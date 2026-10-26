@@ -157,3 +157,28 @@ Usar HTTPS, compresión Brotli/Gzip, CDN delante de los assets y despliegues at�
 - El panel lateral se abre desde la barra superior (botón **Partidas**) o con `Ctrl/⌘ + S`, y se carga bajo demanda para no incluir los catálogos del juego en el bundle inicial.
 - Una sola barra superior global: logo, indicador de autoguardado, botón Partidas y selector de idioma. La barra del track queda debajo, sin duplicar el selector de idioma.
 - `ErrorBoundary` envuelve la aplicación y `StorageWarning` avisa si una escritura en `localStorage` falla.
+
+## Capas y superficies del track
+
+- Escala única de capas en [src/index.css](src/index.css): `layer-app-bar` (50), `layer-track-bar` (40), `layer-menu` (45), `layer-toast` (60), `layer-drawer` (70), `layer-modal` (80) y `layer-dialog` (100). Ningún elemento usa ya valores `z-index` arbitrarios.
+- Cada slot del track usa `track-slot`, que aplica `isolation: isolate`. Así las cartas apiladas nunca se dibujan por encima de la etiqueta del slot ni de los slots vecinos, aunque se escalen o destaquen en el turno actual.
+- Etiqueta del slot (`track-slot__label`), pilas (`track-slot__stack`) e insignias (`track-slot__badge`) tienen capas internas explícitas.
+- Superficies unificadas con `track-surface` y `track-surface-raised`: misma paleta slate, bordes y radios que el resto de la aplicación.
+- Los avisos de fichas se renderizan una sola vez, desde `InitTracker`, para evitar toasts duplicados.
+
+## Menús del track
+
+- Una sola barra contextual con tres secciones: **Enemigos**, **Runas** y **Escenario**, cada una con `aria-expanded` y `aria-controls`.
+- Un único botón de cierre en la barra, en lugar de un botón de cierre repetido en cada sección.
+- El botón de borrar runas vive solo en su sección correspondiente, no duplicado en la barra.
+- Los paneles son regiones desplazables con altura máxima para no tapar el tablero en móvil.
+
+## Consistencia visual y de terminología
+
+- Toda la paleta gris del track y de sus menús se migró a la escala `slate`, la misma que Inicio, Contenido, Partidas y Configuración. Solo quedan grises en los códigos de color de runas y enemigos, donde el gris es un valor semántico.
+- Los paneles del track usan `track-surface` / `track-surface-raised` en lugar de combinaciones sueltas de fondo, radio y borde.
+- Terminología unificada: **Partidas** para guardado, **Contenido** para expansiones, **Cerrar** para cerrar y **Cancelar** para descartar acciones.
+- Claves i18n añadidas para todo el cromo del track (`turno`, `track`, `evento`, `eliminarRuna`, `enemiesMenu`, `runesMenu`, `scenarioMenu`) y para la selección (`searchHeroes`, `searchEnemies`, `noResults`, `stepsLabel`, `next`, `cancel`, etc.) en `es.json` y `en.json`.
+- Extraídos `TrackTurnHeader` ([src/components/track/TrackTurnHeader.jsx](src/components/track/TrackTurnHeader.jsx)) y `BagStatusPanel` ([src/components/track/BagStatusPanel.jsx](src/components/track/BagStatusPanel.jsx)) como primera fase del refactor de `InitTracker`.
+
+

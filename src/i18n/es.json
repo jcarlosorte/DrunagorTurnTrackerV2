@@ -245,7 +245,26 @@
       "comandante": "Comandantes",
       "jefe": "Jefes",
       "hero": "Héroes caídos"
-    }
+    },
+    "searchHeroes": "Buscar héroe…",
+    "searchEnemies": "Buscar enemigo…",
+    "noResults": "No hay resultados con los filtros actuales.",
+    "selected": "seleccionados",
+    "allExpansions": "Todas las expansiones",
+    "allColors": "Todos",
+    "quickSelect": "Selección rápida por expansión",
+    "filterExpansion": "Filtrar por expansión",
+    "filterColor": "Filtrar por color",
+    "heroesSelected": "héroes",
+    "rolesAssigned": "roles",
+    "enemiesSelected": "enemigos",
+    "behaviorsSelected": "comportamientos",
+    "next": "Continuar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "stepsLabel": "Pasos de configuración",
+    "resetConfirmTitle": "Restablecer configuración",
+    "resetConfirm": "Se borrarán los héroes, roles y enemigos seleccionados y se restaurarán los valores por defecto."
   },
   "trackerInit": {
     "vidaExcedida": "supera la vida máxima. ¿Deseas continuar?",
@@ -465,7 +484,16 @@
       "verde": "Verde",
       "naranja": "Naranja",
       "azul": "Azul"
-    }
+    },
+    "turno": "Turno",
+    "track": "Orden de iniciativa",
+    "evento": "Evento",
+    "eliminarRuna": "Eliminar runa",
+    "enemiesMenu": "Enemigos",
+    "runesMenu": "Runas",
+    "scenarioMenu": "Escenario",
+    "resetRunesConfirmTitle": "Borrar runas y fichas",
+    "resetRunesConfirm": "Se eliminarán las cartas de runa colocadas, todas las fichas de la bolsa y los estados activos de la escena."
   },
   "scenarioCard": {
     "Manifiesta": "Manifiesta",

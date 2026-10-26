@@ -98,7 +98,7 @@ const CommanderCardModal = ({ carta, onClose }) => {
 
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="presentation">
+    <div className="layer-modal fixed inset-0 flex items-center justify-center bg-black/70 p-4" role="presentation">
       <div
         role="dialog"
         aria-modal="true"

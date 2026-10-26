@@ -14,7 +14,7 @@ export default function TopMenuLanguage() {
   const onSavesPage = location.pathname === '/saves';
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-700/80 bg-slate-950/95 shadow-lg shadow-slate-950/40 backdrop-blur-xl">
+    <header className="layer-app-bar fixed inset-x-0 top-0 border-b border-slate-700/80 bg-slate-950/95 shadow-lg shadow-slate-950/40 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-6">
         <Link
           to="/"

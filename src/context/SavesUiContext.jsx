@@ -69,7 +69,7 @@ function SavesDrawer({ open, onClose }) {
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[90] flex justify-end bg-black/70" role="presentation" onClick={onClose}>
+    <div className="layer-drawer fixed inset-0 flex justify-end bg-black/70" role="presentation" onClick={onClose}>
       <aside
         ref={panelRef}
         role="dialog"

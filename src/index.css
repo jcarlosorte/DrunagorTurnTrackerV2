@@ -451,3 +451,52 @@ textarea:focus-visible {
   }
 }
 
+/* ---------------------------------------------------------------
+   Escala única de capas.
+   Evita que menús, avisos y modales compitan con el mismo z-index.
+   --------------------------------------------------------------- */
+.layer-app-bar { z-index: 50; }
+.layer-track-bar { z-index: 40; }
+.layer-menu { z-index: 45; }
+.layer-toast { z-index: 60; }
+.layer-drawer { z-index: 70; }
+.layer-modal { z-index: 80; }
+.layer-dialog { z-index: 100; }
+
+/* Superficies del track: misma familia visual que el resto de la app. */
+.track-surface {
+  background-color: color-mix(in srgb, var(--surface-panel) 92%, black);
+  border: 1px solid rgb(51 65 85 / 0.9);
+  border-radius: 1rem;
+}
+
+.track-surface-raised {
+  background-color: var(--surface-raised);
+  border: 1px solid rgb(71 85 105 / 0.9);
+  border-radius: 0.75rem;
+}
+
+/* Cada slot del track aísla su propio contexto de apilado para que
+   las cartas nunca se dibujen por encima de etiquetas o fichas vecinas. */
+.track-slot {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+}
+
+.track-slot__label {
+  position: relative;
+  z-index: 3;
+}
+
+.track-slot__stack {
+  position: relative;
+  z-index: 1;
+}
+
+.track-slot__badge {
+  position: relative;
+  z-index: 2;
+}
+
+

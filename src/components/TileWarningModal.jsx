@@ -21,7 +21,7 @@ const TileWarningModal = () => {
   if (!tileWarning) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="presentation">
+    <div className="layer-modal fixed inset-0 flex items-center justify-center bg-black/70 p-4" role="presentation">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="tile-warning-title">
         <h2 id="tile-warning-title" className="mb-2 text-lg font-bold text-gray-800">{ti.aviso1 || 'Aviso'}</h2>
         <p className="mb-4 text-sm text-gray-800">{tileWarning}</p>

@@ -14,7 +14,6 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
-import TileToast from '@/components/TileToast';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import SaveStatusIndicator from '@/components/SaveStatusIndicator';
 import { v4 as uuidv4 } from 'uuid';
@@ -64,7 +63,7 @@ const TopMenu = ({
     azul: 'bg-blue-700 hover:bg-blue-600',
     verde: 'bg-green-700 hover:bg-green-600',
     naranja: 'bg-orange-700 hover:bg-orange-600',
-    gris: 'bg-gray-600 hover:bg-gray-500',
+    gris: 'bg-slate-600 hover:bg-slate-500',
   };
 
   const toggleMenu = (name) => {
@@ -127,15 +126,16 @@ const TopMenu = ({
     
   return (
     <>
-    <div ref={containerRef} className="fixed inset-x-0 top-14 z-40 border-b border-slate-700/70 bg-slate-900/95 shadow-lg backdrop-blur-xl">
+    <div ref={containerRef} className="layer-track-bar fixed inset-x-0 top-14 border-b border-slate-700/70 bg-slate-900/95 shadow-lg backdrop-blur-xl">
       <div className="mx-auto flex max-w-screen-xl items-center justify-between gap-2 px-3 py-2 sm:px-4">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => toggleMenu('enemies')}
             aria-expanded={activeMenu === 'enemies'}
+            aria-controls="track-menu-enemies"
             aria-label={t.enemiesMenu || 'Enemigos'}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            className={`flex h-11 w-11 items-center justify-center rounded-full text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${activeMenu === 'enemies' ? 'bg-sky-700' : 'bg-slate-800 hover:bg-slate-700'}`}
           >
             <GiMinions size={24} aria-hidden="true" />
           </button>
@@ -143,8 +143,9 @@ const TopMenu = ({
             type="button"
             onClick={() => toggleMenu('runes')}
             aria-expanded={activeMenu === 'runes'}
+            aria-controls="track-menu-runes"
             aria-label={t.runesMenu || 'Runas'}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            className={`flex h-11 w-11 items-center justify-center rounded-full text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${activeMenu === 'runes' ? 'bg-sky-700' : 'bg-slate-800 hover:bg-slate-700'}`}
           >
             <GiRuneStone size={24} aria-hidden="true" />
           </button>
@@ -152,8 +153,9 @@ const TopMenu = ({
             type="button"
             onClick={() => toggleMenu('scenario')}
             aria-expanded={activeMenu === 'scenario'}
+            aria-controls="track-menu-scenario"
             aria-label={t.scenarioMenu || 'Escenario'}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            className={`flex h-11 w-11 items-center justify-center rounded-full text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${activeMenu === 'scenario' ? 'bg-sky-700' : 'bg-slate-800 hover:bg-slate-700'}`}
           >
             <GiVillage size={24} aria-hidden="true" />
           </button>
@@ -161,14 +163,17 @@ const TopMenu = ({
 
         <div className="flex items-center gap-2">
           <SaveStatusIndicator className="hidden sm:inline-flex" />
-          <button
-            type="button"
-            onClick={() => setConfirmResetRunes(true)}
-            aria-label={t.resetRunes}
-            className="hidden min-h-11 items-center rounded-full bg-yellow-500 px-3 text-sm font-bold text-slate-900 hover:bg-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200 md:flex"
-          >
-            {t.resetRunes}
-          </button>
+          {activeMenu && (
+            <button
+              type="button"
+              onClick={toggleMenu}
+              aria-label={t.close || 'Cerrar menú'}
+              className="flex h-11 items-center gap-1 rounded-full bg-slate-700 px-3 text-sm font-semibold text-white hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            >
+              <span aria-hidden="true">✕</span>
+              <span className="hidden sm:inline">{t.close || 'Cerrar'}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -176,14 +181,17 @@ const TopMenu = ({
         {activeMenu === 'enemies' && (
           <motion.div
             ref={menuRefEnemies}
+            id="track-menu-enemies"
+            role="region"
+            aria-label={t.enemiesMenu || 'Enemigos'}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="px-4 pb-4 pt-2 flex flex-col gap-4 text-white"
+            className="layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
           >
             {/* Aleatorios */}
-            <div className="bg-gray-800 rounded-lg p-3 shadow-md justify-center">
+            <div className="track-surface-raised p-3 shadow-md">
               <div className="flex items-center gap-2 mb-2">
                 <GiSwordClash className="text-blue-400 text-xl" />
                 <span className="font-semibold">{t.addEnemies || 'Enemigos aleatorios'}</span>
@@ -191,7 +199,7 @@ const TopMenu = ({
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                 {[
                   { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white' },
-                  { key: 'gris', label: t.addGrayEnemies, color: 'text-gray-400' },
+                  { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400' },
                   { key: 'negro', label: t.addBlackEnemies, color: 'text-black bg-white rounded' },
                   { key: 'comandante', label: t.addCommanders, color: 'text-yellow-500' },
                 ].map(({ key, label, color }) => (
@@ -202,7 +210,7 @@ const TopMenu = ({
                       handleEnemySelect({ target: { value: key } });
                     }}
                     className={`flex flex-col items-center gap-1 px-2 py-2 text-sm rounded-lg font-semibold hover:bg-blue-500 transition ${
-                      enemySelect === key ? 'bg-blue-600' : 'bg-gray-700'
+                      enemySelect === key ? 'bg-blue-600' : 'bg-slate-700'
                     }`}
                   >
                     <GiBullyMinion className={`text-2xl ${color}`} />
@@ -213,7 +221,7 @@ const TopMenu = ({
             </div>
 
             {/* Manuales */}
-            <div className="bg-gray-800 rounded-lg p-3 shadow-md">
+            <div className="bg-slate-800 rounded-lg p-3 shadow-md">
               <div className="flex items-center gap-2 mb-2">
                 <MdAddCircleOutline className="text-purple-400 text-xl" />
                 <span className="font-semibold">{t.addManualEnemy || 'Enemigos manuales'}</span>
@@ -222,7 +230,7 @@ const TopMenu = ({
                 {[
                   { key: 'esbirro', label: t.addMinionEnemies, color: 'text-cyan-300' },
                   { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white' },
-                  { key: 'gris', label: t.addGrayEnemies, color: 'text-gray-400' },
+                  { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400' },
                   { key: 'negro', label: t.addBlackEnemies, color: 'text-black bg-white rounded' },
                   { key: 'comandante', label: t.addCommanders, color: 'text-yellow-500' },
                   { key: 'overlord', label: t.selectOverlord, color: 'text-red-400' },
@@ -237,7 +245,7 @@ const TopMenu = ({
                         handleManualSelect({ target: { value: key } });
                       }}
                       className={`flex flex-col items-center gap-1 px-2 py-2 text-sm rounded-lg font-semibold hover:bg-purple-500 transition ${
-                        manualSelect === key ? 'bg-purple-600' : 'bg-gray-700'
+                        manualSelect === key ? 'bg-purple-600' : 'bg-slate-700'
                       }`}
                     >
                       <GiBullyMinion className={`text-2xl ${color}`} />
@@ -249,19 +257,13 @@ const TopMenu = ({
               </div>
             </div>
             
-            <div className="flex justify-center gap-4 mt-2">
+            <div className="flex justify-center gap-3 pt-1">
               <button
+                type="button"
                 onClick={resetPlacedEnemies}
-                className="px-4 py-1 bg-yellow-600 hover:bg-yellow-700 rounded-full text-sm"
+                className="min-h-11 rounded-full bg-yellow-600 px-4 text-sm font-semibold text-slate-950 hover:bg-yellow-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
               >
                 {t.resetEnemies || 'Resetear enemigos'}
-              </button>
-            
-              <button
-                onClick={toggleMenu}
-                className="px-4 py-1 bg-red-500 hover:bg-red-600 rounded-full text-sm"
-              >
-                {t.close || 'Cerrar'}
               </button>
             </div>
           </motion.div>
@@ -272,17 +274,20 @@ const TopMenu = ({
         {activeMenu === 'runes' && (
           <motion.div
             ref={menuRefRunes}
+            id="track-menu-runes"
+            role="region"
+            aria-label={t.runesMenu || 'Runas'}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="px-4 pb-4 pt-2 flex flex-col gap-4 text-white"
+            className="layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
           >
             <div className="flex flex-col gap-4 max-h-[calc(100vh-100px)] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 hover:scrollbar-thumb-gray-500">
              
               <div className="flex flex-col md:flex-row gap-4">
                 {/* Añadir Cartas de Runa */}
-                <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md ">
+                <div className="track-surface-raised flex-1 p-3 shadow-md ">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiCardPlay className="text-indigo-400 text-xl" />
                     <span className="font-semibold">{t.cartas}</span>
@@ -547,7 +552,7 @@ const TopMenu = ({
                 </div>
 
                 {/* 📦 Estado de la bolsa */}
-                <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                <div className="track-surface-raised flex-1 p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiSwapBag className="text-yellow-300 text-xl" />
                     <span className="font-semibold text-white">
@@ -584,7 +589,7 @@ const TopMenu = ({
                 </div>
                 
                 {/* Manifestar Runa */}
-                <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                <div className="track-surface-raised flex-1 p-3 shadow-md">
                   <div className="flex flex-row items-center gap-2 mb-2 justify-center">
                     <GiRuneStone className="text-blue-400 text-xl inline-block" />
                     <span className="font-semibold whitespace-nowrap">{t.manifestarTitulo || 'Manifestar Runa'}</span>
@@ -606,7 +611,7 @@ const TopMenu = ({
                 
               <div className="flex flex-col md:flex-row gap-4">
                 {/* Añadir ficha */}
-                <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                <div className="track-surface-raised flex-1 p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiBrickWall className="text-green-300 text-xl" />
                     <span className="font-semibold">{t.fichas}</span>
@@ -650,7 +655,7 @@ const TopMenu = ({
                 </div>
 
                 {/* Añadir oscuridad en cascada */}
-                <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                <div className="track-surface-raised flex-1 p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiRuneStone className="text-purple-400 text-xl" />
                     <span className="font-semibold">{t.oscuridadCascada}</span>
@@ -670,7 +675,7 @@ const TopMenu = ({
         
                 
                 {/* Eliminar ficha */}
-                <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                <div className="track-surface-raised flex-1 p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiBrickWall className="text-red-400 text-xl" />
                     <span className="font-semibold">{t.removeTiles || 'Eliminar fichas de runa'}</span>
@@ -714,7 +719,7 @@ const TopMenu = ({
                 </div>
 
                 {/* ❌ Eliminación directa */}
-                <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                <div className="track-surface-raised flex-1 p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiTrashCan className="text-red-400 text-xl" />
                     <span className="font-semibold text-white">
@@ -756,7 +761,7 @@ const TopMenu = ({
               
               <div className="flex flex-col md:flex-row gap-4 mt-4">
                 {/* Sub-bloque: Pilas */}
-                <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                <div className="track-surface-raised flex-1 p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiCardDraw className="text-purple-500 text-xl" />
                     <span className="font-semibold text-white">{t.gestionPila}</span>
@@ -764,7 +769,7 @@ const TopMenu = ({
 
                   <div className="flex flex-col md:flex-row gap-4 justify-center">
                     {/* Sub-bloque: Pila Oscuridad Inquieta */}
-                    <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                    <div className="track-surface-raised flex-1 p-3 shadow-md">
                       <div className="flex items-center gap-2 mb-2 justify-center">
                         <GiCardDraw className="text-purple-400 text-xl" />
                         <span className="font-semibold text-white">{t.gestionPilas}</span>
@@ -780,7 +785,7 @@ const TopMenu = ({
                   
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 justify-center">
                         {pilas.map(pila => (
-                          <div key={pila.id} className="bg-gray-800 p-2 rounded text-center text-white border border-yellow-500">
+                          <div key={pila.id} className="track-surface-raised p-2 text-center text-white">
                             
                             {pila.estado === 'reserva' ? (
                               <>
@@ -801,12 +806,12 @@ const TopMenu = ({
                                     maxLength={5}
                                     value={codigosPilas[pila.id] || ''}
                                     onChange={(e) => handleCodigoChange(pila.id, e.target.value)}
-                                    className="bg-gray-700 text-white text-xs px-2 py-1 rounded w-[70px] text-center"
+                                    className="min-h-11 w-[80px] rounded-lg border border-slate-600 bg-slate-900 px-2 text-center text-xs text-white"
                                     placeholder="ABC12"
                                     title={t.codigoPila}
                                   />
                                 </div>
-                                <div className="text-xs text-gray-300 mb-2">
+                                <div className="text-xs text-slate-300 mb-2">
                                   {t.tamano}: {pila.tiles.length}
                                 </div>
                                 <div className="flex flex-col items-center gap-1">
@@ -855,7 +860,7 @@ const TopMenu = ({
                     </div>
               
                     {/* Sub-bloque: Pila Oscuridad Concentrada */}
-                    <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                    <div className="track-surface-raised flex-1 p-3 shadow-md">
                       <div className="flex items-center gap-2 mb-2 justify-center">
                         <GiCardDraw className="text-purple-400 text-xl" />
                         <span className="font-semibold text-white">{t.gestionPilas2}</span>
@@ -870,7 +875,7 @@ const TopMenu = ({
                 
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 justify-center">
                         {pilasConcentrada.map(pila => (
-                          <div key={pila.id} className="bg-gray-800 p-2 rounded text-center text-white border border-yellow-500">
+                          <div key={pila.id} className="track-surface-raised p-2 text-center text-white">
                             {pila.estado === 'reserva' ? (
                               <>
                                 <div className="font-bold mb-2">{t.nodo || 'Nodo'} 🗃️</div>
@@ -890,12 +895,12 @@ const TopMenu = ({
                                     maxLength={5}
                                     value={codigosPilas[pila.id] || ''}
                                     onChange={(e) => handleCodigoChange(pila.id, e.target.value)}
-                                    className="bg-gray-700 text-white text-xs px-2 py-1 rounded w-[70px] text-center"
+                                    className="min-h-11 w-[80px] rounded-lg border border-slate-600 bg-slate-900 px-2 text-center text-xs text-white"
                                     placeholder="ABC12"
                                     title={t.codigoPila}
                                   />
                                 </div>
-                                <div className="text-xs text-gray-300 mb-2">
+                                <div className="text-xs text-slate-300 mb-2">
                                   {t.tamano}: {pila.tiles.length}
                                 </div>
                                 <div className="flex flex-col items-center gap-1">
@@ -918,8 +923,8 @@ const TopMenu = ({
                                   </button>
                                   
                                   {pilaConcentradaEliminarAbierta === pila.id && (
-                                    <div className="mt-1 p-2 rounded bg-gray-900 border border-red-700 flex flex-wrap justify-center gap-1">
-                                      <div className="w-full text-[11px] text-gray-300 mb-1">
+                                    <div className="mt-1 p-2 rounded bg-slate-900 border border-red-700 flex flex-wrap justify-center gap-1">
+                                      <div className="w-full text-[11px] text-slate-300 mb-1">
                                         {t.eliminarPorColor || 'Eliminar una runa:'}
                                       </div>
                                   
@@ -995,14 +1000,14 @@ const TopMenu = ({
                 </div>
               
                 {/* Bloque 2: Control de áreas y puntos de aparición */}
-                <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                <div className="track-surface-raised flex-1 p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiRuneStone className="text-cyan-500 text-xl" />
                     <span className="font-semibold">{t.controlAreas}</span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Sub-bloque: Barricadas */}
-                    <div className="bg-gray-700 rounded-lg p-3 shadow-md">
+                    <div className="track-surface-raised p-3 shadow-md">
                       <div className="flex items-center gap-2 mb-2 justify-center">
                         <GiRuneStone className="text-cyan-400 text-xl" />
                         <span className="font-semibold">{t.barricadas}</span>
@@ -1025,7 +1030,7 @@ const TopMenu = ({
                     </div>
               
                     {/* Sub-bloque: Puntos de aparición */}
-                    <div className="bg-gray-700 rounded-lg p-3 shadow-md">
+                    <div className="track-surface-raised p-3 shadow-md">
                       <div className="flex items-center gap-2 mb-2 justify-center">
                         <GiRuneStone className="text-cyan-400 text-xl" />
                         <span className="font-semibold">{t.spawnPoints}</span>
@@ -1059,7 +1064,7 @@ const TopMenu = ({
                     </div>
 
                     {/* Sub-bloque: LLaves Rúnicas */}
-                    <div className="bg-gray-700 rounded-lg p-3 shadow-md">
+                    <div className="track-surface-raised p-3 shadow-md">
                       <div className="flex items-center gap-2 mb-2 justify-center">
                         <GiRuneStone className="text-cyan-400 text-xl" />
                         <span className="font-semibold">{t.runeKey}</span>
@@ -1082,7 +1087,7 @@ const TopMenu = ({
                     </div>
 
                     {/* Sub-bloque: Rescate de Aldeanos */}
-                    <div className="bg-gray-700 rounded-lg p-3 shadow-md">
+                    <div className="track-surface-raised p-3 shadow-md">
                       <div className="flex items-center gap-2 mb-2 justify-center">
                         <GiRuneStone className="text-cyan-400 text-xl" />
                         <span className="font-semibold">{t.rescue}</span>
@@ -1105,10 +1110,10 @@ const TopMenu = ({
                     </div>
 
                     {/* Sub-bloque: mostrar botones */}
-                    <div className="bg-gray-700 rounded-lg p-3 shadow-md col-span-1 md:col-span-2">
+                    <div className="track-surface-raised p-3 shadow-md col-span-1 md:col-span-2">
                     <div className="flex items-center gap-2 mb-2 justify-center flex-wrap">
                       {controlPoints.length > 0 && (
-                        <div className="mt-3 p-2 bg-gray-700 rounded-lg">
+                        <div className="track-surface-raised mt-3 p-2">
                           <div className="text-xs text-yellow-300 mb-2">{t.activeBarricade}</div>
                           <div className="flex gap-2 flex-wrap justify-center">
                             {controlPoints.map(point => (
@@ -1129,7 +1134,7 @@ const TopMenu = ({
                         </div>
                       )}
                       {spawnPoints.length > 0 && (
-                        <div className="mt-3 p-2 bg-gray-700 rounded-lg">
+                        <div className="track-surface-raised mt-3 p-2">
                           <div className="text-xs text-yellow-300 mb-2">{t.activeSpawnPoints}</div>
                           <div className="flex gap-2 flex-wrap justify-center">
                             {spawnPoints.map(point => {
@@ -1139,16 +1144,16 @@ const TopMenu = ({
                                 return (
                                   <div
                                     key={point.uuid}
-                                    className="px-3 py-1 rounded bg-gray-800 text-white flex items-center gap-2"
+                                    className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-1 text-white"
                                   >
                                     {evento?.imagen && (
                                       <img
                                         src={evento.imagen}
-                                        alt="Evento"
-                                        className="w-6 h-6 object-contain"
+                                        alt=""
+                                        className="h-6 w-6 object-contain"
                                       />
                                     )}
-                                    <span>{t.evento || "Evento"}</span>
+                                    <span>{t.evento || 'Evento'}</span>
                                     <button
                                       onClick={() => removeSpawnPoint(point.uuid)}
                                       className="bg-red-600 hover:bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs"
@@ -1180,7 +1185,7 @@ const TopMenu = ({
                       )}
 
                       {runeKeys.length > 0 && (
-                        <div className="mt-3 p-2 bg-gray-700 rounded-lg">
+                        <div className="track-surface-raised mt-3 p-2">
                           <div className="text-xs text-yellow-300 mb-2">{t.activeRuneKeys}</div>
                           <div className="flex gap-2 flex-wrap justify-center">
                             {runeKeys.map(point => (
@@ -1201,7 +1206,7 @@ const TopMenu = ({
                         </div>
                       )}
                       {rescue.length > 0 && (
-                        <div className="mt-3 p-2 bg-gray-700 rounded-lg">
+                        <div className="track-surface-raised mt-3 p-2">
                           <div className="text-xs text-yellow-300 mb-2">{t.activeRescue}</div>
                           <div className="flex gap-2 flex-wrap justify-center">
                             {rescue.map(point => (
@@ -1234,17 +1239,10 @@ const TopMenu = ({
                 <button
                   type="button"
                   onClick={() => setConfirmResetRunes(true)}
-                  className="rounded-full bg-yellow-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-yellow-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
+                  className="min-h-11 rounded-full bg-yellow-500 px-4 text-sm font-semibold text-slate-900 hover:bg-yellow-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
                 >
                   {t.resetRunes}
                 </button>
-                <button
-                  onClick={toggleMenu}
-                  className="px-4 py-1 bg-red-500 hover:bg-red-600 rounded-full text-sm"
-                >
-                  {t.close}
-                </button>                      
-                
               </div>
 
             </div>
@@ -1256,16 +1254,19 @@ const TopMenu = ({
         {activeMenu === 'scenario' && (
           <motion.div
             ref={menuRefScenario}
+            id="track-menu-scenario"
+            role="region"
+            aria-label={t.scenarioMenu || 'Escenario'}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="px-4 pb-4 pt-2 flex flex-col gap-4 text-white"
+            className="layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
           >
             <div className="flex flex-col gap-4 max-h-[calc(100vh-100px)] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 hover:scrollbar-thumb-gray-500">
 
               
-              <div className="bg-gray-800 rounded-lg p-3 shadow-md">
+              <div className="bg-slate-800 rounded-lg p-3 shadow-md">
                 <div className="flex items-center gap-2 mb-2">
                   <GiDaemonSkull className="text-red-400 text-xl" />
                   <span className="font-semibold">{t.monstruoEscenario}</span>
@@ -1296,7 +1297,7 @@ const TopMenu = ({
                 </div>
               
                 {scenarioMonster && (
-                  <div className="mt-2 text-xs text-gray-300">
+                  <div className="mt-2 text-xs text-slate-300">
                     ✅ {t.monstruoSeleccionado}: <strong>{translations.enemies.escenario?.[scenarioMonster.id] || scenarioMonster.id}</strong>
                   </div>
                 )}
@@ -1304,7 +1305,7 @@ const TopMenu = ({
   
               
                   
-              <div className="bg-gray-800 rounded-lg p-3 shadow-md">
+              <div className="bg-slate-800 rounded-lg p-3 shadow-md">
                 <div className="flex items-center gap-2 mb-2">
                   <GiVillage className="text-yellow-300 text-xl" />
                   <span className="font-semibold">{t.escenario || 'Cartas de Escenario'}</span>
@@ -1312,7 +1313,7 @@ const TopMenu = ({
                 
                 <div className="flex flex-col md:flex-row gap-4 mt-4">
                   {/* Incursión */}
-                  <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                  <div className="track-surface-raised flex-1 p-3 shadow-md">
                     <div className="flex text-orange font-semibold p-2 mb-2">
                       <GiUprising className="text-blue text-xl" />
                        <span className="font-semibold"> {t.incru1}</span>
@@ -1358,7 +1359,7 @@ const TopMenu = ({
     
           
                   {/* Defensa */}
-                  <div className="flex-1 bg-gray-700 rounded-lg p-3 shadow-md">
+                  <div className="track-surface-raised flex-1 p-3 shadow-md">
                     <div className="flex text-white font-semibold p-2 mb-2">
                       <GiStoneTower className="text-blue text-xl" />
                        <span className="font-semibold"> {t.defen1}</span>
@@ -1401,15 +1402,6 @@ const TopMenu = ({
               </div>
 
               
-              <div className="flex justify-center gap-4 mt-2">
-                <button
-                  onClick={toggleMenu}
-                  className="px-4 py-1 bg-red-500 hover:bg-red-600 rounded-full text-sm"
-                >
-                  {t.close || 'Cerrar'}
-                </button>
-              </div>
-            
             </div>
             
           </motion.div>
@@ -1418,29 +1410,15 @@ const TopMenu = ({
 
     </div>
 
-
-    {/* Toast visual para eliminación */}
-      <div
-        className="fixed left-1/2 top-16 z-50 flex -translate-x-1/2 flex-col items-center space-y-2"
-        aria-live="polite"
-        aria-atomic="false"
-      >
-        {tileToasts.map(tile => (
-          <TileToast
-            key={`${tile.uuid}-${tile.tipo || 'add'}`}
-            tile={tile}
-            tipo={tile.tipo}
-            onClose={() => setTileToasts(prev => prev.filter(item => item.uuid !== tile.uuid))}
-          />
-        ))}
-      </div>
+      {/* Los avisos de fichas se muestran una sola vez desde InitTracker,
+          que ya incluye la región aria-live y el cierre funcional. */}
 
       <ConfirmDialog
         open={confirmResetRunes}
         title={t.resetRunesConfirmTitle || 'Borrar runas y fichas'}
         description={t.resetRunesConfirm || 'Se eliminarán las cartas de runa colocadas, todas las fichas de la bolsa y los estados activos de la escena.'}
         confirmLabel={t.resetRunes || 'Borrar runas'}
-        cancelLabel={t.close || 'Cancelar'}
+        cancelLabel={translations.trackerSelect?.cancel || 'Cancelar'}
         onCancel={() => setConfirmResetRunes(false)}
         onConfirm={() => {
           resetPlacedRunes();

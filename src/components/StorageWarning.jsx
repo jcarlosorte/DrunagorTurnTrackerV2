@@ -17,7 +17,7 @@ export default function StorageWarning() {
   return (
     <div
       role="alert"
-      className="fixed bottom-4 left-1/2 z-[95] w-[min(92vw,32rem)] -translate-x-1/2 rounded-xl border border-amber-500/70 bg-amber-950/95 p-3 text-sm text-amber-100 shadow-2xl"
+      className="layer-toast fixed bottom-4 left-1/2 w-[min(92vw,32rem)] -translate-x-1/2 rounded-xl border border-amber-500/70 bg-amber-950/95 p-3 text-sm text-amber-100 shadow-2xl"
     >
       <div className="flex items-start gap-2">
         <span aria-hidden="true">⚠️</span>

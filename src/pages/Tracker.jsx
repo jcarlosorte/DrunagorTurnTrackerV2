@@ -266,7 +266,7 @@ const TrackerSelect = () => {
         </header>
 
         {/* Paso actual */}
-        <nav aria-label="Pasos de configuración" className="mb-6">
+        <nav aria-label={t.stepsLabel || 'Pasos de configuración'} className="mb-6">
           <ol className="grid grid-cols-3 gap-2">
             {STEPS.map((item, index) => {
               const isActive = item === step;

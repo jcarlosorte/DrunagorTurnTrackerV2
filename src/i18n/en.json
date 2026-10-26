@@ -244,7 +244,26 @@
       "comandante": "Commanders",
       "jefe": "Bosses",
       "hero": "Fallen Heroes"
-    }
+    },
+    "searchHeroes": "Search hero…",
+    "searchEnemies": "Search enemy…",
+    "noResults": "No results match the current filters.",
+    "selected": "selected",
+    "allExpansions": "All expansions",
+    "allColors": "All",
+    "quickSelect": "Quick select by expansion",
+    "filterExpansion": "Filter by expansion",
+    "filterColor": "Filter by colour",
+    "heroesSelected": "heroes",
+    "rolesAssigned": "roles",
+    "enemiesSelected": "enemies",
+    "behaviorsSelected": "behaviours",
+    "next": "Continue",
+    "cancel": "Cancel",
+    "close": "Close",
+    "stepsLabel": "Setup steps",
+    "resetConfirmTitle": "Reset configuration",
+    "resetConfirm": "Selected heroes, roles and enemies will be cleared and defaults restored."
   },
   "trackerInit": {
     "vidaExcedida": "exceeds maximum health. Do you wish to continue?",
@@ -464,7 +483,16 @@
       "verde": "Green",
       "naranja": "Oranje",
       "azul": "Blue"
-    }
+    },
+    "turno": "Turn",
+    "track": "Initiative order",
+    "evento": "Event",
+    "eliminarRuna": "Remove rune",
+    "enemiesMenu": "Enemies",
+    "runesMenu": "Runes",
+    "scenarioMenu": "Scenario",
+    "resetRunesConfirmTitle": "Clear runes and tiles",
+    "resetRunesConfirm": "Placed rune cards, every tile in the bag and the active scenario states will be removed."
   },
   "scenarioCard": {
     "Manifiesta": "Manifest",

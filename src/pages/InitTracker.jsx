@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { flushSync } from "react-dom";
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useState, useRef } from 'react';
-import { GiAbstract065, GiWingedSword, GiSwapBag } from 'react-icons/gi';
+import { GiAbstract065, GiWingedSword } from 'react-icons/gi';
 import { RiArrowTurnBackLine, RiArrowTurnForwardLine } from "react-icons/ri";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -34,6 +34,8 @@ import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRune
 import { useRenderEnemyCapabilities } from '@/components/renderEnemyCapabilities';
 import TileWarningModal from '@/components/TileWarningModal';
 import TileToast from '@/components/TileToast';
+import BagStatusPanel from '@/components/track/BagStatusPanel';
+import TrackTurnHeader from '@/components/track/TrackTurnHeader';
 import CommanderCard from '@/components/CommanderCard';
 import { v4 as uuidv4 } from 'uuid';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
@@ -2055,7 +2057,7 @@ const InitTracker = () => {
     esbirro: 'bg-cyan-300',
     escenario: 'bg-cyan-600',
     blanco: 'bg-white',
-    gris: 'bg-gray-500',
+    gris: 'bg-slate-500',
     negro: 'bg-black',
     comandante: 'bg-orange-400 ',
     overlord: 'bg-purple-800',
@@ -2067,7 +2069,7 @@ const InitTracker = () => {
     azul: 'bg-blue-700 hover:bg-blue-600',
     verde: 'bg-green-700 hover:bg-green-600',
     naranja: 'bg-orange-700 hover:bg-orange-600',
-    gris: 'bg-gray-700 hover:bg-gray-600',
+    gris: 'bg-slate-700 hover:bg-slate-600',
   };
   useEffect(() => {
     const initialHeroes = trackerData.heroes.map(id => {
@@ -3016,9 +3018,10 @@ const InitTracker = () => {
     
                 <div className="flex items-center justify-end mt-1 text-white text-[0.55rem] sm:text-[0.65rem]">
                   <button
+                    type="button"
                     onClick={() => onRemove(rune.uuid)}
-                    className="top-1 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center z-10"
-                    title="Eliminar"
+                    className="right-2 top-1 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-xs text-white hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    aria-label={ti.eliminarRuna || ti.remove || 'Eliminar runa'}
                   >
                     ✕
                   </button>
@@ -3285,11 +3288,11 @@ const InitTracker = () => {
     };
     
     return (
-      <div key={index} className={`flex flex-col w-full ${slotHeightClass} py-2`}>
+      <div key={index} className={`track-slot flex w-full flex-col ${slotHeightClass} py-2`}>
         
         {/* Escalonado arriba */}
         <div className="relative flex justify-center h-1/2 w-full mb-5">
-          <div className="absolute bottom-0 left-0 right-0 flex justify-center">
+          <div className="track-slot__stack absolute bottom-0 left-0 right-0 flex justify-center">
             {renderStack(heroesAbove, true, 'hero')}
             {isRune && renderStack(enemiesAbove, true, 'enemy')}
             {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), true, 'rune')}
@@ -3297,7 +3300,7 @@ const InitTracker = () => {
         </div>
   
         {/* Centro del slot */}
-        <div className="flex items-center justify-center h-8 shrink-0 bg-gray-300">
+        <div className="track-slot__label relative z-10 flex shrink-0 items-center justify-center bg-slate-700 py-1">
           <div className={classNames(
             'flex items-center justify-center font-fantasy',
             {
@@ -3306,7 +3309,7 @@ const InitTracker = () => {
               'w-14 h-14 rotate-45 border-4 gem-blue': index === 5,
               'w-14 h-14 rotate-45 border-4 gem-red': index === 7,
               'w-14 h-14 rotate-45 border-4 gem-gray': index === 9,
-              'w-full h-10 bg-gray-300 text-black text-center shadow': index % 2 === 0
+              'w-full h-10 bg-slate-800 text-slate-100 text-center shadow': index % 2 === 0
             })}>
             <span
               className={classNames(
@@ -3349,7 +3352,7 @@ const InitTracker = () => {
 
         {/* Escalonado abajo */}
         <div className="relative flex justify-center h-1/2 w-full mt-5">
-          <div className="absolute top-0 left-0 right-0 flex justify-center">
+          <div className="track-slot__stack absolute top-0 left-0 right-0 flex justify-center">
             {renderStack(heroesBelow, false, 'hero')}
             {isRune && renderStack(enemiesBelow, false, 'enemy')}
             {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), false, 'rune')}
@@ -3366,13 +3369,14 @@ const InitTracker = () => {
       <PageTransition>
        
         <div className="min-w-0">
-          <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-gray-950 to-black p-3 pt-28 text-gray-200 sm:p-4 sm:pt-28">
-            <div className="no-header" />
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2 text-sm shadow-lg" aria-live="polite">
-              <span className="font-semibold text-emerald-200">{ti.ronda || 'Ronda'}: {roundNumber || 0}</span>
-              <span className="text-slate-300">{ti.turno || 'Turno'}: {turnIndex >= 0 ? turnIndex + 1 : '—'}</span>
-              {currentTurnEntity && <span className="truncate text-sky-200">{currentTurnEntity.name || currentTurnEntity.id || ''}</span>}
-            </div>
+          <div className="min-h-screen overflow-x-hidden bg-slate-950 p-3 pt-28 text-slate-200 sm:p-4 sm:pt-28">
+            <TrackTurnHeader
+              roundLabel={ti.ronda || 'Ronda'}
+              round={roundNumber}
+              turnLabel={ti.turno || 'Turno'}
+              turn={turnIndex >= 0 ? turnIndex + 1 : '—'}
+              entityLabel={currentTurnEntity ? (currentTurnEntity.name || currentTurnEntity.id || '') : ''}
+            />
 
             <TopMenu
               onAddEnemy={openCategorySelector}
@@ -3388,8 +3392,8 @@ const InitTracker = () => {
             {placedEnemies
               .filter(e => e.enemy.categoria === 'jefe' && e.enemy.tipo != 'especial')
               .map(({ enemy }) => (
-                <div className="mt-3 p-2 bg-indigo-900 rounded-lg">
-                  <div key={enemy.uuid} className="scale-200" >
+                <div className="track-surface mt-3 overflow-hidden p-3">
+                  <div key={enemy.uuid} className="mx-auto flex max-w-full origin-center scale-125 justify-center py-6 sm:scale-150 md:scale-[1.75]">
                     <EnemyCard
                       uuid={enemy.uuid}
                       id={enemy.id}
@@ -3419,11 +3423,11 @@ const InitTracker = () => {
             
             {/* Puntos de aparición visibles encima del track */}
             {pilas.length > 0 && (
-                <div className="mt-3 p-2 bg-gray-800 rounded-lg">
+                <div className="track-surface mt-3 p-3">
                   <div className="text-xs text-yellow-300 mb-2">{ti.gestionPilas || ''}</div>
                   <div className="flex gap-2 flex-wrap justify-center">
                     {pilas.map(pila => (
-                      <div key={pila.id} className="bg-gray-800 p-2 rounded text-center text-white border border-yellow-500">
+                      <div key={pila.id} className="track-surface-raised p-2 text-center text-white">
                         
                         {pila.estado === 'reserva' ? (
                           <>
@@ -3444,12 +3448,12 @@ const InitTracker = () => {
                                 maxLength={5}
                                 value={codigosPilas[pila.id] || ''}
                                 onChange={(e) => handleCodigoChange(pila.id, e.target.value)}
-                                className="bg-gray-700 text-white text-xs px-2 py-1 rounded w-[70px] text-center"
+                                className="bg-slate-700 text-white text-xs px-2 py-1 rounded w-[70px] text-center"
                                 placeholder="ABC12"
                                 title={ti.codigoPila}
                               />
                             </div>
-                            <div className="text-xs text-gray-300 mb-2">
+                            <div className="text-xs text-slate-300 mb-2">
                               {ti.tamano}: {pila.tiles.length}
                             </div>
                             <div className="flex flex-col items-center gap-1">
@@ -3494,11 +3498,11 @@ const InitTracker = () => {
               </div>
             )}
             {pilasConcentrada.length > 0 && (
-                <div className="mt-3 p-2 bg-gray-800 rounded-lg">
+                <div className="track-surface mt-3 p-3">
                   <div className="text-xs text-yellow-300 mb-2">{ti.gestionPilas2 || ''}</div>
                   <div className="flex gap-2 flex-wrap justify-center">
                     {pilasConcentrada.map(pila => (
-                        <div key={pila.id} className="bg-gray-800 p-2 rounded text-center text-white border border-yellow-500">
+                        <div key={pila.id} className="track-surface-raised p-2 text-center text-white">
                           {pila.estado === 'reserva' ? (
                             <>
                               <div className="font-bold mb-2">{ti.nodo || 'Nodo'} 🗃️</div>
@@ -3518,12 +3522,12 @@ const InitTracker = () => {
                                   maxLength={5}
                                   value={codigosPilas[pila.id] || ''}
                                   onChange={(e) => handleCodigoChange(pila.id, e.target.value)}
-                                  className="bg-gray-700 text-white text-xs px-2 py-1 rounded w-[70px] text-center"
+                                  className="bg-slate-700 text-white text-xs px-2 py-1 rounded w-[70px] text-center"
                                   placeholder="ABC12"
                                   title={ti.codigoPila}
                                 />
                               </div>
-                              <div className="text-xs text-gray-300 mb-2">
+                              <div className="text-xs text-slate-300 mb-2">
                                 {ti.tamano}: {pila.tiles.length}
                               </div>
                               <div className="flex flex-col items-center gap-1">
@@ -3546,8 +3550,8 @@ const InitTracker = () => {
                                 </button>
                                 
                                 {pilaConcentradaEliminarAbierta === pila.id && (
-                                  <div className="mt-1 p-2 rounded bg-gray-900 border border-red-700 flex flex-wrap justify-center gap-1">
-                                    <div className="w-full text-[11px] text-gray-300 mb-1">
+                                  <div className="mt-1 flex flex-wrap justify-center gap-1 rounded-lg border border-red-800 bg-slate-950 p-2">
+                                    <div className="w-full text-[11px] text-slate-300 mb-1">
                                       {ti.eliminarPorColor || 'Eliminar una runa:'}
                                     </div>
                                 
@@ -3619,7 +3623,7 @@ const InitTracker = () => {
            
 
             {spawnPoints.length > 0 && (
-              <div className="mt-3 p-2 bg-gray-700 rounded-lg">
+              <div className="mt-3 p-2 bg-slate-700 rounded-lg">
                 <div className="text-xs text-yellow-300 mb-2">{ti.activeSpawnPoints}</div>
                 <div className="flex gap-2 flex-wrap justify-center">
                   {spawnPoints.map(point => {
@@ -3629,16 +3633,16 @@ const InitTracker = () => {
                       return (
                         <div
                           key={point.uuid}
-                          className="px-3 py-1 rounded bg-gray-800 text-white flex items-center gap-2"
+                          className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-1 text-white"
                         >
                           {evento?.imagen && (
                             <img
                               src={evento.imagen}
-                              alt="Evento"
-                              className="w-6 h-6 object-contain"
+                              alt=""
+                              className="h-6 w-6 object-contain"
                             />
                           )}
-                          <span>{ti.evento || "Evento"}</span>
+                          <span>{ti.evento || 'Evento'}</span>
                           <button
                             onClick={() => removeSpawnPoint(point.uuid)}
                             className="bg-red-600 hover:bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs"
@@ -3671,7 +3675,7 @@ const InitTracker = () => {
 
             {/* Puntos de control de area visibles encima del track */}
             {controlPoints.length > 0 && (
-                <div className="mt-3 p-2 bg-gray-800 rounded-lg">
+                <div className="track-surface mt-3 p-3">
                   <div className="text-xs text-yellow-300 mb-2cursor-help" title={ti.infoCA || ''}>{ti.activeBarricade || ''}</div>
                   <div className="flex gap-2 flex-wrap justify-center">
                     {controlPoints.map(point => (
@@ -3694,7 +3698,7 @@ const InitTracker = () => {
             
               {/* LLaves rúnicas visibles encima del track */}
               {runeKeys.length > 0 && (
-                <div className="mt-3 p-2 bg-gray-800 rounded-lg">
+                <div className="track-surface mt-3 p-3">
                   <div className="text-xs text-yellow-300 mb-2">{ti.activeRuneKeys}</div>
                   <div className="flex gap-2 flex-wrap justify-center">
                     {runeKeys.map(point => (
@@ -3717,7 +3721,7 @@ const InitTracker = () => {
 
           {/* Aldeanos visibles encima del track */}
             {rescue.length > 0  && (
-              <div className="mt-3 p-2 bg-gray-800 rounded-lg">
+              <div className="track-surface mt-3 p-3">
                 <div className="text-xs text-yellow-300 mb-2">{ti.activeRescue}</div>
                 <div className="flex gap-2 flex-wrap justify-center">
                   {rescue.map(point => (
@@ -3765,8 +3769,8 @@ const InitTracker = () => {
               </div>
             )}
             
-            <div className="overflow-x-auto rounded-xl border border-slate-600 bg-slate-900/80 shadow-inner" role="region" aria-label={ti.track || 'Orden de iniciativa'} tabIndex="0">
-              <div className="grid min-w-[1100px] grid-cols-11 auto-rows-auto gap-0 bg-slate-700 p-2 snap-x snap-mandatory md:min-w-0">
+            <div className="mt-3 overflow-x-auto rounded-2xl border border-slate-700 bg-slate-900/80 shadow-inner" role="region" aria-label={ti.track || 'Orden de iniciativa'} tabIndex="0">
+              <div className="grid min-w-[1100px] snap-x snap-mandatory grid-cols-11 auto-rows-auto gap-0 bg-slate-800 p-2 md:min-w-0">
                 {[...Array(11)].map((_, idx) => (
                   <React.Fragment key={`${idx}-${currentTurnEntity?.uuid || currentTurnEntity?.id || 'none'}`}>
                     {renderSlot(idx)}
@@ -3775,55 +3779,31 @@ const InitTracker = () => {
               </div>
             </div>
 
-            {/* 📦 Estado de la bolsa debajo del track*/}
-            <div className="flex-1 bg-gray-800 rounded-lg p-3 shadow-md">
-              <div className="flex items-center gap-2 mb-2 justify-center">
-                <GiSwapBag className="text-yellow-300 text-xl" />
-                <span className="font-semibold text-white">
-                  {ti.estadoBolsa || 'Estado de la Bolsa de Runas'}
-                </span>
-              </div>
-              {/* Estado general */}
-              <div className="text-sm text-white justify-center">
-                {ti.extraidas}: <b>{usedTiles.length}</b><br />
-                {ti.total}: <b>{availableTiles.length + usedTiles.length}</b>
-              </div>
-              {/* Estado por colores en línea */}
-              <div className="flex items-center gap-2 p-3 text-xs justify-center">
-                {[
-                  { id: 'naranja', color: '#ff8c00' },
-                  { id: 'verde', color: '#00aa00' },
-                  { id: 'azul', color: '#0077cc' },
-                  { id: 'rojo', color: '#cc0000' },
-                  { id: 'gris', color: '#999999' }
-                ].map(({ id, color }) => {
-                  const usadasColor = usedTiles.filter(tile => tile.runa === id).length;
-                  const disponiblesColor = availableTiles.filter(tile => tile.runa === id).length;
-                  return (
-                    <div
-                      key={id}
-                      className="px-2 py-1 rounded font-semibold"
-                      style={{ backgroundColor: color, color: 'white' }}
-                    >
-                      {ti.colores[id] || id}: {usadasColor}/{usadasColor + disponiblesColor}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            {/* 📦 Estado de la bolsa debajo del track */}
+            <BagStatusPanel
+              usedTiles={usedTiles}
+              availableTiles={availableTiles}
+              labels={{
+                title: ti.estadoBolsa || 'Estado de la Bolsa de Runas',
+                drawn: ti.extraidas || 'Extraídas',
+                total: ti.total || 'Total',
+              }}
+              colors={ti.colores || {}}
+            />
             
             {categorySelector.open && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-gray-900 p-4 rounded-xl shadow-lg text-white text-center">
-                  <h2 className="text-lg mb-4">{ti.selectCategory}</h2>
+              <div className="layer-modal fixed inset-0 flex items-center justify-center bg-black/60 p-4" role="presentation">
+                <div role="dialog" aria-modal="true" aria-label={ti.selectCategory || 'Seleccionar categoría'} className="track-surface p-4 text-center text-white shadow-2xl">
+                  <h2 className="mb-4 text-lg font-bold">{ti.selectCategory}</h2>
                     {allowedCategories.map(cat => (
-                      <button key={cat} onClick={() => handleCategorySelect(cat)} className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded m-1">
+                      <button key={cat} type="button" onClick={() => handleCategorySelect(cat)} className="m-1 min-h-11 rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300">
                         {tc[cat] || cat}
                       </button>
                     ))}
                   <div className="mt-4 text-center">
                     <button
-                      className="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded"
+                      type="button"
+                      className="min-h-11 rounded-lg bg-red-700 px-4 py-2 text-white hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
                       onClick={() => setCategorySelector({ open: false, color: null })}
                     >
                       {ti.close || 'Cerrar'}
@@ -3835,8 +3815,8 @@ const InitTracker = () => {
             
             {/* Manual Selector Modal */}
             {manualSelector.open && (
-              <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center z-50">
-                <div className="bg-gray-900 p-6 rounded-xl shadow-lg max-w-3xl w-full max-h-[80vh] overflow-y-auto">
+              <div className="layer-modal fixed inset-0 flex flex-col items-center justify-center bg-black/75 p-4">
+                <div role="dialog" aria-modal="true" aria-label={ti.manualTitle || 'Seleccionar enemigo manualmente'} className="max-h-[80vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
                   <h2 className="text-xl text-yellow-300 mb-4">{ti.manualTitle || 'Seleccionar enemigo manualmente'}</h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {Object.entries(
@@ -3851,7 +3831,7 @@ const InitTracker = () => {
                       const sampleEnemy = Object.values(categories)[0][0]; // Para imagen y nombre
                     
                       return (
-                        <div key={enemyId} className="bg-gray-800 p-2 rounded-lg flex flex-col items-center">
+                        <div key={enemyId} className="track-surface-raised flex flex-col items-center p-2">
                           <img src={sampleEnemy.imagen} alt={enemyId} className="w-20 h-20 object-cover mb-2 rounded" />
                           <div className="text-sm text-white text-center mb-2">{getEnemyName(enemyId, manualSelector.color)}</div>
                     
@@ -3942,7 +3922,7 @@ const InitTracker = () => {
               <button onClick={() => navigate('/')} className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded shadow">
                 {ti.goHome || 'Ir al inicio'}
               </button>
-              <button onClick={() => navigate('/tracker')} className="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded shadow">
+              <button onClick={() => navigate('/tracker')} className="bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded shadow">
                 {ti.backToConfig || 'Volver a configuración'}
               </button>
             </div>
@@ -3980,14 +3960,14 @@ const InitTracker = () => {
           onClose={() => setTileWarning(null)}
         />
         {warningMessage && (
-          <div role="alert" className="fixed left-1/2 top-20 z-50 -translate-x-1/2 items-center rounded bg-red-600 px-4 py-2 text-white shadow-lg">
+          <div role="alert" className="layer-toast fixed left-1/2 top-20 -translate-x-1/2 items-center rounded bg-red-600 px-4 py-2 text-white shadow-lg">
             {warningMessage}
           </div>
         )}
         
         <AnimatePresence>
           <div
-            className="fixed left-1/2 top-16 z-50 flex -translate-x-1/2 flex-col items-center gap-2"
+            className="layer-toast fixed left-1/2 top-16 flex -translate-x-1/2 flex-col items-center gap-2"
             aria-live="polite"
             aria-atomic="false"
           >
@@ -4044,7 +4024,7 @@ const InitTracker = () => {
                   )}
                   
                   {toast.extra && (
-                    <div className="text-xs mt-1 text-gray-300 whitespace-pre-line">
+                    <div className="text-xs mt-1 text-slate-300 whitespace-pre-line">
                       {toast.extra}
                     </div>
                   )}
