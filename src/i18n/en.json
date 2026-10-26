@@ -492,7 +492,21 @@
     "runesMenu": "Runes",
     "scenarioMenu": "Scenario",
     "resetRunesConfirmTitle": "Clear runes and tiles",
-    "resetRunesConfirm": "Placed rune cards, every tile in the bag and the active scenario states will be removed."
+    "resetRunesConfirm": "Placed rune cards, every tile in the bag and the active scenario states will be removed.",
+    "viewBoard": "Board",
+    "viewList": "List",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "fitWidth": "Fit",
+    "presentation": "Presentation mode",
+    "exitPresentation": "Exit presentation",
+    "currentTurn": "Current turn",
+    "noCharacters": "No characters",
+    "undoTurn": "Undo turn",
+    "undoDone": "Previous turn restored",
+    "noUndo": "There are no turns to undo",
+    "drawTile": "Draw tile",
+    "viewMode": "Board view"
   },
   "scenarioCard": {
     "Manifiesta": "Manifest",

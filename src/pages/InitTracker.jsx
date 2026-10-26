@@ -36,6 +36,8 @@ import TileWarningModal from '@/components/TileWarningModal';
 import TileToast from '@/components/TileToast';
 import BagStatusPanel from '@/components/track/BagStatusPanel';
 import TrackTurnHeader from '@/components/track/TrackTurnHeader';
+import EnemyCard from '@/components/track/EnemyCard';
+import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import CommanderCard from '@/components/CommanderCard';
 import { v4 as uuidv4 } from 'uuid';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
@@ -2030,40 +2032,6 @@ const InitTracker = () => {
     campeon: 'drop-shadow-[0_0_6px_rgba(239,68,68,1)]'      // rojo
   };
 
-  const categoryTextGlowMap = {
-    bisoño: 'glow-bisono',
-    soldado: 'glow-soldado',
-    veterano: 'glow-veterano',
-    campeon: 'glow-campeon',
-    comandante: 'glow-commander',
-    overlord: 'glow-commander',
-    jefe: 'glow-commander',
-    esbirro: 'glow-escenario',
-    escenario: 'glow-escenario',
-  };
-
-  const borderColorMap = {
-    esbirro: 'border-cyan',
-    escenario: 'border-blue',
-    blanco: 'border-blanco',
-    gris: 'border-gris',
-    negro: 'border-negro',
-    comandante: 'border-dorado',
-    overlord: 'border-morado',
-    jefe: 'border-morado',
-  };
-
-  const textBgColorMap = {
-    esbirro: 'bg-cyan-300',
-    escenario: 'bg-cyan-600',
-    blanco: 'bg-white',
-    gris: 'bg-slate-500',
-    negro: 'bg-black',
-    comandante: 'bg-orange-400 ',
-    overlord: 'bg-purple-800',
-    jefe: 'bg-purple-700',
-  };
-  
   const colorMap = {
     rojo: 'bg-red-700 hover:bg-red-600',
     azul: 'bg-blue-700 hover:bg-blue-600',
@@ -2099,6 +2067,9 @@ const InitTracker = () => {
   const [extraTurnsQueue, setExtraTurnsQueue] = useState(() => persistedSession.extraTurnsQueue || []);
   const [extraTurnIndex, setExtraTurnIndex] = useState(() => persistedSession.extraTurnIndex || 0);
   const [extraTurnTotal, setExtraTurnTotal] = useState(() => persistedSession.extraTurnTotal || 0);
+  const [presentation, setPresentation] = useState(false);
+  const [undoCount, setUndoCount] = useState(0);
+  const turnHistoryRef = useRef([]);
 
   // Guarda los conjuntos de efectos ya procesados para no repetirlos al restaurar la partida.
   const persistProcessed = () => {
@@ -2555,6 +2526,20 @@ const InitTracker = () => {
   };
 
   const handleNextTurn = () => {
+    // Guardamos el cursor de turno para poder deshacer el último avance.
+    turnHistoryRef.current.push({
+      turnIndex,
+      roundNumber,
+      previousTurnIndex,
+      groupTurnTracker,
+      extraTurnsQueue,
+      extraTurnIndex,
+      extraTurnTotal,
+      currentTurnEntity,
+    });
+    if (turnHistoryRef.current.length > 10) turnHistoryRef.current.shift();
+    setUndoCount(turnHistoryRef.current.length);
+
     if (extraTurnsQueue.length > 0) {
       const [nextUUID, ...rest] = extraTurnsQueue;
       setExtraTurnsQueue(rest);
@@ -2750,6 +2735,25 @@ const InitTracker = () => {
     console.warn("No se encontró siguiente entidad disponible para el turno.");
   };
 
+  const undoTurn = () => {
+    const snapshot = turnHistoryRef.current.pop();
+    if (!snapshot) {
+      showScenarioToast(ti.noUndo || 'No hay turnos que deshacer');
+      return;
+    }
+    setUndoCount(turnHistoryRef.current.length);
+    setTurnIndex(snapshot.turnIndex);
+    setRoundNumber(snapshot.roundNumber);
+    roundRef.current = snapshot.roundNumber;
+    setPreviousTurnIndex(snapshot.previousTurnIndex);
+    previousTurnIndexRef.current = snapshot.previousTurnIndex;
+    setGroupTurnTracker(snapshot.groupTurnTracker);
+    setExtraTurnsQueue(snapshot.extraTurnsQueue);
+    setExtraTurnIndex(snapshot.extraTurnIndex);
+    setExtraTurnTotal(snapshot.extraTurnTotal);
+    setCurrentTurnEntity(snapshot.currentTurnEntity);
+    showScenarioToast(ti.undoDone || 'Turno anterior restaurado');
+  };
   const restartTurnOrder = () => {
     setTurnIndex(0);
     previousTurnIndexRef.current = null;
@@ -3071,141 +3075,6 @@ const InitTracker = () => {
     </div>
   );
   
-  const EnemyCard = ({ id, name, comportamiento, categoria, image, position, uuid, color, onRemove, vida, vidaMax, movimiento, ataque, openEnemyModal, ringColor, isFlipping, estadosAlterados, inmunidad }) => {
-    const [flipped, setFlipped] = useState(false);
-    const isBoss = categoria === "jefe";
-    const ringClass =
-      ENEMY_RING_COLORS.find(r => r.id === ringColor)?.className ||
-      ENEMY_RING_COLORS_BIG.find(r => r.id === ringColor)?.className ||
-      '';
-
-    useEffect(() => {
-      if (isFlipping) {
-        setFlipped(true);
-        const timer = setTimeout(() => setFlipped(false), 1100); // duración de flip
-        return () => clearTimeout(timer);
-      }
-    }, [isFlipping]);
-  
-    return (
-      <div
-        key={uuid}
-        className={classNames(
-          "flex flex-col items-center mx-1 relative transition-transform duration-1000 transform-style-preserve-3d",
-          flipped ? "rotate-y-180" : ""
-        )}
-        style={{ perspective: "1000px" }}
-      >
-        <div className={classNames(
-           "relative w-full hover:scale-110 rounded-lg shadow-[0_6px_12px_rgba(0,0,0,0.5)] transition-transform",
-          !isBoss && ringClass, // 👈 solo anillo si no es jefe
-          isBoss ? "max-h-[250px]" : "max-w-[140px]"
-          )} style={isBoss ? { width: "20%" } : {}} >
-          <img
-            src={image}
-            alt={name}
-            className={classNames(
-            "w-full h-full object-cover rounded-lg",
-            isBoss
-              ? "object-top max-h-[250px]" // 👈 recorte arriba si excede
-              : `border-2 ${borderColorMap[color] || ""}`
-            )}
-          />
-          {/* ✅ Estados Alterados sobre la imagen */}
-          <div className={`absolute top-1 left-1 grid ${isBoss ? "grid-rows-5" : "grid-rows-3"} grid-flow-col gap-1`}>
-            {estadosAlterados
-              .filter(estado => estado.count > 0)
-              .map((estado) => {
-                const estadoConfig = ESTADOS_ALTERADOS.find(e => e.id === estado.id);
-                if (!estadoConfig) return null;
-                const [hover, setHover] = React.useState(false);
-                return (
-                  <div key={estado.id} className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-                    <img
-                      src={estadoConfig.imagen}
-                      alt={estadoConfig.texto}
-                      className={`${isBoss ? "w-8 h-8" : "w-5 h-5"} border border-white rounded-full shadow-md`}          
-                    />
-                    {estado.count > 1 && (
-                      <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.6rem] font-bold px-1 rounded-full">
-                        {estado.count}
-                      </span>
-                    )}
-                    {/* Tooltip */}
-                    {hover && (
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1
-                                      bg-black text-white text-[0.65rem] rounded px-2 py-1 
-                                       w-max max-w-[200px] whitespace-normal break-words z-200">
-                        <strong>{t_con[estado.id] || ""}</strong>
-                        
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-          </div>
-
-          {/* ✅ Inmunidades sobre la imagen */}
-          <div className={`absolute top-1 right-1 grid ${isBoss ? "grid-rows-5" : "grid-rows-3"} grid-flow-col gap-1`}>
-            {inmunidad &&
-              inmunidad.map((clave) => {
-                const inmunConfig = INMUNIDADES.find((i) => i.id === clave);
-                if (!inmunConfig) return null;
-                const [hover, setHover] = React.useState(false);
-                return (
-                  <div key={clave} className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-                    <img
-                      src={inmunConfig.imagen}
-                      alt={t_con[clave] || clave}
-                      className={`${isBoss ? "w-8 h-8" : "w-5 h-5"} border border-white rounded-full shadow-md`}  
-                    />
-                    {/* Tooltip */}
-                    {hover && (
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 
-                                      bg-black text-white text-[0.65rem] rounded px-2 py-1 
-                                       w-max max-w-[200px] whitespace-normal break-words z-20">
-                        <strong>{t_con_d[clave] || clave}</strong>
-                       
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-          </div>
-
-            
-          <div
-            className={`cursor-custom absolute bottom-0 left-1/2 transform -translate-x-1/2 px-1 py-0.5 border-2 rounded-lg text-white text-xs
-              ${borderColorMap[color] || ''} 
-              ${textBgColorMap[color] || 'bg-black/60'} 
-              ${categoryTextGlowMap[categoria] || ''} 
-              enemy-text-wrapper`}
-          >
-            <div className="flex flex-col w-full items-center leading-none" onClick={() => { openEnemyModal(uuid); }}>
-              <span className="enemy-text leading-none">{name}</span>
-              {!isBoss && comportamiento && (
-                <span className="text-[0.50rem] italic leading-none mt-0.5 opacity-90">
-                  {tb?.[comportamiento] || comportamiento}
-                </span>
-              )}
-              <div className="w-full relative h-2 mt-2">
-                <div className="absolute inset-0 flex items-center justify-center text-white text-[0.6rem] font-bold z-10">
-                  {vida} / {vidaMax}
-                </div>
-                <div className="w-full h-full bg-red-900 rounded">
-                  <div
-                    className="h-full bg-red-500 rounded"
-                    style={{ width: `${(vida / vidaMax) * 100}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-  
   const renderSlot = (index) => {
     const isRune = Object.values(runesColorMap).includes(index);
     const isRuneTextSlot = index === 10;
@@ -3365,11 +3234,41 @@ const InitTracker = () => {
 
   };
 
+  const currentSlotIndex = (() => {
+    if (!currentTurnEntity) return -1;
+    if (currentTurnEntity.type === 'rune') return currentTurnEntity.colorIndex ?? -1;
+    return typeof currentTurnEntity.position === 'number' ? currentTurnEntity.position : -1;
+  })();
+
+  const slotSummaries = Array.from({ length: 11 }, (_, index) => {
+    const runeColorId = Object.keys(runesColorMap).find((key) => runesColorMap[key] === index);
+    const label =
+      index === 0 ? (tr.defensor || 'Defensor') :
+      index === 2 ? (tr.apoyo || 'Apoyo') :
+      index === 4 ? (tr.lider || 'Líder') :
+      index === 6 ? (tr.agresor || 'Agresor') :
+      index === 8 ? (tr.controlador || 'Controlador') :
+      index === 10 ? (ti.rune || 'Runa') :
+      `${ti.rune || 'Runa'} ${ti.colores?.[runeColorId] || ''}`.trim();
+
+    const heroes = (trackerData.placedHeroes || [])
+      .filter((hero) => hero.position === index)
+      .map((hero) => getHeroName(hero.id));
+    const enemies = placedEnemies
+      .filter((entry) => entry.enemy.position === index)
+      .map((entry) => getEnemyName(entry.enemy.id, entry.enemy.color));
+    const slotRunes = placedRunes
+      .filter((entry) => entry.rune.colorIndex === index)
+      .map((entry) => entry.rune.id);
+    const names = [...heroes, ...enemies, ...slotRunes];
+
+    return { index, label, count: names.length, names: names.join(' · ') };
+  });
   return ( 
       <PageTransition>
        
         <div className="min-w-0">
-          <div className="min-h-screen overflow-x-hidden bg-slate-950 p-3 pt-28 text-slate-200 sm:p-4 sm:pt-28">
+          <div className={`min-h-screen overflow-x-hidden bg-slate-950 p-3 pb-24 pt-28 text-slate-200 sm:p-4 sm:pt-28 md:pb-6 ${presentation ? 'text-lg' : ''}`}>
             <TrackTurnHeader
               roundLabel={ti.ronda || 'Ronda'}
               round={roundNumber}
@@ -3378,15 +3277,17 @@ const InitTracker = () => {
               entityLabel={currentTurnEntity ? (currentTurnEntity.name || currentTurnEntity.id || '') : ''}
             />
 
-            <TopMenu
-              onAddEnemy={openCategorySelector}
-              onSelectCommander={handleRandomCommander}
-              onSelectBoss={openManualBoss}
-              onAddManual={openManualSelector}
-              behaviors={behaviors}
-              onSelectRuneCard={handleAddRuneCard}
-              onTileDraw={handleTileDraw}
-            />
+            {!presentation && (
+              <TopMenu
+                onAddEnemy={openCategorySelector}
+                onSelectCommander={handleRandomCommander}
+                onSelectBoss={openManualBoss}
+                onAddManual={openManualSelector}
+                behaviors={behaviors}
+                onSelectRuneCard={handleAddRuneCard}
+                onTileDraw={handleTileDraw}
+              />
+            )}
 
             {/* Zona especial para Jefes */}
             {placedEnemies
@@ -3769,14 +3670,27 @@ const InitTracker = () => {
               </div>
             )}
             
-            <div className="mt-3 overflow-x-auto rounded-2xl border border-slate-700 bg-slate-900/80 shadow-inner" role="region" aria-label={ti.track || 'Orden de iniciativa'} tabIndex="0">
-              <div className="grid min-w-[1100px] snap-x snap-mandatory grid-cols-11 auto-rows-auto gap-0 bg-slate-800 p-2 md:min-w-0">
-                {[...Array(11)].map((_, idx) => (
-                  <React.Fragment key={`${idx}-${currentTurnEntity?.uuid || currentTurnEntity?.id || 'none'}`}>
-                    {renderSlot(idx)}
-                  </React.Fragment>
-                ))}
-              </div>
+            <div className="mt-3">
+              <TurnTrackBoard
+                renderSlot={renderSlot}
+                summaries={slotSummaries}
+                currentSlotIndex={currentSlotIndex}
+                presentation={presentation}
+                onTogglePresentation={() => setPresentation((prev) => !prev)}
+                labels={{
+                  section: ti.track || 'Orden de iniciativa',
+                  track: ti.track || 'Orden de iniciativa',
+                  board: ti.viewBoard || 'Tablero',
+                  list: ti.viewList || 'Lista',
+                  zoomIn: ti.zoomIn || 'Aumentar zoom',
+                  zoomOut: ti.zoomOut || 'Reducir zoom',
+                  fit: ti.fitWidth || 'Ajustar',
+                  presentation: ti.presentation || 'Modo presentación',
+                  exitPresentation: ti.exitPresentation || 'Salir de presentación',
+                  current: ti.currentTurn || 'Turno actual',
+                  empty: ti.noCharacters || 'Sin personajes',
+                }}
+              />
             </div>
 
             {/* 📦 Estado de la bolsa debajo del track */}
@@ -3905,17 +3819,58 @@ const InitTracker = () => {
             )}
 
         
-            <div className="flex justify-center mt-6">
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
               <button
+                type="button"
+                onClick={undoTurn}
+                disabled={undoCount === 0}
+                className="flex min-h-11 items-center gap-2 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 font-semibold text-slate-100 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 disabled:opacity-40"
+              >
+                <RiArrowTurnBackLine aria-hidden="true" className="text-lg" />
+                {ti.undoTurn || 'Deshacer turno'}
+              </button>
+              <button
+                type="button"
                 onClick={() => {
                   setTimeout(() => {
                     handleNextTurn();
                   }, 300);
                 }}
-                className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-full shadow-lg"
+                className="min-h-11 rounded-full bg-yellow-500 px-5 py-2 font-bold text-slate-950 shadow-lg hover:bg-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
               >
                 {ti.nextTurn || 'Siguiente turno'}
               </button>
+            </div>
+
+            {/* Barra de accion flotante para movil */}
+            <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 pb-3 md:hidden">
+              <div className="pointer-events-auto mx-auto flex max-w-md items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/95 p-2 shadow-2xl backdrop-blur">
+                <button
+                  type="button"
+                  onClick={undoTurn}
+                  disabled={undoCount === 0}
+                  aria-label={ti.undoTurn || 'Deshacer turno'}
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-800 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 disabled:opacity-40"
+                >
+                  <RiArrowTurnBackLine aria-hidden="true" size={22} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openCategorySelector()}
+                  className="min-h-12 flex-1 rounded-xl border border-slate-600 bg-slate-800 px-3 text-sm font-semibold text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  {ti.addEnemy || '+ Enemigo'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTimeout(() => handleNextTurn(), 300);
+                  }}
+                  className="min-h-12 flex-[1.4] rounded-xl bg-yellow-500 px-3 text-sm font-bold text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
+                >
+                  {ti.nextTurn || 'Siguiente turno'}
+                </button>
+              </div>
             </div>
           
             <div className="mt-8 flex justify-center gap-4">

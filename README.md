@@ -173,6 +173,18 @@ Usar HTTPS, compresión Brotli/Gzip, CDN delante de los assets y despliegues at�
 - El botón de borrar runas vive solo en su sección correspondiente, no duplicado en la barra.
 - Los paneles son regiones desplazables con altura máxima para no tapar el tablero en móvil.
 
+## Experiencia de tablero
+
+- `TurnTrackBoard` ([src/components/track/TurnTrackBoard.jsx](src/components/track/TurnTrackBoard.jsx)) encapsula el tablero y ofrece dos vistas:
+  - **Tablero**: rejilla de 11 posiciones con zoom.
+  - **Lista**: vista vertical para móvil, con el turno actual destacado y el resto colapsado; se expande el slot que interese.
+- Zoom con botones `−`/`+`, porcentaje visible y botón **Ajustar** para encajar el ancho; también admite gesto de pinza en pantallas táctiles.
+- **Modo presentación**: oculta la barra de menús, oculta el selector de vista y muestra el tablero a mayor tamaño. Siempre hay un botón visible para salir.
+- **Deshacer turno**: guarda hasta 10 instantáneas del cursor de turno (turno, ronda, grupo, turnos extra y entidad activa). Restaura el estado anterior sin recalcular daño ya aplicado.
+- **Barra de acción flotante** en móvil con deshacer, añadir enemigo y siguiente turno, con objetivos de 48 px y espacio inferior reservado para no tapar contenido.
+- `EnemyCard` ([src/components/track/EnemyCard.jsx](src/components/track/EnemyCard.jsx)) se extrajo de `InitTracker`. Además corrige un fallo latente: antes llamaba a `useState` dentro de un `map`, lo que rompe las reglas de hooks. Los iconos de estado e inmunidad son ahora subcomponentes propios.
+
+
 ## Consistencia visual y de terminología
 
 - Toda la paleta gris del track y de sus menús se migró a la escala `slate`, la misma que Inicio, Contenido, Partidas y Configuración. Solo quedan grises en los códigos de color de runas y enemigos, donde el gris es un valor semántico.

@@ -493,7 +493,21 @@
     "runesMenu": "Runas",
     "scenarioMenu": "Escenario",
     "resetRunesConfirmTitle": "Borrar runas y fichas",
-    "resetRunesConfirm": "Se eliminarán las cartas de runa colocadas, todas las fichas de la bolsa y los estados activos de la escena."
+    "resetRunesConfirm": "Se eliminarán las cartas de runa colocadas, todas las fichas de la bolsa y los estados activos de la escena.",
+    "viewBoard": "Tablero",
+    "viewList": "Lista",
+    "zoomIn": "Aumentar zoom",
+    "zoomOut": "Reducir zoom",
+    "fitWidth": "Ajustar",
+    "presentation": "Modo presentación",
+    "exitPresentation": "Salir de presentación",
+    "currentTurn": "Turno actual",
+    "noCharacters": "Sin personajes",
+    "undoTurn": "Deshacer turno",
+    "undoDone": "Turno anterior restaurado",
+    "noUndo": "No hay turnos que deshacer",
+    "drawTile": "Robar ficha",
+    "viewMode": "Vista del tablero"
   },
   "scenarioCard": {
     "Manifiesta": "Manifiesta",

@@ -1,0 +1,226 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+const BASE_WIDTH = 1100;
+const MIN_SCALE = 0.45;
+const MAX_SCALE = 1.5;
+const clamp = (value) => Math.min(MAX_SCALE, Math.max(MIN_SCALE, value));
+
+export default function TurnTrackBoard({
+  renderSlot,
+  summaries = [],
+  currentSlotIndex = -1,
+  presentation = false,
+  onTogglePresentation,
+  labels = {},
+}) {
+  const viewportRef = useRef(null);
+  const pinchRef = useRef({ distance: 0, scale: 1 });
+  const [scale, setScale] = useState(1);
+  const [view, setView] = useState(() => {
+    if (typeof window === 'undefined') return 'board';
+    return window.matchMedia('(max-width: 767px)').matches ? 'list' : 'board';
+  });
+  const [expandedIndex, setExpandedIndex] = useState(currentSlotIndex);
+
+  useEffect(() => {
+    if (currentSlotIndex >= 0) setExpandedIndex(currentSlotIndex);
+  }, [currentSlotIndex]);
+
+  const fitToWidth = useCallback(() => {
+    const width = viewportRef.current?.clientWidth;
+    if (!width) return;
+    setScale(clamp((width - 16) / BASE_WIDTH));
+  }, []);
+
+  // Ajuste inicial para que el tablero quepa al entrar.
+  useEffect(() => {
+    if (view === 'board') fitToWidth();
+  }, [view, fitToWidth]);
+
+  const handleTouchStart = (event) => {
+    if (event.touches.length !== 2) return;
+    const [a, b] = event.touches;
+    pinchRef.current = {
+      distance: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY),
+      scale,
+    };
+  };
+
+  const handleTouchMove = (event) => {
+    if (event.touches.length !== 2) return;
+    const [a, b] = event.touches;
+    const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+    if (!pinchRef.current.distance) return;
+    event.preventDefault();
+    setScale(clamp(pinchRef.current.scale * (distance / pinchRef.current.distance)));
+  };
+
+  const toolbar = (
+    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+      <div role="group" aria-label={labels.viewMode || 'Vista del tablero'} className="flex rounded-xl border border-slate-700 bg-slate-900 p-1">
+        <button
+          type="button"
+          aria-pressed={view === 'board'}
+          onClick={() => setView('board')}
+          className={`min-h-9 rounded-lg px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+            view === 'board' ? 'bg-sky-700 text-white' : 'text-slate-300 hover:text-white'
+          }`}
+        >
+          {labels.board || 'Tablero'}
+        </button>
+        <button
+          type="button"
+          aria-pressed={view === 'list'}
+          onClick={() => setView('list')}
+          className={`min-h-9 rounded-lg px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+            view === 'list' ? 'bg-sky-700 text-white' : 'text-slate-300 hover:text-white'
+          }`}
+        >
+          {labels.list || 'Lista'}
+        </button>
+      </div>
+
+      <div className="flex items-center gap-2">
+        {view === 'board' && (
+          <div className="flex items-center gap-1 rounded-xl border border-slate-700 bg-slate-900 p-1">
+            <button
+              type="button"
+              onClick={() => setScale((prev) => clamp(prev - 0.1))}
+              aria-label={labels.zoomOut || 'Reducir zoom'}
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-white hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            >
+              −
+            </button>
+            <span className="min-w-12 text-center text-xs font-semibold text-slate-200" aria-live="polite">
+              {Math.round(scale * 100)}%
+            </span>
+            <button
+              type="button"
+              onClick={() => setScale((prev) => clamp(prev + 0.1))}
+              aria-label={labels.zoomIn || 'Aumentar zoom'}
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-white hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            >
+              +
+            </button>
+            <button
+              type="button"
+              onClick={fitToWidth}
+              className="min-h-9 rounded-lg px-2 text-xs font-semibold text-sky-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            >
+              {labels.fit || 'Ajustar'}
+            </button>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={onTogglePresentation}
+          aria-pressed={presentation}
+          className={`min-h-9 rounded-xl border px-3 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+            presentation
+              ? 'border-emerald-400 bg-emerald-700 text-white'
+              : 'border-slate-700 bg-slate-900 text-slate-200 hover:text-white'
+          }`}
+        >
+          {presentation ? (labels.exitPresentation || 'Salir de presentación') : (labels.presentation || 'Modo presentación')}
+        </button>
+      </div>
+    </div>
+  );
+
+  const boardView = (
+    <div
+      ref={viewportRef}
+      className="max-h-[75dvh] overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      role="region"
+      aria-label={labels.track || 'Orden de iniciativa'}
+      tabIndex={0}
+    >
+      <div style={{ width: `${BASE_WIDTH * scale}px` }}>
+        <div style={{ width: `${BASE_WIDTH}px`, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+          <div className="grid snap-x snap-mandatory grid-cols-11 auto-rows-auto gap-0 bg-slate-800 p-2">
+            {summaries.map(({ index }) => (
+              <div key={index}>{renderSlot(index)}</div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const listView = (
+    <ul className="space-y-2">
+      {summaries.map(({ index, label, count, names }) => {
+        const isOpen = expandedIndex === index;
+        const isCurrent = currentSlotIndex === index;
+        return (
+          <li key={index}>
+            <div
+              className={`overflow-hidden rounded-xl border transition ${
+                isCurrent ? 'border-emerald-400 bg-emerald-950/30' : 'border-slate-700 bg-slate-900'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => setExpandedIndex(isOpen ? -1 : index)}
+                aria-expanded={isOpen}
+                aria-controls={`turn-slot-${index}`}
+                className="flex min-h-14 w-full items-center gap-3 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              >
+                <span
+                  aria-hidden="true"
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                    isCurrent ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-300'
+                  }`}
+                >
+                  {index + 1}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2">
+                    <span className="truncate text-sm font-bold text-slate-100">{label}</span>
+                    {isCurrent && (
+                      <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[0.6rem] font-bold uppercase text-white">
+                        {labels.current || 'Turno actual'}
+                      </span>
+                    )}
+                  </span>
+                  <span className="mt-0.5 block truncate text-xs text-slate-400">
+                    {count > 0 ? names : (labels.empty || 'Sin personajes')}
+                  </span>
+                </span>
+                <span aria-hidden="true" className="text-slate-400">{isOpen ? '▾' : '▸'}</span>
+              </button>
+
+              {isOpen && (
+                <div id={`turn-slot-${index}`} className="overflow-x-auto border-t border-slate-700/70 p-2">
+                  <div className="min-w-[520px]">{renderSlot(index)}</div>
+                </div>
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+
+  const content = view === 'board' ? boardView : listView;
+
+  return (
+    <section aria-label={labels.section || 'Tablero de iniciativa'} className={presentation ? 'text-base' : ''}>
+      {presentation ? (
+        <div className="mb-2 flex justify-end">
+          <button
+            type="button"
+            onClick={onTogglePresentation}
+            className="min-h-9 rounded-xl border border-slate-600 bg-slate-900 px-3 text-xs font-semibold text-slate-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+          >
+            {labels.exitPresentation || 'Salir de presentación'}
+          </button>
+        </div>
+      ) : toolbar}
+      {content}
+    </section>
+  );
+}
