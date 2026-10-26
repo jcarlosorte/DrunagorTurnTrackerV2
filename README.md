@@ -11,7 +11,7 @@ SPA para gestionar turnos de **Chronicles of Drunagor**, construida con React 18
 
 ## Requisitos y desarrollo local
 
-Se recomienda Node.js 20 y npm 10 (`.nvmrc` y `package.json` lo fijan).
+Se recomienda Node.js 24 y npm 10 (`.nvmrc` y `package.json` lo fijan).
 
 ```bash
 npm ci
