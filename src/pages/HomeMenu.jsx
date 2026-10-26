@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useInitRunes } from "@/context/initRunesContext";
 import { useGame } from "@/context/GameContext";
 import PageTransition from "@/components/PageTransition";
-import SaveGameActions from "@/components/SaveGameActions";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { clearTrackState, isPlainObject, readJsonStorage } from "@/utils/storage";
 import logo from "@/assets/Corebox_Logo-1536x864.png";
 
@@ -27,6 +27,8 @@ export default function HomeMenu() {
       gameState.pilasConcentrada?.length
     );
   }, []);
+
+  const [confirmNewGame, setConfirmNewGame] = useState(false);
 
   const startNewGame = () => {
     // La configuración (héroes, roles, enemigos) se conserva; solo se reinicia el track.
@@ -67,7 +69,7 @@ export default function HomeMenu() {
               )}
               <button
                 type="button"
-                onClick={startNewGame}
+                onClick={() => setConfirmNewGame(true)}
                 className="min-h-12 rounded-xl bg-emerald-700 px-5 py-3 text-left font-bold text-white transition hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
               >
                 {home.start_tracker || 'Nueva partida'}
@@ -77,12 +79,9 @@ export default function HomeMenu() {
                 onClick={() => navigate("/config")}
                 className="min-h-12 rounded-xl border border-slate-600 bg-slate-800 px-5 py-3 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
               >
-                {home.configure_environment || 'Configurar entorno'}
+                <span className="block">{home.configure_environment || 'Configurar entorno'}</span>
+                <span className="mt-1 block text-xs font-normal text-slate-400">{home.manageSaves || 'Guardar, exportar o importar partidas'}</span>
               </button>
-            </div>
-
-            <div className="mt-6">
-              <SaveGameActions compact />
             </div>
           </section>
 
@@ -91,6 +90,19 @@ export default function HomeMenu() {
           </aside>
         </div>
       </main>
+
+      <ConfirmDialog
+        open={confirmNewGame}
+        title={home.newGameConfirmTitle || 'Empezar una nueva partida'}
+        description={home.newGameConfirm || 'Se reiniciará el track actual. Tu configuración de héroes y enemigos se conservará. Exporta antes si quieres conservar esta partida.'}
+        confirmLabel={home.newGameConfirmAction || 'Nueva partida'}
+        cancelLabel={translations.trackerSelect?.cancel || 'Cancelar'}
+        onCancel={() => setConfirmNewGame(false)}
+        onConfirm={() => {
+          setConfirmNewGame(false);
+          startNewGame();
+        }}
+      />
     </PageTransition>
   );
 }

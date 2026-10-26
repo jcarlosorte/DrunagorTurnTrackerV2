@@ -22,13 +22,44 @@ export function readJsonStorage(key, fallback, validate = () => true) {
 }
 
 export function writeJsonStorage(key, value) {
-  if (!canUseStorage()) return;
+  if (!canUseStorage()) return false;
 
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch {
     // Persistence is best-effort; in-memory state remains usable.
+    return false;
   }
+}
+
+const STORAGE_LIMIT_BYTES = 5 * 1024 * 1024;
+export const STORAGE_WARNING_RATIO = 0.8;
+
+export function getStorageUsage() {
+  if (!canUseStorage()) return { bytes: 0, limit: STORAGE_LIMIT_BYTES, ratio: 0 };
+
+  let bytes = 0;
+  GAME_STORAGE_KEYS.forEach((key) => {
+    try {
+      const raw = window.localStorage.getItem(key);
+      if (raw) bytes += raw.length + key.length;
+    } catch {
+      // Ignore unavailable storage.
+    }
+  });
+
+  return {
+    bytes,
+    limit: STORAGE_LIMIT_BYTES,
+    ratio: Math.min(bytes / STORAGE_LIMIT_BYTES, 1),
+  };
+}
+
+export function formatBytes(bytes) {
+  if (!Number.isFinite(bytes) || bytes <= 0) return '0 KB';
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 export function removeStorage(key) {
@@ -98,7 +129,7 @@ function validateStorageData(data) {
     });
 }
 
-export function importStorageSnapshot(snapshot, scope = 'full') {
+export function extractSnapshotData(snapshot, scope = 'full') {
   if (!isPlainObject(snapshot)) throw new Error('Formato de partida no compatible');
 
   let data;
@@ -117,9 +148,23 @@ export function importStorageSnapshot(snapshot, scope = 'full') {
   }
 
   validateStorageData(data);
+  return data;
+}
+
+export function applyStorageData(data) {
+  if (!isPlainObject(data)) throw new Error('Datos de partida no válidos');
   Object.entries(data).forEach(([key, value]) => {
     if (GAME_STORAGE_KEYS.includes(key)) writeJsonStorage(key, value);
   });
+}
+
+export function importStorageSnapshot(snapshot, scope = 'full', options = {}) {
+  const data = extractSnapshotData(snapshot, scope);
+  const sanitized = typeof options.validateConfiguration === 'function'
+    ? (options.validateConfiguration(data) || data)
+    : data;
+  applyStorageData(sanitized);
+  return sanitized;
 }
 
 export function clearGameSession() {

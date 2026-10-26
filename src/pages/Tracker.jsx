@@ -10,6 +10,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import { useTracker } from '@/context/TrackerContext';
 import PageTransition from "@/components/PageTransition";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const MAX_HEROES = 5;
 const BEHAVIORS = ["estandar", "alternativo", "complejo"];
@@ -35,6 +36,7 @@ const TrackerSelect = () => {
   const [enemyExpansion, setEnemyExpansion] = useState('all');
   const [enemyColor, setEnemyColor] = useState('all');
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
 
   const { selectedExpansions } = useExpansions();
   const { translations } = useLanguage();
@@ -672,7 +674,7 @@ const TrackerSelect = () => {
               </button>
               <button
                 type="button"
-                onClick={handleReset}
+                onClick={() => setConfirmResetOpen(true)}
                 className="min-h-11 flex-1 rounded-xl border border-red-700 bg-red-900/60 px-4 py-2 font-bold text-red-100 hover:bg-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 sm:flex-none"
               >
                 {t.reset || 'Restablecer'}
@@ -697,6 +699,19 @@ const TrackerSelect = () => {
           </div>
         </div>
       </main>
+
+      <ConfirmDialog
+        open={confirmResetOpen}
+        title={t.resetConfirmTitle || 'Restablecer configuración'}
+        description={t.resetConfirm || 'Se borrarán los héroes, roles y enemigos seleccionados y se restaurarán los valores por defecto.'}
+        confirmLabel={t.reset || 'Restablecer'}
+        cancelLabel={t.cancel || 'Cancelar'}
+        onCancel={() => setConfirmResetOpen(false)}
+        onConfirm={() => {
+          handleReset();
+          setConfirmResetOpen(false);
+        }}
+      />
     </PageTransition>
   );
 };

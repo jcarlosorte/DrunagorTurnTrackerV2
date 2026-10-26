@@ -17,6 +17,7 @@ import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
 import TileToast from '@/components/TileToast';
+import ConfirmDialog from '@/components/ConfirmDialog';
 import { v4 as uuidv4 } from 'uuid';
 
 const TopMenu = ({
@@ -42,6 +43,7 @@ const TopMenu = ({
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState(false);
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
+  const [confirmResetRunes, setConfirmResetRunes] = useState(false);
   const { runes, addRune, removeRune, getRuneCount, clearRunes, availableTiles, usedTiles, showTileToast, setTileToasts, tileToasts,
          drawTileByColor, drawTilePreviewByColor, drawMultipleTiles, discardedTiles, discardTileByColor, discardTileRandom, restoreDiscardedTile, 
          pilas, setPilas, addNewPila, activarPila, removeTileFromPila, addRunesCascade, addTileToPilaConcentrada, addTileToPila,
@@ -1231,15 +1233,9 @@ const TopMenu = ({
               
               <div className="flex justify-center gap-4 mt-2">
                 <button
-                  onClick={() => {
-                    resetPlacedRunes(); // Borra las cartas de runa
-                    resetTiles();        // Borra las fichas de runa
-                    desactivaAcecho();
-                    desactivaHuesped();
-                    desactivaOscuridad();
-                    desactivaAsalto();
-                  }}
-                  className="px-4 py-1 bg-yellow-500 hover:bg-yellow-600 rounded-full text-sm"
+                  type="button"
+                  onClick={() => setConfirmResetRunes(true)}
+                  className="rounded-full bg-yellow-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-yellow-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
                 >
                   {t.resetRunes}
                 </button>
@@ -1425,11 +1421,38 @@ const TopMenu = ({
 
 
     {/* Toast visual para eliminación */}
-      <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center space-y-2 pointer-events-none">
+      <div
+        className="fixed left-1/2 top-16 z-50 flex -translate-x-1/2 flex-col items-center space-y-2"
+        aria-live="polite"
+        aria-atomic="false"
+      >
         {tileToasts.map(tile => (
-          <TileToast key={tile.uuid} tile={tile} tipo={tile.tipo} />
+          <TileToast
+            key={`${tile.uuid}-${tile.tipo || 'add'}`}
+            tile={tile}
+            tipo={tile.tipo}
+            onClose={() => setTileToasts(prev => prev.filter(item => item.uuid !== tile.uuid))}
+          />
         ))}
       </div>
+
+      <ConfirmDialog
+        open={confirmResetRunes}
+        title={t.resetRunesConfirmTitle || 'Borrar runas y fichas'}
+        description={t.resetRunesConfirm || 'Se eliminarán las cartas de runa colocadas, todas las fichas de la bolsa y los estados activos de la escena.'}
+        confirmLabel={t.resetRunes || 'Borrar runas'}
+        cancelLabel={t.close || 'Cancelar'}
+        onCancel={() => setConfirmResetRunes(false)}
+        onConfirm={() => {
+          resetPlacedRunes();
+          resetTiles();
+          desactivaAcecho();
+          desactivaHuesped();
+          desactivaOscuridad();
+          desactivaAsalto();
+          setConfirmResetRunes(false);
+        }}
+      />
     </>
   );
 };

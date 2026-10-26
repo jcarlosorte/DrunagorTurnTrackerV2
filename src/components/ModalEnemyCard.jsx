@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useId, useRef } from 'react';
 import { FiInfo } from "react-icons/fi";
 import { useLanguage } from '@/context/LanguageContext';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
@@ -27,6 +27,17 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   const tca = translations.cartas_ataque || {};
   const ttr = translations.defensaCard.cartas_trad || {};
   const { getRuneCount } = useGame();
+  const closeRef = useRef(null);
+  const titleId = useId();
+
+  useEffect(() => {
+    closeRef.current?.focus();
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose?.();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   useEffect(() => {
     if (enemy) {
@@ -356,14 +367,21 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
 
     
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4">
-      <div className={`${bgColorMap[color] || ''} rounded-lg shadow-lg w-full max-w-xl relative border-4 ${borderColorMap[color] || ''}`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="presentation">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className={`${bgColorMap[color] || ''} relative max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-lg border-4 shadow-lg ${borderColorMap[color] || ''}`}
+      >
         
         {/* Botón cerrar */}
         <button
+          ref={closeRef}
+          type="button"
           onClick={onClose}
-          className="absolute top-2 right-2 text-white hover:text-black bg-red-600 hover:bg-red-700 text-xl rounded-full font-bold"
-          aria-label="Cerrar modal"
+          className="absolute right-2 top-2 flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-xl font-bold text-white hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          aria-label={ti.close || 'Cerrar'}
         >
           X
         </button>
@@ -371,20 +389,21 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
         {/* Botón eliminar */}
         {onDelete && (
           <button
+            type="button"
             onClick={() => {
               onDelete(uuid);
               onClose();
             }}
-            className="absolute top-2 left-2 text-white bg-red-600 hover:bg-red-700 rounded-full px-2 py-1 text-xs"
+            className="absolute left-2 top-2 rounded-full bg-red-600 px-3 py-2 text-xs text-white hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
-            🗑 {ti.remove}
+            🗑 {ti.remove || 'Eliminar'}
           </button>
         )}
 
         <div className="flex flex-col gap-1 items-center p-6">
 
           {/* Nombre como título */}
-          <h2 className={`text-2xl font-bold text-center text-white px-1 py-0 rounded ${textBgColorMap[color] || ''} ${categoryTextGlowMap[categoria] || ''}`}>
+          <h2 id={titleId} className={`text-2xl font-bold text-center text-white px-1 py-0 rounded ${textBgColorMap[color] || ''} ${categoryTextGlowMap[categoria] || ''}`}>
             {getEnemyName()}
           </h2>
 
@@ -517,15 +536,25 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                 return (
                   <div key={estado.id} className="flex flex-col items-center w-14">
                     <button
+                      type="button"
                       onClick={() => handleEstadoChangeLocal(estado.id, +1)}
                       disabled={maxCount === 1 && (estado.count || 0) >= maxCount}
-                      className="bg-green-600 text-white rounded px-1 mb-1 text-xs hover:bg-green-700 disabled:opacity-50"
+                      aria-label={`${tea[estadoConfig.texto] || estadoConfig.texto}: +1`}
+                      className="mb-1 flex h-11 w-11 items-center justify-center rounded bg-green-600 text-lg text-white hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-50"
                     >
                       +
                     </button>
             
                     {/* Icono con tooltip */}
-                    <div className="relative cursor-help flex items-center justify-center" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+                    <div
+                      className="relative flex cursor-help items-center justify-center"
+                      onMouseEnter={() => setHover(true)}
+                      onMouseLeave={() => setHover(false)}
+                      onFocus={() => setHover(true)}
+                      onBlur={() => setHover(false)}
+                      tabIndex={0}
+                      aria-label={tea[estadoConfig.texto] || estadoConfig.texto}
+                    >
                       <img
                         src={estadoConfig.imagen}
                         alt={estadoConfig.texto}
@@ -546,9 +575,11 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                     )}
             
                     <button
+                      type="button"
                       onClick={() => handleEstadoChangeLocal(estado.id, -1)}
                       disabled={(estado.count || 0) <= 0}
-                      className="bg-red-600 text-white rounded px-1 mt-1 text-xs hover:bg-red-700 disabled:opacity-50"
+                      aria-label={`${tea[estadoConfig.texto] || estadoConfig.texto}: −1`}
+                      className="mt-1 flex h-11 w-11 items-center justify-center rounded bg-red-600 text-lg text-white hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-50"
                     >
                       −
                     </button>
@@ -563,8 +594,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
             <div className="flex items-center w-full h-5 mt-2 gap-2">
               {/* Botón − */}
               <button
+                type="button"
                 onClick={() => handleVidaChange(-1)}
-                className="w-5 h-5 flex items-center justify-center bg-red-600 text-white rounded-full hover:bg-red-700"
+                aria-label={`${ti.vida || 'Vida'}: −1`}
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-red-600 text-lg text-white hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 −
               </button>
@@ -584,8 +617,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
             
               {/* Botón + */}
               <button
+                type="button"
                 onClick={() => handleVidaChange(1)}
-                className="w-5 h-5 flex items-center justify-center bg-green-600 text-white rounded-full hover:bg-green-700"
+                aria-label={`${ti.vida || 'Vida'}: +1`}
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-green-600 text-lg text-white hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 +
               </button>

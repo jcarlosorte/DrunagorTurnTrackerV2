@@ -1,5 +1,5 @@
 // src/components/CommanderCardModal.jsx
-import React from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import { useGame } from '@/context/GameContext';
@@ -9,6 +9,17 @@ const CommanderCardModal = ({ carta, onClose }) => {
   const { translations } = useLanguage();
   const { getRuneCount } = useGame();
   const { trackerData } = useTracker();
+  const closeRef = useRef(null);
+  const titleId = useId();
+
+  useEffect(() => {
+    closeRef.current?.focus();
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose?.();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
   const ta = translations.cartas_ataque || {};
   const ttr = translations.defensaCard.cartas_trad || {};
   const selectedHeroes = trackerData.heroes;
@@ -87,15 +98,23 @@ const CommanderCardModal = ({ carta, onClose }) => {
 
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
-      <div className="bg-orange-900 text-white p-6 rounded-lg max-w-sm border-2 border-yellow-400 shadow-xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="presentation">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="relative max-w-sm rounded-lg border-2 border-yellow-400 bg-orange-900 p-6 text-white shadow-xl"
+      >
         <button
+          ref={closeRef}
+          type="button"
           onClick={onClose}
-          className="absolute top-1 right-2 text-sm bg-red-500 hover:bg-red-600 px-2 rounded"
+          aria-label={translations.trackerSelect?.close || 'Cerrar'}
+          className="absolute right-2 top-1 flex h-9 w-9 items-center justify-center rounded bg-red-500 text-sm hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           ✕
         </button>
-        <div className="text-lg text-yellow-300 text-center mb-2" style={{ fontFamily: 'Impact, Charcoal, sans-serif' }}>
+        <div id={titleId} className="mb-2 text-center text-lg text-yellow-300" style={{ fontFamily: 'Impact, Charcoal, sans-serif' }}>
           {nombre}
         </div>
 

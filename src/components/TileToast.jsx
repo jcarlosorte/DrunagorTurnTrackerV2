@@ -26,14 +26,19 @@ const TileToast = ({ tile, tipo = 'add', onClose = () => {} }) => {
     : `+1 ${ti.rune}: ${ti.colores[tile.runa]}`;
 
 return (
-    <div className={`relative flex flex-col items-center justify-center p-4 rounded-xl shadow-2xl text-white ${colorMap[tile.runa]} border-2 border-white`}>
+    <div
+      role="status"
+      aria-live="polite"
+      className={`relative flex flex-col items-center justify-center p-4 rounded-xl shadow-2xl text-white ${colorMap[tile.runa]} border-2 border-white`}
+    >
       {/* Botón cerrar */}
       <button
+        type="button"
         onClick={onClose}
-        className="absolute top-1 right-1 bg-black bg-opacity-40 rounded-full p-1 hover:bg-opacity-70"
-        aria-label="Cerrar"
+        className="absolute right-1 top-1 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        aria-label={ti.close || 'Cerrar'}
       >
-        <IoClose className="text-white" />
+        <IoClose className="text-white" aria-hidden="true" />
       </button>
 
       <div className="text-xs font-bold mb-2">{mensaje}</div>

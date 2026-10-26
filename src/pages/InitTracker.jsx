@@ -60,6 +60,8 @@ const PROPIEDADES_ACTUALIZABLES = ['movimiento', 'ataque', 'capacidades', 'inmun
 const EnemiesNoShow = ['undead_king_boss_Acecho_1', 'undead_king_boss_Acecho_2', 'corrupted_worm_esbirro'];
 const commanderNoPc = ['dark_vampire_scenario_com'];
 
+const toSet = (value) => new Set(Array.isArray(value) ? value : []);
+
 const InitTracker = () => {
   const { trackerData, setTrackerData } = useTracker();
   const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyAt, removeEnemyByUUID, resetPlacedEnemies, assignColorToEnemy, 
@@ -2079,8 +2081,8 @@ const InitTracker = () => {
   const [turnIndex, setTurnIndex] = useState(() => persistedSession.turnIndex ?? -1);
   const [currentTurnEntity, setCurrentTurnEntity] = useState(null);
   const [groupTurnTracker, setGroupTurnTracker] = useState(() => persistedSession.groupTurnTracker || { group: [], index: 0 });
-  const processedVoragineRef = useRef(new Set());
-  const processedDefenseTurnRef = useRef(new Set());
+  const processedVoragineRef = useRef(toSet(persistedSession?.processed?.voragine));
+  const processedDefenseTurnRef = useRef(toSet(persistedSession?.processed?.defenseTurn));
   const [lastRealTurnIndex, setLastRealTurnIndex] = useState(() => persistedSession.lastRealTurnIndex ?? null);
   const [roundNumber, setRoundNumber] = useState(() => persistedSession.roundNumber ?? persistedSession.round ?? 0);
   const placedHeroes = trackerData.placedHeroes;
@@ -2088,13 +2090,30 @@ const InitTracker = () => {
   const roundRef = useRef(roundNumber);
   const [previousTurnIndex, setPreviousTurnIndex] = useState(() => persistedSession.previousTurnIndex ?? null);
   const previousTurnIndexRef = useRef(persistedSession.previousTurnIndex ?? null);
-  const processedStartEffectsRef = useRef(new Set());
-  const processedEndEffectsRef = useRef(new Set());
-  const processedCardsRef = useRef(new Set());
-  const processedTiempoRef = useRef(new Set());
+  const processedStartEffectsRef = useRef(toSet(persistedSession?.processed?.start));
+  const processedEndEffectsRef = useRef(toSet(persistedSession?.processed?.end));
+  const processedCardsRef = useRef(toSet(persistedSession?.processed?.cards));
+  const processedTiempoRef = useRef(toSet(persistedSession?.processed?.tiempo));
   const [extraTurnsQueue, setExtraTurnsQueue] = useState(() => persistedSession.extraTurnsQueue || []);
   const [extraTurnIndex, setExtraTurnIndex] = useState(() => persistedSession.extraTurnIndex || 0);
   const [extraTurnTotal, setExtraTurnTotal] = useState(() => persistedSession.extraTurnTotal || 0);
+
+  // Guarda los conjuntos de efectos ya procesados para no repetirlos al restaurar la partida.
+  const persistProcessed = () => {
+    const session = readJsonStorage('trackerSession', {}, isPlainObject) || {};
+    writeJsonStorage('trackerSession', {
+      ...session,
+      schemaVersion: 2,
+      processed: {
+        voragine: [...processedVoragineRef.current],
+        defenseTurn: [...processedDefenseTurnRef.current],
+        start: [...processedStartEffectsRef.current],
+        end: [...processedEndEffectsRef.current],
+        cards: [...processedCardsRef.current],
+        tiempo: [...processedTiempoRef.current],
+      },
+    });
+  };
 
   useEffect(() => {
     writeJsonStorage('trackerSession', {
@@ -2488,6 +2507,12 @@ const InitTracker = () => {
     setCurrentTurnEntity(entity);
     setGroupTurnTracker({ group: [], index: 0 });
   }, [turnIndex, placedEnemies, placedRunes]);
+
+  // Se declara después del efecto de turno para leer los conjuntos ya actualizados.
+  useEffect(() => {
+    persistProcessed();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [turnIndex]);
 
   const addExtraTurn = (enemyUUID) => {
     setExtraTurnsQueue(prev => {
@@ -3946,6 +3971,7 @@ const InitTracker = () => {
                 onPCConfirm?.(pcValue);
                 closePCModal();
               }}
+              onCancel={closePCModal}
             />
         )}
        
@@ -3954,13 +3980,17 @@ const InitTracker = () => {
           onClose={() => setTileWarning(null)}
         />
         {warningMessage && (
-          <div className="fixed top-20 left-1/2 transform -translate-x-1/2 items-center bg-red-600 text-white px-4 py-2 rounded shadow-lg z-50 animate-bounce">
+          <div role="alert" className="fixed left-1/2 top-20 z-50 -translate-x-1/2 items-center rounded bg-red-600 px-4 py-2 text-white shadow-lg">
             {warningMessage}
           </div>
         )}
         
         <AnimatePresence>
-          <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center gap-2">
+          <div
+            className="fixed left-1/2 top-16 z-50 flex -translate-x-1/2 flex-col items-center gap-2"
+            aria-live="polite"
+            aria-atomic="false"
+          >
 
             
             {tileToasts.map(tile => (

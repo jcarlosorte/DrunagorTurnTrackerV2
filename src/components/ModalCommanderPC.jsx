@@ -1,39 +1,64 @@
 // ModalCommanderPC.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 
-const ModalCommanderPC = ({ onConfirm }) => {
+const ModalCommanderPC = ({ onConfirm, onCancel }) => {
   const [pcValue, setPcValue] = useState('');
-  const { language, translations } = useLanguage();
-  const ti = translations.trackerInit || {}
-  const ts = translations.trackerSelect || {}
+  const { translations } = useLanguage();
+  const ti = translations.trackerInit || {};
+  const ts = translations.trackerSelect || {};
+  const inputRef = useRef(null);
+  const titleId = useId();
+  const inputId = useId();
+
+  useEffect(() => {
+    inputRef.current?.focus();
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onCancel?.();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onCancel]);
 
   const handleSubmit = () => {
     const parsed = parseInt(pcValue, 10);
-    if (isNaN(parsed) || parsed <= 0) {
-      onConfirm(1); // Por defecto PC = 1
-    } else {
-      onConfirm(parsed);
-    }
+    onConfirm(Number.isNaN(parsed) || parsed <= 0 ? 1 : parsed);
   };
 
   return (
-    <div className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50`}>
-      <div className={`bg-yellow-400 text-white p-4 rounded-xl shadow-lg`}>
-        <h2 className="text-lg font-bold mb-2">{ti.PC}</h2>
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4" role="presentation">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="w-full max-w-xs rounded-xl bg-yellow-400 p-4 text-white shadow-2xl"
+      >
+        <h2 id={titleId} className="mb-2 text-lg font-bold">{ti.PC || 'PC'}</h2>
+        <label htmlFor={inputId} className="sr-only">{ti.PC || 'PC'}</label>
         <input
+          id={inputId}
+          ref={inputRef}
           type="number"
           min="1"
           value={pcValue}
-          onChange={(e) => setPcValue(e.target.value)}
-          className="text-black p-1 w-full rounded"
+          onChange={(event) => setPcValue(event.target.value)}
+          onKeyDown={(event) => { if (event.key === 'Enter') handleSubmit(); }}
+          className="w-full rounded p-2 text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
         />
-        <div className="flex justify-end gap-2 mt-3">
+        <div className="mt-3 flex justify-end gap-2">
           <button
-            className={`bg-yellow-600 hover:bg-yellow-700 text-white py-1 px-3 rounded`}
-            onClick={handleSubmit}
+            type="button"
+            onClick={() => onCancel?.()}
+            className="min-h-11 rounded bg-yellow-700 px-3 py-2 font-semibold text-white hover:bg-yellow-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
           >
-            {ts.confirm}
+            {ts.cancel || 'Cancelar'}
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="min-h-11 rounded bg-yellow-600 px-3 py-2 font-semibold text-white hover:bg-yellow-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+          >
+            {ts.confirm || 'Confirmar'}
           </button>
         </div>
       </div>

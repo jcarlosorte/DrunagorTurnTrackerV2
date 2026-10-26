@@ -132,3 +132,15 @@ Usar HTTPS, compresión Brotli/Gzip, CDN delante de los assets y despliegues at�
 - Base/basename, manifest, iconos, fallback SPA y sourcemaps parametrizados para publicación.
 - Dependencias directas de `react-router-dom` y `uuid` actualizadas a versiones sin vulnerabilidades de producción.
 - `.gitignore`, Node LTS, workflow CI/CD y carga diferida de imágenes de catálogo.
+
+## Persistencia y partidas guardadas
+
+- Autoguardado del estado de partida en `localStorage`: runas, fichas, pilas, enemigos, runas colocadas, turno y ronda.
+- La configuración inicial (expansiones, héroes, roles, enemigos y comportamientos) se conserva al empezar una partida nueva.
+- Hasta 10 partidas con nombre en el dispositivo, con carga y borrado individual.
+- Exportación e importación JSON en tres alcances: partida completa, solo configuración o solo track.
+- Compatibilidad con exportaciones antiguas (`schemaVersion: 1`).
+- Los datos importados se validan contra los catálogos actuales; las entradas desconocidas se descartan y se avisa antes de aplicar.
+- Indicador de cuota de almacenamiento con aviso al superar el 80 % del espacio disponible.
+- Los conjuntos de efectos ya procesados se persisten para no repetir invocaciones, daño o cartas al restaurar una partida.
+- Confirmaciones accesibles antes de restablecer, borrar runas, eliminar partidas guardadas o iniciar una partida nueva.
