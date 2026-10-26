@@ -14,7 +14,7 @@ import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { languages as availableLanguages, languageNames } from "@/i18n/languageData";
 import { useLanguage } from "@/context/LanguageContext";
 import { useGame } from '@/context/GameContext';
-import { useInitRunes } from "@/context/InitRunesContext";
+import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
 import TileToast from '@/components/TileToast';
 import { v4 as uuidv4 } from 'uuid';

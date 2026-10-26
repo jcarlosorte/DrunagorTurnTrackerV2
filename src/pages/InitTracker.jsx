@@ -24,7 +24,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import { useGame } from '@/context/GameContext';
-import { useInitRunes } from '@/context/InitRunesContext';
+import { useInitRunes } from '@/context/initRunesContext';
 import TopMenu from '@/components/TopMenu';
 import classNames from 'classnames';
 import AnimatedEnemyToast from '@/components/AnimatedEnemyToast';

@@ -6,7 +6,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { ExpansionProvider } from './context/ExpansionContext';
 import { TrackerProvider } from './context/TrackerContext';
 import { GameProvider } from './context/GameContext';
-import { InitRunesProvider } from './context/InitRunesContext';
+import { InitRunesProvider } from './context/initRunesContext';
 import { InitEnemiesProvider } from './context/InitEnemiesContext';
 
 import AppWrapper from './AppWrapper'; // 👈 nuevo
