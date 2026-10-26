@@ -2,7 +2,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
-import { GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDiceTarget, GiShield, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiCardDraw, GiCardPick, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe } from 'react-icons/gi';
+import { useNavigate } from 'react-router-dom';
+import { GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDiceTarget, GiShield, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiCardDraw, GiCardPick, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer } from 'react-icons/gi';
 import { MdAddCircleOutline } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { ENEMIES } from '@/data/enemies';
@@ -15,7 +16,6 @@ import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
 import ConfirmDialog from '@/components/ConfirmDialog';
-import SaveStatusIndicator from '@/components/SaveStatusIndicator';
 import { v4 as uuidv4 } from 'uuid';
 
 const TopMenu = ({
@@ -29,6 +29,7 @@ const TopMenu = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { translations } = useLanguage();
+  const navigate = useNavigate();
   const t = translations?.trackerInit || {};
   const { resetPlacedEnemies, activaHuesped, desactivaHuesped, huespedActivo, activaAcecho, desactivaAcecho, acechoActivo, activaInvadidos, desactivaInvadidos, invadidosActivo, oscuridadActivo, activaOscuridad, desactivaOscuridad,
                                          asaltoActivo, activaAsalto, desactivaAsalto } = useInitEnemies();
@@ -161,8 +162,25 @@ const TopMenu = ({
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
-          <SaveStatusIndicator className="hidden sm:inline-flex" />
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            aria-label={t.goHome || 'Ir al inicio'}
+            title={t.goHome || 'Ir al inicio'}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800 text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+          >
+            <AiOutlineMenu size={20} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/tracker')}
+            aria-label={t.backToConfig || 'Volver a configuración'}
+            title={t.backToConfig || 'Volver a configuración'}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800 text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+          >
+            <GiGearHammer size={20} aria-hidden="true" />
+          </button>
           {activeMenu && (
             <button
               type="button"

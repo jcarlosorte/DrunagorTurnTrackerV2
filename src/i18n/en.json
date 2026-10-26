@@ -1260,6 +1260,10 @@
     "secondsAgo": "Saved {n} s ago",
     "minutesAgo": "Saved {n} min ago",
     "saved": "Game saved",
-    "storageError": "Could not save on this device. Export your game from Saves so you do not lose progress."
+    "storageError": "Could not save on this device. Export your game from Saves so you do not lose progress.",
+    "gameLog": "Game history",
+    "gameLogEntries": "{n} recorded events",
+    "exportLog": "Export history",
+    "exportLogSuccess": "History exported successfully."
   }
 }

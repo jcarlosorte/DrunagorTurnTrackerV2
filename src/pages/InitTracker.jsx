@@ -41,6 +41,7 @@ import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import CommanderCard from '@/components/CommanderCard';
 import { v4 as uuidv4 } from 'uuid';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
+import { appendGameLog } from '@/utils/gameLog';
 
 const rolesPositionMap = {
   defensor: 0,
@@ -2799,6 +2800,11 @@ const InitTracker = () => {
   const showScenarioToast = (message, action = null, action2 = null, extra = null) => {
     const id = uuidv4();
     setScenarioToasts(prev => [...prev, { id, message, action, action2, extra }]);
+    // Historial exportable: registra el evento junto al guardado de la partida.
+    appendGameLog('event', [message, action, action2].filter(Boolean).join(' · '), {
+      round: roundRef.current,
+      turn: turnIndex,
+    });
   };
 
   const rolesOnTop = ['defensor', 'lider', 'controlador'];
@@ -3102,13 +3108,15 @@ const InitTracker = () => {
         );
         const isEntityFlipping = type === 'enemy' && flippedCards.includes(item.enemy.uuid);
         return (
-          <div key={ type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : item.id } className="absolute w-full transition-transform duration-400"
-              style={{
+          <div
+            key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : item.id}
+            className="absolute left-1/2 w-[92px] max-w-full -translate-x-1/2 transition-transform duration-300"
+            style={{
               ...style,
               zIndex: isCurrentTurn ? 40 : style.zIndex ?? 100,
-              transform: isCurrentTurn ? 'scale(1.1)' : 'scale(1)',
-              transition: 'all 0.4s ease-in-out'
-            }}>
+              transform: isCurrentTurn ? 'translateX(-50%) scale(1.08)' : 'translateX(-50%) scale(1)',
+            }}
+          >
             <div className="relative items-center">
               {isCurrentTurn && (
                 <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 rounded-full border-2 border-white bg-purple-600">
@@ -3157,11 +3165,15 @@ const InitTracker = () => {
     };
     
     return (
-      <div key={index} className={`track-slot flex w-full flex-col ${slotHeightClass} py-2`}>
+      <div
+        key={index}
+        className={`track-slot flex w-full min-w-0 flex-col ${slotHeightClass} py-2`}
+        style={{ minHeight: '32rem' }}
+      >
         
         {/* Escalonado arriba */}
-        <div className="relative flex justify-center h-1/2 w-full mb-5">
-          <div className="track-slot__stack absolute bottom-0 left-0 right-0 flex justify-center">
+        <div className="relative flex h-[13rem] w-full shrink-0 justify-center">
+          <div className="track-slot__stack absolute inset-x-0 bottom-0 flex justify-center">
             {renderStack(heroesAbove, true, 'hero')}
             {isRune && renderStack(enemiesAbove, true, 'enemy')}
             {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), true, 'rune')}
@@ -3169,22 +3181,19 @@ const InitTracker = () => {
         </div>
   
         {/* Centro del slot */}
-        <div className="track-slot__label relative z-10 flex shrink-0 items-center justify-center bg-slate-700 py-1">
+        <div className="track-slot__label relative z-10 flex min-w-0 shrink-0 items-center justify-center bg-slate-700 py-1">
           <div className={classNames(
-            'flex items-center justify-center font-fantasy',
+            'flex min-w-0 items-center justify-center font-fantasy',
             {
-              'w-14 h-14 rotate-45 border-4 gem-orange': index === 1,
-              'w-14 h-14 rotate-45 border-4 gem-green': index === 3,
-              'w-14 h-14 rotate-45 border-4 gem-blue': index === 5,
-              'w-14 h-14 rotate-45 border-4 gem-red': index === 7,
-              'w-14 h-14 rotate-45 border-4 gem-gray': index === 9,
-              'w-full h-10 bg-slate-800 text-slate-100 text-center shadow': index % 2 === 0
+              'h-12 w-12 shrink-0 rotate-45 border-4 gem-orange': index === 1,
+              'h-12 w-12 shrink-0 rotate-45 border-4 gem-green': index === 3,
+              'h-12 w-12 shrink-0 rotate-45 border-4 gem-blue': index === 5,
+              'h-12 w-12 shrink-0 rotate-45 border-4 gem-red': index === 7,
+              'h-12 w-12 shrink-0 rotate-45 border-4 gem-gray': index === 9,
+              'h-10 w-full min-w-0 bg-slate-800 text-center text-slate-100 shadow': index % 2 === 0
             })}>
             <span
-              className={classNames(
-                'block text-[0.6rem] sm:text-xs md:text-sm lg:text-base leading-none text-center whitespace-nowrap max-w-full overflow-hidden text-ellipsis'
-              )}
-              style={{ width: 'fit-content', maxWidth: '100%' }}
+              className="block w-full truncate px-0.5 text-center text-[0.6rem] leading-tight sm:text-xs md:text-sm lg:text-base"
             >
               {index === 0 && tr.defensor ||
                 index === 2 && tr.apoyo ||
@@ -3220,8 +3229,8 @@ const InitTracker = () => {
         </div>
 
         {/* Escalonado abajo */}
-        <div className="relative flex justify-center h-1/2 w-full mt-5">
-          <div className="track-slot__stack absolute top-0 left-0 right-0 flex justify-center">
+        <div className="relative mt-5 flex h-[13rem] w-full shrink-0 justify-center">
+          <div className="track-slot__stack absolute inset-x-0 top-0 flex justify-center">
             {renderStack(heroesBelow, false, 'hero')}
             {isRune && renderStack(enemiesBelow, false, 'enemy')}
             {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), false, 'rune')}
@@ -3871,15 +3880,6 @@ const InitTracker = () => {
                   {ti.nextTurn || 'Siguiente turno'}
                 </button>
               </div>
-            </div>
-          
-            <div className="mt-8 flex justify-center gap-4">
-              <button onClick={() => navigate('/')} className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded shadow">
-                {ti.goHome || 'Ir al inicio'}
-              </button>
-              <button onClick={() => navigate('/tracker')} className="bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded shadow">
-                {ti.backToConfig || 'Volver a configuración'}
-              </button>
             </div>
               
             

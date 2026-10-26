@@ -140,9 +140,9 @@ export default function TurnTrackBoard({
     >
       <div style={{ width: `${BASE_WIDTH * scale}px` }}>
         <div style={{ width: `${BASE_WIDTH}px`, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
-          <div className="grid snap-x snap-mandatory grid-cols-11 auto-rows-auto gap-0 bg-slate-800 p-2">
+          <div className="grid snap-x snap-mandatory grid-cols-11 auto-rows-[34rem] gap-0 bg-slate-800 p-2">
             {summaries.map(({ index }) => (
-              <div key={index}>{renderSlot(index)}</div>
+              <div key={index} className="min-w-0">{renderSlot(index)}</div>
             ))}
           </div>
         </div>

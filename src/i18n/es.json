@@ -1266,6 +1266,10 @@
     "secondsAgo": "Guardado hace {n} s",
     "minutesAgo": "Guardado hace {n} min",
     "saved": "Partida guardada",
-    "storageError": "No se ha podido guardar en este dispositivo. Exporta tu partida desde Partidas para no perder el progreso."
+    "storageError": "No se ha podido guardar en este dispositivo. Exporta tu partida desde Partidas para no perder el progreso.",
+    "gameLog": "Historial de la partida",
+    "gameLogEntries": "{n} eventos registrados",
+    "exportLog": "Exportar historial",
+    "exportLogSuccess": "Historial exportado correctamente."
   }
 }

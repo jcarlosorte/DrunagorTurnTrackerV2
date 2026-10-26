@@ -184,6 +184,21 @@ Usar HTTPS, compresión Brotli/Gzip, CDN delante de los assets y despliegues at�
 - **Barra de acción flotante** en móvil con deshacer, añadir enemigo y siguiente turno, con objetivos de 48 px y espacio inferior reservado para no tapar contenido.
 - `EnemyCard` ([src/components/track/EnemyCard.jsx](src/components/track/EnemyCard.jsx)) se extrajo de `InitTracker`. Además corrige un fallo latente: antes llamaba a `useState` dentro de un `map`, lo que rompe las reglas de hooks. Los iconos de estado e inmunidad son ahora subcomponentes propios.
 
+### Tamaños fijos del tablero
+
+- Cada slot tiene altura mínima de `32rem` y zonas superior e inferior fijas de `13rem`, de modo que la tarjeta nunca colapsa por falta de altura.
+- Las tarjetas se posicionan con ancho fijo de `92px` y traslación centrada, así la imagen siempre tiene anchura y altura calculable.
+- La etiqueta del slot usa `min-w-0` y `truncate`; ya no fuerza el ancho de la columna ni desborda el tablero (causa de que “Controlador” estirase la rejilla).
+- La rejilla usa `auto-rows-[34rem]` para que las once columnas compartan altura aunque alguna quede vacía.
+
+## Historial de la partida
+
+- [gameLog.js](src/utils/gameLog.js) registra hasta 300 eventos con fecha, tipo y mensaje.
+- Cada aviso de escenario, daño, invocación o runa se registra automáticamente con la ronda y el turno activos.
+- El historial viaja dentro del JSON de guardado (`gameLog`) y se limpia al empezar una partida nueva.
+- En **Partidas** se muestra el número de eventos y se puede exportar como `.txt`.
+
+
 
 ## Consistencia visual y de terminología
 

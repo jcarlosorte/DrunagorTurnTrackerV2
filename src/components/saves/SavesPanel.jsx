@@ -10,6 +10,7 @@ import {
 } from '@/utils/storage';
 import { sanitizeConfiguration } from '@/utils/configValidation';
 import { deleteGame, listSaves, loadGame, MAX_SAVES, saveGame } from '@/utils/saves';
+import { exportGameLogText, readGameLog } from '@/utils/gameLog';
 import ConfirmDialog from '@/components/ConfirmDialog';
 
 export default function SavesPanel({ mode = 'page' }) {
@@ -22,11 +23,13 @@ export default function SavesPanel({ mode = 'page' }) {
   const [saveName, setSaveName] = useState('');
   const [feedback, setFeedback] = useState({ type: '', text: '' });
   const [usage, setUsage] = useState(() => getStorageUsage());
+  const [logCount, setLogCount] = useState(0);
   const t = translations?.saves || translations?.config || {};
 
   const refresh = () => {
     setSaves(listSaves());
     setUsage(getStorageUsage());
+    setLogCount(readGameLog().length);
   };
 
   useEffect(() => {
@@ -34,6 +37,19 @@ export default function SavesPanel({ mode = 'page' }) {
   }, []);
 
   const notify = (type, text) => setFeedback({ type, text });
+
+  const downloadLog = () => {
+    const text = exportGameLogText();
+    if (!text) return;
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `drunagor-historial-${new Date().toISOString().slice(0, 10)}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+    notify('ok', t.exportLogSuccess || 'Historial exportado correctamente.');
+  };
 
   const exportSnapshot = (scope, filename) => {
     const snapshot = createStorageSnapshot(scope);
@@ -228,6 +244,26 @@ export default function SavesPanel({ mode = 'page' }) {
           {t.importGame || 'Importar JSON'}
         </button>
         <input ref={inputRef} type="file" accept="application/json,.json" onChange={selectImportFile} className="sr-only" aria-label={t.importGame || 'Importar JSON'} />
+      </div>
+
+      {/* Historial de la partida */}
+      <div className="rounded-lg border border-slate-700 bg-slate-950 p-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-sm font-semibold text-slate-100">{t.gameLog || 'Historial de la partida'}</p>
+            <p className="text-xs text-slate-400">
+              {(t.gameLogEntries || '{n} eventos registrados').replace('{n}', logCount)}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={downloadLog}
+            disabled={logCount === 0}
+            className="min-h-11 rounded-lg border border-slate-500 bg-slate-800 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 disabled:opacity-40"
+          >
+            {t.exportLog || 'Exportar historial'}
+          </button>
+        </div>
       </div>
 
       {pendingImport && (

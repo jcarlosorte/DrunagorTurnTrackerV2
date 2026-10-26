@@ -97,10 +97,11 @@ export const GAME_STORAGE_KEYS = [
   'initEnemiesState',
   'initRunesState',
   'trackerSession',
+  'gameLog',
 ];
 
 const CONFIG_STORAGE_KEYS = ['expansions', 'trackerData'];
-const TRACK_STORAGE_KEYS = ['gameState', 'initEnemiesState', 'initRunesState', 'trackerSession'];
+const TRACK_STORAGE_KEYS = ['gameState', 'initEnemiesState', 'initRunesState', 'trackerSession', 'gameLog'];
 
 function readStorageData() {
   const data = {};
@@ -141,6 +142,7 @@ function validateStorageData(data) {
     .forEach((key) => {
       if (data[key] !== undefined && !isPlainObject(data[key])) throw new Error(`Estado no válido: ${key}`);
     });
+  if (data.gameLog !== undefined && !Array.isArray(data.gameLog)) throw new Error('Historial no válido');
 }
 
 export function extractSnapshotData(snapshot, scope = 'full') {
