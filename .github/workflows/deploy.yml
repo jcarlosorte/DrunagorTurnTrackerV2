@@ -31,7 +31,7 @@ jobs:
         run: npm audit --omit=dev
       - name: Build
         env:
-          VITE_BASE_PATH: /drunagor-turn-tracker/
+          VITE_BASE_PATH: /DrunagorTurnTrackerV2/
           VITE_SOURCEMAP: false
         run: npm run build
       - name: Upload Pages artifact

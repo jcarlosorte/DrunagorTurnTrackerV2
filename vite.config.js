@@ -11,7 +11,7 @@ const normalizeBase = (value) => {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, rootDir, '');
-  const base = normalizeBase(env.VITE_BASE_PATH || '/drunagor-turn-tracker/');
+  const base = normalizeBase(env.VITE_BASE_PATH || '/DrunagorTurnTrackerV2/');
 
   return {
     plugins: [react()],

@@ -33,7 +33,7 @@ Copiar `.env.example` a `.env.local` si se necesita personalizar el destino:
 
 ```dotenv
 # GitHub Pages del repositorio
-VITE_BASE_PATH=/drunagor-turn-tracker/
+VITE_BASE_PATH=/DrunagorTurnTrackerV2/
 
 # Dominio propio o hosting en la raíz
 # VITE_BASE_PATH=/
@@ -70,7 +70,7 @@ El workflow `.github/workflows/deploy.yml` publica `main` automáticamente.
 
 1. En GitHub, abrir **Settings → Pages**.
 2. Seleccionar **GitHub Actions** como fuente.
-3. Comprobar que el repositorio se llama `drunagor-turn-tracker` o cambiar `VITE_BASE_PATH` en el workflow a `/<nombre-del-repo>/`.
+3. Comprobar que el repositorio se llama `DrunagorTurnTrackerV2` o cambiar `VITE_BASE_PATH` en el workflow a `/<nombre-del-repo>/`.
 4. Confirmar que el workflow tiene permisos `Pages: write` y `id-token: write`.
 5. Hacer commit y push a `main`.
 6. Esperar los jobs **Build and deploy / build** y **deploy**.
@@ -96,7 +96,7 @@ Para Nginx, el bloque equivalente es:
 server {
   listen 443 ssl http2;
   server_name tracker.example.com;
-  root /srv/drunagor-turn-tracker/dist;
+  root /srv/DrunagorTurnTrackerV2/dist;
 
   location /assets/ {
     try_files $uri =404;

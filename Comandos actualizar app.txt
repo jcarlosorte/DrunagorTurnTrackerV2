@@ -14,6 +14,6 @@ El workflow .github/workflows/deploy.yml compila y publica automáticamente en G
 No se debe versionar node_modules ni dist; ambos están cubiertos por .gitignore.
 
 Variables:
-- GitHub Pages: VITE_BASE_PATH=/drunagor-turn-tracker/
+- GitHub Pages: VITE_BASE_PATH=/DrunagorTurnTrackerV2/
 - Dominio propio en raíz: VITE_BASE_PATH=/
 - Producción: VITE_SOURCEMAP=false
