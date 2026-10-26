@@ -338,9 +338,11 @@ export const GameProvider = ({ children }) => {
     const colores = shuffleArray(['naranja', 'verde', 'azul', 'rojo', 'gris']);
     
     // Buscar la primera tile disponible
-    const nuevaTile = colores
-      .map(color => deleteAvailableTileByColor(color))
-      .find(tile => tile !== null && tile !== undefined);
+    let nuevaTile = null;
+    for (const color of colores) {
+      nuevaTile = deleteAvailableTileByColor(color);
+      if (nuevaTile) break;
+    }
   
     if (!nuevaTile) {
       alert(ti.aviso);
@@ -527,9 +529,11 @@ export const GameProvider = ({ children }) => {
     const colores = shuffleArray(['naranja', 'verde', 'azul', 'rojo', 'gris']);
     
     // Buscar la primera tile disponible
-    const nuevaTile = colores
-      .map(color => deleteAvailableTileByColor(color))
-      .find(tile => tile !== null && tile !== undefined);
+    let nuevaTile = null;
+    for (const color of colores) {
+      nuevaTile = deleteAvailableTileByColor(color);
+      if (nuevaTile) break;
+    }
   
     if (!nuevaTile) {
       alert(ti.aviso);
