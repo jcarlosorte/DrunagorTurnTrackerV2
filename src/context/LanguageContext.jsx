@@ -1,16 +1,36 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { translationsByLang } from '../i18n/languageData';
+import { writeJsonStorage } from '../utils/storage';
 
 const LanguageContext = createContext();
+const DEFAULT_LANGUAGE = 'es';
+const isSupportedLanguage = (value) => (
+  typeof value === 'string' && Object.prototype.hasOwnProperty.call(translationsByLang, value)
+);
+
+const readStoredLanguage = () => {
+  try {
+    if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
+    const raw = window.localStorage.getItem('lang');
+    if (!raw) return DEFAULT_LANGUAGE;
+    let candidate = raw;
+    try { candidate = JSON.parse(raw); } catch { /* legacy unquoted value */ }
+    return isSupportedLanguage(candidate) ? candidate : DEFAULT_LANGUAGE;
+  } catch {
+    return DEFAULT_LANGUAGE;
+  }
+};
 
 export const LanguageProvider = ({ children }) => {
-  const storedLang = localStorage.getItem('lang') || 'es';
-  const [language, setLanguage] = useState(storedLang);
-  const [translations, setTranslations] = useState(translationsByLang[storedLang]);
+  const initialLanguage = readStoredLanguage();
+  const [language, setLanguage] = useState(initialLanguage);
+  const [translations, setTranslations] = useState(translationsByLang[initialLanguage]);
 
   useEffect(() => {
-    localStorage.setItem('lang', language);
-    setTranslations(translationsByLang[language]);
+    const safeLanguage = isSupportedLanguage(language) ? language : DEFAULT_LANGUAGE;
+    if (safeLanguage !== language) setLanguage(safeLanguage);
+    writeJsonStorage('lang', safeLanguage);
+    setTranslations(translationsByLang[safeLanguage]);
 
     // Cambiar atributo lang del <html>
     document.documentElement.lang = language;

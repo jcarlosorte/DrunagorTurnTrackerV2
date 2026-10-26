@@ -45,7 +45,7 @@ function AppContent() {
 
 function App() {
   return (
-    <Router basename="/drunagor-turn-tracker/">
+    <Router basename={import.meta.env.BASE_URL}>
       <TopMenuLanguage /> {/* 👈 menú de idioma siempre arriba */}
       <AppContent />
     </Router>

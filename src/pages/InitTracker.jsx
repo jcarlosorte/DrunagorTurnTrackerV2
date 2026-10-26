@@ -1235,7 +1235,7 @@ const InitTracker = () => {
     let estados = [...enemy.estadosAlterados];
     const logs = [];
 
-    if (vidaRestante === 0) return;
+    if (vidaRestante === 0) return { enemy, logs: [] };
     
     // ✅ Buscar ESCUDO antes de aplicar daño
     const estadoEscudo = estados.find(e => e.id === "ESCUDO");

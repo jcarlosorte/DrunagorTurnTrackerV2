@@ -103,40 +103,38 @@ export const InitEnemiesProvider = ({ children }) => {
     });
   };
 
-  const removeEnemyByUUID = (uuid) => { 
-     setPlacedEnemies((prev = []) => {
-        const target = prev.find(e => e.enemy.uuid === uuid);
-        if (!target) return prev;
-        const isCommander = target.enemy.categoria === 'comandante';
-        const isOverlord = target.enemy.categoria === 'overlord';
-        const isFallenHero= target.enemy.categoria === 'hero';
-        const isBoss= target.enemy.categoria === 'jefe';
-        const updated = prev.filter(e => {
-          const enemy = e.enemy;
-          if (enemy.uuid === uuid) return false;
-          if (isCommander && enemy.tipo === 'especial' && enemy.sourceEnemyUUID === uuid) return false;
-          if (isOverlord && enemy.tipo === 'especial' && enemy.sourceEnemyUUID === uuid) return false;
-          if (isFallenHero && (enemy.tipo === 'especial' || enemy.tipo === 'fallenHero') && enemy.sourceEnemyUUID === uuid) return false;
-          if (isBoss && enemy.tipo === 'especial' && enemy.sourceEnemyUUID === uuid) return false;
-          return true;
-        });
+  const removeEnemyByUUID = (uuid) => {
+    const target = placedEnemies.find((entry) => entry.enemy.uuid === uuid);
+    if (!target) return;
 
-       if (huespedActivo) {
-        const cantidad = target.enemy.size === 'grande' ? 2 : 1;
-        const tiles = drawMultipleTiles(cantidad);
-        if (tiles && tiles.length > 0) {
-          tiles.forEach(tile => handleTileDraw(tile));
-        } else {
-          mostrarAviso(ti.aviso);
-        }
-        mostrarAviso(`🐉 ${ti.robaHuesped}`);
+    const { categoria } = target.enemy;
+    const isCommander = categoria === 'comandante';
+    const isOverlord = categoria === 'overlord';
+    const isFallenHero = categoria === 'hero';
+    const isBoss = categoria === 'jefe';
+    const updated = placedEnemies.filter((entry) => {
+      const enemy = entry.enemy;
+      if (enemy.uuid === uuid) return false;
+      if (isCommander && enemy.tipo === 'especial' && enemy.sourceEnemyUUID === uuid) return false;
+      if (isOverlord && enemy.tipo === 'especial' && enemy.sourceEnemyUUID === uuid) return false;
+      if (isFallenHero && (enemy.tipo === 'especial' || enemy.tipo === 'fallenHero') && enemy.sourceEnemyUUID === uuid) return false;
+      if (isBoss && enemy.tipo === 'especial' && enemy.sourceEnemyUUID === uuid) return false;
+      return true;
+    });
+
+    // Keep the state updater pure. React may invoke it more than once in StrictMode.
+    setPlacedEnemies(updated);
+    if (huespedActivo) {
+      const cantidad = target.enemy.size === 'grande' ? 2 : 1;
+      const tiles = drawMultipleTiles(cantidad);
+      if (tiles && tiles.length > 0) {
+        tiles.forEach(tile => handleTileDraw(tile));
+      } else {
+        mostrarAviso(ti.aviso);
       }
-      if (acechoActivo) {
-        desactivaAcecho();
-      }
-       
-      return updated;
-      });
+      mostrarAviso(`🐉 ${ti.robaHuesped}`);
+    }
+    if (acechoActivo) desactivaAcecho();
   };
   
   const resetPlacedEnemies = () => {

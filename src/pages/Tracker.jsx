@@ -21,7 +21,7 @@ const TrackerSelect = () => {
   const [showEnemies, setShowEnemies] = useState(false);
   const { selectedExpansions } = useExpansions();
   const { language, translations } = useLanguage();
-  const { setTrackerData } = useTracker();
+  const { trackerData, setTrackerData } = useTracker();
   const t = translations?.trackerSelect || {};
   const navigate = useNavigate();
   const heroesInSelectedExpansions = HEROES.filter(h => selectedExpansions.includes(h.expansionId));
@@ -29,25 +29,26 @@ const TrackerSelect = () => {
   //const enemiesInSelectedExpansions = ENEMIES.filter(e => selectedExpansions.includes(e.expansionId) && e.color !== "jefe" && e.color !== "hero" && e.color !== "esbirro");
   
   useEffect(() => {
-    const validEnemies = enemiesInSelectedExpansions.map(e => e.id);
-  
-    const stored = localStorage.getItem("trackerData");
-    if (stored) {
-      const data = JSON.parse(stored);
-      if (data.heroes) setSelectedHeroes(data.heroes);
-      if (data.roles) setHeroRoles(data.roles);
-      if (data.enemies) {
-        // Filtra solo enemigos válidos según expansiones activas
-        const filteredEnemies = data.enemies.filter(id => validEnemies.includes(id));
-        setSelectedEnemies(filteredEnemies);
-      } else {
-        setSelectedEnemies(validEnemies);
-      }
-      if (data.behaviors) setSelectedBehaviors(data.behaviors);
-    } else {
-      setSelectedEnemies(validEnemies);
-    }
-  }, [selectedExpansions.join(',')]);
+    const validHeroIds = new Set(heroesInSelectedExpansions.map((hero) => hero.id));
+    const validEnemyIds = new Set(enemiesInSelectedExpansions.map((enemy) => enemy.id));
+    const validRoleIds = new Set(ROLES.map((role) => role.id));
+    const validBehaviorIds = new Set(["estandar", "alternativo", "complejo"]);
+    const heroes = (Array.isArray(trackerData.heroes) ? trackerData.heroes : [])
+      .filter((id) => validHeroIds.has(id));
+    const roles = Object.fromEntries(
+      Object.entries(trackerData.roles || {})
+        .filter(([heroId, roleId]) => heroes.includes(heroId) && validRoleIds.has(roleId))
+    );
+    const enemies = (Array.isArray(trackerData.enemies) ? trackerData.enemies : [])
+      .filter((id) => validEnemyIds.has(id));
+    const behaviors = (Array.isArray(trackerData.behaviors) ? trackerData.behaviors : [])
+      .filter((behavior) => validBehaviorIds.has(behavior));
+
+    setSelectedHeroes(heroes);
+    setHeroRoles(roles);
+    setSelectedEnemies(enemies);
+    setSelectedBehaviors(behaviors.length > 0 ? behaviors : ["estandar", "alternativo", "complejo"]);
+  }, [selectedExpansions.join(','), trackerData]);
 
 
   const getHeroName = (heroId) => translations.heroes?.[heroId] || heroId;
@@ -90,7 +91,16 @@ const TrackerSelect = () => {
       return;
     }
   
-    const heroesWithoutRole = selectedHeroes.filter(h => !heroRoles[h]);
+    const validHeroIds = new Set(heroesInSelectedExpansions.map((hero) => hero.id));
+    const validEnemyIds = new Set(enemiesInSelectedExpansions.map((enemy) => enemy.id));
+    const validRoleIds = new Set(ROLES.map((role) => role.id));
+    const validBehaviorIds = new Set(["estandar", "alternativo", "complejo"]);
+    const heroes = selectedHeroes.filter((id) => validHeroIds.has(id));
+    const roles = Object.fromEntries(
+      Object.entries(heroRoles)
+        .filter(([heroId, roleId]) => heroes.includes(heroId) && validRoleIds.has(roleId))
+    );
+    const heroesWithoutRole = heroes.filter((heroId) => !roles[heroId]);
     if (heroesWithoutRole.length > 0) {
       const names = heroesWithoutRole.map(getHeroName).join(', ');
       alert(
@@ -99,24 +109,17 @@ const TrackerSelect = () => {
       );
       return;
     }
-  
-    // (opcional) Refiltrar enemigos por si el estado no estaba 100% sincronizado
-    //return enemy?.color !== "jefe" && enemy?.color !== "hero" && enemy?.color !== "esbirro";
-    const validEnemies = selectedEnemies.filter(id => {
-      const enemy = ENEMIES.find(e => e.id === id);
-      
-      return enemy;
-    });
-  
-    const trackerData = {
-      heroes: selectedHeroes,
-      roles: heroRoles,
+
+    const validEnemies = selectedEnemies.filter((id) => validEnemyIds.has(id));
+    const behaviors = selectedBehaviors.filter((behavior) => validBehaviorIds.has(behavior));
+    const nextTrackerData = {
+      heroes,
+      roles,
       enemies: validEnemies,
-      behaviors: selectedBehaviors,
+      behaviors: behaviors.length > 0 ? behaviors : ["estandar"],
     };
-  
-    setTrackerData(trackerData);
-    localStorage.setItem("trackerData", JSON.stringify(trackerData));
+
+    setTrackerData(nextTrackerData);
     navigate("/init", { replace: true });
   };
   
@@ -132,7 +135,6 @@ const TrackerSelect = () => {
       enemies: validEnemies,
       behaviors: ["estandar", "alternativo", "complejo"],
     });
-    localStorage.removeItem("trackerData");
   };
 
 
@@ -248,6 +250,8 @@ const TrackerSelect = () => {
                       <img
                         src={hero.image}
                         alt={getHeroName(hero.id)}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-auto object-contain"
                       />
                       <span className="absolute bottom-1 left-0 right-0 text-xs text-white bg-black bg-opacity-60 p-1 text-center">

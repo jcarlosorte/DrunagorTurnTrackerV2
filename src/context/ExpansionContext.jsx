@@ -1,18 +1,20 @@
 // src/context/ExpansionContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import { EXPANSIONS } from '../data/expansions';
+import { readJsonStorage, writeJsonStorage } from '../utils/storage';
 
 const ExpansionContext = createContext();
+const expansionIds = new Set(EXPANSIONS.map(({ id }) => id));
+const defaultExpansions = ['base'];
 
 export const ExpansionProvider = ({ children }) => {
-  const stored = localStorage.getItem('expansions');
-  const [selectedExpansions, setSelectedExpansions] = useState(
-    stored ? JSON.parse(stored) : ['base']
-  );
+  const [selectedExpansions, setSelectedExpansions] = useState(() => {
+    const stored = readJsonStorage('expansions', defaultExpansions, Array.isArray);
+    return stored.filter((id) => typeof id === 'string' && expansionIds.has(id));
+  });
 
   useEffect(() => {
-    localStorage.setItem('expansions', JSON.stringify(selectedExpansions));
-    console.log('[ExpansionContext] Expansiones seleccionadas:', selectedExpansions);
+    writeJsonStorage('expansions', selectedExpansions);
   }, [selectedExpansions]);
 
   const toggleExpansion = (id) => {

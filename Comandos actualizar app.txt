@@ -1,4 +1,19 @@
-Actualizar fetch origin en GitHub Desktop
-Luego en ProwerShell del GitHub:
-npm install
-npm run deploy
+Publicación actual (GitHub Pages)
+
+1. Verifica Node 20 y npm 10.
+2. git pull origin main
+3. npm ci
+4. npm audit --omit=dev
+5. npm run build
+6. npm run preview   # revisión local opcional
+7. git add -A
+8. git commit -m "Describe el cambio"
+9. git push origin main
+
+El workflow .github/workflows/deploy.yml compila y publica automáticamente en GitHub Pages.
+No se debe versionar node_modules ni dist; ambos están cubiertos por .gitignore.
+
+Variables:
+- GitHub Pages: VITE_BASE_PATH=/drunagor-turn-tracker/
+- Dominio propio en raíz: VITE_BASE_PATH=/
+- Producción: VITE_SOURCEMAP=false

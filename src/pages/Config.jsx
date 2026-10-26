@@ -45,6 +45,8 @@ export default function Config() {
                   <img
                     src={exp.imagen}
                     alt={translations.expansions[exp.id]}
+                    loading="lazy"
+                    decoding="async"
                     className={`w-full h-32 object-cover rounded ${isInactive ? "opacity-50" : ""}`}
                   />
                   {isInactive && (

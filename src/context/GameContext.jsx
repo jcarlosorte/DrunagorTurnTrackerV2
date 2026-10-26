@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useRef, useState } from 'react';
 import { FICHAS } from '@/data/fichas';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
@@ -42,6 +42,7 @@ export const GameProvider = ({ children }) => {
   const [rescue, setRescue] = useState([]);
   const [aldeanoDeck, setAldeanoDeck] = useState([]);
   const [errantesDeck, setErrantesDeck] = useState([]);
+  const decksInitialized = useRef(false);
   const [codigosPilas, setCodigosPilas] = useState({});
   const { trackerData } = useTracker();
   const selectedHeroes = trackerData.heroes;
@@ -172,11 +173,22 @@ export const GameProvider = ({ children }) => {
       naranja: [],
       gris: [],
     });
-    setPilas([]); // 🔁 Limpiar también las pilas
+    setPilas([]);
     setPilasConcentrada([]);
-    clearRunes();
+    setContadorPilas(1);
+    setContadorPilasConcentradas(1);
+    setCodigosPilas({});
+    setTileToasts([]);
+    setTileWarning(null);
+    setScenarioMonster(null);
     setSpawnPoints([]);
     setControlPoints([]);
+    setRuneKeys([]);
+    setRescue([]);
+    setAldeanoDeck([]);
+    setErrantesDeck([]);
+    decksInitialized.current = false;
+    clearRunes();
   };
 
   const discardTileByColor = (color) => {
@@ -222,21 +234,31 @@ export const GameProvider = ({ children }) => {
 
   const addNewPila = () => {
     const coloresAleatorios = shuffle(['rojo', 'azul', 'verde', 'naranja', 'gris']);
+    let remaining = [...availableTiles];
     const nuevaPila = [];
-  
+
     for (const color of coloresAleatorios) {
-      const tile = discardTileByColor(color); // usamos discard para mantener consistencia
-      if (!tile) return null; // abortar si falta alguna
+      const candidates = remaining.filter((tile) => tile.runa === color);
+      if (candidates.length === 0) return null; // No state was changed: atomic rollback.
+      const tile = candidates[Math.floor(Math.random() * candidates.length)];
       nuevaPila.push(tile);
+      remaining = remaining.filter((item) => item.uuid !== tile.uuid);
     }
-  
+
     const nueva = {
       id: uuidv4(),
       tiles: nuevaPila,
       estado: 'reserva',
       numPila: contadorPilas
     };
-  
+    setAvailableTiles(remaining);
+    setDiscardedTiles((prev) => {
+      const next = { ...prev };
+      nuevaPila.forEach((tile) => {
+        next[tile.runa] = [...(next[tile.runa] || []), tile];
+      });
+      return next;
+    });
     setPilas(prev => [...prev, nueva]);
     setContadorPilas(prev => prev + 1);
     return nueva;
@@ -566,6 +588,29 @@ export const GameProvider = ({ children }) => {
     return tile;
   };
 
+  const replaceRunePoints = (currentPoints, colors, setPoints, missingMessage) => {
+    const returnedTiles = currentPoints.flatMap((point) => (
+      point.tile?.runa ? [point.tile] : []
+    ));
+    let pool = [...availableTiles, ...returnedTiles];
+    const newPoints = [];
+
+    colors.forEach((color) => {
+      const candidates = pool.filter((tile) => tile.runa === color);
+      const tile = candidates[Math.floor(Math.random() * candidates.length)];
+      if (tile) {
+        newPoints.push({ uuid: uuidv4(), runa: color, tile });
+        pool = pool.filter((item) => item.uuid !== tile.uuid);
+      } else {
+        alert(`${missingMessage} ${ti.colores?.[color] || color}`);
+      }
+    });
+
+    setAvailableTiles(pool);
+    setPoints(newPoints);
+    return newPoints;
+  };
+
   const initializeSpawnPoints = (tipo = "runa") => {
     if (tipo === "evento") {
       // ✅ Solo un punto genérico de evento
@@ -576,142 +621,94 @@ export const GameProvider = ({ children }) => {
           tile: { id: "evento", nombre: "Evento" } // puedes ajustar los datos que quieras mostrar
         }
       ];
+      setAvailableTiles((prev) => [
+        ...prev,
+        ...spawnPoints.flatMap((point) => point.tile?.runa ? [point.tile] : []),
+      ]);
       setSpawnPoints(newPoints);
       return;
     }
-  
-    // ✅ Versión clásica: por runas
-    const colors = ["naranja", "verde", "azul", "rojo", "gris"];
-    const newPoints = [];
-  
-    colors.forEach(color => {
-      const tile = deleteAvailableTileByColor(color); // quita 1 ficha de la bolsa
-      if (tile) {
-        newPoints.push({
-          uuid: uuidv4(),
-          runa: color,
-          tile
-        });
-      } else {
-        alert(`No hay fichas ${ti.colores[color]} para crear punto de aparición`);
-      }
-    });
-  
-    setSpawnPoints(newPoints);
+
+    replaceRunePoints(
+      spawnPoints,
+      ["naranja", "verde", "azul", "rojo", "gris"],
+      setSpawnPoints,
+      'No hay fichas para crear punto de aparición:'
+    );
   };
 
   
   const removeSpawnPoint = (uuid) => {
-    setSpawnPoints(prev => {
-      const point = prev.find(p => p.uuid === uuid);
-      if (point) {
-        // ✅ devolvemos la ficha a la bolsa
-        //restoreTile(point.tile);
-      }
-      return prev.filter(p => p.uuid !== uuid);
-    });
+    const point = spawnPoints.find((item) => item.uuid === uuid);
+    if (!point) return;
+    if (point.tile?.runa) setAvailableTiles((prev) => [...prev, point.tile]);
+    setSpawnPoints((prev) => prev.filter((item) => item.uuid !== uuid));
   };
 
   const initializeControlPoints = () => {
-    const colors = ['naranja', 'verde', 'azul', 'rojo', 'gris'];
-    const newPoints = [];
-  
-    colors.forEach(color => {
-      const tile = deleteAvailableTileByColor(color); // quita 1 ficha de la bolsa
-      if (tile) {
-        newPoints.push({
-          uuid: uuidv4(),
-          runa: color,
-          tile
-        });
-      } else {
-        alert(`No hay fichas ${ti.colores[color]} para crear una Barricada`);
-      }
-    });
-  
-    setControlPoints(newPoints);
+    replaceRunePoints(
+      controlPoints,
+      ['naranja', 'verde', 'azul', 'rojo', 'gris'],
+      setControlPoints,
+      'No hay fichas para crear una Barricada:'
+    );
   };
   
   const removeControlPoint = (uuid) => {
-    setControlPoints(prev => {
-      const point = prev.find(p => p.uuid === uuid);
-      if (point) {
-        // ✅ Colocar la ficha en el track 
-        addRune(point.runa);
-        // ✅ Eliminar 2 de la bolsa del mismo color
-        deleteAvailableTileByColor(point.runa);
-        deleteAvailableTileByColor(point.runa);
-      }
-      return prev.filter(p => p.uuid !== uuid);
-    });
+    const point = controlPoints.find((item) => item.uuid === uuid);
+    if (!point) return null;
+
+    // Do the two removals from one snapshot so the same tile cannot be picked twice.
+    const tilesToRemove = availableTiles
+      .filter((tile) => tile.runa === point.runa)
+      .slice(0, 2);
+    const removedIds = new Set(tilesToRemove.map((tile) => tile.uuid));
+    setAvailableTiles((prev) => prev.filter((tile) => !removedIds.has(tile.uuid)));
+    setRunes((prev) => ({
+      ...prev,
+      [point.runa]: (prev[point.runa] || 0) + 1,
+    }));
+    setControlPoints((prev) => prev.filter((item) => item.uuid !== uuid));
+    return point;
   };
 
   const initializeRuneKeys = () => {
-    // Solo tiene los 4 colores esta mecánica
-    const colors = ['naranja', 'verde', 'rojo', 'gris'];
-    const newPoints = [];
-  
-    colors.forEach(color => {
-      const tile = deleteAvailableTileByColor(color); // quita 1 ficha de la bolsa
-      if (tile) {
-        newPoints.push({
-          uuid: uuidv4(),
-          runa: color,
-          tile
-        });
-      } else {
-        alert(`No hay fichas ${ti.colores[color]} para crear punto de aparición`);
-      }
-    });
-  
-    setRuneKeys(newPoints);
+    replaceRunePoints(
+      runeKeys,
+      ['naranja', 'verde', 'rojo', 'gris'],
+      setRuneKeys,
+      'No hay fichas para crear la llave de runas:'
+    );
   };
   
   const removeRuneKey = (uuid) => {
-    setRuneKeys(prev => {
-      const point = prev.find(p => p.uuid === uuid);
-      if (point) {
-        // ✅ devolvemos la ficha a la bolsa
-        //restoreTile(point.tile);
-      }
-      return prev.filter(p => p.uuid !== uuid);
-    });
+    const point = runeKeys.find((item) => item.uuid === uuid);
+    if (!point) return;
+    if (point.tile?.runa) setAvailableTiles((prev) => [...prev, point.tile]);
+    setRuneKeys((prev) => prev.filter((item) => item.uuid !== uuid));
   };
 
   const initializeRescue = () => {
-    const colors = ['naranja', 'verde', 'azul', 'rojo', 'gris'];
-    const newPoints = [];
-  
-    colors.forEach(color => {
-      const tile = deleteAvailableTileByColor(color); // quita 1 ficha de la bolsa
-      if (tile) {
-        newPoints.push({
-          uuid: uuidv4(),
-          runa: color,
-          tile
-        });
-      } else {
-        alert(`No hay fichas ${ti.colores[color]} para crear punto de aparición del aldeano`);
-      }
-    });
-  
-    setRescue(newPoints);
+    replaceRunePoints(
+      rescue,
+      ['naranja', 'verde', 'azul', 'rojo', 'gris'],
+      setRescue,
+      'No hay fichas para crear el punto de aparición del aldeano:'
+    );
   };
   
   const removeRescue = (uuid) => {
-    setRescue(prev => {
-      const point = prev.find(p => p.uuid === uuid);
-      if (point) {
-        // ✅ devolvemos la ficha a la bolsa
-        //restoreTile(point.tile);
-      }
-      return prev.filter(p => p.uuid !== uuid);
-    });
+    const point = rescue.find((item) => item.uuid === uuid);
+    if (!point) return;
+    if (point.tile?.runa) setAvailableTiles((prev) => [...prev, point.tile]);
+    setRescue((prev) => prev.filter((item) => item.uuid !== uuid));
   };
   
   const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
   const initializeDecks = () => {
+    if (decksInitialized.current) return;
+    decksInitialized.current = true;
     const aldeanoBase = ALDEANO.map(card => card.id);
     const errantesBase = ERRANTES.map(card => card.id);
     setAldeanoDeck(shuffleArray(aldeanoBase));
