@@ -181,15 +181,15 @@ Usar HTTPS, compresión Brotli/Gzip, CDN delante de los assets y despliegues at�
 - Zoom con botones `−`/`+`, porcentaje visible y botón **Ajustar** para encajar el ancho; también admite gesto de pinza en pantallas táctiles.
 - **Modo presentación**: oculta la barra de menús, oculta el selector de vista y muestra el tablero a mayor tamaño. Siempre hay un botón visible para salir.
 - **Deshacer turno**: guarda hasta 10 instantáneas del cursor de turno (turno, ronda, grupo, turnos extra y entidad activa). Restaura el estado anterior sin recalcular daño ya aplicado.
-- **Barra de acción flotante** en móvil con deshacer, añadir enemigo y siguiente turno, con objetivos de 48 px y espacio inferior reservado para no tapar contenido.
+- **Acciones de turno centradas** en la barra del tablero: Deshacer y Siguiente turno entre el selector Tablero/Lista y el zoom, visibles también en móvil.
 - `EnemyCard` ([src/components/track/EnemyCard.jsx](src/components/track/EnemyCard.jsx)) se extrajo de `InitTracker`. Además corrige un fallo latente: antes llamaba a `useState` dentro de un `map`, lo que rompe las reglas de hooks. Los iconos de estado e inmunidad son ahora subcomponentes propios.
 
 ### Tamaños fijos del tablero
 
-- Cada slot tiene altura mínima de `32rem` y zonas superior e inferior fijas de `13rem`, de modo que la tarjeta nunca colapsa por falta de altura.
+- Cada slot tiene altura mínima de `26rem` y zonas superior e inferior fijas de `9rem`, de modo que la tarjeta nunca colapsa por falta de altura.
 - Las tarjetas se posicionan con ancho fijo de `92px` y traslación centrada, así la imagen siempre tiene anchura y altura calculable.
 - La etiqueta del slot usa `min-w-0` y `truncate`; ya no fuerza el ancho de la columna ni desborda el tablero (causa de que “Controlador” estirase la rejilla).
-- La rejilla usa `auto-rows-[34rem]` para que las once columnas compartan altura aunque alguna quede vacía.
+- La rejilla usa `auto-rows-[26rem]` para que las once columnas compartan altura aunque alguna quede vacía.
 
 ## Historial de la partida
 
@@ -209,3 +209,20 @@ Usar HTTPS, compresión Brotli/Gzip, CDN delante de los assets y despliegues at�
 - Extraídos `TrackTurnHeader` ([src/components/track/TrackTurnHeader.jsx](src/components/track/TrackTurnHeader.jsx)) y `BagStatusPanel` ([src/components/track/BagStatusPanel.jsx](src/components/track/BagStatusPanel.jsx)) como primera fase del refactor de `InitTracker`.
 
 
+
+## Barra única en el track
+
+- En `/init` no se monta la barra global (`TopMenuLanguage` devuelve `null`): la barra del track incluye logo, secciones, **Partidas**, navegación a inicio y configuración, idioma y cierre.
+- El botón **Partidas** abre el mismo panel lateral que en el resto de la aplicación.
+
+## Verificación visual automatizada
+
+- `npm run visual:check` levanta Playwright con Chromium, siembra una partida (5 héroes con roles) y captura escritorio y móvil.
+- Comprueba que las imágenes del tablero tengan tamaño real, evitando la regresión de tarjetas colapsadas.
+- Requiere el build servido en `http://localhost:4173/DrunagorTurnTrackerV2/` (`npx vite preview --port 4173`).
+
+### Causa raíz de las tarjetas invisibles
+
+- `.track-slot__stack` tenía `position: relative` en CSS, que sobrescribía la utilidad `absolute` del marcado. Al no aplicar `inset-x-0`, el ancho de la pila caía a unos pocos píxeles y las imágenes quedaban a 6×6 px.
+- Se eliminó ese `position` forzado; ahora el contenedor se coloca con las utilidades del marcado.
+- Además, `getHeroProf` y la construcción de `placedHeroes` ahora toleran identificadores de héroe desconocidos en lugar de romper el render.

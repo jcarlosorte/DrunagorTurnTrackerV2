@@ -11,6 +11,9 @@ export default function TurnTrackBoard({
   currentSlotIndex = -1,
   presentation = false,
   onTogglePresentation,
+  onNextTurn,
+  onUndoTurn,
+  canUndo = false,
   labels = {},
 }) {
   const viewportRef = useRef(null);
@@ -80,6 +83,26 @@ export default function TurnTrackBoard({
         </button>
       </div>
 
+      {/* Acciones de turno, centradas entre la vista y el zoom */}
+      <div className="order-3 flex w-full items-center justify-center gap-2 sm:order-none sm:w-auto sm:flex-1">
+        <button
+          type="button"
+          onClick={onUndoTurn}
+          disabled={!canUndo}
+          className="flex min-h-10 items-center gap-1.5 rounded-xl border border-slate-600 bg-slate-800 px-3 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 disabled:opacity-40"
+        >
+          <span aria-hidden="true" className="text-base">↶</span>
+          <span className="hidden sm:inline">{labels.undoTurn || 'Deshacer'}</span>
+        </button>
+        <button
+          type="button"
+          onClick={onNextTurn}
+          className="min-h-10 rounded-xl bg-yellow-500 px-4 text-sm font-bold text-slate-950 shadow-lg shadow-yellow-900/30 transition hover:bg-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
+        >
+          {labels.nextTurn || 'Siguiente turno'}
+        </button>
+      </div>
+
       <div className="flex items-center gap-2">
         {view === 'board' && (
           <div className="flex items-center gap-1 rounded-xl border border-slate-700 bg-slate-900 p-1">
@@ -140,7 +163,7 @@ export default function TurnTrackBoard({
     >
       <div style={{ width: `${BASE_WIDTH * scale}px` }}>
         <div style={{ width: `${BASE_WIDTH}px`, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
-          <div className="grid snap-x snap-mandatory grid-cols-11 auto-rows-[34rem] gap-0 bg-slate-800 p-2">
+          <div className="grid snap-x snap-mandatory grid-cols-11 auto-rows-[26rem] gap-0 bg-slate-800 p-2">
             {summaries.map(({ index }) => (
               <div key={index} className="min-w-0">{renderSlot(index)}</div>
             ))}

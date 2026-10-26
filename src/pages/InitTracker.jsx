@@ -125,7 +125,11 @@ const InitTracker = () => {
 
   const getHeroProf = (id) => {
     const heroe = HEROES.find(e => e.id === id);
-    return translations.heroes.profession?.[heroe.profession] || heroe.profession;
+    if (!heroe) {
+      console.warn(`Héroe desconocido en el tablero: ${id}`);
+      return '';
+    }
+    return translations.heroes?.profession?.[heroe.profession] || heroe.profession || '';
   };
   const openCategorySelector = (color) => setCategorySelector({ open: true, color });
   const openManualSelector = (color) => setManualSelector({ open: true, color });
@@ -2041,11 +2045,14 @@ const InitTracker = () => {
     gris: 'bg-slate-700 hover:bg-slate-600',
   };
   useEffect(() => {
-    const initialHeroes = trackerData.heroes.map(id => {
-      const role = trackerData.roles[id];
-      const image = HEROES.find(h => h.id === id)?.image;
-      return { id, role, image, position: rolesPositionMap[role] };
-    });
+    const initialHeroes = (Array.isArray(trackerData.heroes) ? trackerData.heroes : [])
+      .map((id) => {
+        const hero = HEROES.find((entry) => entry.id === id);
+        if (!hero) return null;
+        const role = trackerData.roles?.[id];
+        return { id, role, image: hero.image, position: rolesPositionMap[role] };
+      })
+      .filter(Boolean);
     setTrackerData(prev => ({ ...prev, placedHeroes: initialHeroes }));
   }, []);
   
@@ -3168,11 +3175,11 @@ const InitTracker = () => {
       <div
         key={index}
         className={`track-slot flex w-full min-w-0 flex-col ${slotHeightClass} py-2`}
-        style={{ minHeight: '32rem' }}
+        style={{ minHeight: '26rem' }}
       >
         
         {/* Escalonado arriba */}
-        <div className="relative flex h-[13rem] w-full shrink-0 justify-center">
+        <div className="relative flex h-[9rem] w-full shrink-0 justify-center">
           <div className="track-slot__stack absolute inset-x-0 bottom-0 flex justify-center">
             {renderStack(heroesAbove, true, 'hero')}
             {isRune && renderStack(enemiesAbove, true, 'enemy')}
@@ -3229,7 +3236,7 @@ const InitTracker = () => {
         </div>
 
         {/* Escalonado abajo */}
-        <div className="relative mt-5 flex h-[13rem] w-full shrink-0 justify-center">
+        <div className="relative mt-3 flex h-[9rem] w-full shrink-0 justify-center">
           <div className="track-slot__stack absolute inset-x-0 top-0 flex justify-center">
             {renderStack(heroesBelow, false, 'hero')}
             {isRune && renderStack(enemiesBelow, false, 'enemy')}
@@ -3277,7 +3284,7 @@ const InitTracker = () => {
       <PageTransition>
        
         <div className="min-w-0">
-          <div className={`min-h-screen overflow-x-hidden bg-slate-950 p-3 pb-24 pt-28 text-slate-200 sm:p-4 sm:pt-28 md:pb-6 ${presentation ? 'text-lg' : ''}`}>
+          <div className={`min-h-screen overflow-x-hidden bg-slate-950 p-3 pt-20 text-slate-200 sm:p-4 sm:pt-20 md:pb-6 ${presentation ? 'text-lg' : ''}`}>
             <TrackTurnHeader
               roundLabel={ti.ronda || 'Ronda'}
               round={roundNumber}
@@ -3686,6 +3693,9 @@ const InitTracker = () => {
                 currentSlotIndex={currentSlotIndex}
                 presentation={presentation}
                 onTogglePresentation={() => setPresentation((prev) => !prev)}
+                onNextTurn={() => setTimeout(() => handleNextTurn(), 300)}
+                onUndoTurn={undoTurn}
+                canUndo={undoCount > 0}
                 labels={{
                   section: ti.track || 'Orden de iniciativa',
                   track: ti.track || 'Orden de iniciativa',
@@ -3698,6 +3708,8 @@ const InitTracker = () => {
                   exitPresentation: ti.exitPresentation || 'Salir de presentación',
                   current: ti.currentTurn || 'Turno actual',
                   empty: ti.noCharacters || 'Sin personajes',
+                  undoTurn: ti.undoTurn || 'Deshacer',
+                  nextTurn: ti.nextTurn || 'Siguiente turno',
                 }}
               />
             </div>
@@ -3827,62 +3839,6 @@ const InitTracker = () => {
               </div>
             )}
 
-        
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <button
-                type="button"
-                onClick={undoTurn}
-                disabled={undoCount === 0}
-                className="flex min-h-11 items-center gap-2 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 font-semibold text-slate-100 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 disabled:opacity-40"
-              >
-                <RiArrowTurnBackLine aria-hidden="true" className="text-lg" />
-                {ti.undoTurn || 'Deshacer turno'}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setTimeout(() => {
-                    handleNextTurn();
-                  }, 300);
-                }}
-                className="min-h-11 rounded-full bg-yellow-500 px-5 py-2 font-bold text-slate-950 shadow-lg hover:bg-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
-              >
-                {ti.nextTurn || 'Siguiente turno'}
-              </button>
-            </div>
-
-            {/* Barra de accion flotante para movil */}
-            <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 pb-3 md:hidden">
-              <div className="pointer-events-auto mx-auto flex max-w-md items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/95 p-2 shadow-2xl backdrop-blur">
-                <button
-                  type="button"
-                  onClick={undoTurn}
-                  disabled={undoCount === 0}
-                  aria-label={ti.undoTurn || 'Deshacer turno'}
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-800 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 disabled:opacity-40"
-                >
-                  <RiArrowTurnBackLine aria-hidden="true" size={22} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openCategorySelector()}
-                  className="min-h-12 flex-1 rounded-xl border border-slate-600 bg-slate-800 px-3 text-sm font-semibold text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-                >
-                  {ti.addEnemy || '+ Enemigo'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTimeout(() => handleNextTurn(), 300);
-                  }}
-                  className="min-h-12 flex-[1.4] rounded-xl bg-yellow-500 px-3 text-sm font-bold text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
-                >
-                  {ti.nextTurn || 'Siguiente turno'}
-                </button>
-              </div>
-            </div>
-              
-            
           </div>
         </div>
         <ToastContainer toastClassName="toast-expand" bodyClassName="" />

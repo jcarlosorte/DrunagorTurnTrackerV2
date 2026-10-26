@@ -3,7 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
-import { GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDiceTarget, GiShield, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiCardDraw, GiCardPick, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer } from 'react-icons/gi';
+import { languages as availableLanguages, languageNames } from '@/i18n/languageData';
+import { useSavesUi } from '@/context/SavesUiContext';
+import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDiceTarget, GiShield, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiCardDraw, GiCardPick, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer } from 'react-icons/gi';
 import { MdAddCircleOutline } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { ENEMIES } from '@/data/enemies';
@@ -28,8 +30,10 @@ const TopMenu = ({
   onTileDraw
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { translations } = useLanguage();
+  const { translations, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
+  const { openSaves } = useSavesUi() || {};
+  const savesT = translations?.saves || {};
   const t = translations?.trackerInit || {};
   const { resetPlacedEnemies, activaHuesped, desactivaHuesped, huespedActivo, activaAcecho, desactivaAcecho, acechoActivo, activaInvadidos, desactivaInvadidos, invadidosActivo, oscuridadActivo, activaOscuridad, desactivaOscuridad,
                                          asaltoActivo, activaAsalto, desactivaAsalto } = useInitEnemies();
@@ -127,15 +131,20 @@ const TopMenu = ({
     
   return (
     <>
-    <div ref={containerRef} className="layer-track-bar fixed inset-x-0 top-14 border-b border-slate-700/70 bg-slate-900/95 shadow-lg backdrop-blur-xl">
-      <div className="mx-auto flex max-w-screen-xl items-center justify-between gap-2 px-3 py-2 sm:px-4">
-        <div className="flex items-center gap-2">
+    <div ref={containerRef} className="layer-track-bar fixed inset-x-0 top-0 border-b border-slate-700/70 bg-slate-900/95 shadow-lg backdrop-blur-xl">
+      <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-2 px-3 py-2 sm:px-6">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="mr-1 hidden items-center gap-2 text-sm font-black uppercase tracking-[0.2em] text-white lg:flex">
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" aria-hidden="true" />
+            Drunagor
+          </span>
           <button
             type="button"
             onClick={() => toggleMenu('enemies')}
             aria-expanded={activeMenu === 'enemies'}
             aria-controls="track-menu-enemies"
             aria-label={t.enemiesMenu || 'Enemigos'}
+            title={t.enemiesMenu || 'Enemigos'}
             className={`flex h-11 w-11 items-center justify-center rounded-full text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${activeMenu === 'enemies' ? 'bg-sky-700' : 'bg-slate-800 hover:bg-slate-700'}`}
           >
             <GiMinions size={24} aria-hidden="true" />
@@ -146,6 +155,7 @@ const TopMenu = ({
             aria-expanded={activeMenu === 'runes'}
             aria-controls="track-menu-runes"
             aria-label={t.runesMenu || 'Runas'}
+            title={t.runesMenu || 'Runas'}
             className={`flex h-11 w-11 items-center justify-center rounded-full text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${activeMenu === 'runes' ? 'bg-sky-700' : 'bg-slate-800 hover:bg-slate-700'}`}
           >
             <GiRuneStone size={24} aria-hidden="true" />
@@ -156,6 +166,7 @@ const TopMenu = ({
             aria-expanded={activeMenu === 'scenario'}
             aria-controls="track-menu-scenario"
             aria-label={t.scenarioMenu || 'Escenario'}
+            title={t.scenarioMenu || 'Escenario'}
             className={`flex h-11 w-11 items-center justify-center rounded-full text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${activeMenu === 'scenario' ? 'bg-sky-700' : 'bg-slate-800 hover:bg-slate-700'}`}
           >
             <GiVillage size={24} aria-hidden="true" />
@@ -163,6 +174,16 @@ const TopMenu = ({
         </div>
 
         <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => openSaves?.()}
+            className="flex min-h-11 items-center gap-2 rounded-full bg-emerald-700 px-3 text-sm font-bold text-white transition hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
+            aria-label={savesT.title || 'Partidas'}
+            title={savesT.title || 'Partidas'}
+          >
+            <GiArchiveRegister aria-hidden="true" size={20} />
+            <span className="hidden md:inline">{savesT.title || 'Partidas'}</span>
+          </button>
           <button
             type="button"
             onClick={() => navigate('/')}
@@ -181,6 +202,17 @@ const TopMenu = ({
           >
             <GiGearHammer size={20} aria-hidden="true" />
           </button>
+          <label htmlFor="track-lang" className="sr-only">{savesT.language || 'Idioma'}</label>
+          <select
+            id="track-lang"
+            value={language}
+            onChange={(event) => setLanguage(event.target.value)}
+            className="min-h-11 rounded-lg border border-slate-600 bg-slate-800 px-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+          >
+            {availableLanguages.map((lang) => (
+              <option key={lang} value={lang}>{languageNames[lang]}</option>
+            ))}
+          </select>
           {activeMenu && (
             <button
               type="button"
@@ -227,8 +259,8 @@ const TopMenu = ({
                       setEnemySelect(key);
                       handleEnemySelect({ target: { value: key } });
                     }}
-                    className={`flex flex-col items-center gap-1 px-2 py-2 text-sm rounded-lg font-semibold hover:bg-blue-500 transition ${
-                      enemySelect === key ? 'bg-blue-600' : 'bg-slate-700'
+                    className={`flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-sm font-semibold transition ${
+                      enemySelect === key ? 'border-sky-400 bg-sky-700 text-white shadow-lg' : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
                     }`}
                   >
                     <GiBullyMinion className={`text-2xl ${color}`} />
@@ -262,8 +294,8 @@ const TopMenu = ({
                         setManualSelect(key);
                         handleManualSelect({ target: { value: key } });
                       }}
-                      className={`flex flex-col items-center gap-1 px-2 py-2 text-sm rounded-lg font-semibold hover:bg-purple-500 transition ${
-                        manualSelect === key ? 'bg-purple-600' : 'bg-slate-700'
+                      className={`flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-sm font-semibold transition ${
+                        manualSelect === key ? 'border-purple-400 bg-purple-700 text-white shadow-lg' : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
                       }`}
                     >
                       <GiBullyMinion className={`text-2xl ${color}`} />

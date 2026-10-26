@@ -7,10 +7,12 @@ import { SavesUiProvider } from "@/context/SavesUiContext";
 
 function AppContent() {
   const location = useLocation();
+  // El track monta su propia barra completa: así solo hay una cabecera.
+  const hasOwnHeader = location.pathname === "/init";
   const isTrackerRoute = ["/init", "/config", "/tracker", "/saves"].includes(location.pathname);
 
   return (
-    <div className={`min-h-screen bg-slate-950 pt-14 ${isTrackerRoute ? 'text-left' : ''}`}>
+    <div className={`min-h-screen bg-slate-950 ${hasOwnHeader ? "" : "pt-14"} ${isTrackerRoute ? "text-left" : ""}`}>
       <AnimatedRoutes />
       <StorageWarning />
     </div>

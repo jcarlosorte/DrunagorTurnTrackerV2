@@ -489,8 +489,9 @@ textarea:focus-visible {
   z-index: 3;
 }
 
+/* Sin `position` aquí: la clase utilitaria del markup decide cómo se coloca.
+   Si se fuerza `relative`, `inset-x-0` deja de funcionar y las pilas colapsan. */
 .track-slot__stack {
-  position: relative;
   z-index: 1;
 }
 

@@ -12,3 +12,7 @@ coverage/
 playwright-report/
 test-results/
 .tmp-build/
+
+# Capturas temporales de verificacion visual
+shot-*.png
+track-check.png
