@@ -226,3 +226,12 @@ Usar HTTPS, compresión Brotli/Gzip, CDN delante de los assets y despliegues at�
 - `.track-slot__stack` tenía `position: relative` en CSS, que sobrescribía la utilidad `absolute` del marcado. Al no aplicar `inset-x-0`, el ancho de la pila caía a unos pocos píxeles y las imágenes quedaban a 6×6 px.
 - Se eliminó ese `position` forzado; ahora el contenedor se coloca con las utilidades del marcado.
 - Además, `getHeroProf` y la construcción de `placedHeroes` ahora toleran identificadores de héroe desconocidos en lugar de romper el render.
+## Ajustes del tablero (iteración actual)
+
+- Las ayudas de iconos de estado e inmunidad usan `title` nativo: el tablero tiene scroll y los tooltips absolutos quedaban recortados o tapados.
+- Iconos de estado reducidos a 16 px (24 px en jefes) y tarjetas ampliadas a 104 px para que quepan varios estados sin solaparse.
+- Solape de cartas aumentado: 62/48/38/30 px según cantidad, con filas `minmax(21rem, auto)` que crecen cuando hay muchas cartas en una posición.
+- Fila central más discreta: etiquetas en mayúsculas de 0.55–0.75 rem, gemas de 40 px y barra de 2rem.
+- La barra del tablero agrupa vista, **Ronda/Turno**, acciones centradas, zoom compacto, **Bolsa** y **Presentación**.
+- El panel de la bolsa es opcional y se coloca a la derecha en escritorio, debajo en móvil.
+- El nombre de la entidad activa se muestra traducido (enemigos, héroes o runas) en lugar del identificador bruto.

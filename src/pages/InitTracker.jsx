@@ -2076,6 +2076,7 @@ const InitTracker = () => {
   const [extraTurnIndex, setExtraTurnIndex] = useState(() => persistedSession.extraTurnIndex || 0);
   const [extraTurnTotal, setExtraTurnTotal] = useState(() => persistedSession.extraTurnTotal || 0);
   const [presentation, setPresentation] = useState(false);
+  const [bagOpen, setBagOpen] = useState(true);
   const [undoCount, setUndoCount] = useState(0);
   const turnHistoryRef = useRef([]);
 
@@ -3100,7 +3101,7 @@ const InitTracker = () => {
     const runesBelow = placedRunes.filter(r => r.rune.colorIndex === index && r.rune.posicion === 'abajo');
 
     const renderStack = (items, isTop, type = 'hero') => {
-      const spacing = items.length <= 2 ? 90 : items.length === 3 ? 70 : items.length === 4 ? 40 : 30;
+      const spacing = items.length <= 2 ? 62 : items.length === 3 ? 48 : items.length === 4 ? 38 : 30;
       const reversed = isTop ? [...items].reverse() : items;
       
       return reversed.map((item, i) => {
@@ -3117,7 +3118,7 @@ const InitTracker = () => {
         return (
           <div
             key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : item.id}
-            className="absolute left-1/2 w-[92px] max-w-full -translate-x-1/2 transition-transform duration-300"
+            className="absolute left-1/2 w-[104px] max-w-full -translate-x-1/2 transition-transform duration-300"
             style={{
               ...style,
               zIndex: isCurrentTurn ? 40 : style.zIndex ?? 100,
@@ -3175,7 +3176,7 @@ const InitTracker = () => {
       <div
         key={index}
         className={`track-slot flex w-full min-w-0 flex-col ${slotHeightClass} py-2`}
-        style={{ minHeight: '26rem' }}
+        style={{ minHeight: '21rem' }}
       >
         
         {/* Escalonado arriba */}
@@ -3192,15 +3193,15 @@ const InitTracker = () => {
           <div className={classNames(
             'flex min-w-0 items-center justify-center font-fantasy',
             {
-              'h-12 w-12 shrink-0 rotate-45 border-4 gem-orange': index === 1,
-              'h-12 w-12 shrink-0 rotate-45 border-4 gem-green': index === 3,
-              'h-12 w-12 shrink-0 rotate-45 border-4 gem-blue': index === 5,
-              'h-12 w-12 shrink-0 rotate-45 border-4 gem-red': index === 7,
-              'h-12 w-12 shrink-0 rotate-45 border-4 gem-gray': index === 9,
-              'h-10 w-full min-w-0 bg-slate-800 text-center text-slate-100 shadow': index % 2 === 0
+              'h-10 w-10 shrink-0 rotate-45 border-[3px] gem-orange': index === 1,
+              'h-10 w-10 shrink-0 rotate-45 border-[3px] gem-green': index === 3,
+              'h-10 w-10 shrink-0 rotate-45 border-[3px] gem-blue': index === 5,
+              'h-10 w-10 shrink-0 rotate-45 border-[3px] gem-red': index === 7,
+              'h-10 w-10 shrink-0 rotate-45 border-[3px] gem-gray': index === 9,
+              'h-8 w-full min-w-0 bg-slate-800 text-center text-slate-100 shadow': index % 2 === 0
             })}>
             <span
-              className="block w-full truncate px-0.5 text-center text-[0.6rem] leading-tight sm:text-xs md:text-sm lg:text-base"
+              className="block w-full truncate px-0.5 text-center text-[0.55rem] font-semibold uppercase tracking-wide leading-tight text-slate-200 sm:text-[0.65rem] md:text-xs"
             >
               {index === 0 && tr.defensor ||
                 index === 2 && tr.apoyo ||
@@ -3256,6 +3257,18 @@ const InitTracker = () => {
     return typeof currentTurnEntity.position === 'number' ? currentTurnEntity.position : -1;
   })();
 
+  const currentEntityName = (() => {
+    const entity = currentTurnEntity;
+    if (!entity) return '';
+    const id = entity.id;
+    return translations.enemies?.[id]
+      || translations.heroes?.[id]
+      || translations.runas?.[id]
+      || entity.name
+      || id
+      || '';
+  })();
+
   const slotSummaries = Array.from({ length: 11 }, (_, index) => {
     const runeColorId = Object.keys(runesColorMap).find((key) => runesColorMap[key] === index);
     const label =
@@ -3285,14 +3298,6 @@ const InitTracker = () => {
        
         <div className="min-w-0">
           <div className={`min-h-screen overflow-x-hidden bg-slate-950 p-3 pt-20 text-slate-200 sm:p-4 sm:pt-20 md:pb-6 ${presentation ? 'text-lg' : ''}`}>
-            <TrackTurnHeader
-              roundLabel={ti.ronda || 'Ronda'}
-              round={roundNumber}
-              turnLabel={ti.turno || 'Turno'}
-              turn={turnIndex >= 0 ? turnIndex + 1 : '—'}
-              entityLabel={currentTurnEntity ? (currentTurnEntity.name || currentTurnEntity.id || '') : ''}
-            />
-
             {!presentation && (
               <TopMenu
                 onAddEnemy={openCategorySelector}
@@ -3686,45 +3691,70 @@ const InitTracker = () => {
               </div>
             )}
             
-            <div className="mt-3">
-              <TurnTrackBoard
-                renderSlot={renderSlot}
-                summaries={slotSummaries}
-                currentSlotIndex={currentSlotIndex}
-                presentation={presentation}
-                onTogglePresentation={() => setPresentation((prev) => !prev)}
-                onNextTurn={() => setTimeout(() => handleNextTurn(), 300)}
-                onUndoTurn={undoTurn}
-                canUndo={undoCount > 0}
-                labels={{
-                  section: ti.track || 'Orden de iniciativa',
-                  track: ti.track || 'Orden de iniciativa',
-                  board: ti.viewBoard || 'Tablero',
-                  list: ti.viewList || 'Lista',
-                  zoomIn: ti.zoomIn || 'Aumentar zoom',
-                  zoomOut: ti.zoomOut || 'Reducir zoom',
-                  fit: ti.fitWidth || 'Ajustar',
-                  presentation: ti.presentation || 'Modo presentación',
-                  exitPresentation: ti.exitPresentation || 'Salir de presentación',
-                  current: ti.currentTurn || 'Turno actual',
-                  empty: ti.noCharacters || 'Sin personajes',
-                  undoTurn: ti.undoTurn || 'Deshacer',
-                  nextTurn: ti.nextTurn || 'Siguiente turno',
-                }}
-              />
-            </div>
+            <div className="mt-3 flex flex-col gap-3 lg:flex-row">
+              <div className="min-w-0 flex-1">
+                <TurnTrackBoard
+                  renderSlot={renderSlot}
+                  summaries={slotSummaries}
+                  currentSlotIndex={currentSlotIndex}
+                  presentation={presentation}
+                  onTogglePresentation={() => setPresentation((prev) => !prev)}
+                  onNextTurn={() => setTimeout(() => handleNextTurn(), 300)}
+                  onUndoTurn={undoTurn}
+                  canUndo={undoCount > 0}
+                  bagOpen={bagOpen}
+                  onToggleBag={() => setBagOpen((prev) => !prev)}
+                  status={(
+                    <div className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs">
+                      <span className="font-semibold text-emerald-200">
+                        {ti.roundShort || 'Ronda'} <b className="text-white">{roundNumber || 0}</b>
+                      </span>
+                      <span className="h-4 w-px bg-slate-700" aria-hidden="true" />
+                      <span className="text-slate-300">
+                        {ti.turno || 'Turno'} <b className="text-white">{turnIndex >= 0 ? turnIndex + 1 : '—'}</b>
+                      </span>
+                      {currentEntityName && (
+                        <>
+                          <span className="h-4 w-px bg-slate-700" aria-hidden="true" />
+                          <span className="max-w-[10rem] truncate text-sky-200" title={currentEntityName}>{currentEntityName}</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  labels={{
+                    section: ti.track || 'Orden de iniciativa',
+                    track: ti.track || 'Orden de iniciativa',
+                    board: ti.viewBoard || 'Tablero',
+                    list: ti.viewList || 'Lista',
+                    zoomIn: ti.zoomIn || 'Aumentar zoom',
+                    zoomOut: ti.zoomOut || 'Reducir zoom',
+                    fit: ti.fitWidth || 'Ajustar',
+                    presentation: ti.presentation || 'Modo presentación',
+                    exitPresentation: ti.exitPresentation || 'Salir de presentación',
+                    current: ti.currentTurn || 'Turno actual',
+                    empty: ti.noCharacters || 'Sin personajes',
+                    undoTurn: ti.undoTurn || 'Deshacer',
+                    nextTurn: ti.nextTurn || 'Siguiente turno',
+                    bag: ti.estadoBolsa || 'Bolsa de runas',
+                  }}
+                />
+              </div>
 
-            {/* 📦 Estado de la bolsa debajo del track */}
-            <BagStatusPanel
-              usedTiles={usedTiles}
-              availableTiles={availableTiles}
-              labels={{
-                title: ti.estadoBolsa || 'Estado de la Bolsa de Runas',
-                drawn: ti.extraidas || 'Extraídas',
-                total: ti.total || 'Total',
-              }}
-              colors={ti.colores || {}}
-            />
+              {bagOpen && (
+                <aside className="lg:w-72 lg:shrink-0">
+                  <BagStatusPanel
+                    usedTiles={usedTiles}
+                    availableTiles={availableTiles}
+                    labels={{
+                      title: ti.estadoBolsa || 'Estado de la Bolsa de Runas',
+                      drawn: ti.extraidas || 'Extraídas',
+                      total: ti.total || 'Total',
+                    }}
+                    colors={ti.colores || {}}
+                  />
+                </aside>
+              )}
+            </div>
             
             {categorySelector.open && (
               <div className="layer-modal fixed inset-0 flex items-center justify-center bg-black/60 p-4" role="presentation">

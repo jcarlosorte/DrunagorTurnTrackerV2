@@ -13,6 +13,9 @@ export default function TurnTrackBoard({
   onTogglePresentation,
   onNextTurn,
   onUndoTurn,
+  status = null,
+  bagOpen = false,
+  onToggleBag,
   canUndo = false,
   labels = {},
 }) {
@@ -59,37 +62,42 @@ export default function TurnTrackBoard({
   };
 
   const toolbar = (
-    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-      <div role="group" aria-label={labels.viewMode || 'Vista del tablero'} className="flex rounded-xl border border-slate-700 bg-slate-900 p-1">
-        <button
-          type="button"
-          aria-pressed={view === 'board'}
-          onClick={() => setView('board')}
-          className={`min-h-9 rounded-lg px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
-            view === 'board' ? 'bg-sky-700 text-white' : 'text-slate-300 hover:text-white'
-          }`}
-        >
-          {labels.board || 'Tablero'}
-        </button>
-        <button
-          type="button"
-          aria-pressed={view === 'list'}
-          onClick={() => setView('list')}
-          className={`min-h-9 rounded-lg px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
-            view === 'list' ? 'bg-sky-700 text-white' : 'text-slate-300 hover:text-white'
-          }`}
-        >
-          {labels.list || 'Lista'}
-        </button>
+    <div className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-700 bg-slate-900/70 px-2 py-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <div role="group" aria-label={labels.viewMode || 'Vista del tablero'} className="flex rounded-xl border border-slate-700 bg-slate-900 p-1">
+          <button
+            type="button"
+            aria-pressed={view === 'board'}
+            onClick={() => setView('board')}
+            className={`min-h-9 rounded-lg px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              view === 'board' ? 'bg-sky-700 text-white' : 'text-slate-300 hover:text-white'
+            }`}
+          >
+            {labels.board || 'Tablero'}
+          </button>
+          <button
+            type="button"
+            aria-pressed={view === 'list'}
+            onClick={() => setView('list')}
+            className={`min-h-9 rounded-lg px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              view === 'list' ? 'bg-sky-700 text-white' : 'text-slate-300 hover:text-white'
+            }`}
+          >
+            {labels.list || 'Lista'}
+          </button>
+        </div>
+
+        {/* Ronda y turno, junto al selector de vista */}
+        {status}
       </div>
 
-      {/* Acciones de turno, centradas entre la vista y el zoom */}
+      {/* Acciones de turno, centradas */}
       <div className="order-3 flex w-full items-center justify-center gap-2 sm:order-none sm:w-auto sm:flex-1">
         <button
           type="button"
           onClick={onUndoTurn}
           disabled={!canUndo}
-          className="flex min-h-10 items-center gap-1.5 rounded-xl border border-slate-600 bg-slate-800 px-3 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 disabled:opacity-40"
+          className="flex min-h-10 items-center gap-2 rounded-xl border border-slate-600 bg-slate-800 px-3 text-sm font-semibold text-slate-100 shadow-sm transition hover:border-slate-500 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 disabled:opacity-40"
         >
           <span aria-hidden="true" className="text-base">↶</span>
           <span className="hidden sm:inline">{labels.undoTurn || 'Deshacer'}</span>
@@ -97,55 +105,68 @@ export default function TurnTrackBoard({
         <button
           type="button"
           onClick={onNextTurn}
-          className="min-h-10 rounded-xl bg-yellow-500 px-4 text-sm font-bold text-slate-950 shadow-lg shadow-yellow-900/30 transition hover:bg-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
+          className="min-h-10 rounded-xl bg-gradient-to-b from-yellow-400 to-yellow-500 px-4 text-sm font-bold text-slate-950 shadow-lg shadow-yellow-900/30 transition hover:from-yellow-300 hover:to-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
         >
           {labels.nextTurn || 'Siguiente turno'}
         </button>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         {view === 'board' && (
-          <div className="flex items-center gap-1 rounded-xl border border-slate-700 bg-slate-900 p-1">
+          <div className="flex items-center rounded-xl border border-slate-700 bg-slate-900 p-0.5">
             <button
               type="button"
               onClick={() => setScale((prev) => clamp(prev - 0.1))}
               aria-label={labels.zoomOut || 'Reducir zoom'}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-white hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
             >
               −
-            </button>
-            <span className="min-w-12 text-center text-xs font-semibold text-slate-200" aria-live="polite">
-              {Math.round(scale * 100)}%
-            </span>
-            <button
-              type="button"
-              onClick={() => setScale((prev) => clamp(prev + 0.1))}
-              aria-label={labels.zoomIn || 'Aumentar zoom'}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-white hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-            >
-              +
             </button>
             <button
               type="button"
               onClick={fitToWidth}
-              className="min-h-9 rounded-lg px-2 text-xs font-semibold text-sky-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              title={labels.fit || 'Ajustar'}
+              className="min-h-8 rounded-lg px-1.5 text-[0.7rem] font-semibold text-sky-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
             >
-              {labels.fit || 'Ajustar'}
+              {Math.round(scale * 100)}%
+            </button>
+            <button
+              type="button"
+              onClick={() => setScale((prev) => clamp(prev + 0.1))}
+              aria-label={labels.zoomIn || 'Aumentar zoom'}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            >
+              +
             </button>
           </div>
         )}
 
         <button
           type="button"
+          onClick={onToggleBag}
+          aria-pressed={bagOpen}
+          title={labels.bag || 'Bolsa de runas'}
+          aria-label={labels.bag || 'Bolsa de runas'}
+          className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+            bagOpen ? 'border-emerald-400 bg-emerald-700 text-white' : 'border-slate-700 bg-slate-900 text-slate-200 hover:text-white'
+          }`}
+        >
+          🎒
+        </button>
+
+        <button
+          type="button"
           onClick={onTogglePresentation}
           aria-pressed={presentation}
-          className={`min-h-9 rounded-xl border px-3 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+          title={labels.presentation || 'Modo presentación'}
+          className={`flex h-9 items-center gap-1.5 rounded-xl border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
             presentation
               ? 'border-emerald-400 bg-emerald-700 text-white'
               : 'border-slate-700 bg-slate-900 text-slate-200 hover:text-white'
           }`}
         >
-          {presentation ? (labels.exitPresentation || 'Salir de presentación') : (labels.presentation || 'Modo presentación')}
+          <span aria-hidden="true">🖵</span>
+          <span className="hidden lg:inline">{presentation ? (labels.exitPresentation || 'Salir') : (labels.presentation || 'Presentación')}</span>
         </button>
       </div>
     </div>
@@ -163,7 +184,7 @@ export default function TurnTrackBoard({
     >
       <div style={{ width: `${BASE_WIDTH * scale}px` }}>
         <div style={{ width: `${BASE_WIDTH}px`, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
-          <div className="grid snap-x snap-mandatory grid-cols-11 auto-rows-[26rem] gap-0 bg-slate-800 p-2">
+          <div className="grid snap-x snap-mandatory grid-cols-11 auto-rows-[minmax(21rem,auto)] gap-0 bg-slate-800 p-2">
             {summaries.map(({ index }) => (
               <div key={index} className="min-w-0">{renderSlot(index)}</div>
             ))}

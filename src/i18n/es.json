@@ -507,7 +507,10 @@
     "undoDone": "Turno anterior restaurado",
     "noUndo": "No hay turnos que deshacer",
     "drawTile": "Robar ficha",
-    "viewMode": "Vista del tablero"
+    "viewMode": "Vista del tablero",
+    "roundShort": "Ronda",
+    "bag": "Bolsa de runas",
+    "presentationShort": "Presentación"
   },
   "scenarioCard": {
     "Manifiesta": "Manifiesta",

@@ -506,7 +506,10 @@
     "undoDone": "Previous turn restored",
     "noUndo": "There are no turns to undo",
     "drawTile": "Draw tile",
-    "viewMode": "Board view"
+    "viewMode": "Board view",
+    "roundShort": "Round",
+    "bag": "Rune bag",
+    "presentationShort": "Presentation"
   },
   "scenarioCard": {
     "Manifiesta": "Manifest",

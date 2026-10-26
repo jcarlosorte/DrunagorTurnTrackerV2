@@ -6,66 +6,43 @@ import { ENEMY_RING_COLORS_BIG } from '@/data/enemyRingsBig';
 import { useLanguage } from '@/context/LanguageContext';
 import { borderColorMap, categoryTextGlowMap, textBgColorMap } from './enemyVisuals';
 
-// Subcomponente propio para poder usar estado sin llamar a hooks dentro de un map.
+// Los ayudas usan `title` nativo: el tablero tiene scroll y `overflow`, así que
+// cualquier tooltip absoluto quedaría recortado o tapado por otras tarjetas.
 function EstadoBadge({ estado, isBoss, label }) {
-  const [hover, setHover] = useState(false);
   const config = ESTADOS_ALTERADOS.find((item) => item.id === estado.id);
   if (!config) return null;
 
+  const text = `${label || config.texto}${estado.count > 1 ? ` x${estado.count}` : ''}`;
+
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      onFocus={() => setHover(true)}
-      onBlur={() => setHover(false)}
-      tabIndex={0}
-      aria-label={`${label || config.texto}${estado.count > 1 ? ` x${estado.count}` : ''}`}
-    >
+    <div className="relative" title={text} tabIndex={0} aria-label={text}>
       <img
         src={config.imagen}
         alt=""
-        className={`${isBoss ? 'h-8 w-8' : 'h-5 w-5'} rounded-full border border-white shadow-md`}
+        className={`${isBoss ? 'h-6 w-6' : 'h-4 w-4'} rounded-full border border-white/80 shadow`}
       />
       {estado.count > 1 && (
-        <span className="absolute -right-1 -top-1 rounded-full bg-red-600 px-1 text-[0.6rem] font-bold text-white">
+        <span className="absolute -right-1 -top-1 rounded-full bg-red-600 px-1 text-[0.55rem] font-bold leading-none text-white">
           {estado.count}
         </span>
-      )}
-      {hover && (
-        <div className="absolute left-1/2 top-full z-30 mt-1 w-max max-w-[200px] -translate-x-1/2 whitespace-normal break-words rounded bg-black px-2 py-1 text-[0.65rem] text-white">
-          <strong>{label || config.texto}</strong>
-        </div>
       )}
     </div>
   );
 }
 
 function ImmunityBadge({ immunityId, isBoss, label }) {
-  const [hover, setHover] = useState(false);
   const config = INMUNIDADES.find((item) => item.id === immunityId);
   if (!config) return null;
 
+  const text = label || immunityId;
+
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      onFocus={() => setHover(true)}
-      onBlur={() => setHover(false)}
-      tabIndex={0}
-      aria-label={label || immunityId}
-    >
+    <div className="relative" title={text} tabIndex={0} aria-label={text}>
       <img
         src={config.imagen}
         alt=""
-        className={`${isBoss ? 'h-8 w-8' : 'h-5 w-5'} rounded-full border border-white shadow-md`}
+        className={`${isBoss ? 'h-6 w-6' : 'h-4 w-4'} rounded-full border border-white/80 shadow`}
       />
-      {hover && (
-        <div className="absolute left-1/2 top-full z-30 mt-1 w-max max-w-[200px] -translate-x-1/2 whitespace-normal break-words rounded bg-black px-2 py-1 text-[0.65rem] text-white">
-          <strong>{label || immunityId}</strong>
-        </div>
-      )}
     </div>
   );
 }
