@@ -43,3 +43,54 @@ export function removeStorage(key) {
 export const isPlainObject = (value) => (
   value !== null && typeof value === 'object' && !Array.isArray(value)
 );
+
+export const GAME_STORAGE_KEYS = [
+  'lang',
+  'expansions',
+  'trackerData',
+  'gameState',
+  'initEnemiesState',
+  'initRunesState',
+  'trackerSession',
+];
+
+export function createStorageSnapshot() {
+  const data = {};
+  GAME_STORAGE_KEYS.forEach((key) => {
+    const value = readJsonStorage(key, undefined);
+    if (value !== undefined) data[key] = value;
+  });
+
+  return {
+    app: 'drunagor-turn-tracker',
+    schemaVersion: 1,
+    exportedAt: new Date().toISOString(),
+    data,
+  };
+}
+
+export function importStorageSnapshot(snapshot) {
+  if (!isPlainObject(snapshot) || snapshot.schemaVersion !== 1 || !isPlainObject(snapshot.data)) {
+    throw new Error('Formato de partida no compatible');
+  }
+
+  const { data } = snapshot;
+  if (data.lang !== undefined && typeof data.lang !== 'string') throw new Error('Idioma no válido');
+  if (data.expansions !== undefined && !Array.isArray(data.expansions)) throw new Error('Expansiones no válidas');
+  ['trackerData', 'gameState', 'initEnemiesState', 'initRunesState', 'trackerSession']
+    .forEach((key) => {
+      if (data[key] !== undefined && !isPlainObject(data[key])) throw new Error(`Estado no válido: ${key}`);
+    });
+
+  GAME_STORAGE_KEYS.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      writeJsonStorage(key, data[key]);
+    }
+  });
+}
+
+export function clearGameSession() {
+  if (!canUseStorage()) return;
+  ['trackerData', 'gameState', 'initEnemiesState', 'initRunesState', 'trackerSession']
+    .forEach((key) => removeStorage(key));
+}

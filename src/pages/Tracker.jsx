@@ -215,7 +215,7 @@ const TrackerSelect = () => {
   
   return (
   <PageTransition>
-    <div className="p-4 space-y-8 font-fantasy bg-slate-700 min-h-screen">
+    <div className="mx-auto min-h-screen max-w-7xl space-y-8 bg-slate-950 px-3 py-6 font-sans text-slate-100 sm:px-6 lg:px-8">
       <div className="no-header" />
       <h1 className="flex justify-center items-center gap-3 text-4xl font-extrabold text-yellow-300 drop-shadow-lg uppercase tracking-wider">
         <GiBadGnome className="text-yellow-400 text-5xl" />
@@ -224,11 +224,17 @@ const TrackerSelect = () => {
       
       {/* Selección de héroes */}
       <div className="border-0 rounded-3xl p-2 bg-slate-600 shadow-2xl border-yellow-700 text-black">
-        <div className="cursor-pointer flex items-center gap-2" onClick={() => setShowHeroes(!showHeroes)}>
-          <RuneTitle color="yellow"> <GiAttachedShield className="text-yellow-800 text-2xl" />{t.selectHeroes}</RuneTitle>
-        </div>
+        <button
+          type="button"
+          aria-expanded={showHeroes}
+          aria-controls="heroes-selection"
+          className="flex min-h-11 w-full items-center gap-2 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+          onClick={() => setShowHeroes(!showHeroes)}
+        >
+          <RuneTitle color="yellow"> <GiAttachedShield className="text-yellow-800 text-2xl" aria-hidden="true" />{t.selectHeroes}</RuneTitle>
+        </button>
         {showHeroes && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
+          <div id="heroes-selection" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
             {heroesInSelectedExpansions.map((hero) => {
               const isSelected = selectedHeroes.includes(hero.id);
               return (
@@ -243,7 +249,8 @@ const TrackerSelect = () => {
                     checked={isSelected}
                     onChange={() => handleHeroSelect(hero.id)}
                     disabled={!isSelected && selectedHeroes.length >= 5}
-                    className="hidden"
+                    className="sr-only peer"
+                    aria-label={getHeroName(hero.id)}
                   />
                   {hero.image && (
                     <div className="relative w-full max-w-[150px] mx-auto">
@@ -312,13 +319,19 @@ const TrackerSelect = () => {
 
       {/* Enemigos agrupados por color */}
       <div className="border-0 rounded-3xl p-2 bg-slate-600 shadow-2xl border-yellow-700 text-black">
-        <div className="cursor-pointer flex items-center gap-2" onClick={() => setShowEnemies(!showEnemies)}>
-          <RuneTitle color="red"><GiSharpedTeethSkull className="text-red-700 text-2xl" />{t.selectEnemies}</RuneTitle>
-        </div>
+        <button
+          type="button"
+          aria-expanded={showEnemies}
+          aria-controls="enemies-selection"
+          className="flex min-h-11 w-full items-center gap-2 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+          onClick={() => setShowEnemies(!showEnemies)}
+        >
+          <RuneTitle color="red"><GiSharpedTeethSkull className="text-red-700 text-2xl" aria-hidden="true" />{t.selectEnemies}</RuneTitle>
+        </button>
         
         {/* Comportamientos Generales */}
         {showEnemies && (
-        <div>
+        <div id="enemies-selection">
           <div className="flex flex-col sm:flex-row sm:justify-center sm:items-start sm:gap-4 mb-4">
 
           {/* Comportamientos */}
@@ -422,7 +435,8 @@ const TrackerSelect = () => {
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => handleEnemySelect(enemy.id)}
-                          className="hidden"
+                          className="sr-only peer"
+                          aria-label={getEnemyName(enemy.id)}
                         />
                         {enemy.imagen && (
                           <div className="relative w-full max-w-[120px] mx-auto">
@@ -447,22 +461,22 @@ const TrackerSelect = () => {
 
 
       {/* Botones */}
-      <div className="flex justify-between gap-4 mt-6 text-black">
+      <div className="sticky bottom-0 z-20 -mx-3 flex flex-col gap-3 border-t border-slate-700 bg-slate-950/95 px-3 py-4 text-black backdrop-blur sm:mx-0 sm:flex-row sm:justify-between sm:gap-4 sm:px-0">
         <button
           onClick={handleBack}
-          className="px-4 py-2 rounded-lg bg-blue-200 hover:bg-blue-400 shadow font-bold"
+          className="min-h-11 rounded-lg bg-blue-200 px-4 py-2 font-bold shadow hover:bg-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
         >
           {t.back}
         </button>
         <button
           onClick={handleReset}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition shadow "
+          className="min-h-11 rounded bg-red-500 px-4 py-2 font-bold text-white shadow transition hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
         >
           {t.reset}
         </button>
         <button
           onClick={handleConfirm}
-          className="px-4 py-2 rounded-lg bg-green-200 hover:bg-green-400 shadow font-bold"
+          className="min-h-11 rounded-lg bg-green-200 px-4 py-2 font-bold shadow hover:bg-green-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
         >
           {t.confirm}
         </button>

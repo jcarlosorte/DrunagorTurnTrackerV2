@@ -2,23 +2,42 @@ import { ENEMY_RING_COLORS } from '@/data/enemyRings';
 import { ENEMY_RING_COLORS_BIG } from '@/data/enemyRingsBig';
 import { useLanguage } from '@/context/LanguageContext';
 import { useGame } from '@/context/GameContext';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 
 const InitEnemiesContext = createContext();
 
 export const InitEnemiesProvider = ({ children }) => {
   const { language, translations } = useLanguage();
   const ti = translations.trackerInit || {};
-  const [placedEnemies, setPlacedEnemies] = useState([]);
-  const [huespedActivo, setHuespedActivo] = useState(false);
-  const [acechoActivo, setAcechoActivo] = useState(false);
-  const [invadidosActivo, setInvadidosActivo] = useState(false);
-  const [oscuridadActivo, setOscuridadActivo] = useState(false);
-  const [asaltoActivo, setAsaltoActivo] = useState(false);
-  const [usedColors, setUsedColors] = useState([]);
-  const [usedColorsBig, setUsedColorsBig] = useState([]); 
-  const [enemyColorMap, setEnemyColorMap] = useState({});
+  const persisted = readJsonStorage('initEnemiesState', {}, isPlainObject);
+  const [placedEnemies, setPlacedEnemies] = useState(() => persisted.placedEnemies || []);
+  const [huespedActivo, setHuespedActivo] = useState(() => persisted.huespedActivo || false);
+  const [acechoActivo, setAcechoActivo] = useState(() => persisted.acechoActivo || false);
+  const [invadidosActivo, setInvadidosActivo] = useState(() => persisted.invadidosActivo || false);
+  const [oscuridadActivo, setOscuridadActivo] = useState(() => persisted.oscuridadActivo || false);
+  const [asaltoActivo, setAsaltoActivo] = useState(() => persisted.asaltoActivo || false);
+  const [usedColors, setUsedColors] = useState(() => persisted.usedColors || []);
+  const [usedColorsBig, setUsedColorsBig] = useState(() => persisted.usedColorsBig || []);
+  const [enemyColorMap, setEnemyColorMap] = useState(() => persisted.enemyColorMap || {});
   const [avisos, setAvisos] = useState([]);
+
+  useEffect(() => {
+    writeJsonStorage('initEnemiesState', {
+      placedEnemies,
+      huespedActivo,
+      acechoActivo,
+      invadidosActivo,
+      oscuridadActivo,
+      asaltoActivo,
+      usedColors,
+      usedColorsBig,
+      enemyColorMap,
+    });
+  }, [
+    placedEnemies, huespedActivo, acechoActivo, invadidosActivo,
+    oscuridadActivo, asaltoActivo, usedColors, usedColorsBig, enemyColorMap,
+  ]);
   
   const { tileToasts, setTileToasts, showTileToast, handleTileDraw, drawMultipleTiles, tileWarning, setTileWarning } = useGame();
 
@@ -138,16 +157,25 @@ export const InitEnemiesProvider = ({ children }) => {
   };
   
   const resetPlacedEnemies = () => {
-    //console.log('Resetting placedEnemies');
     setPlacedEnemies([]);
     setUsedColors([]);
     setUsedColorsBig([]);
     setEnemyColorMap({});
   };
 
+  const resetEnemySession = () => {
+    resetPlacedEnemies();
+    setHuespedActivo(false);
+    setAcechoActivo(false);
+    setInvadidosActivo(false);
+    setOscuridadActivo(false);
+    setAsaltoActivo(false);
+    setAvisos([]);
+  };
+
   return (
     <InitEnemiesContext.Provider value={{ placedEnemies, setPlacedEnemies, placeEnemy, 
-                                         removeEnemyAt, removeEnemyByUUID, resetPlacedEnemies, 
+                                         removeEnemyAt, removeEnemyByUUID, resetPlacedEnemies, resetEnemySession, 
                                          assignColorToEnemy, releaseColor, usedColors, setUsedColors, 
                                          usedColorsBig, setUsedColorsBig, enemyColorMap, setEnemyColorMap, 
                                          huespedActivo, activaHuesped, desactivaHuesped, 

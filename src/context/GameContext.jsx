@@ -1,52 +1,71 @@
-import React, { createContext, useContext, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { FICHAS } from '@/data/fichas';
+import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { ALDEANO, ERRANTES } from '@/data/cartasEspeciales';
 import { v4 as uuidv4 } from 'uuid';
 
 const GameContext = createContext();
+const defaultRunes = { rojo: 0, azul: 0, verde: 0, naranja: 0, gris: 0 };
+const defaultDiscardedTiles = { rojo: [], azul: [], verde: [], naranja: [], gris: [] };
+const createInitialTiles = () => FICHAS.map((f) => ({ ...f, uuid: uuidv4() }));
 
 export const GameProvider = ({ children }) => {
-  const [runes, setRunes] = useState({
-    rojo: 0,
-    azul: 0,
-    verde: 0,
-    naranja: 0,
-    gris: 0
-  });
-  const [discardedTiles, setDiscardedTiles] = useState({
-    rojo: [],
-    azul: [],
-    verde: [],
-    naranja: [],
-    gris: []
-  });
-  const [pilaDeRunas, setPilaDeRunas] = useState([]);
-  const [pilas, setPilas] = useState([]);
-  const [pilasConcentrada, setPilasConcentrada] = useState([]);
-  const [contadorPilas, setContadorPilas] = useState(1);
-  const [contadorPilasConcentradas, setContadorPilasConcentradas] = useState(1);
+  const persisted = readJsonStorage('gameState', {}, isPlainObject);
+  const [runes, setRunes] = useState(() => ({ ...defaultRunes, ...(persisted.runes || {}) }));
+  const [discardedTiles, setDiscardedTiles] = useState(() => ({ ...defaultDiscardedTiles, ...(persisted.discardedTiles || {}) }));
+  const [pilaDeRunas, setPilaDeRunas] = useState(() => persisted.pilaDeRunas || []);
+  const [pilas, setPilas] = useState(() => persisted.pilas || []);
+  const [pilasConcentrada, setPilasConcentrada] = useState(() => persisted.pilasConcentrada || []);
+  const [contadorPilas, setContadorPilas] = useState(() => persisted.contadorPilas || 1);
+  const [contadorPilasConcentradas, setContadorPilasConcentradas] = useState(() => persisted.contadorPilasConcentradas || 1);
+  const [availableTiles, setAvailableTiles] = useState(() => persisted.availableTiles || createInitialTiles());
+  const [usedTiles, setUsedTiles] = useState(() => persisted.usedTiles || []);
+  const [scenarioMonster, setScenarioMonster] = useState(() => persisted.scenarioMonster || null);
+  const [spawnPoints, setSpawnPoints] = useState(() => persisted.spawnPoints || []);
+  const [controlPoints, setControlPoints] = useState(() => persisted.controlPoints || []);
+  const [runeKeys, setRuneKeys] = useState(() => persisted.runeKeys || []);
+  const [rescue, setRescue] = useState(() => persisted.rescue || []);
+  const [aldeanoDeck, setAldeanoDeck] = useState(() => persisted.aldeanoDeck || []);
+  const [errantesDeck, setErrantesDeck] = useState(() => persisted.errantesDeck || []);
+  const [codigosPilas, setCodigosPilas] = useState(() => persisted.codigosPilas || {});
+  const [tileWarning, setTileWarning] = useState(null);
+  const [tileToasts, setTileToasts] = useState([]);
+
   const { language, translations } = useLanguage();
   const ti = translations.trackerInit || {};
-  const [availableTiles, setAvailableTiles] = useState(
-    FICHAS.map(f => ({ ...f, uuid: uuidv4() }))
-  );
-  const [tileWarning, setTileWarning] = useState(null);
-  const [usedTiles, setUsedTiles] = useState([]);
-  const [scenarioMonster, setScenarioMonster] = useState(null);
-  const [tileToasts, setTileToasts] = useState([]);
-  const [spawnPoints, setSpawnPoints] = useState([]);
-  const [controlPoints, setControlPoints] = useState([]);
-  const [runeKeys, setRuneKeys] = useState([]);
-  const [rescue, setRescue] = useState([]);
-  const [aldeanoDeck, setAldeanoDeck] = useState([]);
-  const [errantesDeck, setErrantesDeck] = useState([]);
   const decksInitialized = useRef(false);
-  const [codigosPilas, setCodigosPilas] = useState({});
   const { trackerData } = useTracker();
   const selectedHeroes = trackerData.heroes;
   const numHeroes = selectedHeroes.length;
+
+  useEffect(() => {
+    writeJsonStorage('gameState', {
+      runes,
+      discardedTiles,
+      pilaDeRunas,
+      pilas,
+      pilasConcentrada,
+      contadorPilas,
+      contadorPilasConcentradas,
+      availableTiles,
+      usedTiles,
+      scenarioMonster,
+      spawnPoints,
+      controlPoints,
+      runeKeys,
+      rescue,
+      aldeanoDeck,
+      errantesDeck,
+      codigosPilas,
+    });
+  }, [
+    runes, discardedTiles, pilaDeRunas, pilas, pilasConcentrada,
+    contadorPilas, contadorPilasConcentradas, availableTiles, usedTiles,
+    scenarioMonster, spawnPoints, controlPoints, runeKeys, rescue,
+    aldeanoDeck, errantesDeck, codigosPilas,
+  ]);
 
   const handleCodigoChange = (pilaId, nuevoCodigo) => {
     setCodigosPilas(prev => ({
@@ -164,8 +183,9 @@ export const GameProvider = ({ children }) => {
 
 
   const resetTiles = () => {
-    setAvailableTiles(FICHAS.map(f => ({ ...f, uuid: uuidv4() })));
+    setAvailableTiles(createInitialTiles());
     setUsedTiles([]);
+    setPilaDeRunas([]);
     setDiscardedTiles({
       rojo: [],
       azul: [],
@@ -788,6 +808,7 @@ export const GameProvider = ({ children }) => {
         removeTileFromPila, addRunesCascade, placeTilesFromPilaToTrack, addTileToPila, addTileToPilaConcentrada,
         pilasConcentrada, setPilasConcentrada, addNewPilaConcentrada, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack,
         resetTiles,
+        resetGameState: resetTiles,
         tileWarning, 
         setTileWarning,
         deleteAvailableTileByColor,

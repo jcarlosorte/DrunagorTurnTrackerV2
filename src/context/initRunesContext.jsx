@@ -1,13 +1,19 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLanguage } from "@/context/LanguageContext";
+import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { v4 as uuidv4 } from 'uuid';
 
 const InitRunesContext = createContext();
 
 export const InitRunesProvider = ({ children }) => {
-  const [placedRunes, setPlacedRunes] = useState([]);
-  const [executedRunes, setExecutedRunes] = useState([]);
+  const persisted = readJsonStorage('initRunesState', {}, isPlainObject);
+  const [placedRunes, setPlacedRunes] = useState(() => persisted.placedRunes || []);
+  const [executedRunes, setExecutedRunes] = useState(() => persisted.executedRunes || []);
   const { translations } = useLanguage();
+
+  useEffect(() => {
+    writeJsonStorage('initRunesState', { placedRunes, executedRunes });
+  }, [placedRunes, executedRunes]);
   const t = translations?.trackerInit || {};
 
   const placeRune = ({ rune }) => {

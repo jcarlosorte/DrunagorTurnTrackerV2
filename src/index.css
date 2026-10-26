@@ -1,23 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Forzar vista horizontal (apaisada) cuando el dispositivo está en orientación vertical */
-.portrait-lock {
-  transform: rotate(90deg);
-  transform-origin: left top;
-  width: 100vh;
-  height: 100vw;
-  overflow-x: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-body {
-  @apply bg-gray-900;
-}
 
 .font-fantasy {
   font-family: 'Uncial Antiqua', cursive;
@@ -408,6 +392,62 @@ body {
   100% {
     transform: translateX(-50%) translateY(0);
     opacity: 0.3;
+  }
+}
+
+/* Tokens y reglas globales del sistema visual */
+:root {
+  color-scheme: dark;
+  --surface-bg: #020617;
+  --surface-panel: #0f172a;
+  --surface-raised: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --accent-primary: #10b981;
+  --accent-focus: #7dd3fc;
+  --danger: #f43f5e;
+}
+
+html {
+  min-width: 320px;
+  background: var(--surface-bg);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100dvh;
+  margin: 0;
+  background: var(--surface-bg);
+  color: var(--text-primary);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a,
+select,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--accent-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

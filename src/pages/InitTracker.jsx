@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useState, useRef } from 'react';
 import { GiAbstract065, GiWingedSword, GiSwapBag } from 'react-icons/gi';
 import { RiArrowTurnBackLine, RiArrowTurnForwardLine } from "react-icons/ri";
-import { MdScreenRotation } from "react-icons/md";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { HEROES } from '@/data/heroes';
@@ -37,6 +36,7 @@ import TileWarningModal from '@/components/TileWarningModal';
 import TileToast from '@/components/TileToast';
 import CommanderCard from '@/components/CommanderCard';
 import { v4 as uuidv4 } from 'uuid';
+import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 
 const rolesPositionMap = {
   defensor: 0,
@@ -83,12 +83,12 @@ const InitTracker = () => {
   const t_ira = translations.ira || {};
   const t_con = translations.condiciones_t || {};
   const t_con_d = translations.condiciones_d || {};
+  const persistedSession = readJsonStorage('trackerSession', {}, isPlainObject);
   const behaviors = trackerData.behaviors;
   const enemies = trackerData.enemies;
   const selectedHeroes = trackerData.heroes;
   const numHeroes = selectedHeroes.length;
   const [categorySelector, setCategorySelector] = useState({ open: false, color: null });
-  const [isLandscape, setIsLandscape] = useState(window.matchMedia("(orientation: landscape)").matches);
   const [manualSelector, setManualSelector] = useState({ open: false, color: null });
   const [toastMessage, setToastMessage] = useState('');
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
@@ -97,17 +97,17 @@ const InitTracker = () => {
   const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, drawTilePreviewByColor, drawTileByColor, discardTileByColor, runes, addRune, removeRune, getRuneCount, clearRunes, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, 
          spawnPoints, removeSpawnPoint, controlPoints, removeControlPoint, runeKeys, removeRuneKey, rescue, removeRescue, pilas, pilasConcentrada, activarPilaConcentrada, activarPila, codigosPilas, setCodigosPilas, handleCodigoChange, addTileToPila, addTileToPilaConcentrada,
          initializeDecks, drawCardFromDeck, removeTileFromPila, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack } = useGame();
-  const [selectedRuneCards, setSelectedRuneCards] = useState([]);
+  const [selectedRuneCards, setSelectedRuneCards] = useState(() => persistedSession.selectedRuneCards || []);
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
   const [warningMessage, setWarningMessage] = useState(null);
-  const [overhealedEnemies, setOverhealedEnemies] = useState(new Set());
+  const [overhealedEnemies, setOverhealedEnemies] = useState(() => new Set(persistedSession.overhealedEnemies || []));
   const [rotatingUUIDs, setRotatingUUIDs] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [scenarioToasts, setScenarioToasts] = useState([]);
   const [showPCModal, setShowPCModal] = useState(false);
   const [onPCConfirm, setOnPCConfirm] = useState(null);
-  const [enemyEvolutions, setEnemyEvolutions] = useState([]);
+  const [enemyEvolutions, setEnemyEvolutions] = useState(() => persistedSession.enemyEvolutions || []);
   const getHeroName = (id) => translations.heroes?.[id] || id;
   const getEnemyName = (id, color = null) => {
     if (color === 'escenario') {
@@ -2073,22 +2073,15 @@ const InitTracker = () => {
       const image = HEROES.find(h => h.id === id)?.image;
       return { id, role, image, position: rolesPositionMap[role] };
     });
-    const handleResize = () => setIsLandscape(window.matchMedia("(orientation: landscape)").matches);
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("orientationchange", handleResize);
     setTrackerData(prev => ({ ...prev, placedHeroes: initialHeroes }));
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", handleResize);
-    };
   }, []);
   
-  const [turnIndex, setTurnIndex] = useState(-1);
+  const [turnIndex, setTurnIndex] = useState(() => persistedSession.turnIndex ?? -1);
   const [currentTurnEntity, setCurrentTurnEntity] = useState(null);
-  const [groupTurnTracker, setGroupTurnTracker] = useState({ group: [], index: 0 });
+  const [groupTurnTracker, setGroupTurnTracker] = useState(() => persistedSession.groupTurnTracker || { group: [], index: 0 });
   const processedVoragineRef = useRef(new Set());
   const processedDefenseTurnRef = useRef(new Set());
-  const [lastRealTurnIndex, setLastRealTurnIndex] = useState(null); 
+  const [lastRealTurnIndex, setLastRealTurnIndex] = useState(() => persistedSession.lastRealTurnIndex ?? null); 
   const placedHeroes = trackerData.placedHeroes;
   const groupIndex = groupTurnTracker.index;
   const roundRef = useRef(0);
@@ -2097,9 +2090,25 @@ const InitTracker = () => {
   const processedEndEffectsRef = useRef(new Set());
   const processedCardsRef = useRef(new Set());
   const processedTiempoRef = useRef(new Set());
-  const [extraTurnsQueue, setExtraTurnsQueue] = useState([]);
-  const [extraTurnIndex, setExtraTurnIndex] = useState(0); // índice actual
-  const [extraTurnTotal, setExtraTurnTotal] = useState(0); // total actual
+  const [extraTurnsQueue, setExtraTurnsQueue] = useState(() => persistedSession.extraTurnsQueue || []);
+  const [extraTurnIndex, setExtraTurnIndex] = useState(() => persistedSession.extraTurnIndex || 0);
+  const [extraTurnTotal, setExtraTurnTotal] = useState(() => persistedSession.extraTurnTotal || 0);
+
+  useEffect(() => {
+    writeJsonStorage('trackerSession', {
+      schemaVersion: 1,
+      enemyEvolutions,
+      turnIndex,
+      lastRealTurnIndex,
+      groupTurnTracker,
+      extraTurnsQueue,
+      extraTurnIndex,
+      extraTurnTotal,
+    });
+  }, [
+    enemyEvolutions, turnIndex, lastRealTurnIndex, groupTurnTracker,
+    extraTurnsQueue, extraTurnIndex, extraTurnTotal,
+  ]);
   
   useEffect(() => {
 
@@ -2752,18 +2761,6 @@ const InitTracker = () => {
     setScenarioToasts(prev => [...prev, { id, message, action, action2, extra }]);
   };
 
-  if (!isLandscape) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen text-center bg-gradient-to-br from-black via-gray-900 to-black text-white p-6">
-        <div className="bg-white bg-opacity-10 p-6 rounded-2xl shadow-xl backdrop-blur-md animate-fade-in">
-          <MdScreenRotation className="text-6xl mb-4 animate-spin-slow" />
-          <p className="text-xl font-semibold">{ti.movil1}</p>
-          <p className="text-sm mt-2 text-gray-300">{ti.movil2}</p>
-        </div>
-      </div>
-    );
-  }
-
   const rolesOnTop = ['defensor', 'lider', 'controlador'];
   const rolesOnBottom = ['apoyo', 'agresor'];
 
@@ -2830,14 +2827,14 @@ const InitTracker = () => {
         <div className={`${posicion === 'abajo' ? 'absolute top-0 left-0 right-0' : 'absolute bottom-0 left-0 right-0'} backface-hidden ${ caraB ? 'rotate-y-180' : '' }`} >
           <div className="relative">
             {/* 🌊 Fondo del río */}
-            <div class="river-bg rounded-lg max-w-[95%] mx-auto sm:max-w-[140px]">
-              <svg class="river-waves" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <div className="river-bg rounded-lg max-w-[95%] mx-auto sm:max-w-[140px]">
+              <svg className="river-waves" viewBox="0 0 1440 320" preserveAspectRatio="none">
                 <path
                   d="M0,160 C360,240 1080,80 1440,160 L1440,320 L0,320 Z"
                   fill="rgba(0, 255, 150, 0.2)"
                 />
               </svg>
-              <svg class="river-waves2" viewBox="0 0 100 800" preserveAspectRatio="none">
+              <svg className="river-waves2" viewBox="0 0 100 800" preserveAspectRatio="none">
                 <path
                   d="M50,0 
                      C60,100 40,200 50,300 
@@ -2848,7 +2845,7 @@ const InitTracker = () => {
                   stroke-width="10"
                 />
               </svg>
-              <svg class="river-waves3" viewBox="0 0 100 800" preserveAspectRatio="none">
+              <svg className="river-waves3" viewBox="0 0 100 800" preserveAspectRatio="none">
                 <path
                   d="M50,0 
                      C60,100 40,200 50,300 
@@ -3334,8 +3331,8 @@ const InitTracker = () => {
   return ( 
       <PageTransition>
        
-        <div className={isLandscape ? "" : "portrait-lock"}>
-          <div className="p-4 text-gray-200 bg-gradient-to-b from-gray-900 to-black min-h-screen">
+        <div className="min-w-0">
+          <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-gray-950 to-black p-3 text-gray-200 sm:p-4">
             <div className="no-header" />
             
             
@@ -3730,12 +3727,14 @@ const InitTracker = () => {
               </div>
             )}
             
-            <div className="grid grid-cols-11 gap-0 auto-rows-auto bg-slate-700 p-2">
-              {[...Array(11)].map((_, idx) => (
-                <React.Fragment key={`${idx}-${currentTurnEntity?.uuid || currentTurnEntity?.id || 'none'}`}>
-                  {renderSlot(idx)}
-                </React.Fragment>
-              ))}
+            <div className="overflow-x-auto rounded-xl border border-slate-600 bg-slate-900/80 shadow-inner" role="region" aria-label={ti.track || 'Orden de iniciativa'} tabIndex="0">
+              <div className="grid min-w-[1100px] grid-cols-11 auto-rows-auto gap-0 bg-slate-700 p-2 snap-x snap-mandatory md:min-w-0">
+                {[...Array(11)].map((_, idx) => (
+                  <React.Fragment key={`${idx}-${currentTurnEntity?.uuid || currentTurnEntity?.id || 'none'}`}>
+                    {renderSlot(idx)}
+                  </React.Fragment>
+                ))}
+              </div>
             </div>
 
             {/* 📦 Estado de la bolsa debajo del track*/}
