@@ -4,7 +4,8 @@
     "title": "Drunagor Turn Tracker",
     "start_tracker": "Start",
     "configure_environment": "Configure",
-    "back_to_home": "Back"
+    "back_to_home": "Back",
+    "manageSaves": "Save, export or import games"
   },
   "tracker": "Tracker",
   "config": {
@@ -12,7 +13,9 @@
     "language_section_title": "App Language",
     "select_language": "Select language",
     "select_expansions": "Select expansions",
-    "waiting_for_spanish_copy": "Awaiting Spanish edition"
+    "waiting_for_spanish_copy": "Awaiting Spanish edition",
+    "expansionsHint": "Active expansions determine which heroes and enemies appear in the game setup.",
+    "noActiveExpansions": "There are no active expansions available."
   },
   "expansions": {
     "base": "Chronicles of Drunagor (Base Game)",
@@ -28,8 +31,8 @@
     "apocalypse_heroes_1": "Apocalypse - Hero Pack",
     "apocalypse_lorien": "Apocalypse - Lorien",
     "apocalypse_awakenings": "Apocalypse - Awakenings",
-    "apocalypse_sisters":"Apocalypse - The Fallen Sisters"
-},
+    "apocalypse_sisters": "Apocalypse - The Fallen Sisters"
+  },
   "heroes": {
     "lorelai": "Lorelai",
     "elros": "Elros",
@@ -95,7 +98,7 @@
       "Guerrero_Sombrio": "Shadow Knight",
       "Adalid": "Warlord",
       "Monje": "Monk"
-      }
+    }
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Fallen Mage",
@@ -271,26 +274,26 @@
     "consume": "spend",
     "escudos": "SHIELD/S",
     "escudosConsumidos": "spent shields",
-    "regenera": "regenerates",      
+    "regenera": "regenerates",
     "vida_i": "life",
     "gana": "gets",
     "sanaA": "heals",
     "sana": "heals",
     "sanaPreg": "Apply effect HEALS",
-    "numCasillas1": "Is Tthe Undead King on one or more Darkness tiles (not tableboard Darkness)",      
-    "numCasillas2": "Remove the smallest of them. How many spaces did the tile occupy?", 
+    "numCasillas1": "Is Tthe Undead King on one or more Darkness tiles (not tableboard Darkness)",
+    "numCasillas2": "Remove the smallest of them. How many spaces did the tile occupy?",
     "preg": "?",
-    "noMasInvocar": "No more enemies can be summoned this turn", 
+    "noMasInvocar": "No more enemies can be summoned this turn",
     "cuantosEscudos": "How many shields are added by this effect?",
-    "cuantosRecursos": "How many resources of",   
+    "cuantosRecursos": "How many resources of",
     "sonAb": "are absorbed",
-    "fromPassiveCard": "Modified by passive ability, may have conditions", 
+    "fromPassiveCard": "Modified by passive ability, may have conditions",
     "ronda": "New Round",
     "activaTurno": "The enemy is activated!",
     "activaTurnoEsbirros": "The minions activate!",
     "activaTurnoCarta": "Continues after the Minions' turn",
     "activandoTurnoAdicional": "Activating additional turn",
-    "rondaInicial": "First Round!", 
+    "rondaInicial": "First Round!",
     "mazo_1": "⚠️ There are no cards in the deck:",
     "movil1": "Please rotate your device to landscape orientation",
     "movil2": "to properly enjoy turn tracker control.",
@@ -480,7 +483,7 @@
     "incru1": "Monster Raid",
     "Incru_1": "Rune and summon the {x} minions. Use the revealed Rune as a Spawning Point.",
     "Incru_2": "Rune and summon the {x} minions. Use the revealed Rune as a Spawning Point."
-    },
+  },
   "condiciones_t": {
     "none": "",
     "ABSORCION": "ABSORPTION",
@@ -730,17 +733,17 @@
     "VORAGINE": "This is an Overlord Ability. At the start of their Activation, an Overlord must add their Attack cards to the deck, shuffle it, and draw a new \"hand\" (1 card per Hero in the Adventure). Thus, the Overlord's combination of Attacks can change from round to round."
   },
   "estadosAlterados": {
-      "aturdimiento": "STUN",
-      "derribo": "KNOCK DOWN",
-      "escudo": "SHIELD",
-      "hemorragia": "BLEED",
-      "intimidar": "INTIMIDATE",
-      "lentitud": "SLOW",
-      "marca": "RANGER’S MARK",
-      "quemadura": "BURN",
-      "sigilo": "STEALTH",
-      "veneno": "POISON"
-    },
+    "aturdimiento": "STUN",
+    "derribo": "KNOCK DOWN",
+    "escudo": "SHIELD",
+    "hemorragia": "BLEED",
+    "intimidar": "INTIMIDATE",
+    "lentitud": "SLOW",
+    "marca": "RANGER’S MARK",
+    "quemadura": "BURN",
+    "sigilo": "STEALTH",
+    "veneno": "POISON"
+  },
   "cartas_ataque": {
     "ataqueC": "Commander Action",
     "ataqueO": "Overlord Action",
@@ -836,14 +839,13 @@
       "boss_13": "When the initiative marker reaches this card, resolve all conditions of Wermunggdir. Then, advance the marker.",
       "boss_14": "Wermunggdir causes a collapse in the Area of the farthest Hero and Swallows them. (The swallowed character is moved into Wermunggdir’s guts, suffers {FATIGA 2}; {DAÑO} {X} and {VENENO} {X}).",
       "boss_15": "Wermunggdir targets {X} hero(es) at any range (always starting with the strongest) and deals {2*X} damage to each enemy and {DERRIBO}. If any hero prevents the damage, they also avoid knockdown.",
-
       "fallen_1": "MANIFEST 1 RUNE: PLACE 1 TIME TOKEN ON EACH ATTACK CARD THAT MATCHES THAT RUNE'S COLOR (DO NOT PLACE IT ON THE MONSTER CARD OR THIS CARD). THE NEXT TIME THE INITIATIVE MARKER REACHES THIS CARD, REMOVE THE TIME TOKEN INSTEAD OF RESOLVING THAT CARD'S EFFECTS.",
       "fallen_2": "THE FALLEN HERO AMBUSHS THE WEAKER HERO. THEN, DEAL {X} {DAÑO}. IF THAT HERO IS KNOCKED OUT BY THIS ATTACK, THE FALLEN HERO ALSO HEALS {2*X}."
     }
   },
   "defensaCard": {
     "cartas_aldeano": {
-      "nombre":{
+      "nombre": {
         "aldeano_1": "Tom the Elder",
         "aldeano_2": "Jasmine the Blue",
         "aldeano_3": "William of Orange",
@@ -851,7 +853,7 @@
         "aldeano_5": "Little Red Riding Hood",
         "aldeano_6": "Dorian Gray"
       },
-      "accion":{
+      "accion": {
         "aldeano_1": "{MANIFIESTA} 1 RUNE.",
         "aldeano_2": "",
         "aldeano_3": "",
@@ -859,7 +861,7 @@
         "aldeano_5": "",
         "aldeano_6": ""
       },
-      "accion2":{
+      "accion2": {
         "aldeano_1": "",
         "aldeano_2": "",
         "aldeano_3": "",
@@ -867,7 +869,7 @@
         "aldeano_5": "",
         "aldeano_6": ""
       },
-      "texto":{
+      "texto": {
         "aldeano_1": "{INVOCA} 1 NPC TOKEN ({BEIGE}) ON THE NEAREST UNOCCUPIED DARKNESS SPAWN POINT TO THE CORRESPONDING RUNE. THE NEXT MONSTER THAT ACTS GAINS {MATANZA} DURING ITS TURN. (VILLAGERS HAVE FIRMNESS 4 AND CAN APPEAR ON DARKNESS TILES).",
         "aldeano_2": "{INVOCA} 1 NPC TOKEN ({AZUL}) ON THE NEAREST UNOCCUPIED DARKNESS SPAWN POINT TO THE {AZUL} RUNE. THE NEXT MONSTER THAT ACTS GAINS {MATANZA} DURING ITS TURN. (VILLAGERS HAVE FIRMNESS 4 AND CAN APPEAR ON DARKNESS TILES).",
         "aldeano_3": "{INVOCA} 1 NPC TOKEN ({NARANJA}) ON THE NEAREST UNOCCUPIED DARKNESS SPAWN POINT TO THE {NARANJA} RUNE. THE NEXT MONSTER THAT ACTS GAINS {MATANZA} DURING ITS TURN. (VILLAGERS HAVE FIRMNESS 4 AND CAN APPEAR ON DARKNESS TILES).",
@@ -877,7 +879,7 @@
       }
     },
     "cartas_errantes": {
-      "nombre":{
+      "nombre": {
         "errantes_1": "Violent Uproar",
         "errantes_2": "Dark Artillery",
         "errantes_3": "Heavyweights",
@@ -885,7 +887,7 @@
         "errantes_5": "Band of Thugs",
         "errantes_6": "Harassment Party"
       },
-      "accion":{
+      "accion": {
         "errantes_1": "{MANIFIESTA} 1 RUNE.",
         "errantes_2": "{MANIFIESTA} 1 RUNE.",
         "errantes_3": "{MANIFIESTA} 1 RUNE.",
@@ -893,7 +895,7 @@
         "errantes_5": "{MANIFIESTA} 1 RUNE.",
         "errantes_6": "{MANIFIESTA} 1 RUNE."
       },
-      "accion2":{
+      "accion2": {
         "errantes_1": "THEN, {INVOCA} THE FOLLOWING GROUP OF MONSTERS WITHIN RANGE 1 OF THE CORRESPONDING RUNE (THE LEADER CHOOSES HOW EACH MONSTER IS PLACED):",
         "errantes_2": "THEN, {INVOCA} THE FOLLOWING GROUP OF MONSTERS WITHIN RANGE 1 OF THE CORRESPONDING RUNE (THE LEADER CHOOSES HOW EACH MONSTER IS PLACED):",
         "errantes_3": "THEN, {INVOCA} THE FOLLOWING GROUP OF MONSTERS WITHIN RANGE 1 OF THE CORRESPONDING RUNE (THE LEADER CHOOSES HOW EACH MONSTER IS PLACED):",
@@ -901,7 +903,7 @@
         "errantes_5": "THEN, {INVOCA} THE FOLLOWING GROUP OF MONSTERS WITHIN RANGE 1 OF THE CORRESPONDING RUNE (THE LEADER CHOOSES HOW EACH MONSTER IS PLACED):",
         "errantes_6": "THEN, {INVOCA} THE FOLLOWING GROUP OF MONSTERS WITHIN RANGE 1 OF THE CORRESPONDING RUNE (THE LEADER CHOOSES HOW EACH MONSTER IS PLACED):"
       },
-      "texto":{
+      "texto": {
         "errantes_11": "2 GRAY MONSTERS - VETERAN",
         "errantes_12": "1 WHITE MONSTER - VETERAN",
         "errantes_13": "1 GRAY MONSTER - VETERAN",
@@ -930,32 +932,138 @@
         "errantes_63": "1 WHITE MONSTER - VETERAN"
       },
       "texto2": {
-        "errantes_11": [2, "gris", "veterano"],
-        "errantes_12": [1, "blanco", "veterano"],
-        "errantes_13": [1, "gris", "veterano"],
-        "errantes_14": [1, "blanco", "veterano"],
-        "errantes_15": [1, "gris", "veterano"],
-        "errantes_21": [2, "blanco", "veterano"],
-        "errantes_22": [1, "gris", "veterano"],
-        "errantes_23": [1, "blanco", "veterano"],
-        "errantes_24": [1, "gris", "veterano"],
-        "errantes_25": [1, "blanco", "veterano"],
-        "errantes_31": [1, "negro", "veterano"],
-        "errantes_32": [1, "gris", "veterano"],
-        "errantes_33": [1, "negro", "veterano"],
-        "errantes_34": [1, "gris", "veterano"],
-        "errantes_35": [1, "negro", "veterano"],
-        "errantes_41": [1, "negro", "veterano"],
-        "errantes_42": [1, "blanco", "veterano"],
-        "errantes_43": [1, "negro", "veterano"],
-        "errantes_44": [1, "blanco", "veterano"],
-        "errantes_45": [1, "negro", "veterano"],
-        "errantes_51": [1, "comandante", "comandante", 2],
-        "errantes_52": [1, "gris", "veterano"],
-        "errantes_53": [1, "gris", "veterano"],
-        "errantes_61": [1, "comandante", "comandante", 2],
-        "errantes_62": [1, "blanco", "veterano"],
-        "errantes_63": [1, "blanco", "veterano"]
+        "errantes_11": [
+          2,
+          "gris",
+          "veterano"
+        ],
+        "errantes_12": [
+          1,
+          "blanco",
+          "veterano"
+        ],
+        "errantes_13": [
+          1,
+          "gris",
+          "veterano"
+        ],
+        "errantes_14": [
+          1,
+          "blanco",
+          "veterano"
+        ],
+        "errantes_15": [
+          1,
+          "gris",
+          "veterano"
+        ],
+        "errantes_21": [
+          2,
+          "blanco",
+          "veterano"
+        ],
+        "errantes_22": [
+          1,
+          "gris",
+          "veterano"
+        ],
+        "errantes_23": [
+          1,
+          "blanco",
+          "veterano"
+        ],
+        "errantes_24": [
+          1,
+          "gris",
+          "veterano"
+        ],
+        "errantes_25": [
+          1,
+          "blanco",
+          "veterano"
+        ],
+        "errantes_31": [
+          1,
+          "negro",
+          "veterano"
+        ],
+        "errantes_32": [
+          1,
+          "gris",
+          "veterano"
+        ],
+        "errantes_33": [
+          1,
+          "negro",
+          "veterano"
+        ],
+        "errantes_34": [
+          1,
+          "gris",
+          "veterano"
+        ],
+        "errantes_35": [
+          1,
+          "negro",
+          "veterano"
+        ],
+        "errantes_41": [
+          1,
+          "negro",
+          "veterano"
+        ],
+        "errantes_42": [
+          1,
+          "blanco",
+          "veterano"
+        ],
+        "errantes_43": [
+          1,
+          "negro",
+          "veterano"
+        ],
+        "errantes_44": [
+          1,
+          "blanco",
+          "veterano"
+        ],
+        "errantes_45": [
+          1,
+          "negro",
+          "veterano"
+        ],
+        "errantes_51": [
+          1,
+          "comandante",
+          "comandante",
+          2
+        ],
+        "errantes_52": [
+          1,
+          "gris",
+          "veterano"
+        ],
+        "errantes_53": [
+          1,
+          "gris",
+          "veterano"
+        ],
+        "errantes_61": [
+          1,
+          "comandante",
+          "comandante",
+          2
+        ],
+        "errantes_62": [
+          1,
+          "blanco",
+          "veterano"
+        ],
+        "errantes_63": [
+          1,
+          "blanco",
+          "veterano"
+        ]
       }
     },
     "cartas_trad": {
@@ -994,14 +1102,14 @@
     }
   },
   "cartas_sorpresa": {
-    "nombre":{
+    "nombre": {
       "sorpresa_1": "Noxious Cloud",
       "sorpresa_2": "Agitated Monsters",
       "sorpresa_3": "Suffocating Mists",
       "sorpresa_4": "Monster Raid",
       "sorpresa_5": "Treasure of Kings"
     },
-    "texto":{
+    "texto": {
       "sorpresa_1": "IF THIS DOOR IS OPENED, A TRAP TRIGGERS AND EACH HERO WITHIN RANGE 2 OF IT MUST MAKE A STRENGTH SKILL CHALLENGE (YELLOW), DIFFICULTY 13. EACH MELEE CUBE THEY HAVE ADDS +1 TO THE ROLL. HEROES WHO FAIL SUFFER 2 UNPREVENTABLE DAMAGE, POISON 4, AND SLOW.",
       "sorpresa_2": "ACTIVATE EACH MONSTER YOU JUST SUMMONED, FOLLOWING THE INITIATIVE ORDER (DO NOT MOVE THE INITIATIVE MARKER TOWARDS THEM, THESE ARE ADDITIONAL ACTIVATIONS). THEN, THE HERO WHO OPENED THE DOOR CONTINUES THEIR TURN NORMALLY.",
       "sorpresa_3": "UNTIL THE END OF THE ADVENTURE, THE RANGE OF ALL AGILITY, WISDOM, AND CONCENTRATION ABILITIES THAT ARE NOT WEAPON ATTACKS OR CONSUMABLE ITEMS IS REDUCED TO A MAXIMUM OF 1 AREA (1 BLUE SQUARE). THE SAME APPLIES TO MULTICOLOR ABILITIES ACTIVATED WITH AGILITY OR WISDOM CUBES.",
@@ -1010,30 +1118,30 @@
     }
   },
   "cartas_gusano": {
-    "nombre":{
+    "nombre": {
       "boss_w_1": "EARTHQUAKE",
       "boss_w_2": "SANDSWIM",
       "boss_w_3": "SHADOW SPAWN",
       "boss_w_4": "SWALLOW",
       "boss_w_5": "BOSS STATUS"
     },
-    "texto":{
+    "texto": {
       "boss_w_1": "Wermunggdir targets {X} hero(es) at any range (always starting with the strongest) and deals {2*X} damage to each enemy and {KNOCKDOWN}. If a hero prevents the damage, they also avoid knockdown.",
       "boss_w_2": "Wermunggdir targets {X} area(s) at any range (first choose the areas with the highest number of heroes, then those with the strongest heroes) and deals {2*X} damage to each enemy within each Area.",
       "boss_w_3": "{DRAW} 1 rune and generate its Darkness tile adjacent to Wermunggdir (the leader chooses the space). Then, {SUMMON} 2 Worm Spawn - Rookie with 3 HP (instead of 9) in spaces adjacent to Wermunggdir (chosen by the leader).",
       "boss_w_4": "Wermunggdir causes a collapse in the Area of the farthest Hero and Swallows them. (The swallowed character is moved into Wermunggdir’s guts, suffers {FATIGUE 2}; {DAMAGE} {X} and {POISON} {X}).",
-      "boss_w_5": "When the initiative marker reaches this card, resolve all of Wermunggdir’s conditions. Then, advance the marker."      
+      "boss_w_5": "When the initiative marker reaches this card, resolve all of Wermunggdir’s conditions. Then, advance the marker."
     }
   },
   "asalto_gusano": {
-    "nombre":{
+    "nombre": {
       "asalto_w_1": "BODY PUSH",
       "asalto_w_2": "ACID SPIT",
       "asalto_w_3": "CORRUPTED BY DARKNESS",
       "asalto_w_4": "SHARP BITE",
       "asalto_w_5": "SPAWN WURMS"
     },
-    "texto":{
+    "texto": {
       "asalto_w_1": "{ATACA} 1 AREA ADJACENT TO WERMUNGGDIR AND DEALS {2*X} TO EACH HERO OR PET THERE.",
       "asalto_w_2": "ALL HEROES SUFFER {VENENO} {X}.",
       "asalto_w_3": "{ROBA} 1 RUNE AND PLACE 2 OF ITS RESPECTIVE DARKNESS TILES ON THE BOARD. GENERATE DARKNESS FROM A SPACE ADJACENT TO WERMUNGGDIR.",
@@ -1042,14 +1150,14 @@
     }
   },
   "acecho": {
-    "nombre":{
+    "nombre": {
       "acecho_1": "",
       "acecho_2": "",
       "acecho_3": "",
       "acecho_4": "",
       "acecho_5": ""
     },
-    "texto":{
+    "texto": {
       "acecho_1": "ALL HEROES SUFFER {QUEMADURA} {X}.",
       "acecho_2": "ALL HEROES SUFFER {VENENO} {X}.",
       "acecho_3": "THE UNDEAD KING GAINS {ESCUDO} {X}.",
@@ -1058,19 +1166,58 @@
     }
   },
   "ira": {
-    "nombre":{
+    "nombre": {
       "ira_1": "",
       "ira_2": "",
       "ira_3": "",
       "ira_4": "",
       "ira_5": ""
     },
-    "texto":{
+    "texto": {
       "ira_1": "ALL HEROES WITHIN RANGE 1 OF THIS MONSTER SUFFER {QUEMADURA} {X}.",
       "ira_2": "ALL HEROES WITHIN RANGE 1 OF THIS MONSTER SUFFER {VENENO} {X}.",
       "ira_3": "THIS MONSTER GAINS {ESCUDO} {X}.",
       "ira_4": "ALL HEROES WITHIN RANGE 1 OF THIS MONSTER SUFFER {HEMORRAGIA} {X}.",
       "ira_5": "ALL HEROES WITHIN RANGE 1 OF THIS MONSTER SUFFER {INTIMIDAR} {X}."
     }
+  },
+  "saves": {
+    "title": "Saves",
+    "manage": "Manage",
+    "subtitle": "Save, load, export and import your campaign state on this device.",
+    "close": "Close",
+    "savedGames": "Saved games",
+    "storageUsed": "Local storage",
+    "quotaWarning": "Local storage is almost full. Export your game so you do not lose it.",
+    "saveName": "Game name",
+    "saveNamePlaceholder": "Saturday campaign",
+    "saveGame": "Save game",
+    "saveSuccess": "Game saved on this device.",
+    "noSaves": "There are no saved games on this device yet.",
+    "loadGame": "Load",
+    "deleteGame": "Delete",
+    "deleteSuccess": "Game deleted.",
+    "deleteConfirmTitle": "Delete saved game",
+    "exportGame": "Export game",
+    "exportConfig": "Export configuration",
+    "exportSuccess": "Game exported successfully.",
+    "exportConfigSuccess": "Configuration exported successfully.",
+    "importGame": "Import JSON",
+    "importError": "The selected file could not be read.",
+    "confirmImport": "What do you want to import?",
+    "importScope": "Content",
+    "fullSave": "Configuration and track",
+    "onlyConfig": "Configuration only",
+    "onlyTrack": "Track only",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "goToSaves": "Go to Saves",
+    "selected": "selected",
+    "notSavedYet": "Not saved yet",
+    "justNow": "Saved just now",
+    "secondsAgo": "Saved {n} s ago",
+    "minutesAgo": "Saved {n} min ago",
+    "saved": "Game saved",
+    "storageError": "Could not save on this device. Export your game from Saves so you do not lose progress."
   }
 }

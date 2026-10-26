@@ -21,14 +21,28 @@ export function readJsonStorage(key, fallback, validate = () => true) {
   }
 }
 
+let lastWriteAt = 0;
+export const getLastWriteAt = () => lastWriteAt;
+
 export function writeJsonStorage(key, value) {
   if (!canUseStorage()) return false;
 
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
+    lastWriteAt = Date.now();
+    try {
+      window.dispatchEvent(new CustomEvent('drunagor:storage-write', { detail: { key, at: lastWriteAt } }));
+    } catch {
+      // Events are optional; persistence already succeeded.
+    }
     return true;
   } catch {
     // Persistence is best-effort; in-memory state remains usable.
+    try {
+      window.dispatchEvent(new CustomEvent('drunagor:storage-error', { detail: { key } }));
+    } catch {
+      // Ignore event dispatch failures.
+    }
     return false;
   }
 }

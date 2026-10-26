@@ -1,24 +1,32 @@
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import AnimatedRoutes from "@/components/AnimatedRoutes";
 import TopMenuLanguage from "@/components/TopMenuLanguage";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import StorageWarning from "@/components/StorageWarning";
+import { SavesUiProvider } from "@/context/SavesUiContext";
 
 function AppContent() {
   const location = useLocation();
-  const isTrackerRoute = ["/init", "/config", "/tracker"].includes(location.pathname);
+  const isTrackerRoute = ["/init", "/config", "/tracker", "/saves"].includes(location.pathname);
 
   return (
     <div className={`min-h-screen bg-slate-950 pt-14 ${isTrackerRoute ? 'text-left' : ''}`}>
       <AnimatedRoutes />
+      <StorageWarning />
     </div>
   );
 }
 
 function App() {
   return (
-    <Router basename={import.meta.env.BASE_URL}>
-      <TopMenuLanguage />
-      <AppContent />
-    </Router>
+    <ErrorBoundary>
+      <Router basename={import.meta.env.BASE_URL}>
+        <SavesUiProvider>
+          <TopMenuLanguage />
+          <AppContent />
+        </SavesUiProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

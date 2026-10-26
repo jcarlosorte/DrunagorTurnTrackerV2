@@ -144,3 +144,16 @@ Usar HTTPS, compresión Brotli/Gzip, CDN delante de los assets y despliegues at�
 - Indicador de cuota de almacenamiento con aviso al superar el 80 % del espacio disponible.
 - Los conjuntos de efectos ya procesados se persisten para no repetir invocaciones, daño o cartas al restaurar una partida.
 - Confirmaciones accesibles antes de restablecer, borrar runas, eliminar partidas guardadas o iniciar una partida nueva.
+
+## Navegación y arquitectura de pantallas
+
+- `/` Inicio: continuar partida, nueva partida y acceso a contenido y partidas.
+- `/tracker` Selección de héroes, roles y enemigos.
+- `/init` Partida activa.
+- `/config` **Contenido**: idioma y expansiones activas.
+- `/saves` **Partidas**: guardar, cargar, exportar, importar y cuota.
+
+- `SavesPanel` ([src/components/saves/SavesPanel.jsx](src/components/saves/SavesPanel.jsx)) es el único componente de gestión de partidas y se reutiliza en la página `/saves` y en el panel lateral del track.
+- El panel lateral se abre desde la barra superior (botón **Partidas**) o con `Ctrl/⌘ + S`, y se carga bajo demanda para no incluir los catálogos del juego en el bundle inicial.
+- Una sola barra superior global: logo, indicador de autoguardado, botón Partidas y selector de idioma. La barra del track queda debajo, sin duplicar el selector de idioma.
+- `ErrorBoundary` envuelve la aplicación y `StorageWarning` avisa si una escritura en `localStorage` falla.

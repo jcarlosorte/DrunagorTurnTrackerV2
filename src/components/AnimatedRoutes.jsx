@@ -7,6 +7,7 @@ import { AnimatePresence } from "framer-motion";
 const HomeMenu = lazy(() => import("@/pages/HomeMenu"));
 const Tracker = lazy(() => import("@/pages/Tracker"));
 const Config = lazy(() => import("@/pages/Config"));
+const Saves = lazy(() => import("@/pages/Saves"));
 const InitTracker = lazy(() => import("@/pages/InitTracker"));
 
 const LoadingRoute = () => (
@@ -31,6 +32,7 @@ export default function AnimatedRoutes() {
           <Route path="/" element={<HomeMenu />} />
           <Route path="/tracker" element={<Tracker />} />
           <Route path="/config" element={<Config />} />
+          <Route path="/saves" element={<Saves />} />
           <Route path="/init" element={<ProtectedTracker />} />
         </Routes>
       </AnimatePresence>

@@ -12,7 +12,7 @@ import { sanitizeConfiguration } from '@/utils/configValidation';
 import { deleteGame, listSaves, loadGame, MAX_SAVES, saveGame } from '@/utils/saves';
 import ConfirmDialog from '@/components/ConfirmDialog';
 
-export default function SaveGameActions({ compact = false }) {
+export default function SavesPanel({ mode = 'page' }) {
   const { translations } = useLanguage();
   const inputRef = useRef(null);
   const [pendingImport, setPendingImport] = useState(null);
@@ -22,7 +22,7 @@ export default function SaveGameActions({ compact = false }) {
   const [saveName, setSaveName] = useState('');
   const [feedback, setFeedback] = useState({ type: '', text: '' });
   const [usage, setUsage] = useState(() => getStorageUsage());
-  const t = translations?.config || {};
+  const t = translations?.saves || translations?.config || {};
 
   const refresh = () => {
     setSaves(listSaves());
@@ -119,10 +119,12 @@ export default function SaveGameActions({ compact = false }) {
 
   return (
     <section
-      className={compact ? 'space-y-3' : 'space-y-4 rounded-2xl border border-slate-600 bg-slate-800/80 p-4'}
+      className={mode === 'drawer'
+        ? 'space-y-4'
+        : 'space-y-4 rounded-2xl border border-slate-600 bg-slate-800/80 p-4'}
       aria-labelledby="save-game-title"
     >
-      {!compact && (
+      {mode !== 'drawer' && (
         <h2 id="save-game-title" className="text-lg font-bold text-white">
           {t.savedGames || 'Partidas guardadas'}
         </h2>

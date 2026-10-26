@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDiceTarget, GiShield, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiCardDraw, GiCardPick, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe } from 'react-icons/gi';
-import { FaLanguage } from 'react-icons/fa';
 import { MdAddCircleOutline } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { ENEMIES } from '@/data/enemies';
@@ -11,13 +10,13 @@ import { INCURSION } from '@/data/incursion';
 import { DEFENSA } from '@/data/defensa';
 import { OTROS } from '@/data/estadosAlterados';
 import { useInitEnemies } from "@/context/InitEnemiesContext";
-import { languages as availableLanguages, languageNames } from "@/i18n/languageData";
 import { useLanguage } from "@/context/LanguageContext";
 import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
 import TileToast from '@/components/TileToast';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import SaveStatusIndicator from '@/components/SaveStatusIndicator';
 import { v4 as uuidv4 } from 'uuid';
 
 const TopMenu = ({
@@ -30,7 +29,7 @@ const TopMenu = ({
   onTileDraw
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { language, setLanguage, translations } = useLanguage();
+  const { translations } = useLanguage();
   const t = translations?.trackerInit || {};
   const { resetPlacedEnemies, activaHuesped, desactivaHuesped, huespedActivo, activaAcecho, desactivaAcecho, acechoActivo, activaInvadidos, desactivaInvadidos, invadidosActivo, oscuridadActivo, activaOscuridad, desactivaOscuridad,
                                          asaltoActivo, activaAsalto, desactivaAsalto } = useInitEnemies();
@@ -128,48 +127,48 @@ const TopMenu = ({
     
   return (
     <>
-    <div ref={containerRef} className="fixed top-0 left-0 w-full z-50 bg-gray-900 bg-opacity-80 backdrop-blur-xl shadow-lg">
-      <div className="flex justify-between items-center px-4 py-2 max-w-screen-xl mx-auto">
+    <div ref={containerRef} className="fixed inset-x-0 top-14 z-40 border-b border-slate-700/70 bg-slate-900/95 shadow-lg backdrop-blur-xl">
+      <div className="mx-auto flex max-w-screen-xl items-center justify-between gap-2 px-3 py-2 sm:px-4">
         <div className="flex items-center gap-2">
           <button
-            onClick={() => toggleMenu('enemies')} aria-expanded={activeMenu === 'enemies'}
-            className="bg-gray-800 p-2 rounded-full text-white hover:bg-gray-700"
+            type="button"
+            onClick={() => toggleMenu('enemies')}
+            aria-expanded={activeMenu === 'enemies'}
+            aria-label={t.enemiesMenu || 'Enemigos'}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
           >
-            <GiMinions size={24} />
+            <GiMinions size={24} aria-hidden="true" />
           </button>
           <button
-            onClick={() => toggleMenu('runes')} aria-expanded={activeMenu === 'runes'}
-            className="bg-gray-800 p-2 rounded-full text-white hover:bg-gray-700"
+            type="button"
+            onClick={() => toggleMenu('runes')}
+            aria-expanded={activeMenu === 'runes'}
+            aria-label={t.runesMenu || 'Runas'}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
           >
-            <GiRuneStone size={24} />
+            <GiRuneStone size={24} aria-hidden="true" />
           </button>
           <button
-            onClick={() => toggleMenu('scenario')} aria-expanded={activeMenu === 'scenario'}
-            className="bg-gray-800 p-2 rounded-full text-white hover:bg-gray-700"
+            type="button"
+            onClick={() => toggleMenu('scenario')}
+            aria-expanded={activeMenu === 'scenario'}
+            aria-label={t.scenarioMenu || 'Escenario'}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
           >
-            <GiVillage size={24} />
+            <GiVillage size={24} aria-hidden="true" />
           </button>
         </div>
 
-        <div className="text-white font-bold text-lg">
-          {t.menu || 'Menú'}
-        </div>
-
-        <div className="flex items-center gap-2 text-white text-sm">
-          <FaLanguage className="text-blue-300" />
-          <label htmlFor="lang">{t.language || 'Idioma'}:</label>
-          <select
-            id="lang"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="bg-gray-800 text-white border border-gray-600 rounded px-2 py-1"
+        <div className="flex items-center gap-2">
+          <SaveStatusIndicator className="hidden sm:inline-flex" />
+          <button
+            type="button"
+            onClick={() => setConfirmResetRunes(true)}
+            aria-label={t.resetRunes}
+            className="hidden min-h-11 items-center rounded-full bg-yellow-500 px-3 text-sm font-bold text-slate-900 hover:bg-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200 md:flex"
           >
-            {availableLanguages.map((lang) => (
-              <option key={lang} value={lang}>
-                {languageNames[lang]}
-              </option>
-            ))}
-          </select>
+            {t.resetRunes}
+          </button>
         </div>
       </div>
 

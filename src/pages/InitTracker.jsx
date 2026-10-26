@@ -3366,7 +3366,7 @@ const InitTracker = () => {
       <PageTransition>
        
         <div className="min-w-0">
-          <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-gray-950 to-black p-3 text-gray-200 sm:p-4">
+          <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-gray-950 to-black p-3 pt-28 text-gray-200 sm:p-4 sm:pt-28">
             <div className="no-header" />
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2 text-sm shadow-lg" aria-live="polite">
               <span className="font-semibold text-emerald-200">{ti.ronda || 'Ronda'}: {roundNumber || 0}</span>
