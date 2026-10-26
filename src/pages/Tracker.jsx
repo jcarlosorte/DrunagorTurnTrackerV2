@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { GiSwordClash, GiAttachedShield, GiBadGnome, GiShadowFollower, GiSharpedTeethSkull } from 'react-icons/gi';
+import React, { useMemo, useState, useEffect } from 'react';
+import { GiAttachedShield, GiBadGnome, GiShadowFollower, GiSharpedTeethSkull, GiCheckMark, GiMagnifyingGlass } from 'react-icons/gi';
 import { useNavigate } from "react-router-dom";
 import { EXPANSIONS } from '@/data/expansions';
 import { HEROES } from '@/data/heroes';
@@ -9,30 +9,55 @@ import { COLORS } from '@/data/color';
 import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import { useTracker } from '@/context/TrackerContext';
-import classNames from 'classnames';
 import PageTransition from "@/components/PageTransition";
+
+const MAX_HEROES = 5;
+const BEHAVIORS = ["estandar", "alternativo", "complejo"];
+const STEPS = ['heroes', 'roles', 'enemies'];
+
+const normalize = (value) => String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+const COLOR_SWATCH = {
+  blanco: '#f8fafc',
+  gris: '#94a3b8',
+  negro: '#0f172a',
+  comandante: '#facc15',
+};
 
 const TrackerSelect = () => {
   const [selectedHeroes, setSelectedHeroes] = useState([]);
   const [heroRoles, setHeroRoles] = useState({});
   const [selectedEnemies, setSelectedEnemies] = useState([]);
   const [selectedBehaviors, setSelectedBehaviors] = useState(["estandar", "alternativo", "complejo"]);
-  const [showHeroes, setShowHeroes] = useState(false);
-  const [showEnemies, setShowEnemies] = useState(false);
+  const [step, setStep] = useState('heroes');
+  const [heroQuery, setHeroQuery] = useState('');
+  const [enemyQuery, setEnemyQuery] = useState('');
+  const [enemyExpansion, setEnemyExpansion] = useState('all');
+  const [enemyColor, setEnemyColor] = useState('all');
+  const [message, setMessage] = useState({ type: '', text: '' });
+
   const { selectedExpansions } = useExpansions();
-  const { language, translations } = useLanguage();
+  const { translations } = useLanguage();
   const { trackerData, setTrackerData } = useTracker();
   const t = translations?.trackerSelect || {};
   const navigate = useNavigate();
-  const heroesInSelectedExpansions = HEROES.filter(h => selectedExpansions.includes(h.expansionId));
-  const enemiesInSelectedExpansions = ENEMIES.filter(e => selectedExpansions.includes(e.expansionId));
-  //const enemiesInSelectedExpansions = ENEMIES.filter(e => selectedExpansions.includes(e.expansionId) && e.color !== "jefe" && e.color !== "hero" && e.color !== "esbirro");
-  
+
+  const expansionKey = selectedExpansions.join(',');
+
+  const heroesInSelectedExpansions = useMemo(
+    () => HEROES.filter((h) => selectedExpansions.includes(h.expansionId)),
+    [expansionKey]
+  );
+  const enemiesInSelectedExpansions = useMemo(
+    () => ENEMIES.filter((e) => selectedExpansions.includes(e.expansionId)),
+    [expansionKey]
+  );
+
   useEffect(() => {
     const validHeroIds = new Set(heroesInSelectedExpansions.map((hero) => hero.id));
     const validEnemyIds = new Set(enemiesInSelectedExpansions.map((enemy) => enemy.id));
     const validRoleIds = new Set(ROLES.map((role) => role.id));
-    const validBehaviorIds = new Set(["estandar", "alternativo", "complejo"]);
+
     const heroes = (Array.isArray(trackerData.heroes) ? trackerData.heroes : [])
       .filter((id) => validHeroIds.has(id));
     const roles = Object.fromEntries(
@@ -42,59 +67,84 @@ const TrackerSelect = () => {
     const enemies = (Array.isArray(trackerData.enemies) ? trackerData.enemies : [])
       .filter((id) => validEnemyIds.has(id));
     const behaviors = (Array.isArray(trackerData.behaviors) ? trackerData.behaviors : [])
-      .filter((behavior) => validBehaviorIds.has(behavior));
+      .filter((behavior) => BEHAVIORS.includes(behavior));
 
     setSelectedHeroes(heroes);
     setHeroRoles(roles);
     setSelectedEnemies(enemies);
-    setSelectedBehaviors(behaviors.length > 0 ? behaviors : ["estandar", "alternativo", "complejo"]);
-  }, [selectedExpansions.join(','), trackerData]);
-
+    setSelectedBehaviors(behaviors.length > 0 ? behaviors : BEHAVIORS);
+  }, [expansionKey, trackerData, heroesInSelectedExpansions, enemiesInSelectedExpansions]);
 
   const getHeroName = (heroId) => translations.heroes?.[heroId] || heroId;
   const getEnemyName = (enemyId) => translations.enemies?.[enemyId] || enemyId;
   const getRoleName = (roleId) => translations.roles?.[roleId] || roleId;
+  const getExpansionName = (id) => translations.expansions?.[id] || id;
+
+  const showMessage = (type, text) => setMessage({ type, text });
 
   const handleRoleSelect = (heroId, roleId) => {
-    setHeroRoles(prev => ({ ...prev, [heroId]: roleId }));
+    setHeroRoles((prev) => {
+      const next = { ...prev };
+      if (roleId) next[heroId] = roleId;
+      else delete next[heroId];
+      return next;
+    });
   };
 
-  const handleHeroSelect = heroId => {
-    setHeroRoles(prev => {
+  const handleHeroSelect = (heroId) => {
+    const isSelected = selectedHeroes.includes(heroId);
+    if (!isSelected && selectedHeroes.length >= MAX_HEROES) {
+      showMessage('error', t.maxHeroes || `Máximo ${MAX_HEROES} héroes`);
+      return;
+    }
+    setHeroRoles((prev) => {
       const roles = { ...prev };
       if (roles[heroId]) delete roles[heroId];
       return roles;
     });
-    setSelectedHeroes(prev =>
-      prev.includes(heroId)
-        ? prev.filter(id => id !== heroId)
-        : prev.length < 5
-        ? [...prev, heroId]
-        : prev
-    );
-    if (selectedHeroes.length >= 5 && !selectedHeroes.includes(heroId)) {
-      alert(t.maxHeroes || 'Máximo 5 héroes');
-    }
+    setSelectedHeroes((prev) => (
+      prev.includes(heroId) ? prev.filter((id) => id !== heroId) : [...prev, heroId]
+    ));
+    showMessage('', '');
   };
 
   const handleEnemySelect = (enemyId) => {
-    setSelectedEnemies(prev =>
-      prev.includes(enemyId)
-        ? prev.filter(id => id !== enemyId)
-        : [...prev, enemyId]
-    );
+    setSelectedEnemies((prev) => (
+      prev.includes(enemyId) ? prev.filter((id) => id !== enemyId) : [...prev, enemyId]
+    ));
+  };
+
+  const handleBehaviorSelect = (behavior) => {
+    setSelectedBehaviors((prev) => {
+      if (prev.includes(behavior)) {
+        const next = prev.filter((b) => b !== behavior);
+        return next.length === 0 ? prev : next;
+      }
+      return [...prev, behavior];
+    });
+  };
+
+  const toggleExpansionEnemies = (expansionId) => {
+    const ids = ENEMIES.filter((e) => e.expansionId === expansionId).map((e) => e.id);
+    if (ids.length === 0) return;
+    const allSelected = ids.every((id) => selectedEnemies.includes(id));
+    setSelectedEnemies((prev) => (
+      allSelected
+        ? prev.filter((id) => !ids.includes(id))
+        : [...new Set([...prev, ...ids])]
+    ));
   };
 
   const handleConfirm = () => {
     if (selectedHeroes.length === 0) {
-      alert(t.noHeroesSelected || "Debes seleccionar al menos un héroe.");
+      showMessage('error', t.noHeroesSelected || "Debes seleccionar al menos un héroe.");
+      setStep('heroes');
       return;
     }
-  
+
     const validHeroIds = new Set(heroesInSelectedExpansions.map((hero) => hero.id));
     const validEnemyIds = new Set(enemiesInSelectedExpansions.map((enemy) => enemy.id));
     const validRoleIds = new Set(ROLES.map((role) => role.id));
-    const validBehaviorIds = new Set(["estandar", "alternativo", "complejo"]);
     const heroes = selectedHeroes.filter((id) => validHeroIds.has(id));
     const roles = Object.fromEntries(
       Object.entries(heroRoles)
@@ -103,389 +153,552 @@ const TrackerSelect = () => {
     const heroesWithoutRole = heroes.filter((heroId) => !roles[heroId]);
     if (heroesWithoutRole.length > 0) {
       const names = heroesWithoutRole.map(getHeroName).join(', ');
-      alert(
+      showMessage(
+        'error',
         t.heroesWithoutRoles?.replace('{heroes}', names) ||
         `Todos los héroes deben tener un rol asignado. Faltan: ${names}`
       );
+      setStep('roles');
       return;
     }
 
     const validEnemies = selectedEnemies.filter((id) => validEnemyIds.has(id));
-    const behaviors = selectedBehaviors.filter((behavior) => validBehaviorIds.has(behavior));
-    const nextTrackerData = {
+    const behaviors = selectedBehaviors.filter((behavior) => BEHAVIORS.includes(behavior));
+
+    setTrackerData({
       heroes,
       roles,
       enemies: validEnemies,
       behaviors: behaviors.length > 0 ? behaviors : ["estandar"],
-    };
-
-    setTrackerData(nextTrackerData);
+    });
     navigate("/init", { replace: true });
   };
-  
+
   const handleReset = () => {
-    const validEnemies = Array.from(new Set(enemiesInSelectedExpansions.map(e => e.id)));
+    const validEnemies = Array.from(new Set(enemiesInSelectedExpansions.map((e) => e.id)));
     setSelectedHeroes([]);
     setHeroRoles({});
     setSelectedEnemies(validEnemies);
-    setSelectedBehaviors(["estandar", "alternativo", "complejo"]);
+    setSelectedBehaviors(BEHAVIORS);
+    setMessage({ type: '', text: '' });
     setTrackerData({
       heroes: [],
       roles: {},
       enemies: validEnemies,
-      behaviors: ["estandar", "alternativo", "complejo"],
+      behaviors: BEHAVIORS,
     });
   };
 
+  const handleBack = () => navigate("/", { replace: true });
 
-  const handleBack = () => {
-    navigate("/", { replace: true });
+  const filteredHeroes = useMemo(() => {
+    const q = normalize(heroQuery.trim());
+    return heroesInSelectedExpansions.filter((hero) => (
+      !q || normalize(getHeroName(hero.id)).includes(q) || normalize(hero.id).includes(q)
+    ));
+  }, [heroQuery, heroesInSelectedExpansions, translations]);
+
+  const enemiesOfExpansion = useMemo(() => (
+    enemyExpansion === 'all'
+      ? enemiesInSelectedExpansions
+      : enemiesInSelectedExpansions.filter((e) => e.expansionId === enemyExpansion)
+  ), [enemyExpansion, enemiesInSelectedExpansions]);
+
+  const enemyFilters = useMemo(() => (
+    COLORS
+      .map((color) => {
+        const seen = new Set();
+        const items = enemiesOfExpansion.filter((enemy) => {
+          if (enemy.color !== color.id || seen.has(enemy.id)) return false;
+          seen.add(enemy.id);
+          return true;
+        });
+        return { color, items };
+      })
+      .filter(({ items }) => items.length > 0)
+  ), [enemiesOfExpansion]);
+
+  const visibleEnemyGroups = useMemo(() => {
+    const q = normalize(enemyQuery.trim());
+    const base = enemyColor === 'all'
+      ? enemyFilters
+      : enemyFilters.filter(({ color }) => color.id === enemyColor);
+    return base
+      .map(({ color, items }) => ({
+        color,
+        items: items.filter((enemy) => (
+          !q || normalize(getEnemyName(enemy.id)).includes(q) || normalize(enemy.id).includes(q)
+        )),
+      }))
+      .filter(({ items }) => items.length > 0);
+  }, [enemyColor, enemyFilters, enemyQuery, translations]);
+
+  const filteredEnemyCount = visibleEnemyGroups.reduce((total, group) => total + group.items.length, 0);
+
+  const selectedHeroObjects = selectedHeroes
+    .map((id) => HEROES.find((hero) => hero.id === id))
+    .filter(Boolean);
+
+  const rolesAssigned = Object.keys(heroRoles).length;
+  const expansionOptions = selectedExpansions
+    .filter((exp) => (EXPANSIONS.find((item) => item.id === exp)?.enemies?.length || 0) > 0);
+
+  const stepIndex = STEPS.indexOf(step);
+
+  const goToStep = (nextStep) => {
+    setStep(nextStep);
+    setMessage({ type: '', text: '' });
   };
 
-  // Función para manejar la selección de comportamientos
-  const handleBehaviorSelect = (behavior) => {
-    setSelectedBehaviors(prev => {
-      if (prev.includes(behavior)) {
-        // Si el comportamiento ya está seleccionado, lo eliminamos
-        const newBehaviors = prev.filter(b => b !== behavior);
-        // Si no hay ningún comportamiento seleccionado, restauramos el comportamiento
-        if (newBehaviors.length === 0) {
-          return prev; // No dejamos que se deseleccione el último comportamiento
-        }
-        return newBehaviors;
-      } else {
-        // Si el comportamiento no está seleccionado, lo añadimos
-        return [...prev, behavior];
-      }
-    });
-  };
+  const stepLabel = { heroes: t.selectHeroes, roles: t.assignRoles, enemies: t.selectEnemies };
 
-  const toggleExpansionEnemies = (expansionId) => {
-    const enemiesOfExpansion = ENEMIES.filter(e => e.expansionId === expansionId).map(e => e.id);
-  
-    const allSelected = enemiesOfExpansion.every(id => selectedEnemies.includes(id));
-  
-    if (allSelected) {
-      // Si todos están seleccionados, los desmarcamos
-      setSelectedEnemies(prev => prev.filter(id => !enemiesOfExpansion.includes(id)));
-    } else {
-      // Si alguno no está seleccionado, los añadimos todos
-      setSelectedEnemies(prev => [...new Set([...prev, ...enemiesOfExpansion])]);
-    }
-  };
-
-  
-   const RuneTitle = ({ children, color = "yellow" }) => {
-    const colors = {
-      yellow: {
-        border: "border-yellow-800",
-        bg: "bg-yellow-100",
-        text: "text-yellow-900 font-fantasy",
-        dot: "bg-yellow-800",
-      },
-      green: {
-        border: "border-green-700",
-        bg: "bg-green-100",
-        text: "text-green-900 font-fantasy",
-        dot: "bg-green-700",
-      },
-      red: {
-        border: "border-red-700",
-        bg: "bg-red-100",
-        text: "text-red-900 font-fantasy",
-        dot: "bg-red-700",
-      },
-      blue: {
-        border: "border-blue-700",
-        bg: "bg-blue-100",
-        text: "text-blue-900 font-fantasy",
-        dot: "bg-blue-700",
-      },
-    };
-  
-    const c = colors[color] || colors.yellow;
-  
-    return (
-      <div className={`flex items-center justify-start gap-2 mb-2 px-3 py-1 border-l-8 rounded-r-xl ${c.bg} ${c.border}`}>
-        <div className={`w-3 h-3 rounded-full ${c.dot}`} />
-        <span className={`flex items-center gap-2 text-lg font-bold ${c.text}`}>{children}</span>
-      </div>
-    );
-  };
-  
   return (
-  <PageTransition>
-    <div className="mx-auto min-h-screen max-w-7xl space-y-8 bg-slate-950 px-3 py-6 font-sans text-slate-100 sm:px-6 lg:px-8">
-      <div className="no-header" />
-      <h1 className="flex justify-center items-center gap-3 text-4xl font-extrabold text-yellow-300 drop-shadow-lg uppercase tracking-wider">
-        <GiBadGnome className="text-yellow-400 text-5xl" />
-        {t.title}
-      </h1>
-      
-      {/* Selección de héroes */}
-      <div className="border-0 rounded-3xl p-2 bg-slate-600 shadow-2xl border-yellow-700 text-black">
-        <button
-          type="button"
-          aria-expanded={showHeroes}
-          aria-controls="heroes-selection"
-          className="flex min-h-11 w-full items-center gap-2 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-          onClick={() => setShowHeroes(!showHeroes)}
-        >
-          <RuneTitle color="yellow"> <GiAttachedShield className="text-yellow-800 text-2xl" aria-hidden="true" />{t.selectHeroes}</RuneTitle>
-        </button>
-        {showHeroes && (
-          <div id="heroes-selection" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
-            {heroesInSelectedExpansions.map((hero) => {
-              const isSelected = selectedHeroes.includes(hero.id);
-              return (
-         
-                <label
-                  key={hero.id}
-                  className={`cursor-pointer border-2 rounded-lg p-2 flex flex-col items-center text-center transition w-full max-w-[150px] mx-auto
-                    ${isSelected ? 'border-green-600 bg-green-100/80 shadow-lg' : 'border-gray-300 bg-white hover:bg-gray-100'}`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={() => handleHeroSelect(hero.id)}
-                    disabled={!isSelected && selectedHeroes.length >= 5}
-                    className="sr-only peer"
-                    aria-label={getHeroName(hero.id)}
-                  />
-                  {hero.image && (
-                    <div className="relative w-full max-w-[150px] mx-auto">
-                      <img
-                        src={hero.image}
-                        alt={getHeroName(hero.id)}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-auto object-contain"
-                      />
-                      <span className="absolute bottom-1 left-0 right-0 text-xs text-white bg-black bg-opacity-60 p-1 text-center">
-                        {getHeroName(hero.id)}
-                      </span>
-                    </div>
-                  )}
-                  
-                </label>
-      
-              );
-            })}
-          </div>
-      )}  
-      </div>
+    <PageTransition>
+      <main className="mx-auto min-h-[calc(100dvh-3.5rem)] max-w-7xl bg-slate-950 px-3 pb-40 pt-5 text-slate-100 sm:px-6 lg:px-8">
+        <header className="mb-6">
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-300">Drunagor</p>
+          <h1 className="mt-2 flex items-center gap-3 text-3xl font-black tracking-tight text-yellow-300 sm:text-4xl">
+            <GiBadGnome className="text-4xl text-yellow-400 sm:text-5xl" aria-hidden="true" />
+            <span>{t.title || 'Configurar partida'}</span>
+          </h1>
+        </header>
 
-      {/* Asignación de roles */}
-      {selectedHeroes.length > 0 && (
-        <div className="border-0 rounded-3xl p-2 bg-slate-600 shadow-2xl border-green-600 text-black">
-          <RuneTitle color="green"><GiShadowFollower className="text-green-700 text-2xl" />{t.assignRoles}</RuneTitle>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6">
-            {selectedHeroes.map((heroId) => {
-              const heroData = HEROES.find((h) => h.id === heroId);
-              const usedRoles = Object.values(heroRoles);
+        {/* Paso actual */}
+        <nav aria-label="Pasos de configuración" className="mb-6">
+          <ol className="grid grid-cols-3 gap-2">
+            {STEPS.map((item, index) => {
+              const isActive = item === step;
+              const isDone = index < stepIndex;
               return (
-                <div key={heroId} className="flex flex-col items-center gap-2 p-4 bg-green-100/80 rounded-2xl border-0 border-green-600 shadow-md">
-                  <div className="relative w-full max-w-[150px] mx-auto">
-                    <img
-                      src={heroData.image}
-                      alt={getHeroName(heroId)}
-                      className="w-full h-auto object-contain"
-                    />
-                    <span className="absolute bottom-1 left-0 right-0 text-xs text-white bg-black bg-opacity-60 p-1 text-center">{getHeroName(heroId)}</span>
-                  </div>
-                  <span>
-                    {heroRoles[heroId]
-                      ? `- ${getRoleName(heroRoles[heroId])} -`
-                      : <em>- {t.chooseRole} -</em>}
-                  </span>
-                  <select
-                    value={heroRoles[heroId] || ""}
-                    onChange={(e) => handleRoleSelect(heroId, e.target.value)}
-                    className="mt-1 p-1 border border-gray-400 rounded text-sm"
+                <li key={item}>
+                  <button
+                    type="button"
+                    onClick={() => goToStep(item)}
+                    aria-current={isActive ? 'step' : undefined}
+                    className={`flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border px-2 py-2 text-center text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 sm:text-sm ${
+                      isActive
+                        ? 'border-emerald-400 bg-emerald-600 text-white'
+                        : isDone
+                          ? 'border-emerald-700 bg-emerald-950/60 text-emerald-200'
+                          : 'border-slate-700 bg-slate-900 text-slate-400'
+                    }`}
                   >
-                    <option value="">{t.chooseRole}</option>
-                    {ROLES.filter(role => !usedRoles.includes(role.id)).map(role => (
-                      <option key={role.id} value={role.id}>
-                        {getRoleName(role.id)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                    <span aria-hidden="true" className="flex h-6 w-6 items-center justify-center rounded-full bg-black/30 text-xs">
+                      {isDone ? <GiCheckMark /> : index + 1}
+                    </span>
+                    <span className="truncate">{stepLabel[item] || item}</span>
+                  </button>
+                </li>
               );
             })}
-          </div>
+          </ol>
+        </nav>
+
+        <div aria-live="assertive" role="status" className="min-h-0">
+          {message.text && (
+            <p className={`mb-4 rounded-xl border px-4 py-3 text-sm font-semibold ${
+              message.type === 'error'
+                ? 'border-red-500/60 bg-red-950/50 text-red-100'
+                : 'border-emerald-500/60 bg-emerald-950/50 text-emerald-100'
+            }`}>
+              {message.text}
+            </p>
+          )}
         </div>
-      )}
 
-      {/* Enemigos agrupados por color */}
-      <div className="border-0 rounded-3xl p-2 bg-slate-600 shadow-2xl border-yellow-700 text-black">
-        <button
-          type="button"
-          aria-expanded={showEnemies}
-          aria-controls="enemies-selection"
-          className="flex min-h-11 w-full items-center gap-2 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-          onClick={() => setShowEnemies(!showEnemies)}
-        >
-          <RuneTitle color="red"><GiSharpedTeethSkull className="text-red-700 text-2xl" aria-hidden="true" />{t.selectEnemies}</RuneTitle>
-        </button>
-        
-        {/* Comportamientos Generales */}
-        {showEnemies && (
-        <div id="enemies-selection">
-          <div className="flex flex-col sm:flex-row sm:justify-center sm:items-start sm:gap-4 mb-4">
-
-          {/* Comportamientos */}
-          <div className="bg-white/70 rounded-lg p-4 w-full sm:w-1/3 text-center">
-            <p className="text-lg font-semibold mb-2 text-center">{t?.comportamientos?.comportamiento}</p>
-            <div className="flex flex-col text-center items-center gap-2">
-              {["estandar", "alternativo", "complejo"].map(tipo => (
-                <label key={tipo} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedBehaviors.includes(tipo)}
-                    onChange={() => handleBehaviorSelect(tipo)}
-                    className="form-checkbox"
-                  />
-                  <span className="text-sm">{t?.comportamientos?.[tipo]}</span>
-                </label>
-              ))}
+        {/* PASO: HÉROES */}
+        {step === 'heroes' && (
+          <section aria-labelledby="heroes-heading" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-4 sm:p-6">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h2 id="heroes-heading" className="flex items-center gap-2 text-xl font-bold">
+                <GiAttachedShield className="text-yellow-400" aria-hidden="true" />
+                {t.selectHeroes || 'Héroes'}
+              </h2>
+              <span className="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-emerald-200">
+                {selectedHeroes.length}/{MAX_HEROES}
+              </span>
             </div>
-          </div>
-      
-          {/* Expansiones */}
-          <div className="bg-white/70 rounded-lg p-4 w-full sm:w-2/3">
-            <p className="text-lg font-semibold mb-2">{t?.selectExpansions || 'Seleccionar enemigos por expansión'}</p>
-            <div className="flex flex-wrap gap-2 justify-center">
-              {selectedExpansions
-                .filter(exp => {
-                  const expData = EXPANSIONS.find(e => e.id === exp);
-                  return expData?.enemies?.length > 0; // 👈 Filtra las expansiones con enemigos
-                })
-                .map(exp => {
-                  const expData = EXPANSIONS.find(e => e.id === exp);
+
+            <div className="relative mb-4">
+              <GiMagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+              <label htmlFor="hero-search" className="sr-only">{t.searchHeroes || 'Buscar héroe'}</label>
+              <input
+                id="hero-search"
+                type="search"
+                value={heroQuery}
+                onChange={(event) => setHeroQuery(event.target.value)}
+                placeholder={t.searchHeroes || 'Buscar héroe…'}
+                className="min-h-11 w-full rounded-xl border border-slate-600 bg-slate-950 pl-10 pr-3 text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              />
+            </div>
+
+            {filteredHeroes.length === 0 ? (
+              <p className="rounded-xl border border-slate-700 bg-slate-950 p-6 text-center text-slate-400">
+                {t.noResults || 'No hay resultados con los filtros actuales.'}
+              </p>
+            ) : (
+              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                {filteredHeroes.map((hero) => {
+                  const isSelected = selectedHeroes.includes(hero.id);
+                  const isBlocked = !isSelected && selectedHeroes.length >= MAX_HEROES;
                   return (
-                    <button
-                      key={exp}
-                      onClick={() => toggleExpansionEnemies(exp)}
-                      className="px-3 py-1 rounded-full border bg-indigo-600 hover:bg-indigo-700 text-white text-sm"
-                    >
-                      {translations.expansions?.[exp] || expData?.name || exp}
-                    </button>
-                  );
-                })}
-            </div>
-          </div>
-      
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-4 justify-center">
-          {COLORS.map(color => {
-            const enemiesOfColorMap = new Map();
-            enemiesInSelectedExpansions.forEach(e => {
-              if (e.color === color.id && !enemiesOfColorMap.has(e.id)) {
-                enemiesOfColorMap.set(e.id, e);
-              }
-            });
-            const enemiesOfColor = Array.from(enemiesOfColorMap.values());
-            if (enemiesOfColor.length === 0) return null;
-      
-            let areaBg = "bg-white";
-            let textColor = "";
-            if (color.id === "gris") areaBg = "bg-gray-300";
-            else if (color.id === "negro") {
-              areaBg = "bg-black/60";
-              textColor = "text-white";
-            } else if (color.id === "comandante") areaBg = "bg-yellow-200";
-      
-            const isCompact = enemiesOfColor.length <= 4;
-      
-            return (
-              <div
-                  key={color.id}
-                  className={`flex flex-col p-4 rounded-lg shadow items-center ${areaBg} ${textColor}
-                    ${isCompact ? 'max-w-[800px] flex-1' : 'w-full'}
-                  `}
-                >
-                  <h3 className="text-xl font-bold mb-4 text-center">
-                    {t.colors?.[color.id] || color.id}
-                  </h3>
-              
-                  <div
-                    className={
-                      ['blanco', 'gris'].includes(color.id)
-                        ? 'grid gap-4 w-full justify-center'
-                        : 'flex flex-wrap gap-4 justify-center w-full'
-                    }
-                    style={
-                      ['blanco', 'gris'].includes(color.id)
-                        ? { gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))' }
-                        : {}
-                    }
-                  >
-                  {enemiesOfColor.map(enemy => {
-                    const isSelected = selectedEnemies.includes(enemy.id);
-                    return (
+                    <li key={hero.id}>
                       <label
-                        key={enemy.id}
-                        className={`relative fantasy-frame flex flex-col items-center space-y-2 p-2 rounded-lg cursor-pointer border transition 
-                          w-full max-w-[150px]
-                          ${isSelected ? 'border-green-600 bg-green-100/80' : 'border-red-600 bg-white hover:bg-gray-100'}`}
+                        className={`group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border-2 transition focus-within:ring-2 focus-within:ring-sky-300 ${
+                          isSelected
+                            ? 'border-emerald-400 bg-emerald-950/50 shadow-lg shadow-emerald-950/40'
+                            : isBlocked
+                              ? 'cursor-not-allowed border-slate-800 bg-slate-900/40 opacity-50'
+                              : 'border-slate-700 bg-slate-900 hover:border-slate-500'
+                        }`}
                       >
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={() => handleEnemySelect(enemy.id)}
-                          className="sr-only peer"
-                          aria-label={getEnemyName(enemy.id)}
+                          onChange={() => handleHeroSelect(hero.id)}
+                          disabled={isBlocked}
+                          className="sr-only"
+                          aria-label={getHeroName(hero.id)}
                         />
-                        {enemy.imagen && (
-                          <div className="relative w-full max-w-[120px] mx-auto">
-                          <img src={enemy.imagen} alt={getEnemyName(enemy.id)} className="w-full h-auto object-contain" />
-                          <span className="absolute bottom-1 left-0 right-0 text-xs text-white bg-black bg-opacity-60 p-1 text-center">
-                            {getEnemyName(enemy.id)}
+                        <span className="relative block">
+                          {hero.image ? (
+                            <img
+                              src={hero.image}
+                              alt=""
+                              loading="lazy"
+                              decoding="async"
+                              className="h-32 w-full object-cover sm:h-40"
+                            />
+                          ) : (
+                            <span className="flex h-32 w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
+                          )}
+                          <span
+                            aria-hidden="true"
+                            className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black ${
+                              isSelected
+                                ? 'border-emerald-200 bg-emerald-500 text-slate-950'
+                                : 'border-slate-400 bg-slate-900/80 text-transparent'
+                            }`}
+                          >
+                            <GiCheckMark />
                           </span>
-                          </div>
-                        )}
-                        
+                        </span>
+                        <span className="flex flex-1 flex-col justify-center gap-0.5 px-2 py-2 text-center">
+                          <span className="line-clamp-2 text-sm font-bold text-slate-100">{getHeroName(hero.id)}</span>
+                          <span className="truncate text-[0.7rem] text-slate-400">{getExpansionName(hero.expansionId)}</span>
+                          {heroRoles[hero.id] && (
+                            <span className="mt-1 truncate rounded-full bg-emerald-900/70 px-2 py-0.5 text-[0.7rem] font-semibold text-emerald-200">
+                              {getRoleName(heroRoles[hero.id])}
+                            </span>
+                          )}
+                        </span>
                       </label>
-                    );
-                  })}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+        )}
+
+        {/* PASO: ROLES */}
+        {step === 'roles' && (
+          <section aria-labelledby="roles-heading" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-4 sm:p-6">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h2 id="roles-heading" className="flex items-center gap-2 text-xl font-bold">
+                <GiShadowFollower className="text-emerald-400" aria-hidden="true" />
+                {t.assignRoles || 'Roles'}
+              </h2>
+              <span className="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-emerald-200">
+                {rolesAssigned}/{selectedHeroes.length}
+              </span>
+            </div>
+
+            {selectedHeroes.length === 0 ? (
+              <div className="rounded-xl border border-slate-700 bg-slate-950 p-6 text-center">
+                <p className="text-slate-300">{t.noHeroesSelected || 'Todavía no has seleccionado héroes.'}</p>
+                <button
+                  type="button"
+                  onClick={() => goToStep('heroes')}
+                  className="mt-4 min-h-11 rounded-lg bg-emerald-600 px-4 py-2 font-bold text-white hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
+                >
+                  {t.selectHeroes || 'Seleccionar héroes'}
+                </button>
+              </div>
+            ) : (
+              <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {selectedHeroObjects.map((hero) => {
+                  const usedRoles = Object.values(heroRoles).filter((id) => id !== heroRoles[hero.id]);
+                  return (
+                    <li key={hero.id} className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-950 p-2">
+                      <img
+                        src={hero.image}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="h-16 w-16 shrink-0 rounded-lg object-cover"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-bold text-slate-100">{getHeroName(hero.id)}</p>
+                        <label htmlFor={`role-${hero.id}`} className="sr-only">{`${t.chooseRole || 'Rol'} — ${getHeroName(hero.id)}`}</label>
+                        <select
+                          id={`role-${hero.id}`}
+                          value={heroRoles[hero.id] || ''}
+                          onChange={(event) => handleRoleSelect(hero.id, event.target.value)}
+                          className={`mt-1 min-h-11 w-full rounded-lg border bg-slate-900 px-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                            heroRoles[hero.id] ? 'border-emerald-600' : 'border-amber-600'
+                          }`}
+                        >
+                          <option value="">{t.chooseRole || 'Elegir rol'}</option>
+                          {ROLES
+                            .filter((role) => !usedRoles.includes(role.id) || role.id === heroRoles[hero.id])
+                            .map((role) => (
+                              <option key={role.id} value={role.id}>{getRoleName(role.id)}</option>
+                            ))}
+                        </select>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+        )}
+
+        {/* PASO: ENEMIGOS */}
+        {step === 'enemies' && (
+          <section aria-labelledby="enemies-heading" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-4 sm:p-6">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h2 id="enemies-heading" className="flex items-center gap-2 text-xl font-bold">
+                <GiSharpedTeethSkull className="text-red-400" aria-hidden="true" />
+                {t.selectEnemies || 'Enemigos'}
+              </h2>
+              <span className="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-red-200">
+                {selectedEnemies.length} {t.selected || 'seleccionados'}
+              </span>
+            </div>
+
+            {/* Comportamientos */}
+            <div className="mb-4 rounded-xl border border-slate-700 bg-slate-950 p-3">
+              <p id="behaviors-label" className="mb-2 text-sm font-bold text-slate-200">
+                {t?.comportamientos?.comportamiento || 'Comportamientos'}
+              </p>
+              <div role="group" aria-labelledby="behaviors-label" className="flex flex-wrap gap-2">
+                {BEHAVIORS.map((behavior) => {
+                  const isOn = selectedBehaviors.includes(behavior);
+                  return (
+                    <button
+                      key={behavior}
+                      type="button"
+                      aria-pressed={isOn}
+                      onClick={() => handleBehaviorSelect(behavior)}
+                      className={`min-h-11 rounded-full border px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                        isOn
+                          ? 'border-emerald-400 bg-emerald-600 text-white'
+                          : 'border-slate-600 bg-slate-900 text-slate-300 hover:border-slate-400'
+                      }`}
+                    >
+                      {t?.comportamientos?.[behavior] || behavior}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Filtros */}
+            <div className="mb-4 grid gap-3 sm:grid-cols-2">
+              <div className="relative">
+                <GiMagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+                <label htmlFor="enemy-search" className="sr-only">{t.searchEnemies || 'Buscar enemigo'}</label>
+                <input
+                  id="enemy-search"
+                  type="search"
+                  value={enemyQuery}
+                  onChange={(event) => setEnemyQuery(event.target.value)}
+                  placeholder={t.searchEnemies || 'Buscar enemigo…'}
+                  className="min-h-11 w-full rounded-xl border border-slate-600 bg-slate-950 pl-10 pr-3 text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                />
+              </div>
+              <div>
+                <label htmlFor="enemy-expansion" className="sr-only">{t.filterExpansion || 'Filtrar por expansión'}</label>
+                <select
+                  id="enemy-expansion"
+                  value={enemyExpansion}
+                  onChange={(event) => setEnemyExpansion(event.target.value)}
+                  className="min-h-11 w-full rounded-xl border border-slate-600 bg-slate-950 px-3 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  <option value="all">{t.allExpansions || 'Todas las expansiones'}</option>
+                  {expansionOptions.map((exp) => (
+                    <option key={exp} value={exp}>{getExpansionName(exp)}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Filtro por color */}
+            <div role="group" aria-label={t.filterColor || 'Filtrar por color'} className="mb-4 flex flex-wrap gap-2">
+              <button
+                type="button"
+                aria-pressed={enemyColor === 'all'}
+                onClick={() => setEnemyColor('all')}
+                className={`min-h-11 rounded-full border px-4 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                  enemyColor === 'all' ? 'border-sky-300 bg-sky-700 text-white' : 'border-slate-600 bg-slate-900 text-slate-300'
+                }`}
+              >
+                {t.allColors || 'Todos'}
+              </button>
+              {enemyFilters.map(({ color, items }) => (
+                <button
+                  key={color.id}
+                  type="button"
+                  aria-pressed={enemyColor === color.id}
+                  onClick={() => setEnemyColor(enemyColor === color.id ? 'all' : color.id)}
+                  className={`min-h-11 rounded-full border px-4 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                    enemyColor === color.id ? 'border-sky-300 bg-sky-700 text-white' : 'border-slate-600 bg-slate-900 text-slate-300'
+                  }`}
+                >
+                  {t.colors?.[color.id] || color.id} ({items.length})
+                </button>
+              ))}
+            </div>
+
+            {/* Selección rápida por expansión */}
+            {expansionOptions.length > 0 && (
+              <div className="mb-5 rounded-xl border border-slate-700 bg-slate-950 p-3">
+                <p className="mb-2 text-sm font-bold text-slate-200">{t.quickSelect || 'Selección rápida por expansión'}</p>
+                <div className="flex flex-wrap gap-2">
+                  {expansionOptions.map((exp) => (
+                    <button
+                      key={exp}
+                      type="button"
+                      onClick={() => toggleExpansionEnemies(exp)}
+                      className="min-h-11 rounded-full border border-indigo-500 bg-indigo-800 px-4 text-sm font-semibold text-white hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+                    >
+                      {getExpansionName(exp)}
+                    </button>
+                  ))}
                 </div>
               </div>
-            );
-          })}
+            )}
+
+            {filteredEnemyCount === 0 ? (
+              <p className="rounded-xl border border-slate-700 bg-slate-950 p-6 text-center text-slate-400">
+                {t.noResults || 'No hay resultados con los filtros actuales.'}
+              </p>
+            ) : (
+              visibleEnemyGroups.map(({ color, items }) => {
+                const filteredItems = items;
+                return (
+                  <div key={color.id} className="mb-6">
+                    <h3 className="mb-2 flex items-center gap-2 text-base font-bold text-slate-200">
+                      <span aria-hidden="true" className="h-3 w-3 rounded-full border border-white/40" style={{ backgroundColor: color.hex || COLOR_SWATCH[color.id] || '#64748b' }} />
+                      {t.colors?.[color.id] || color.id}
+                      <span className="text-xs font-normal text-slate-400">({filteredItems.length})</span>
+                    </h3>
+                    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                      {filteredItems.map((enemy) => {
+                        const isSelected = selectedEnemies.includes(enemy.id);
+                        return (
+                          <li key={enemy.id}>
+                            <label
+                              className={`group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border-2 transition focus-within:ring-2 focus-within:ring-sky-300 ${
+                                isSelected
+                                  ? 'border-emerald-400 bg-emerald-950/50 shadow-lg shadow-emerald-950/40'
+                                  : 'border-slate-700 bg-slate-900 hover:border-slate-500'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => handleEnemySelect(enemy.id)}
+                                className="sr-only"
+                                aria-label={getEnemyName(enemy.id)}
+                              />
+                              <span className="relative block">
+                                {enemy.imagen ? (
+                                  <img
+                                    src={enemy.imagen}
+                                    alt=""
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="h-28 w-full object-cover sm:h-32"
+                                  />
+                                ) : (
+                                  <span className="flex h-28 w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
+                                )}
+                                <span
+                                  aria-hidden="true"
+                                  className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black ${
+                                    isSelected
+                                      ? 'border-emerald-200 bg-emerald-500 text-slate-950'
+                                      : 'border-slate-400 bg-slate-900/80 text-transparent'
+                                  }`}
+                                >
+                                  <GiCheckMark />
+                                </span>
+                              </span>
+                              <span className="flex flex-1 flex-col justify-center gap-0.5 px-2 py-2 text-center">
+                                <span className="line-clamp-2 text-sm font-bold text-slate-100">{getEnemyName(enemy.id)}</span>
+                                <span className="truncate text-[0.7rem] text-slate-400">{getExpansionName(enemy.expansionId)}</span>
+                              </span>
+                            </label>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                );
+              })
+            )}
+          </section>
+        )}
+
+        {/* Resumen sticky */}
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-700 bg-slate-950/95 backdrop-blur">
+          <div className="mx-auto max-w-7xl px-3 py-3 sm:px-6 lg:px-8">
+            <div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-300">
+              <span><b className="text-emerald-300">{selectedHeroes.length}</b> {t.heroesSelected || 'héroes'}</span>
+              <span><b className="text-emerald-300">{rolesAssigned}</b> {t.rolesAssigned || 'roles'}</span>
+              <span><b className="text-red-300">{selectedEnemies.length}</b> {t.enemiesSelected || 'enemigos'}</span>
+              <span className="hidden sm:inline"><b className="text-sky-300">{selectedBehaviors.length}</b> {t.behaviorsSelected || 'comportamientos'}</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={handleBack}
+                className="min-h-11 flex-1 rounded-xl border border-slate-600 bg-slate-800 px-4 py-2 font-bold text-slate-100 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 sm:flex-none"
+              >
+                {t.back || 'Atrás'}
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="min-h-11 flex-1 rounded-xl border border-red-700 bg-red-900/60 px-4 py-2 font-bold text-red-100 hover:bg-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 sm:flex-none"
+              >
+                {t.reset || 'Restablecer'}
+              </button>
+              {step !== 'enemies' && (
+                <button
+                  type="button"
+                  onClick={() => goToStep(STEPS[Math.min(stepIndex + 1, STEPS.length - 1)])}
+                  className="min-h-11 flex-1 rounded-xl border border-emerald-500 bg-emerald-800 px-4 py-2 font-bold text-white hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200 sm:flex-none"
+                >
+                  {t.next || 'Continuar'}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={handleConfirm}
+                className="min-h-11 flex-1 rounded-xl bg-emerald-600 px-4 py-2 font-bold text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200 sm:flex-none"
+              >
+                {t.confirm || 'Iniciar partida'}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-      )}
-      </div>
-
-
-      {/* Botones */}
-      <div className="sticky bottom-0 z-20 -mx-3 flex flex-col gap-3 border-t border-slate-700 bg-slate-950/95 px-3 py-4 text-black backdrop-blur sm:mx-0 sm:flex-row sm:justify-between sm:gap-4 sm:px-0">
-        <button
-          onClick={handleBack}
-          className="min-h-11 rounded-lg bg-blue-200 px-4 py-2 font-bold shadow hover:bg-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-        >
-          {t.back}
-        </button>
-        <button
-          onClick={handleReset}
-          className="min-h-11 rounded bg-red-500 px-4 py-2 font-bold text-white shadow transition hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
-        >
-          {t.reset}
-        </button>
-        <button
-          onClick={handleConfirm}
-          className="min-h-11 rounded-lg bg-green-200 px-4 py-2 font-bold shadow hover:bg-green-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-        >
-          {t.confirm}
-        </button>
-      </div>
-      </div>
+      </main>
     </PageTransition>
   );
-
 };
 
 export default TrackerSelect;
-

@@ -2081,11 +2081,13 @@ const InitTracker = () => {
   const [groupTurnTracker, setGroupTurnTracker] = useState(() => persistedSession.groupTurnTracker || { group: [], index: 0 });
   const processedVoragineRef = useRef(new Set());
   const processedDefenseTurnRef = useRef(new Set());
-  const [lastRealTurnIndex, setLastRealTurnIndex] = useState(() => persistedSession.lastRealTurnIndex ?? null); 
+  const [lastRealTurnIndex, setLastRealTurnIndex] = useState(() => persistedSession.lastRealTurnIndex ?? null);
+  const [roundNumber, setRoundNumber] = useState(() => persistedSession.roundNumber ?? persistedSession.round ?? 0);
   const placedHeroes = trackerData.placedHeroes;
   const groupIndex = groupTurnTracker.index;
-  const roundRef = useRef(0);
-  const previousIndexRef = useRef(null);
+  const roundRef = useRef(roundNumber);
+  const [previousTurnIndex, setPreviousTurnIndex] = useState(() => persistedSession.previousTurnIndex ?? null);
+  const previousTurnIndexRef = useRef(persistedSession.previousTurnIndex ?? null);
   const processedStartEffectsRef = useRef(new Set());
   const processedEndEffectsRef = useRef(new Set());
   const processedCardsRef = useRef(new Set());
@@ -2100,14 +2102,16 @@ const InitTracker = () => {
       enemyEvolutions,
       turnIndex,
       lastRealTurnIndex,
+      roundNumber,
+      previousTurnIndex,
       groupTurnTracker,
       extraTurnsQueue,
       extraTurnIndex,
       extraTurnTotal,
     });
   }, [
-    enemyEvolutions, turnIndex, lastRealTurnIndex, groupTurnTracker,
-    extraTurnsQueue, extraTurnIndex, extraTurnTotal,
+    enemyEvolutions, turnIndex, lastRealTurnIndex, roundNumber, previousTurnIndex,
+    groupTurnTracker, extraTurnsQueue, extraTurnIndex, extraTurnTotal,
   ]);
   
   useEffect(() => {
@@ -2116,16 +2120,17 @@ const InitTracker = () => {
     const step = TURN_ORDER[turnIndex];
 
     // ✅ Mostrar toast inicial solo una vez
-    if (previousIndexRef.current === null && roundRef.current === 0) {
+    if (previousTurnIndexRef.current === null && roundRef.current === 0) {
       roundRef.current = 1;
+      setRoundNumber(1);
       showScenarioToast(`🔁 ${ti.rondaInicial}`);
     }
     
     // 🔁 Detectar nueva ronda
     if (
-      previousIndexRef.current !== null &&
+      previousTurnIndexRef.current !== null &&
       turnIndex !== -1 &&
-      turnIndex < previousIndexRef.current
+      turnIndex < previousTurnIndexRef.current
     ) {
       // Solo cuando damos la vuelta al ciclo completo
       processedVoragineRef.current = new Set();
@@ -2136,10 +2141,12 @@ const InitTracker = () => {
       processedTiempoRef.current = new Set();
       setExecutedRunes([]);
       roundRef.current += 1;
+      setRoundNumber(roundRef.current);
       showScenarioToast(`🔁 ${ti.ronda}: ${roundRef.current}`);
     }
-    
-    previousIndexRef.current = turnIndex;
+
+    previousTurnIndexRef.current = turnIndex;
+    setPreviousTurnIndex(turnIndex);
     
     let hasEntities = false;
     if (step.type === "enemy") {
@@ -2717,9 +2724,11 @@ const InitTracker = () => {
   };
 
   const restartTurnOrder = () => {
-    setTurnIndex(0);                // empezamos desde el primer paso
-    previousIndexRef.current = null;
+    setTurnIndex(0);
+    previousTurnIndexRef.current = null;
+    setPreviousTurnIndex(null);
     roundRef.current = 1;
+    setRoundNumber(1);
     setCurrentTurnEntity(null);
     setGroupTurnTracker({ group: [], index: 0 });
     setExecutedRunes([]);
@@ -3334,8 +3343,12 @@ const InitTracker = () => {
         <div className="min-w-0">
           <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-gray-950 to-black p-3 text-gray-200 sm:p-4">
             <div className="no-header" />
-            
-            
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-2 text-sm shadow-lg" aria-live="polite">
+              <span className="font-semibold text-emerald-200">{ti.ronda || 'Ronda'}: {roundNumber || 0}</span>
+              <span className="text-slate-300">{ti.turno || 'Turno'}: {turnIndex >= 0 ? turnIndex + 1 : '—'}</span>
+              {currentTurnEntity && <span className="truncate text-sky-200">{currentTurnEntity.name || currentTurnEntity.id || ''}</span>}
+            </div>
+
             <TopMenu
               onAddEnemy={openCategorySelector}
               onSelectCommander={handleRandomCommander}

@@ -6,19 +6,22 @@ export default function SaveGameActions({ compact = false }) {
   const { translations } = useLanguage();
   const inputRef = useRef(null);
   const [pendingImport, setPendingImport] = useState(null);
+  const [importScope, setImportScope] = useState('full');
   const [feedback, setFeedback] = useState('');
   const t = translations?.config || {};
 
-  const exportGame = () => {
-    const snapshot = createStorageSnapshot();
+  const exportGame = (scope, filename) => {
+    const snapshot = createStorageSnapshot(scope);
     const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `drunagor-partida-${new Date().toISOString().slice(0, 10)}.json`;
+    link.download = `drunagor-${filename}-${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
     URL.revokeObjectURL(url);
-    setFeedback(t.exportSuccess || 'Partida exportada correctamente.');
+    setFeedback(scope === 'configuration'
+      ? (t.exportConfigSuccess || 'Configuración exportada correctamente.')
+      : (t.exportSuccess || 'Partida exportada correctamente.'));
   };
 
   const selectImportFile = async (event) => {
@@ -28,11 +31,11 @@ export default function SaveGameActions({ compact = false }) {
 
     try {
       const snapshot = JSON.parse(await file.text());
-      // Validate before showing the destructive confirmation.
-      if (!snapshot || snapshot.schemaVersion !== 1 || !snapshot.data) {
-        throw new Error('Formato no compatible');
-      }
-      setPendingImport({ snapshot, name: file.name });
+      if (!snapshot || ![1, 2].includes(snapshot.schemaVersion)) throw new Error('Formato no compatible');
+      const fileScope = snapshot.schemaVersion === 2 ? snapshot.scope : 'full';
+      const allowedScope = ['configuration', 'track', 'full'].includes(fileScope) ? fileScope : 'full';
+      setPendingImport({ snapshot, name: file.name, allowedScope });
+      setImportScope(allowedScope === 'configuration' || allowedScope === 'track' ? allowedScope : 'full');
       setFeedback('');
     } catch {
       setFeedback(t.importError || 'No se pudo leer la partida seleccionada.');
@@ -41,7 +44,7 @@ export default function SaveGameActions({ compact = false }) {
 
   const confirmImport = () => {
     try {
-      importStorageSnapshot(pendingImport.snapshot);
+      importStorageSnapshot(pendingImport.snapshot, importScope);
       window.location.reload();
     } catch {
       setPendingImport(null);
@@ -53,20 +56,35 @@ export default function SaveGameActions({ compact = false }) {
     <section className={compact ? 'flex flex-wrap items-center gap-2' : 'rounded-2xl border border-slate-600 bg-slate-800/80 p-4'} aria-labelledby="save-game-title">
       {!compact && <h2 id="save-game-title" className="mb-3 text-lg font-bold text-white">{t.savedGames || 'Partidas guardadas'}</h2>}
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={exportGame} className="min-h-11 rounded-lg bg-emerald-700 px-4 py-2 font-semibold text-white transition hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+        <button type="button" onClick={() => exportGame('full', 'partida')} className="min-h-11 rounded-lg bg-emerald-700 px-4 py-2 font-semibold text-white transition hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
           {t.exportGame || 'Exportar partida'}
         </button>
-        <button type="button" onClick={() => inputRef.current?.click()} className="min-h-11 rounded-lg border border-slate-500 bg-slate-700 px-4 py-2 font-semibold text-white transition hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300">
-          {t.importGame || 'Importar partida'}
+        <button type="button" onClick={() => exportGame('configuration', 'configuracion')} className="min-h-11 rounded-lg border border-emerald-500/70 bg-emerald-950 px-4 py-2 font-semibold text-emerald-100 transition hover:bg-emerald-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+          {t.exportConfig || 'Exportar configuración'}
         </button>
-        <input ref={inputRef} type="file" accept="application/json,.json" onChange={selectImportFile} className="sr-only" aria-label={t.importGame || 'Importar partida'} />
+        <button type="button" onClick={() => inputRef.current?.click()} className="min-h-11 rounded-lg border border-slate-500 bg-slate-700 px-4 py-2 font-semibold text-white transition hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300">
+          {t.importGame || 'Importar JSON'}
+        </button>
+        <input ref={inputRef} type="file" accept="application/json,.json" onChange={selectImportFile} className="sr-only" aria-label={t.importGame || 'Importar JSON'} />
       </div>
 
       {pendingImport && (
         <div className="mt-3 rounded-lg border border-amber-500/60 bg-amber-950/40 p-3 text-left text-sm text-amber-100" role="alert">
-          <p>{t.confirmImport || '¿Quieres reemplazar la partida actual?'}</p>
+          <p>{t.confirmImport || '¿Qué parte quieres importar?'}</p>
           <p className="mt-1 truncate text-amber-200/80">{pendingImport.name}</p>
-          <div className="mt-3 flex gap-2">
+          <label htmlFor="import-scope" className="mt-3 block font-semibold">{t.importScope || 'Contenido'}</label>
+          <select
+            id="import-scope"
+            value={importScope}
+            onChange={(event) => setImportScope(event.target.value)}
+            disabled={pendingImport.allowedScope !== 'full'}
+            className="mt-1 min-h-11 w-full rounded-lg border border-amber-500/50 bg-slate-900 px-3 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
+          >
+            {pendingImport.allowedScope === 'full' && <option value="full">{t.fullSave || 'Configuración y track'}</option>}
+            {(pendingImport.allowedScope === 'full' || pendingImport.allowedScope === 'configuration') && <option value="configuration">{t.onlyConfig || 'Solo configuración'}</option>}
+            {(pendingImport.allowedScope === 'full' || pendingImport.allowedScope === 'track') && <option value="track">{t.onlyTrack || 'Solo track'}</option>}
+          </select>
+          <div className="mt-3 flex flex-wrap gap-2">
             <button type="button" onClick={confirmImport} className="min-h-11 rounded-lg bg-amber-600 px-4 py-2 font-semibold text-white hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200">
               {t.confirm || 'Confirmar'}
             </button>

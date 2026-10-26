@@ -1,19 +1,17 @@
 import { useMemo } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
-import { useTracker } from "@/context/TrackerContext";
 import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useInitRunes } from "@/context/initRunesContext";
 import { useGame } from "@/context/GameContext";
 import PageTransition from "@/components/PageTransition";
 import SaveGameActions from "@/components/SaveGameActions";
-import { clearGameSession, isPlainObject, readJsonStorage } from "@/utils/storage";
+import { clearTrackState, isPlainObject, readJsonStorage } from "@/utils/storage";
 import logo from "@/assets/Corebox_Logo-1536x864.png";
 
 export default function HomeMenu() {
   const navigate = useNavigate();
   const { translations } = useLanguage();
-  const { setTrackerData } = useTracker();
   const { resetEnemySession } = useInitEnemies();
   const { resetPlacedRunes } = useInitRunes();
   const { resetGameState } = useGame();
@@ -31,11 +29,11 @@ export default function HomeMenu() {
   }, []);
 
   const startNewGame = () => {
-    clearGameSession();
+    // La configuración (héroes, roles, enemigos) se conserva; solo se reinicia el track.
+    clearTrackState();
     resetGameState();
     resetEnemySession();
     resetPlacedRunes();
-    setTrackerData({ heroes: [], roles: {}, enemies: [], behaviors: ['estandar', 'alternativo', 'complejo'] });
     navigate('/tracker');
   };
 
