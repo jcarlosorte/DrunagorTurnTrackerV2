@@ -5,7 +5,7 @@ import dragonImg from '@/assets/expansions/dragon.jpg';
 import desiertoImg from '@/assets/expansions/desierto.jpg';
 import mundoImg from '@/assets/expansions/mundo-sombrio.jpg';
 import handurielImg from '@/assets/expansions/handuriel.jpg';
-import iraImg from '@/assets/expansions/Ira.jpg';
+import iraImg from '@/assets/expansions/ira.jpg';
 import monstruos1Img from '@/assets/expansions/monstruos1.jpg';
 import botinesImg from '@/assets/expansions/botines.jpg';
 import apocalypseImg from '@/assets/expansions/apocalypse.png';
