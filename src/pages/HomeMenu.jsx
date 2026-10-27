@@ -7,8 +7,8 @@ import { useGame } from "@/context/GameContext";
 import PageTransition from "@/components/PageTransition";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { clearTrackState, isPlainObject, readJsonStorage } from "@/utils/storage";
-import logo from "@/assets/Corebox_Logo-1536x864.webp";
-import skeleton from "@/assets/enemies/skeleton_knight.png";
+import logo from "@/assets/Corebox_Logo-1536x864.avif";
+import skeleton from "@/assets/enemies/skeleton_knight.avif";
 import BuildBadge from "@/components/BuildBadge";
 
 export default function HomeMenu() {

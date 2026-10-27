@@ -15,6 +15,7 @@ import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageMenu from "@/components/LanguageMenu";
 import ScenarioPanels from '@/components/scenario/ScenarioPanels';
+import ResponsiveImage from '@/components/track/ResponsiveImage';
 import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
@@ -326,82 +327,97 @@ const TopMenu = ({
             transition={{ duration: 0.25 }}
             className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-2 overflow-y-auto px-3 pb-3 pt-2 text-white sm:px-4"
           >
-            {/* Aleatorios */}
-            <div className="track-surface-raised p-2.5 shadow-md">
-              <div className="mb-2 flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-900/60 text-blue-300">
-                  <GiSwordClash className="text-lg" />
-                </span>
-                <span className="font-semibold">{t.addEnemies || 'Enemigos aleatorios'}</span>
+            <div className="grid gap-2 md:grid-cols-2">
+              {/* Aleatorios */}
+              <div data-testid="random-enemies" className="track-surface-raised p-2.5 shadow-md">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-900/60 text-blue-300">
+                    <GiSwordClash className="text-lg" />
+                  </span>
+                  <span className="font-semibold">{t.addEnemies || 'Enemigos aleatorios'}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {[
+                    { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white', ring: 'ring-white/30' },
+                    { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400', ring: 'ring-slate-400/30' },
+                    { key: 'negro', label: t.addBlackEnemies, color: 'text-black', ring: 'ring-slate-200/40' },
+                    { key: 'comandante', label: t.addCommanders, color: 'text-yellow-500', ring: 'ring-yellow-500/30' },
+                  ].map(({ key, label, color, ring }) => (
+                    <button
+                      key={key}
+                      onClick={() => {
+                        setEnemySelect(key);
+                        handleEnemySelect({ target: { value: key } });
+                      }}
+                      className={`state-chip flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg border px-1.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                        enemySelect === key
+                          ? 'border-sky-400 bg-sky-700 text-white shadow-lg shadow-sky-950/50'
+                          : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
+                      }`}
+                    >
+                      <GiBullyMinion className={`text-2xl ${key === 'negro' ? 'rounded bg-white text-black' : color} ${ring}`} />
+                      <span className="text-center text-xs">{label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
-                {[
-                  { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white', ring: 'ring-white/30' },
-                  { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400', ring: 'ring-slate-400/30' },
-                  { key: 'negro', label: t.addBlackEnemies, color: 'text-black', ring: 'ring-slate-200/40' },
-                  { key: 'comandante', label: t.addCommanders, color: 'text-yellow-500', ring: 'ring-yellow-500/30' },
-                ].map(({ key, label, color, ring }) => (
-                  <button
-                    key={key}
-                    onClick={() => {
-                      setEnemySelect(key);
-                      handleEnemySelect({ target: { value: key } });
-                    }}
-                    className={`state-chip flex min-h-16 flex-col items-center justify-center gap-0.5 rounded-lg border px-1.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
-                      enemySelect === key
-                        ? 'border-sky-400 bg-sky-700 text-white shadow-lg shadow-sky-950/50'
-                        : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
-                    }`}
-                  >
-                    <GiBullyMinion className={`text-2xl ${key === 'negro' ? 'rounded bg-white text-black' : color} ${ring}`} />
-                    <span className="text-center text-xs">{label}</span>
-                  </button>
-                ))}
+
+              {/* Manuales: 2 filas agrupadas (colores + especiales) */}
+              <div data-testid="manual-enemies" className="track-surface-raised p-2.5 shadow-md">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-900/60 text-purple-300">
+                    <MdAddCircleOutline className="text-lg" />
+                  </span>
+                  <span className="font-semibold">{t.addManualEnemy || 'Enemigos manuales'}</span>
+                </div>
+                <div className="grid grid-cols-5 gap-1.5">
+                  {[
+                    { key: 'esbirro', label: t.addMinionEnemies, color: 'text-cyan-300' },
+                    { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white' },
+                    { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400' },
+                    { key: 'negro', label: t.addBlackEnemies, color: 'text-black' },
+                    { key: 'comandante', label: t.addCommanders, color: 'text-yellow-500' },
+                    { key: 'overlord', label: t.selectOverlord, color: 'text-red-400' },
+                    { key: 'jefe', label: t.selectBosses, color: 'text-purple-400' },
+                    { key: 'hero', label: t.selectHeroFall, color: 'text-orange-400' },
+                    { key: 'escenario', label: t.selectScenario, color: 'text-cyan-600' },
+                  ].map(({ key, label, color }) => (
+                    <button
+                      key={key}
+                      onClick={() => {
+                        setManualSelect(key);
+                        handleManualSelect({ target: { value: key } });
+                      }}
+                      className={`state-chip flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg border px-1 py-1.5 text-[0.65rem] font-semibold leading-tight transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 ${
+                        manualSelect === key
+                          ? 'border-purple-400 bg-purple-700 text-white shadow-lg shadow-purple-950/50'
+                          : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
+                      }`}
+                    >
+                      <GiBullyMinion className={`text-xl ${key === 'negro' ? 'rounded bg-white text-black' : color}`} />
+                      <span className="text-center">{label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setManualSelect('');
+                    onAddManual();
+                  }}
+                  className="mt-2 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-dashed border-purple-500/70 bg-purple-950/40 px-3 text-sm font-semibold text-purple-100 transition hover:border-purple-300 hover:bg-purple-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300"
+                >
+                  <MdAddCircleOutline className="text-lg" aria-hidden="true" />
+                  {t.manualAny || 'Añadir enemigo manual'}
+                </button>
               </div>
             </div>
 
-            {/* Manuales */}
-            <div className="track-surface-raised p-2.5 shadow-md">
-              <div className="mb-2 flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-900/60 text-purple-300">
-                  <MdAddCircleOutline className="text-lg" />
-                </span>
-                <span className="font-semibold">{t.addManualEnemy || 'Enemigos manuales'}</span>
-              </div>
-              <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5 lg:grid-cols-9">
-                {[
-                  { key: 'esbirro', label: t.addMinionEnemies, color: 'text-cyan-300' },
-                  { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white' },
-                  { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400' },
-                  { key: 'negro', label: t.addBlackEnemies, color: 'text-black' },
-                  { key: 'comandante', label: t.addCommanders, color: 'text-yellow-500' },
-                  { key: 'overlord', label: t.selectOverlord, color: 'text-red-400' },
-                  { key: 'jefe', label: t.selectBosses, color: 'text-purple-400' },
-                  { key: 'hero', label: t.selectHeroFall, color: 'text-orange-400' },
-                  { key: 'escenario', label: t.selectScenario, color: 'text-cyan-600' },
-                ].map(({ key, label, color }) => (
-                  <button
-                    key={key}
-                    onClick={() => {
-                      setManualSelect(key);
-                      handleManualSelect({ target: { value: key } });
-                    }}
-                    className={`state-chip flex min-h-16 flex-col items-center justify-center gap-0.5 rounded-lg border px-1.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 ${
-                      manualSelect === key
-                        ? 'border-purple-400 bg-purple-700 text-white shadow-lg shadow-purple-950/50'
-                        : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
-                    }`}
-                  >
-                    <GiBullyMinion className={`text-2xl ${key === 'negro' ? 'rounded bg-white text-black' : color}`} />
-                    <span className="text-center text-xs">{label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            
             <div className="flex justify-center gap-3 pt-1">
               <button
                 type="button"
+                data-testid="reset-enemies"
                 onClick={resetPlacedEnemies}
                 className="min-h-11 rounded-xl border border-amber-600/70 bg-amber-950/50 px-4 text-sm font-semibold text-amber-100 transition hover:border-amber-400 hover:bg-amber-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
               >
@@ -450,13 +466,14 @@ const TopMenu = ({
                 </button>
               </div>
 
+              <div data-testid="runes-row" className="grid gap-3 lg:grid-cols-3">
               {/* Añadir Cartas de Runa */}
               <section className="track-surface-raised p-3 shadow-md">
                 <div className="mb-2 flex items-center gap-2">
                   <GiCardPlay className="text-indigo-400 text-xl" />
                   <h3 className="min-w-0 flex-1 text-sm font-semibold">{t.cartas}</h3>
                 </div>
-                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="flex flex-col gap-2">
 
                   {/* --- Bloque 1: OSCURIDAD DE CAZA --- */}
                   <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
@@ -715,9 +732,8 @@ const TopMenu = ({
                 </div>
               </section>
 
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                {/* 📦 Estado de la bolsa */}
-                <div className="track-surface-raised p-3 shadow-md">
+              {/* 📦 Estado de la bolsa */}
+              <div className="track-surface-raised p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiSwapBag className="text-yellow-300 text-xl" />
                     <span className="font-semibold text-white">
@@ -753,24 +769,8 @@ const TopMenu = ({
                   </div>
                 </div>
                 
-                {/* Manifestar Runa */}
-                <div className="track-surface-raised flex-1 p-3 shadow-md">
-                  <div className="flex flex-row items-center gap-2 mb-2 justify-center">
-                    <GiRuneStone className="text-blue-400 text-xl inline-block" />
-                    <span className="font-semibold whitespace-nowrap">{t.manifestarTitulo || 'Manifestar Runa'}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    <button
-                      onClick={() => {
-                        manifestTile();
-                      }}
-                      className="bg-gradient-to-r from-blue-500 via-yellow-400 to-red-500 text-white text-xs px-2 py-1 rounded"
-                    >
-                      {t.manifestar || 'Manifestar'}
-                    </button>
-                  </div>
-                </div>
-
+                {/* Columna: añadir y manifestar */}
+                <div className="flex flex-col gap-2">
                 {/* Añadir ficha */}
                 <div className="track-surface-raised p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
@@ -833,21 +833,26 @@ const TopMenu = ({
                     ))}
                   </div>
                 </div>
-        
-                
-              </div>
 
-              {/* Nodos y áreas (pilas, nieblas, barricadas, apariciones…) */}
-              <section aria-labelledby="runas-nodos" className="track-surface-raised p-2.5 shadow-md">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
-                    <GiRuneStone className="text-lg" />
-                  </span>
-                  <h3 id="runas-nodos" className="min-w-0 flex-1 text-sm font-semibold">{t.nodesSection || 'Nodos y áreas'}</h3>
-                  <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">{activeNodes}</span>
+                {/* Manifestar Runa */}
+                <div className="track-surface-raised p-3 shadow-md">
+                  <div className="flex flex-row items-center gap-2 mb-2 justify-center">
+                    <GiRuneStone className="text-blue-400 text-xl inline-block" />
+                    <span className="font-semibold whitespace-nowrap">{t.manifestarTitulo || 'Manifestar Runa'}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    <button
+                      onClick={() => {
+                        manifestTile();
+                      }}
+                      className="bg-gradient-to-r from-blue-500 via-yellow-400 to-red-500 text-white text-xs px-2 py-1 rounded"
+                    >
+                      {t.manifestar || 'Manifestar'}
+                    </button>
+                  </div>
                 </div>
-                <ScenarioPanels />
-              </section>
+                </div>
+              </div>
 
               {/* Zona de riesgo: acciones sin deshacer */}
               <section aria-labelledby="runas-riesgo" className="rounded-xl border border-red-900/70 bg-red-950/20 p-3">
@@ -923,6 +928,19 @@ const TopMenu = ({
                 </div>
               </section>
 
+              {/* Nodos y áreas (pilas, nieblas, barricadas, apariciones…) */}
+              <section aria-labelledby="runas-nodos" className="track-surface-raised p-2.5 shadow-md">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
+                    <GiRuneStone className="text-lg" />
+                  </span>
+                  <h3 id="runas-nodos" className="min-w-0 flex-1 text-sm font-semibold">{t.nodesSection || 'Nodos y áreas'}</h3>
+                  <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">{activeNodes}</span>
+                </div>
+                <ScenarioPanels />
+              </section>
+
+
             </div>
           </motion.div>
         )}
@@ -963,6 +981,7 @@ const TopMenu = ({
                 </button>
               </div>
 
+              <div data-testid="scenario-row" className="grid gap-3 sm:grid-cols-2">
               {/* Monstruo de escenario */}
               <section aria-labelledby="scenario-monstruo" className="track-surface-raised p-2.5 shadow-md">
                 <div className="mb-2 flex items-center gap-2">
@@ -975,7 +994,7 @@ const TopMenu = ({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {monstruosUnicos.map(monstruo => {
                     const selected = scenarioMonster?.id === monstruo.id;
                     const nombre = translations.enemies.escenario?.[monstruo.id] || monstruo.id;
@@ -986,13 +1005,14 @@ const TopMenu = ({
                         aria-pressed={selected}
                         aria-label={nombre}
                         onClick={() => setScenarioMonster(prev => prev?.id === monstruo.id ? null : monstruo)}
-                        className={`relative aspect-square w-full overflow-hidden rounded-lg border-2 transition hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200 ${
+                        className={`relative mx-auto aspect-square w-full max-w-[190px] overflow-hidden rounded-lg border-2 transition hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200 ${
                           selected ? 'border-emerald-400 ring-2 ring-emerald-300' : 'border-slate-600'
                         }`}
                       >
-                        <img
+                        <ResponsiveImage
                           src={monstruo.imagen}
                           alt=""
+                          sizes="190px"
                           className="h-full w-full object-cover"
                           loading="lazy"
                           decoding="async"
@@ -1024,7 +1044,7 @@ const TopMenu = ({
                   <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">{scenarioCards}/2</span>
                 </div>
 
-                <div className="grid gap-2 md:grid-cols-2">
+                <div className="grid gap-2">
                   {/* Incursión */}
                   <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
                     <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-orange-200">
@@ -1110,6 +1130,7 @@ const TopMenu = ({
                   </div>
                 </div>
               </section>
+              </div>
             </div>
           </motion.div>
         )}

@@ -17,6 +17,47 @@ test.describe('Selector manual de enemigos', () => {
     await openTracker(page);
   });
 
+  test('el menú agrupa aleatorios 2×2, manuales en dos filas y reset centrado', async ({ page }) => {
+    await page.getByRole('button', { name: 'Enemigos', exact: true }).first().click();
+    const panel = page.locator('#track-menu-enemies');
+
+    const randomBoxes = await panel.locator('[data-testid="random-enemies"] button').evaluateAll((els) => els.map((el) => {
+      const r = el.getBoundingClientRect();
+      return { x: Math.round(r.x), y: Math.round(r.y) };
+    }));
+    expect(randomBoxes).toHaveLength(4);
+    expect(new Set(randomBoxes.map((box) => box.x)).size).toBe(2);
+    expect(new Set(randomBoxes.map((box) => box.y)).size).toBe(2);
+
+    const manualBoxes = await panel.locator('[data-testid="manual-enemies"] .grid > button').evaluateAll((els) => els.map((el) => {
+      const r = el.getBoundingClientRect();
+      return { x: Math.round(r.x), y: Math.round(r.y) };
+    }));
+    expect(manualBoxes).toHaveLength(9);
+    const rows = [...new Set(manualBoxes.map((box) => box.y))];
+    expect(rows).toHaveLength(2);
+    expect(manualBoxes.filter((box) => box.y === rows[0])).toHaveLength(5);
+
+    const centered = await panel.evaluate((el) => {
+      const button = el.querySelector('[data-testid="reset-enemies"]').getBoundingClientRect();
+      const rect = el.getBoundingClientRect();
+      return Math.abs((button.x + button.width / 2) - (rect.x + rect.width / 2));
+    });
+    expect(centered).toBeLessThan(2);
+  });
+
+  test('el botón genérico abre el selector sin preselección', async ({ page }) => {
+    await page.getByRole('button', { name: 'Enemigos', exact: true }).first().click();
+    await page.getByRole('button', { name: 'Añadir enemigo manual' }).click();
+
+    const dialog = page.getByRole('dialog', { name: 'Seleccionar enemigo manualmente' });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole('group', { name: 'Color' }).getByRole('button', { name: 'Todos', exact: true }))
+      .toHaveAttribute('aria-pressed', 'true');
+    await expect(dialog.getByRole('group', { name: 'Categoría' }).getByRole('button', { name: 'Todas', exact: true }))
+      .toHaveAttribute('aria-pressed', 'true');
+  });
+
   test('abre filtrado por el color elegido y permite ampliar a todos', async ({ page }) => {
     const dialog = await openManualSelector(page, 'Jefe');
     const colors = dialog.getByRole('group', { name: 'Color' });

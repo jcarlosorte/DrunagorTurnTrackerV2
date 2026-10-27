@@ -1,18 +1,18 @@
 // src/data/expansions.js
-import baseImg from '@/assets/expansions/base.webp';
-import luccanorImg from '@/assets/expansions/luccanor.webp';
-import dragonImg from '@/assets/expansions/dragon.webp';
-import desiertoImg from '@/assets/expansions/desierto.webp';
-import mundoImg from '@/assets/expansions/mundo-sombrio.webp';
-import handurielImg from '@/assets/expansions/handuriel.webp';
-import iraImg from '@/assets/expansions/ira.webp';
-import monstruos1Img from '@/assets/expansions/monstruos1.webp';
-import botinesImg from '@/assets/expansions/botines.webp';
+import baseImg from '@/assets/expansions/base.avif';
+import luccanorImg from '@/assets/expansions/luccanor.avif';
+import dragonImg from '@/assets/expansions/dragon.avif';
+import desiertoImg from '@/assets/expansions/desierto.avif';
+import mundoImg from '@/assets/expansions/mundo-sombrio.avif';
+import handurielImg from '@/assets/expansions/handuriel.avif';
+import iraImg from '@/assets/expansions/ira.avif';
+import monstruos1Img from '@/assets/expansions/monstruos1.avif';
+import botinesImg from '@/assets/expansions/botines.avif';
 import apocalypseImg from '@/assets/expansions/apocalypse.webp';
-import heroPackImg from '@/assets/expansions/hero-pack.webp';
-import lorienImg from '@/assets/expansions/lorien.webp';
-import awakeningsImg from '@/assets/expansions/awakenings.webp';
-import sistersImg from '@/assets/expansions/sisters.webp';
+import heroPackImg from '@/assets/expansions/hero-pack.avif';
+import lorienImg from '@/assets/expansions/lorien.avif';
+import awakeningsImg from '@/assets/expansions/awakenings.avif';
+import sistersImg from '@/assets/expansions/sisters.avif';
 
 export const EXPANSIONS = [
   {

@@ -5,6 +5,7 @@ import { ENEMY_RING_COLORS_BIG } from '@/data/enemyRingsBig';
 import { useLanguage } from '@/context/LanguageContext';
 import { borderColorMap, categoryTextGlowMap, textBgColorMap } from './enemyVisuals';
 import FitText from './FitText';
+import ResponsiveImage from './ResponsiveImage';
 
 // Los ayudas usan `title` nativo: el tablero tiene scroll y `overflow`, así que
 // cualquier tooltip absoluto quedaría recortado o tapado por otras tarjetas.
@@ -88,9 +89,10 @@ export default function EnemyCard({
         )}
         style={isBoss ? { width: '20%' } : {}}
       >
-        <img
+        <ResponsiveImage
           src={image}
           alt={name}
+          sizes={isBoss ? '250px' : '(max-width: 640px) 22vw, 140px'}
           loading="lazy"
           decoding="async"
           className={classNames(

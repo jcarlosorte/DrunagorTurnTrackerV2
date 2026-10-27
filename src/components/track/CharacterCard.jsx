@@ -1,6 +1,7 @@
 import FitText from '@/components/track/FitText';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { ESTADOS_HEROE } from '@/data/heroes/index';
+import ResponsiveImage from '@/components/track/ResponsiveImage';
 
 /**
  * Carta de héroe dentro del track.
@@ -38,9 +39,10 @@ export default function CharacterCard({
         aria-label={clickable ? `${name} · ${prof}` : undefined}
         data-hero-id={heroId}
       >
-        <img
+        <ResponsiveImage
           src={image}
           alt={name}
+          sizes="(max-width: 640px) 45vw, 160px"
           className="w-full h-auto object-cover rounded-lg border-2 border-[#800020]/70"
           loading="lazy"
           decoding="async"

@@ -87,4 +87,41 @@ test.describe('Menús de runas y escenario', () => {
     await incursion.click();
     await expect(panel.getByText(/^Cartas 1\/2$/)).toBeVisible();
   });
+
+  test('runas: tres columnas arriba, luego riesgo y nodos', async ({ page }) => {
+    await page.getByRole('button', { name: 'Runas', exact: true }).first().click();
+    const panel = page.locator('#track-menu-runes');
+
+    const rowBoxes = await panel.getByTestId('runes-row').locator(':scope > *').evaluateAll((els) => els.map((el) => {
+      const r = el.getBoundingClientRect();
+      return { x: Math.round(r.x), y: Math.round(r.y) };
+    }));
+    expect(rowBoxes).toHaveLength(3);
+    expect(new Set(rowBoxes.map((box) => box.y)).size).toBe(1);
+    expect(rowBoxes[0].x).toBeLessThan(rowBoxes[1].x);
+    expect(rowBoxes[1].x).toBeLessThan(rowBoxes[2].x);
+
+    const tops = await panel.evaluate((el) => ({
+      risk: el.querySelector('section[aria-labelledby="runas-riesgo"]').getBoundingClientRect().y,
+      nodes: el.querySelector('section[aria-labelledby="runas-nodos"]').getBoundingClientRect().y,
+    }));
+    expect(tops.risk).toBeLessThan(tops.nodes);
+  });
+
+  test('escenario: monstruo y cartas en la misma fila con retratos contenidos', async ({ page }) => {
+    await page.getByRole('button', { name: 'Escenario', exact: true }).first().click();
+    const panel = page.locator('#track-menu-scenario');
+
+    const sections = await panel.getByTestId('scenario-row').locator(':scope > section').evaluateAll((els) => els.map((el) => {
+      const r = el.getBoundingClientRect();
+      return { x: Math.round(r.x), y: Math.round(r.y) };
+    }));
+    expect(sections).toHaveLength(2);
+    expect(Math.abs(sections[0].y - sections[1].y)).toBeLessThan(4);
+    expect(sections[0].x).toBeLessThan(sections[1].x);
+
+    const widths = await panel.locator('button[aria-pressed]').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().width));
+    expect(widths.length).toBeGreaterThan(0);
+    widths.forEach((width) => expect(width).toBeLessThanOrEqual(200));
+  });
 });

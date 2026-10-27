@@ -411,6 +411,11 @@ npm run visual:check
 npm run lint
 npm run test
 npm run test:e2e
+
+# Imágenes (después de añadir ilustraciones nuevas)
+npm run images:webp      # PNG/JPG → WebP
+npm run images:avif      # WebP/PNG → AVIF (actualiza imports)
+npm run images:variants  # 320/640 para miniaturas + manifiesto
 ```
 
 ---
@@ -729,6 +734,42 @@ Color      Activa Invadidos → rgb(21, 128, 61) desde --state-add
 Nodos      chip «Nodos 0» y sección con «Añadir Pila de Runas» en Runas
 ```
 
+### 17.ª tanda — nueva disposición de los menús
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos en dos bloques** | Aleatorios 2×2 a la izquierda; manuales en dos filas (5+4) y botón genérico que abre el selector sin preselección; reset centrado debajo | `TopMenu.jsx`, `es.json`, `en.json` |
+| **Runas en tres columnas** | Cartas \| bolsa \| añadir+manifestar en la primera fila; zona de riesgo en la segunda y nodos en la última | `TopMenu.jsx` |
+| **Escenario lado a lado** | Monstruo y cartas en la misma fila desde `sm`; retratos limitados a 190 px con `srcset` | `TopMenu.jsx` |
+| **Pruebas de estructura** | Cuatro E2E miden 2×2, dos filas, centrado del reset, tres columnas y fila de escenario | `enemigos-manual.spec.js`, `runas-escenario.spec.js` |
+
+**Medición**
+
+```text
+E2E        28/28
+Enemigos   aleatorios 2×2 · manuales 5+4 · reset centrado (±0 px)
+Runas      3 columnas (y=123, 461 px) · riesgo antes que nodos
+Escenario  2 columnas en 1440 y 844 · retratos 190 px (121 px en 844)
+```
+
+### 18.ª tanda — F2: AVIF y `srcset`
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **AVIF** | 101 ilustraciones convertidas a AVIF q60; los imports pasan a `.avif` y los WebP/PNG quedan como respaldo sin importarse | `scripts/convert-to-avif.mjs`, `enemies.js`, `heroes.js`, `expansions.js`, `HomeMenu.jsx` |
+| **Variantes 320/640** | 82 miniaturas con 91 variantes y manifiesto generado | `scripts/generate-image-variants.mjs`, `assets/imageVariants.js` |
+| **`ResponsiveImage`** | Componente con `srcset`/`sizes` usado en cartas, héroes y retratos de escenario; cae al `src` normal si no hay variantes | `ResponsiveImage.jsx`, `EnemyCard.jsx`, `CharacterCard.jsx`, `TopMenu.jsx` |
+| **Comandos** | `npm run images:avif` y `npm run images:variants` documentados | `package.json`, este documento |
+
+**Medición**
+
+```text
+dist       8,9 MB → 8,36 MB (7,0 MB sin las variantes de srcset)
+Imágenes   5,45 MB en dist (187 AVIF; los originales WebP/PNG no se importan)
+Transfer   retrato de héroe 39 KB → 13 KB (−66 %) · tracker 269 KB → 196 KB (−27 %)
+E2E        28/28 · Unit 72 · Lint 0
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
@@ -736,6 +777,6 @@ Nodos      chip «Nodos 0» y sección con «Añadir Pila de Runas» en Runas
 - **Escenario (paso 3)**: cerrado (monstruo y cartas con contadores; retratos accesibles).
 - **H8**: cerrado en sus tres partes (cursor, orden/historial y paneles de escenario).
 - **D9**: cerrado (eventos, facciones, estados y botones de acción tokenizados; los badges y rojos oscuros conservan su matiz propio).
-- **F2**: `srcset`/AVIF (WebP ya aplicado).
+- **F2**: cerrado (AVIF + `srcset` en miniaturas; los originales WebP/PNG se conservan como respaldo).
 - **F4**: CSP por `<meta>`; `frame-ancestors`/`report-uri` siguen requiriendo cabeceras (solo con otro hosting).
 - **P2**: API de sincronización (pospuesta por decisión de producto).

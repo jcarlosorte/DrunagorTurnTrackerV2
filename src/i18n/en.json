@@ -371,6 +371,7 @@
     "addEnemy": "Add",
     "selectType": "Select Type",
     "manualTitle": "Manually select enemy",
+    "manualAny": "Add manual enemy",
     "manualColor": "Color",
     "manualCategory": "Category",
     "manualAllColors": "All",
