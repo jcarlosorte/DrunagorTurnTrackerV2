@@ -5,12 +5,12 @@ import { appendGameLog } from '@/utils/gameLog';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { ALDEANO, ERRANTES } from '@/data/cartasEspeciales';
-import { v4 as uuidv4 } from 'uuid';
+import { createId } from '@/utils/id';
 
 const GameContext = createContext();
 const defaultRunes = { rojo: 0, azul: 0, verde: 0, naranja: 0, gris: 0 };
 const defaultDiscardedTiles = { rojo: [], azul: [], verde: [], naranja: [], gris: [] };
-const createInitialTiles = () => FICHAS.map((f) => ({ ...f, uuid: uuidv4() }));
+const createInitialTiles = () => FICHAS.map((f) => ({ ...f, uuid: createId() }));
 
 export const GameProvider = ({ children }) => {
   const persisted = readJsonStorage('gameState', {}, isPlainObject);
@@ -267,7 +267,7 @@ export const GameProvider = ({ children }) => {
     }
 
     const nueva = {
-      id: uuidv4(),
+      id: createId(),
       tiles: nuevaPila,
       estado: 'reserva',
       numPila: contadorPilas
@@ -419,7 +419,7 @@ export const GameProvider = ({ children }) => {
     
     // Crear la nueva pila
     const nuevaPila = {
-      id: uuidv4(),
+      id: createId(),
       tiles: tilesSeleccionadas,
       estado: 'reserva',
       numPila: contadorPilasConcentradas
@@ -594,7 +594,7 @@ export const GameProvider = ({ children }) => {
   };
 
   const showTileToast = (tile, tipo = 'remove') => {
-    const uuid = uuidv4();
+    const uuid = createId();
     const tileWithId = { ...tile, tipo, uuid };
     setTileToasts(prev => [...prev, tileWithId]);
     // Registro en el historial: color traducido de la runa y forma (dibujo).
@@ -629,7 +629,7 @@ export const GameProvider = ({ children }) => {
       const candidates = pool.filter((tile) => tile.runa === color);
       const tile = candidates[Math.floor(Math.random() * candidates.length)];
       if (tile) {
-        newPoints.push({ uuid: uuidv4(), runa: color, tile });
+        newPoints.push({ uuid: createId(), runa: color, tile });
         pool = pool.filter((item) => item.uuid !== tile.uuid);
       } else {
         alert(`${missingMessage} ${ti.colores?.[color] || color}`);
@@ -646,7 +646,7 @@ export const GameProvider = ({ children }) => {
       // ✅ Solo un punto genérico de evento
       const newPoints = [
         {
-          uuid: uuidv4(),
+          uuid: createId(),
           runa: "evento",
           tile: { id: "evento", nombre: "Evento" } // puedes ajustar los datos que quieras mostrar
         }

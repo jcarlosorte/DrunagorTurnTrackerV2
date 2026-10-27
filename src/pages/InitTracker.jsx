@@ -43,7 +43,7 @@ import ModalHeroCard from '@/components/track/ModalHeroCard';
 import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import CommanderCard from '@/components/CommanderCard';
-import { v4 as uuidv4 } from 'uuid';
+import { createId } from '@/utils/id';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { appendGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
@@ -211,7 +211,7 @@ const InitTracker = () => {
   };
   
   const showCardToast = (card, deckType) => {
-    const id = uuidv4();
+    const id = createId();
     const translationsDeck = td[`cartas_${deckType}`];
     const message = translationsDeck.nombre?.[card.id] || card.id;
     const action_ori = translationsDeck.accion?.[card.id] || '';
@@ -585,7 +585,7 @@ const InitTracker = () => {
     const runeIndex = runesColorMap[selected.rune];
     const runePosition = selected.runePosition;
     const adjustedCaps = adjustCapabilitiesByRunes(selected.capacidades, selected.rune, getRuneCount);
-    const uuid = uuidv4();
+    const uuid = createId();
     const isBig = selected.size === 'grande';
     const colorId = assignColorToEnemy(uuid, isBig);
     const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
@@ -630,7 +630,7 @@ const InitTracker = () => {
     });
 
     if (!selected) return;
-    const uuid = forcedUUID || uuidv4();
+    const uuid = forcedUUID || createId();
     const isBig = selected.size === 'grande';
     const colorId = forcedColorId === 'noColor' ? undefined : assignColorToEnemy(uuid, isBig, forcedColorId);
     const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
@@ -907,7 +907,7 @@ const InitTracker = () => {
     const filtered = ENEMIES.filter(e => e.categoria === 'comandante');
     if (filtered.length === 0) return;
     const selected = filtered[Math.floor(Math.random() * filtered.length)];
-    const uuid = uuidv4();
+    const uuid = createId();
     const isBig = selected.size === 'grande';
     const colorId = assignColorToEnemy(uuid, isBig);
     const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
@@ -956,7 +956,7 @@ const InitTracker = () => {
     const nombreCommander = getEnemyName(enemyId, enemyColor);
     const nuevas = selected.map(carta => ({
       enemy: {
-        uuid: uuidv4(),
+        uuid: createId(),
         id: carta.id,
         nombre: carta.nombre,
         capacidades: carta.capacidades,
@@ -993,7 +993,7 @@ const InitTracker = () => {
     const nombreOverlord = getEnemyName(enemyId, enemyColor);
     const nuevas = selected.map(carta => ({
       enemy: {
-        uuid: uuidv4(),
+        uuid: createId(),
         id: carta.id,
         nombre: carta.nombre,
         capacidades: carta.capacidades,
@@ -1039,7 +1039,7 @@ const InitTracker = () => {
       if (confirmar) {
         nuevasCartas.push({
           enemy: {
-            uuid: uuidv4(),
+            uuid: createId(),
             id: carta.id,
             nombre: carta.nombre,
             capacidades: carta.capacidades,
@@ -1088,7 +1088,7 @@ const InitTracker = () => {
   
     const nuevas = cartasJefe.map(carta => ({
       enemy: {
-        uuid: uuidv4(),
+        uuid: createId(),
         id: carta.id,
         nombre: carta.nombre,
         capacidades: carta.capacidades,
@@ -1131,7 +1131,7 @@ const InitTracker = () => {
       initialStates[idxTiempo].count = 2;
     }
     const newRune = {
-      uuid: uuidv4(),
+      uuid: createId(),
       id: runeCard.id,
       nombre: runeCard.nombre,
       cara: runeCard.cara,
@@ -2838,7 +2838,7 @@ const InitTracker = () => {
   }, [turnSignature]);
 
   const showScenarioToast = (message, action = null, action2 = null, extra = null) => {
-    const id = uuidv4();
+    const id = createId();
     // Máximo 5 avisos visibles y cierre automático para no tapar el tablero.
     setScenarioToasts(prev => [...prev, { id, message, action, action2, extra }].slice(-5));
     window.setTimeout(() => {
@@ -3219,7 +3219,7 @@ const InitTracker = () => {
     return Math.max(448, 2 * Math.max(...tallest) + 16);
   })();
 
-  const renderSlot = (index) => {
+  const renderSlot = (index, { compact = false } = {}) => {
     const isRune = Object.values(runesColorMap).includes(index);
     const isRuneTextSlot = index === 10;
     const runeColor = getRuneColorFromIndex(index);
@@ -3232,7 +3232,10 @@ const InitTracker = () => {
 
     const totalAbove = heroesAbove.length + (isRune ? enemiesAbove.length : 0) + (isRuneTextSlot ? runesAbove.length : 0);
     const totalBelow = heroesBelow.length + (isRune ? enemiesBelow.length : 0) + (isRuneTextSlot ? runesBelow.length : 0);
-    const slotHeight = boardSlotHeight;
+    // En la vista de lista el slot se dibuja solo: usa su altura real y no la del tablero.
+    const slotHeight = compact
+      ? Math.max(360, 2 * Math.max(stackHeight(totalAbove), stackHeight(totalBelow)) + 16)
+      : boardSlotHeight;
 
     const renderStack = (items, side, type = 'hero') => {
       const isTop = side === 'top';
@@ -3893,11 +3896,14 @@ const InitTracker = () => {
 
                   {historyOpen && (
                     <HistoryPanel
-                      limit={10}
+                      limit={60}
                       refreshKey={scenarioToasts.length + turnIndex + roundNumber}
                       labels={{
                         title: ti.history || 'Historial',
                         empty: ti.historyEmpty || 'Sin eventos todavía.',
+                        noMatches: ti.historyNoMatches || 'Sin resultados.',
+                        search: ti.historySearch || 'Buscar…',
+                        filters: ti.historyFilters || 'Filtrar historial',
                       }}
                     />
                   )}

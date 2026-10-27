@@ -18,7 +18,7 @@ import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
 import ConfirmDialog from '@/components/ConfirmDialog';
-import { v4 as uuidv4 } from 'uuid';
+import { createId } from '@/utils/id';
 
 const TopMenu = ({
   onAddEnemy,

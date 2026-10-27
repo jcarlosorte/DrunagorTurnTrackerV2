@@ -484,14 +484,19 @@ textarea:focus-visible {
   min-width: 0;
 }
 
-/* Slot activo: halo esmeralda para localizar de un vistazo el turno en curso. */
+/* Slot activo: banda esmeralda centrada en la línea del track, sin desbordar
+   la columna ni tapar las cartas de las pilas. */
 .track-slot--active::before {
   content: '';
   position: absolute;
-  inset: 2px;
+  left: 2px;
+  right: 2px;
+  top: 50%;
+  height: 150px;
+  transform: translateY(-50%);
   border-radius: 0.9rem;
   border: 2px solid rgb(52 211 153 / 0.55);
-  background: radial-gradient(60% 50% at 50% 50%, rgb(16 185 129 / 0.12), transparent 70%);
+  background: radial-gradient(70% 60% at 50% 50%, rgb(16 185 129 / 0.14), transparent 72%);
   pointer-events: none;
   z-index: 0;
   animation: slotGlow 2.4s ease-in-out infinite;

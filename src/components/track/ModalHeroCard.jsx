@@ -108,6 +108,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
   );
 
   // Iconos de estado alterado (quemadura, veneno, escudo…), igual que en enemigos.
+  const estadosActivos = (extras.estadosAlterados || []).filter((estado) => estado.count > 0);
   const estadosAlteradosDisponibles = ESTADOS_ALTERADOS.filter((item) => item.mostrar === 'si');
   const countAlterado = (id) => (extras.estadosAlterados || []).find((item) => item.id === id)?.count || 0;
   // Inmunidades: solo si los datos del héroe las definen.
@@ -124,39 +125,70 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
       >
         <div className="h-1.5 w-full shrink-0 bg-gradient-to-r from-rose-700 via-rose-500 to-rose-800" aria-hidden="true" />
 
-        <header className="flex shrink-0 items-center gap-3 border-b border-slate-700 px-3 py-2.5">
-          {hero?.image && (
-            <img src={hero.image} alt="" className="h-16 w-16 shrink-0 rounded-xl object-cover ring-2 ring-rose-900" loading="lazy" decoding="async" />
-          )}
-          <div className="min-w-0 flex-1">
-            <h2 id={titleId} className="truncate text-lg font-bold text-white">{heroName}</h2>
-            <div className="mt-1 flex flex-wrap gap-1 text-[0.65rem]">
-              {profession && (
-                <span className="rounded-full bg-rose-800 px-2 py-0.5 font-semibold uppercase tracking-wide text-white">
-                  {profession}
+        <header className="shrink-0 border-b border-slate-700 bg-slate-900/95 px-3 py-2.5 backdrop-blur">
+          <div className="flex items-center gap-3">
+            {hero?.image && (
+              <img src={hero.image} alt="" className="h-14 w-14 shrink-0 rounded-xl object-cover ring-2 ring-rose-900" loading="lazy" decoding="async" />
+            )}
+            <div className="min-w-0 flex-1">
+              <h2 id={titleId} className="truncate text-lg font-bold text-white">{heroName}</h2>
+              <div className="mt-1 flex flex-wrap items-center gap-1 text-[0.65rem]">
+                {profession && (
+                  <span className="rounded-full bg-rose-800 px-2 py-0.5 font-semibold uppercase tracking-wide text-white">
+                    {profession}
+                  </span>
+                )}
+                {roleName && (
+                  <span className="rounded-full border border-slate-600 px-2 py-0.5 text-slate-300">{roleName}</span>
+                )}
+                {/* Vida resumida siempre visible */}
+                <span className="rounded-full border border-red-800/70 bg-red-950/60 px-2 py-0.5 font-bold tabular-nums text-red-100">
+                  {extras.vida}/{vidaMaxTotal}
                 </span>
-              )}
-              {roleName && (
-                <span className="rounded-full border border-slate-600 px-2 py-0.5 text-slate-300">{roleName}</span>
-              )}
+              </div>
             </div>
+            <dl className="flex shrink-0 gap-3 text-center">
+              <div>
+                <dt className="text-[0.6rem] uppercase text-slate-400">{t.movementShort || 'Mov.'}</dt>
+                <dd className="text-base font-bold text-white">{movement}</dd>
+              </div>
+              <div>
+                <dt className="text-[0.6rem] uppercase text-slate-400">{t.attackShort || 'Ata.'}</dt>
+                <dd className="text-base font-bold text-white">{attack}</dd>
+              </div>
+              <div>
+                <dt className="text-[0.6rem] uppercase text-slate-400">{t.impactShort || 'Imp.'}</dt>
+                <dd className={`text-base font-bold ${extras.impactoMod ? 'text-emerald-300' : 'text-white'}`}>
+                  {extras.impactoMod > 0 ? `+${extras.impactoMod}` : extras.impactoMod}
+                </dd>
+              </div>
+            </dl>
           </div>
-          <dl className="flex shrink-0 gap-3 text-center">
-            <div>
-              <dt className="text-[0.6rem] uppercase text-slate-400">{t.movementShort || 'Mov.'}</dt>
-              <dd className="text-base font-bold text-white">{movement}</dd>
+
+          {/* Iconos de estado activos: hasta 6, con su contador */}
+          {estadosActivos.length > 0 && (
+            <div className="mt-2 flex items-center gap-1 overflow-hidden">
+              {estadosActivos.slice(0, 6).map((estado) => {
+                const meta = ESTADOS_ALTERADOS.find((item) => item.id === estado.id);
+                if (!meta) return null;
+                return (
+                  <span
+                    key={estado.id}
+                    className="relative flex h-6 w-6 items-center justify-center rounded-full border border-slate-600 bg-slate-950/70"
+                    title={`${meta.texto} ×${estado.count}`}
+                  >
+                    <img src={meta.imagen} alt="" className="h-4 w-4" />
+                    <span className="absolute -right-1 -top-1 rounded-full bg-red-600 px-1 text-[0.5rem] font-bold leading-tight text-white">
+                      {estado.count}
+                    </span>
+                  </span>
+                );
+              })}
+              {estadosActivos.length > 6 && (
+                <span className="text-[0.6rem] text-slate-400">+{estadosActivos.length - 6}</span>
+              )}
             </div>
-            <div>
-              <dt className="text-[0.6rem] uppercase text-slate-400">{t.attackShort || 'Ata.'}</dt>
-              <dd className="text-base font-bold text-white">{attack}</dd>
-            </div>
-            <div>
-              <dt className="text-[0.6rem] uppercase text-slate-400">{t.impactShort || 'Imp.'}</dt>
-              <dd className={`text-base font-bold ${extras.impactoMod ? 'text-emerald-300' : 'text-white'}`}>
-                {extras.impactoMod > 0 ? `+${extras.impactoMod}` : extras.impactoMod}
-              </dd>
-            </div>
-          </dl>
+          )}
         </header>
 
         <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-3 py-3">

@@ -455,5 +455,26 @@ npm run test:e2e
 
 ### Pendiente / pospuesto
 
-H8, H11, D1, D2, D3, D5, D7, D8, D9, A1, A4, X1-X4, F1-F5, P2.
+H8, H11, D2, D7, D8, D9, A1, A4, F1-F5, P2.
+
+### Tercera tanda aceptada e implementada
+
+| ID | Cambio | Archivos |
+|---|---|---|
+| D1 | Historial agrupado por turno con cabeceras colapsables y contadores | `HistoryPanel.jsx` |
+| D3 | Filtros por tipo (turnos, eventos, runas, invocaciones) + búsqueda de texto | `HistoryPanel.jsx` |
+| D5 | Cabecera fija del héroe con vida resumida e iconos de estado (hasta 6) | `ModalHeroCard.jsx` |
+| X1 | Eliminada `lucide-react` (0 usos): un único set de iconos | `package.json` |
+| X2 | Eliminada `uuid`: `createId()` usa `crypto.randomUUID()` | `id.js`, 4 archivos |
+| — | Corrección: el resaltado del turno activo es una banda de 150 px centrada y la vista de lista usa altura compacta | `index.css`, `InitTracker.jsx`, `TurnTrackBoard.jsx` |
+
+**Verificación**
+
+```text
+Historial       6 grupos · 13 entradas · filtros con contador · búsqueda
+Filtro Runas    0 resultados → mensaje "Sin resultados"
+Slot activo     slot 457 px · banda 150 px centrada (top 224 px)
+Vista lista     slot expandido 360 px (antes usaba la altura global del tablero)
+Cabecera héroe  "Vorn · Guerrero · Defensor · 7/12 · Mov.2 · Ata.0 · Imp.+3" + 2 iconos
+```
 

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLanguage } from "@/context/LanguageContext";
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
-import { v4 as uuidv4 } from 'uuid';
+import { createId } from '@/utils/id';
 
 const InitRunesContext = createContext();
 
@@ -28,7 +28,7 @@ export const InitRunesProvider = ({ children }) => {
       ...prev,
       {
         rune: {
-          uuid: uuidv4(),
+          uuid: createId(),
           ...rune,
           colorIndex: 10, // siempre se colocan en índice 10
           applyEffect: true,
