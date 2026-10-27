@@ -222,7 +222,8 @@
       "comandante": "Commander",
       "jefe": "Boss",
       "hero": "Corrupted Hero",
-      "overlord": "Overlord"
+      "overlord": "Overlord",
+      "escenario": "Scenario"
     },
     "escenario": {
       "dark_vampire": "Shadow Vampire Spawn",
@@ -370,6 +371,23 @@
     "addEnemy": "Add",
     "selectType": "Select Type",
     "manualTitle": "Manually select enemy",
+    "manualColor": "Color",
+    "manualCategory": "Category",
+    "manualAllColors": "All",
+    "manualAllCategories": "All",
+    "manualOf": "of",
+    "manualNoMatches": "No results with the current filters.",
+    "manualColors": {
+      "blanco": "White",
+      "gris": "Gray",
+      "negro": "Black",
+      "comandante": "Commander",
+      "jefe": "Boss",
+      "esbirro": "Minion",
+      "overlord": "Overlord",
+      "hero": "Corrupted Hero",
+      "escenario": "Scenario"
+    },
     "addMinionEnemies": "Minion",
     "addWhiteEnemies": "WM (White)",
     "addGrayEnemies": "GM (Grey)",

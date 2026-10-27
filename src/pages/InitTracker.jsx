@@ -50,6 +50,7 @@ import { formatClock } from '@/utils/turnTimer';
 import { findNextActiveEntity, indexOfEntityInOrder } from '@/utils/turnOrder';
 import { findEnemyVariant } from '@/utils/enemyVariant';
 import { resolveEntityLabel } from '@/utils/entityLabel';
+import { collectManualFacets, filterManualEnemies } from '@/utils/manualEnemyFilter';
 import { useHeroExtras } from '@/context/HeroExtrasContext';
 import useStatusEffects from '@/hooks/useStatusEffects';
 import useTurnCursor from '@/hooks/useTurnCursor';
@@ -112,6 +113,8 @@ const InitTracker = () => {
   const [categorySelector, setCategorySelector] = useState({ open: false, color: null });
   const [manualSelector, setManualSelector] = useState({ open: false, color: null });
   const [manualQuery, setManualQuery] = useState('');
+  const [manualColor, setManualColor] = useState('all');
+  const [manualCategory, setManualCategory] = useState('all');
 
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
@@ -150,7 +153,12 @@ const InitTracker = () => {
   };
   const openCategorySelector = (color) => setCategorySelector({ open: true, color });
   const openManualSelector = (color) => {
+    const availableColors = collectManualFacets(
+      ENEMIES.filter((enemy) => selectedExpansions.includes(enemy.expansionId)),
+    ).colors;
     setManualQuery('');
+    setManualCategory('all');
+    setManualColor(color && availableColors.includes(color) ? color : 'all');
     setManualSelector({ open: true, color });
   };
   const openManualBoss = (id) => handleManualEnemyAdd(id, "jefe", "jefe");
@@ -304,6 +312,43 @@ const InitTracker = () => {
   };
 
   const enemiesInSelectedExpansions = ENEMIES.filter(e => selectedExpansions.includes(e.expansionId) );
+
+  // Selector manual: pool sin variantes ocultas, facetas presentes y filtrado combinado.
+  const manualPool = manualSelector.open
+    ? enemiesInSelectedExpansions.filter((enemy) => !EnemiesNoShow.includes(enemy.id))
+    : [];
+  const manualColorScope = manualSelector.open && manualColor !== 'all'
+    ? manualPool.filter((enemy) => enemy.color === manualColor)
+    : manualPool;
+  const manualFacets = manualSelector.open
+    ? {
+      colors: collectManualFacets(manualPool).colors,
+      categories: collectManualFacets(manualColorScope).categories,
+    }
+    : { colors: [], categories: [] };
+  const filteredManualEnemies = manualSelector.open
+    ? filterManualEnemies(manualColorScope, {
+      category: manualCategory,
+      query: manualQuery,
+      getLabel: (enemy) => getEnemyName(enemy.id, enemy.color),
+    })
+    : [];
+  const manualGroups = filteredManualEnemies.reduce((acc, enemy) => {
+    if (!acc[enemy.id]) acc[enemy.id] = {};
+    if (!acc[enemy.id][enemy.categoria]) acc[enemy.id][enemy.categoria] = [];
+    acc[enemy.id][enemy.categoria].push(enemy);
+    return acc;
+  }, {});
+  const manualTotalGroups = new Set(manualPool.map((enemy) => enemy.id)).size;
+
+  const handleManualColorChange = (nextColor) => {
+    setManualColor(nextColor);
+    if (nextColor === 'all' || manualCategory === 'all') return;
+    const stillAvailable = manualPool.some(
+      (enemy) => enemy.color === nextColor && enemy.categoria === manualCategory,
+    );
+    if (!stillAvailable) setManualCategory('all');
+  };
 
   const clearCardHighlight = (uuid) => {
     setPlacedEnemies(prev =>
@@ -1893,15 +1938,6 @@ const InitTracker = () => {
 
     });
     
-  };
-
-  const getEnemiesByColor = (trackerEnemies, color, behaviorType = null) => {
-    const validEnemies = Array.from(new Set(trackerEnemies.map(e => e.id)));
-    return ENEMIES.filter(e =>
-      validEnemies.includes(e.id) &&
-      e.color === color &&
-      (behaviorType ? e.comportamiento === behaviorType : true)
-    );
   };
 
   const procesarInicioTurnoEnemy = (enemy) => {
@@ -3762,13 +3798,20 @@ const InitTracker = () => {
                   role="dialog"
                   aria-modal="true"
                   aria-label={ti.manualTitle || 'Seleccionar enemigo manualmente'}
-                  className="flex max-h-[80vh] w-full max-w-3xl flex-col rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl"
+                  className="manual-dialog flex max-h-[80vh] w-full max-w-3xl flex-col rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl"
                 >
-                  <div className="flex items-center gap-2 border-b border-slate-700 px-4 py-3">
+                  <div className="manual-dialog__header flex shrink-0 items-center gap-2 border-b border-slate-700 px-4 py-3">
                     <span aria-hidden="true" className="text-lg">👾</span>
-                    <h2 className="min-w-0 flex-1 truncate text-base font-bold text-yellow-300">
+                    <h2 className="min-w-0 flex-1 truncate text-base font-bold text-yellow-300" title={ti.manualTitle || 'Seleccionar enemigo manualmente'}>
                       {ti.manualTitle || 'Seleccionar enemigo manualmente'}
                     </h2>
+                    <span
+                      role="status"
+                      aria-live="polite"
+                      className="shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200"
+                    >
+                      {Object.keys(manualGroups).length} {ti.manualOf || 'de'} {manualTotalGroups}
+                    </span>
                     <button
                       type="button"
                       onClick={() => setManualSelector({ open: false, color: null })}
@@ -3779,7 +3822,7 @@ const InitTracker = () => {
                     </button>
                   </div>
 
-                  <div className="border-b border-slate-700 px-4 py-2">
+                  <div className="manual-dialog__filters shrink-0 space-y-2 border-b border-slate-700 px-4 py-2">
                     <label htmlFor="manual-enemy-search" className="sr-only">{ti.search || 'Buscar enemigo'}</label>
                     <input
                       id="manual-enemy-search"
@@ -3789,33 +3832,100 @@ const InitTracker = () => {
                       placeholder={ti.search || 'Buscar enemigo…'}
                       className="h-9 w-full rounded-lg border border-slate-700 bg-slate-950 px-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
                     />
+
+                    <div className="flex items-start gap-2">
+                      <span className="w-14 shrink-0 pt-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
+                        {ti.manualColor || 'Color'}
+                      </span>
+                      <div
+                        role="group"
+                        aria-label={ti.manualColor || 'Filtrar por color'}
+                        className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto pb-0.5"
+                      >
+                        <button
+                          type="button"
+                          aria-pressed={manualColor === 'all'}
+                          onClick={() => handleManualColorChange('all')}
+                          className={`min-h-8 shrink-0 rounded-full border px-2.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                            manualColor === 'all'
+                              ? 'border-sky-300 bg-sky-700 text-white'
+                              : 'border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-400'
+                          }`}
+                        >
+                          {ti.manualAllColors || 'Todos'}
+                        </button>
+                        {manualFacets.colors.map((color) => (
+                          <button
+                            key={color}
+                            type="button"
+                            aria-pressed={manualColor === color}
+                            onClick={() => handleManualColorChange(manualColor === color ? 'all' : color)}
+                            className={`min-h-8 shrink-0 rounded-full border px-2.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                              manualColor === color
+                                ? 'border-sky-300 bg-sky-700 text-white'
+                                : 'border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-400'
+                            }`}
+                          >
+                            {ti.manualColors?.[color] || tc?.[color] || color}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      <span className="w-14 shrink-0 pt-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
+                        {ti.manualCategory || 'Categoría'}
+                      </span>
+                      <div
+                        role="group"
+                        aria-label={ti.manualCategory || 'Filtrar por categoría'}
+                        className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto pb-0.5"
+                      >
+                        <button
+                          type="button"
+                          aria-pressed={manualCategory === 'all'}
+                          onClick={() => setManualCategory('all')}
+                          className={`min-h-8 shrink-0 rounded-full border px-2.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                            manualCategory === 'all'
+                              ? 'border-emerald-300 bg-emerald-700 text-white'
+                              : 'border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-400'
+                          }`}
+                        >
+                          {ti.manualAllCategories || 'Todas'}
+                        </button>
+                        {manualFacets.categories.map((category) => (
+                          <button
+                            key={category}
+                            type="button"
+                            aria-pressed={manualCategory === category}
+                            onClick={() => setManualCategory(manualCategory === category ? 'all' : category)}
+                            className={`min-h-8 shrink-0 rounded-full border px-2.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                              manualCategory === category
+                                ? 'border-emerald-300 bg-emerald-700 text-white'
+                                : 'border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-400'
+                            }`}
+                          >
+                            {tc?.[category] || category}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-2 overflow-y-auto p-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {Object.entries(
-                      getEnemiesByColor(enemiesInSelectedExpansions, manualSelector.color)
-                        .filter((enemy) => {
-                          const q = manualQuery.trim().toLowerCase();
-                          if (!q) return true;
-                          const nombre = String(getEnemyName(enemy.id, enemy.color) || '').toLowerCase();
-                          return nombre.includes(q) || String(enemy.id).toLowerCase().includes(q);
-                        })
-                        .reduce((acc, enemy) => {
-                        if (!acc[enemy.id]) acc[enemy.id] = {};
-                        if (!acc[enemy.id][enemy.categoria]) acc[enemy.id][enemy.categoria] = [];
-                        acc[enemy.id][enemy.categoria].push(enemy);
-                        return acc;
-                      }, {})
-                    ).map(([enemyId, categories]) => {
-                      if (EnemiesNoShow.includes(enemyId)) return null
+                  <div className="grid flex-1 grid-cols-1 gap-2 overflow-y-auto p-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {Object.keys(manualGroups).length === 0 ? (
+                      <p className="col-span-full self-start rounded-xl border border-slate-700 bg-slate-950 p-6 text-center text-sm text-slate-400">
+                        {ti.manualNoMatches || 'Sin resultados con los filtros actuales.'}
+                      </p>
+                    ) : Object.entries(manualGroups).map(([enemyId, categories]) => {
                       const sampleEnemy = Object.values(categories)[0][0]; // Para imagen y nombre
                     
                       return (
                         <div key={enemyId} className="state-chip flex flex-col gap-1.5 rounded-xl border p-2">
                           <div className="flex items-center gap-2">
                             <img src={sampleEnemy.imagen} alt="" className="h-12 w-12 shrink-0 rounded object-cover object-top" loading="lazy" decoding="async" />
-                            <span className="min-w-0 flex-1 truncate text-sm font-bold text-white">
-                              {getEnemyName(enemyId, manualSelector.color)}
+                            <span className="min-w-0 flex-1 truncate text-sm font-bold text-white" title={getEnemyName(enemyId, sampleEnemy.color)}>
+                              {getEnemyName(enemyId, sampleEnemy.color)}
                             </span>
                           </div>
                     
@@ -3876,7 +3986,7 @@ const InitTracker = () => {
                     })}
 
                   </div>
-                  <div className="mt-4 text-center">
+                  <div className="manual-dialog__footer shrink-0 border-t border-slate-700 px-4 py-3 text-center">
                     <button
                       className="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded"
                       onClick={() => setManualSelector({ open: false, color: null })}

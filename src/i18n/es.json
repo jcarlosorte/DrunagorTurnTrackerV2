@@ -222,7 +222,8 @@
       "comandante": "Comandante",
       "jefe": "Jefe",
       "hero": "Héroe Corrupto",
-      "overlord": "Señor Supremo"
+      "overlord": "Señor Supremo",
+      "escenario": "Escenario"
     },
     "escenario": {
       "dark_vampire": "Vástago de Vampiro Sombrío",
@@ -371,6 +372,23 @@
     "addEnemy": "Añadir",
     "selectType": "Selecciona Tipo",
     "manualTitle": "Seleccionar enemigo manualmente",
+    "manualColor": "Color",
+    "manualCategory": "Categoría",
+    "manualAllColors": "Todos",
+    "manualAllCategories": "Todas",
+    "manualOf": "de",
+    "manualNoMatches": "Sin resultados con los filtros actuales.",
+    "manualColors": {
+      "blanco": "Blanco",
+      "gris": "Gris",
+      "negro": "Negro",
+      "comandante": "Comandante",
+      "jefe": "Jefe",
+      "esbirro": "Esbirro",
+      "overlord": "Señor Supremo",
+      "hero": "Héroe Corrupto",
+      "escenario": "Escenario"
+    },
     "addMinionEnemies": "Esbirro",
     "addWhiteEnemies": "MB (Blanco)",
     "addGrayEnemies": "MG (Gris)",

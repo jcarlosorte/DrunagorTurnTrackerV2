@@ -664,8 +664,34 @@ Ahora                    findEnemyVariant la encuentra · toast si no hubiera co
 Cuota                    payload de 1000 elementos descartado por la lista blanca (test)
 Suite                    Lint 0 · Unit 59 · E2E 18/18
 ```
+### 14.ª tanda — filtros del selector manual de enemigos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Filtros en cabecera** | Chips de color y categoría (con «Todos/Todas»), contador `visibles de total` y el buscador existente; el color inicial es el del menú y se valida contra las expansiones activas | `InitTracker.jsx`, `manualEnemyFilter.js` |
+| **Facetas reales** | Solo se ofrecen colores y categorías presentes; las categorías se recalculan al cambiar de color y se limpian si dejan de aplicar | `manualEnemyFilter.js` |
+| **Búsqueda sin acentos** | La consulta normaliza mayúsculas y diacríticos y busca por nombre traducido o id | `manualEnemyFilter.js` |
+| **Pantallas bajas** | En móvil horizontal el modal crece a 94 dvh, compacta cabecera/chips/pie y mantiene la lista con scroll propio; en vertical los chips pasan a varias líneas | `index.css`, `InitTracker.jsx` |
+| **Limpieza** | Se elimina `getEnemiesByColor`, sin uso tras unificar el filtrado | `InitTracker.jsx` |
+
+**Medición**
+
+```text
+Unit       72 tests (9 nuevos del filtro)
+E2E        21/21 (3 nuevos: apertura por color, combinación con contador, añadir)
+Lint       0 problemas
+Build      OK
+Modal 844×390   cabecera compacta · lista 154 px · sin desborde horizontal · pie visible
+Modal 667×375   lista 140 px · pie visible
+Modal 390×844   chips en 3 líneas · lista 288 px
+Modal 1440×950  lista 322 px
+```
+
 ### Pendiente / pospuesto
 
+- **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
+- **Runas (paso 2)**: pendiente el rediseño del submenú (cabecera con contador, rejilla responsiva, acciones destructivas separadas con confirmación).
+- **Escenario (paso 3)**: pendiente agrupar en monstruo/cartas/nodos con contadores.
 - **H8**: cerrado en sus tres partes (cursor, orden/historial y paneles de escenario).
 - **D9**: hecho para eventos, facciones y estados; quedan acentos sueltos de botones (verde/rojo) fuera de la paleta.
 - **F2**: `srcset`/AVIF (WebP ya aplicado).
