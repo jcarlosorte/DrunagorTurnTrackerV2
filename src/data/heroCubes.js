@@ -55,11 +55,53 @@ export function getClassCubeColor(profession) {
 }
 
 /**
- * Cubos base: 1 de cada color + 1 extra del color de la clase = 5.
- * Devuelve `{ amarillo, rojo, verde, azul, max: {...} }`.
+ * Cubos iniciales reales por héroe (5 en total: 2 de un color + 1 del resto).
+ * Fuente: valores del manual para cada héroe publicado.
  */
-export function getHeroBaseCubes(profession) {
+const HERO_CUBES = {
+  // 2 Melee · 1 Ranged · 1 Agility · 1 Wisdom
+  vorn: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  jaheen: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  tork: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  katarina: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  jade: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  drasek: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  duncan: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  devron: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  shadow: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  sun: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  'lord-of-wrath': { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+
+  // 1 Melee · 2 Ranged · 1 Agility · 1 Wisdom
+  maya: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  elros: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  lorelai: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  flavian: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  pietro: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  barak: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  savran: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  handuriel: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  lorien: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  arkhanos: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  kellam: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  sskar: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  willow: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+};
+
+/**
+ * Cubos base de un héroe.
+ * Si está en la tabla oficial se usan sus valores exactos; si no (héroes de
+ * Apocalipsis pendientes de datos), se aplica la regla 1 de cada color + 1 del
+ * color de su clase.
+ */
+export function getHeroBaseCubes(heroOrProfession) {
+  const hero = typeof heroOrProfession === 'string'
+    ? { profession: heroOrProfession }
+    : (heroOrProfession || {});
+
+  if (hero.id && HERO_CUBES[hero.id]) return { ...HERO_CUBES[hero.id] };
+
   const cubos = { amarillo: 1, rojo: 1, verde: 1, azul: 1 };
-  cubos[getClassCubeColor(profession)] += 1;
+  cubos[getClassCubeColor(hero.profession)] += 1;
   return cubos;
 }

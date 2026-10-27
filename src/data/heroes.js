@@ -81,7 +81,7 @@ export const HEROES = [
  * un único sitio cuando lleguen los valores definitivos.
  */
 HEROES.forEach((hero) => {
-  if (!hero.cubos) hero.cubos = getHeroBaseCubes(hero.profession);
+  if (!hero.cubos) hero.cubos = getHeroBaseCubes(hero);
 });
 
 export { getHeroBaseCubes, getClassCubeColor, CUBE_COLORS } from '@/data/heroCubes';

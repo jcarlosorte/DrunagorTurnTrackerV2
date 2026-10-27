@@ -2,6 +2,8 @@ import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storag
 import { HEROES } from '@/data/heroes';
 
 export const HERO_EXTRAS_KEY = 'heroExtras';
+/** Sube cuando cambian los cubos oficiales de los héroes para refrescar los guardados. */
+export const HERO_CUBES_VERSION = 2;
 export const MAX_TRAUMA = 2;
 export const MAX_MALDICION = 5;
 export const MAX_CUBOS = 6;
@@ -78,8 +80,14 @@ export function getHeroExtras(heroId) {
   if (!isPlainObject(entry)) return base;
 
   const equipoMods = normalizeMods(entry.equipoMods, base.equipoMods);
-  const cubos = { ...base.cubos, ...(isPlainObject(entry.cubos) ? entry.cubos : {}) };
-  const cubosMax = { ...base.cubosMax, ...(isPlainObject(entry.cubosMax) ? entry.cubosMax : {}) };
+  // Si cambian los cubos oficiales de un héroe, se refrescan los guardados.
+  const cubosVigentes = Number(entry.cubosVersion) === HERO_CUBES_VERSION;
+  const cubos = cubosVigentes
+    ? { ...base.cubos, ...(isPlainObject(entry.cubos) ? entry.cubos : {}) }
+    : { ...base.cubos };
+  const cubosMax = cubosVigentes
+    ? { ...base.cubosMax, ...(isPlainObject(entry.cubosMax) ? entry.cubosMax : {}) }
+    : { ...base.cubosMax };
   // El valor nunca puede superar el máximo vigente.
   CUBE_KEYS.forEach((key) => {
     const max = Math.max(0, Number(cubosMax[key]) || 0);
@@ -109,7 +117,11 @@ export function getHeroExtras(heroId) {
 
 export function setHeroExtras(heroId, extras) {
   const stored = readHeroExtras();
-  stored[heroId] = { ...getHeroExtras(heroId), ...extras };
+  stored[heroId] = {
+    ...getHeroExtras(heroId),
+    ...extras,
+    cubosVersion: HERO_CUBES_VERSION,
+  };
   writeJsonStorage(HERO_EXTRAS_KEY, stored);
   return stored[heroId];
 }
