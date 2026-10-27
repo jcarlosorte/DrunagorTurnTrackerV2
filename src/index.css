@@ -514,6 +514,34 @@ textarea:focus-visible {
 .history-kind-summon { background: var(--event-summon-bg); color: var(--event-summon-fg); border-color: var(--event-summon-border); }
 .history-kind-event { background: var(--event-default-bg); color: var(--event-default-fg); border-color: var(--event-default-border); }
 
+/* ------------------------------------------------------------------
+   Portada: latido del logo y deriva del esqueleto de fondo.
+   ------------------------------------------------------------------ */
+@keyframes homeLogoBeat {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(16, 185, 129, 0)); }
+  14% { transform: scale(1.035); filter: drop-shadow(0 0 18px rgba(16, 185, 129, 0.35)); }
+  28% { transform: scale(0.995); }
+  42% { transform: scale(1.02); }
+  60% { transform: scale(1); }
+}
+
+.home-logo {
+  animation: homeLogoBeat 4.2s ease-in-out infinite;
+}
+
+@keyframes homeSkeletonDrift {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-1deg); }
+  50% { transform: translate3d(-18px, -10px, 0) rotate(1deg); }
+}
+
+.home-skeleton {
+  animation: homeSkeletonDrift 18s ease-in-out infinite;
+}
+
+.home-logo-glow {
+  animation: homeLogoBeat 4.2s ease-in-out infinite;
+}
+
 /* Sin `position` aquí: la clase utilitaria del markup decide cómo se coloca
    (absolute centrada en el 50% del slot). Si se fuerza `relative`, la etiqueta
    vuelve al flujo y se queda pegada arriba del slot. */

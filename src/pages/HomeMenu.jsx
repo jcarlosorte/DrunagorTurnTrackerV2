@@ -8,6 +8,7 @@ import PageTransition from "@/components/PageTransition";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { clearTrackState, isPlainObject, readJsonStorage } from "@/utils/storage";
 import logo from "@/assets/Corebox_Logo-1536x864.webp";
+import skeleton from "@/assets/enemies/skeleton_knight.png";
 
 export default function HomeMenu() {
   const navigate = useNavigate();
@@ -43,6 +44,17 @@ export default function HomeMenu() {
     <PageTransition>
       <main className="relative flex min-h-[calc(100dvh-3.5rem)] items-center justify-center overflow-hidden bg-slate-950 px-4 py-10 text-white sm:px-6">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(16,185,129,0.18),transparent_42%),linear-gradient(180deg,#0f172a_0%,#020617_100%)]" />
+
+        {/* Fondo: caballero esqueleto a la deriva, muy tenue */}
+        <img
+          src={skeleton}
+          alt=""
+          aria-hidden="true"
+          className="home-skeleton pointer-events-none absolute -right-24 bottom-0 h-[85%] max-h-[720px] w-auto select-none object-contain opacity-[0.07] mix-blend-luminosity"
+          loading="lazy"
+          decoding="async"
+        />
+
         <div className="relative z-10 grid w-full max-w-5xl gap-8 overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/80 p-5 shadow-2xl shadow-emerald-950/30 backdrop-blur sm:p-8 lg:grid-cols-[1.1fr_0.9fr] lg:p-10">
           <section className="flex flex-col justify-center">
             <div className="mb-6 flex items-center gap-3">
@@ -85,8 +97,14 @@ export default function HomeMenu() {
             </div>
           </section>
 
-          <aside className="flex min-h-64 items-center justify-center rounded-2xl border border-emerald-500/20 bg-slate-950/60 p-4 sm:p-8">
-            <img src={logo} alt="Drunagor" className="max-h-72 w-full object-contain opacity-90 drop-shadow-2xl" loading="eager" />
+          <aside className="relative flex min-h-64 items-center justify-center rounded-2xl border border-emerald-500/20 bg-slate-950/60 p-4 sm:p-8">
+            <div className="home-logo-glow absolute inset-8 rounded-full bg-emerald-500/10 blur-3xl" aria-hidden="true" />
+            <img
+              src={logo}
+              alt="Drunagor"
+              className="home-logo relative max-h-72 w-full object-contain opacity-90 drop-shadow-2xl"
+              loading="eager"
+            />
           </aside>
         </div>
       </main>

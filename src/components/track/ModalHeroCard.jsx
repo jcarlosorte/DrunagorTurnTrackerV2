@@ -29,6 +29,7 @@ import {
   stepHeroEstadoAlterado,
   toggleHeroExtra,
 } from '@/utils/heroExtras';
+import { formatClock } from '@/utils/turnTimer';
 
 const EQUIPMENT = [
   { key: 'arma', es: 'Arma', en: 'Weapon', mod: true },
@@ -47,6 +48,7 @@ const GROUPS = [
 
 const ACTION_CUBES = CUBE_META.filter((cube) => !['trauma', 'maldicion'].includes(cube.key));
 const CONDITION_CUBES = CUBE_META.filter((cube) => ['trauma', 'maldicion'].includes(cube.key));
+
 
 const SOURCE_LABELS = {
   core: 'Adv.',
@@ -197,7 +199,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
             <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
               {t.conditions || 'Estados alterados'}
             </p>
-            <div className="flex flex-wrap items-start gap-1">
+            <div className="flex flex-wrap items-stretch justify-center gap-1">
               {estadosAlteradosDisponibles.map((estadoConfig) => {
                 const count = countAlterado(estadoConfig.id);
                 const maxCount = estadoConfig.max || 1;
@@ -205,7 +207,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                 return (
                   <div
                     key={estadoConfig.id}
-                    className="flex w-8 shrink-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5 sm:w-9"
+                    className="flex min-w-[2.1rem] max-w-[3.5rem] flex-1 basis-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
                     title={`${nombre} ×${count}`}
                   >
                     <button
@@ -604,6 +606,29 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
               </section>
             );
           })}
+
+          {/* Tiempo total jugado con este héroe */}
+          <section
+            className="rounded-xl border border-slate-700 bg-slate-950/60 p-2"
+            aria-label={t.totalTime || 'Tiempo total'}
+          >
+            <div className="flex items-center justify-between">
+              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+                {t.totalTime || 'Tiempo total'}
+              </p>
+              <p
+                data-testid="hero-total-time"
+                className={`font-mono text-base font-bold tabular-nums ${
+                  (extras.tiempoTotal || 0) >= 300 ? 'text-amber-300' : 'text-white'
+                }`}
+              >
+                {formatClock(extras.tiempoTotal)}
+              </p>
+            </div>
+            <p className="mt-0.5 text-[0.6rem] text-slate-500">
+              {t.totalTimeHint || 'Suma de todos sus turnos.'}
+            </p>
+          </section>
         </div>
 
         <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-slate-700 bg-slate-950/70 px-3 py-2">

@@ -135,7 +135,9 @@
     "conditionCubes": "Estado",
     "maxCubes": "máximo",
     "impactShort": "Imp.",
-    "impactModifier": "Mod. al impactar"
+    "impactModifier": "Mod. al impactar",
+    "totalTime": "Tiempo total",
+    "totalTimeHint": "Suma de todos sus turnos."
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Maga Caída",
@@ -559,7 +561,21 @@
     "sumarModificador": "Sumar modificador de",
     "sinModificador": "Ninguno (tirada genérica)",
     "impactShort": "Imp.",
-    "impactModifier": "Mod. al impactar"
+    "impactModifier": "Mod. al impactar",
+    "turnTimer": "Tiempo del turno",
+    "turnos": "Turnos",
+    "carousel": "Turnos",
+    "previousTurn": "Anterior",
+    "nextTurnShort": "Siguiente",
+    "noTurn": "—",
+    "density": "Densidad",
+    "densityCompact": "Densidad compacta",
+    "densityNormal": "Densidad normal",
+    "overlap": "Solape",
+    "overlapCompact": "Superponer más las cartas",
+    "overlapNormal": "Separar cartas",
+    "boardGroup": "Vista del tablero",
+    "panels": "Paneles"
   },
   "scenarioCard": {
     "Manifiesta": "Manifiesta",

@@ -566,6 +566,28 @@ Solape     separación 85 px → 61/53 px · slot 669 → 482 px · persistido
 Carrusel   visible por defecto en escritorio · toggle 1 → 0
 Suite      Lint 0 · Unit 33 · E2E 13/13
 ```
+### 9.ª tanda — estados, portada y cronómetro
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Paleta de estados** | Chips flexibles (`flex-1 basis-0`, mínimo 2,1 rem y máximo 3,5 rem): ocupan **una sola fila** y se reparten todo el ancho, centrados; si no caben, pasan a varias filas | `ModalEnemyCard.jsx`, `ModalHeroCard.jsx` |
+| **Portada animada** | Logo con latido (`homeLogoBeat`, 4,2 s) y esqueleto de fondo con deriva lenta (`SkeletonDrift`, 18 s, opacidad 7 %) | `HomeMenu.jsx`, `index.css` |
+| **Cronómetro de turno** | `mm:ss` por turno, reiniciado al empezar cada uno; **rojo con anillo** a partir de 5:00 | `InitTracker.jsx`, `turnTimer.js` |
+| **Tiempo por héroe** | Al cerrar el turno se suma a `tiempoTotal` del héroe y se registra en el historial: `⏱ Vorn: 00:04 · total 00:04` | `heroExtras.js`, `heroSanitize.js` |
+| **Estadísticas** | El modal del héroe muestra **Tiempo total** al final, tras auras, consecuencias y estados | `ModalHeroCard.jsx` |
+| **Versión visible** | `v1.0.0 · <commit>` en la barra superior para detectar builds antiguos | `BuildBadge.jsx`, `vite.config.js`, `TopMenu.jsx` |
+
+**Medición**
+
+```text
+Cronómetro     00:01 → 00:03 (avanza 1 s)
+Acumulado      vorn 4 s · historial "⏱ Vorn: 00:04 · total 00:04"
+Modal héroe    Tiempo total 00:04
+Paleta 1440    10 chips · 1 fila · 48 px cada uno · ocupa 518/518 px
+Paleta 360     2 filas · 0 desbordamiento
+Portada        logo homeLogoBeat · esqueleto homeSkeletonDrift (opacidad 0,07)
+Suite          Lint 0 · Unit 36 · E2E 15/15 · dist 8,89 MB
+```
 ### Pendiente / pospuesto
 
 - **H8 (2/3 y 3/3)**: extraer `useTurnEngine` (~600 líneas) y los paneles de escenario/pilas (~350). Requiere una sesión dedicada con la suite E2E como red.

@@ -47,7 +47,8 @@ import { createId } from '@/utils/id';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { appendGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
-import { stepHeroEstadoAlterado } from '@/utils/heroExtras';
+import { addHeroTurnTime, stepHeroEstadoAlterado } from '@/utils/heroExtras';
+import { formatClock, isOverWarning } from '@/utils/turnTimer';
 import { useHeroExtras } from '@/context/HeroExtrasContext';
 import useStatusEffects from '@/hooks/useStatusEffects';
 import { aplicarEfectosEstadosHeroe } from '@/utils/heroStatus';
@@ -2024,6 +2025,9 @@ const InitTracker = () => {
   const turnHistoryRef = useRef([]);
   // Rastro de los últimos turnos para el carrusel (anterior / actual / siguiente).
   const turnTrailRef = useRef([]);
+  // Cronómetro: segundos del turno actual y marca de inicio del turno.
+  const [turnSeconds, setTurnSeconds] = useState(0);
+  const turnTimerRef = useRef({ entity: null, startedAt: Date.now() });
   // Densidad del tablero, persistida entre sesiones.
   const [density, setDensity] = useState(() => {
     const stored = readJsonStorage('trackDensity', 'normal');
@@ -2818,6 +2822,46 @@ const InitTracker = () => {
       turn: turnIndex,
       type: currentTurnEntity.type,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTurnEntity?.uuid, currentTurnEntity?.id]);
+
+  // Cronómetro por turno y tiempo acumulado por héroe.
+  useEffect(() => {
+    const now = Date.now();
+    const previo = turnTimerRef.current;
+
+    // Cierra el turno anterior: si era de un héroe, suma su tiempo.
+    if (heroManagementEnabled && previo.entity?.type === 'hero' && previo.entity.id) {
+      const transcurrido = Math.round((now - previo.startedAt) / 1000);
+      if (transcurrido > 0) {
+        const total = addHeroTurnTime(previo.entity.id, transcurrido);
+        const nombre = translations.heroes?.[previo.entity.id] || previo.entity.id;
+        appendGameLog('turn', `⏱ ${nombre}: ${formatClock(transcurrido)} · total ${formatClock(total)}`, {
+          round: roundRef.current,
+          turn: turnIndex,
+          type: 'hero',
+        });
+        refreshHeroExtras();
+      }
+    }
+
+    turnTimerRef.current = {
+      entity: currentTurnEntity
+        ? { type: currentTurnEntity.type, id: currentTurnEntity.id || currentTurnEntity.uuid }
+        : null,
+      startedAt: now,
+    };
+    setTurnSeconds(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTurnEntity?.uuid, currentTurnEntity?.id]);
+
+  // Tick de un segundo mientras haya turno activo.
+  useEffect(() => {
+    if (!currentTurnEntity) return undefined;
+    const interval = window.setInterval(() => {
+      setTurnSeconds(Math.max(0, Math.floor((Date.now() - turnTimerRef.current.startedAt) / 1000)));
+    }, 1000);
+    return () => window.clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTurnEntity?.uuid, currentTurnEntity?.id]);
 
@@ -3673,6 +3717,18 @@ const InitTracker = () => {
                       <span className="text-slate-300">
                         {ti.turno || 'Turno'} <b className="text-white">{turnIndex >= 0 ? turnIndex + 1 : '—'}</b>
                       </span>
+                      <span className="h-3.5 w-px bg-slate-700" aria-hidden="true" />
+                      <span
+                        data-testid="turn-timer"
+                        title={ti.turnTimer || 'Tiempo del turno'}
+                        className={`rounded-md px-1 font-mono text-[0.7rem] font-bold tabular-nums ${
+                          turnSeconds >= 300
+                            ? 'bg-red-600/20 text-red-300 ring-1 ring-red-500/70'
+                            : 'text-sky-200'
+                        }`}
+                      >
+                        ⏱ {formatClock(turnSeconds)}
+                      </span>
                       {currentEntityName && (
                         <span
                           className="hidden max-w-[8rem] truncate text-sky-200 2xl:inline"
@@ -3698,6 +3754,15 @@ const InitTracker = () => {
                     undoTurn: ti.undoTurn || 'Deshacer',
                     nextTurn: ti.nextTurn || 'Siguiente turno',
                     bag: ti.estadoBolsa || 'Bolsa de runas',
+                    density: ti.density || 'Densidad',
+                    densityCompact: ti.densityCompact || 'Densidad compacta',
+                    densityNormal: ti.densityNormal || 'Densidad normal',
+                    overlap: ti.overlap || 'Solape',
+                    overlapCompact: ti.overlapCompact || 'Superponer más las cartas',
+                    overlapNormal: ti.overlapNormal || 'Separar cartas',
+                    carousel: ti.carousel || 'Turnos',
+                    panels: ti.panels || 'Paneles',
+                    boardGroup: ti.boardGroup || 'Vista del tablero',
                   }}
                 />
               </div>

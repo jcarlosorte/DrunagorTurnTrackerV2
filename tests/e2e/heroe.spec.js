@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { buildHeroExtras, buildSeed, openTracker, seedStorage } from './helpers';
+import { buildEnemyState, buildHeroExtras, buildSeed, openTracker, seedStorage } from './helpers';
 
 test.describe('Vista ampliada del héroe', () => {
   test.beforeEach(async ({ page }) => {
@@ -58,4 +58,40 @@ test.describe('Vista ampliada del héroe', () => {
       return (extras.vorn?.estadosAlterados || []).some((estado) => estado.count === 2);
     }, { timeout: 10_000 }).toBe(true);
   });
+});
+
+test.describe('Cronómetro de turno', () => {
+  test.beforeEach(async ({ page }) => {
+    await seedStorage(page, {
+      ...buildSeed(),
+      heroExtras: buildHeroExtras(),
+      initEnemiesState: buildEnemyState(),
+    });
+  });
+  test('el cronómetro acumula el tiempo del héroe y lo registra', async ({ page }) => {
+    await openTracker(page);
+
+    // Dos turnos con una pausa para que el cronómetro avance.
+    await page.getByTestId('next-turn').click();
+    await page.waitForTimeout(2400);
+    const timer = await page.getByTestId('turn-timer').innerText();
+    expect(timer).toMatch(/\d{2}:\d{2}/);
+
+    await page.getByTestId('next-turn').click();
+
+    // La escritura de `heroExtras` va agrupada (250 ms): se espera al valor.
+    await expect.poll(async () => page.evaluate(() => {
+      const extras = JSON.parse(localStorage.getItem('heroExtras') || '{}');
+      return Object.values(extras).reduce((acc, hero) => acc + (hero.tiempoTotal || 0), 0);
+    }), { timeout: 10_000 }).toBeGreaterThan(0);
+
+    const log = await page.evaluate(() => JSON.parse(localStorage.getItem('gameLog') || '[]'));
+    expect(log.some((entry) => String(entry.message).startsWith('⏱'))).toBe(true);
+
+    // El modal muestra el total al final.
+    await page.locator('[role="button"][aria-label*="Vorn"]').first().click({ force: true });
+    await expect(page.getByTestId('hero-total-time')).toBeVisible();
+    await expect(page.getByTestId('hero-total-time')).toHaveText(/\d{2}:\d{2}/);
+  });
+
 });

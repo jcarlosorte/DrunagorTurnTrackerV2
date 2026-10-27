@@ -81,6 +81,7 @@ export function sanitizeHeroEntry(raw) {
     trauma: clamp(raw.trauma, 0, MAX_TRAUMA_CUBES, 0),
     maldicion: clamp(raw.maldicion, 0, MAX_CURSE_CUBES, 0),
     impactoMod: clamp(raw.impactoMod, -20, 20, 0),
+    tiempoTotal: clamp(raw.tiempoTotal, 0, 60 * 60 * 24, 0),
     auras: Array.isArray(raw.auras) ? raw.auras.filter((id) => typeof id === 'string') : [],
     consecuencias: Array.isArray(raw.consecuencias)
       ? raw.consecuencias.filter((id) => typeof id === 'string')

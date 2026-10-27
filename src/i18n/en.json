@@ -135,7 +135,9 @@
     "conditionCubes": "Condition",
     "maxCubes": "max",
     "impactShort": "Hit",
-    "impactModifier": "Hit modifier"
+    "impactModifier": "Hit modifier",
+    "totalTime": "Total time",
+    "totalTimeHint": "Sum of all their turns."
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Fallen Mage",
@@ -558,7 +560,21 @@
     "sumarModificador": "Add modifier from",
     "sinModificador": "None (plain roll)",
     "impactShort": "Hit",
-    "impactModifier": "Hit modifier"
+    "impactModifier": "Hit modifier",
+    "turnTimer": "Turn time",
+    "turnos": "Turns",
+    "carousel": "Turns",
+    "previousTurn": "Previous",
+    "nextTurnShort": "Next",
+    "noTurn": "—",
+    "density": "Density",
+    "densityCompact": "Compact density",
+    "densityNormal": "Normal density",
+    "overlap": "Overlap",
+    "overlapCompact": "Overlap cards more",
+    "overlapNormal": "Separate cards",
+    "boardGroup": "Board view",
+    "panels": "Panels"
   },
   "scenarioCard": {
     "Manifiesta": "Manifest",

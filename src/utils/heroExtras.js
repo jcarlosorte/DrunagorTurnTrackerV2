@@ -40,6 +40,8 @@ export const emptyHeroExtras = (heroId) => {
     maldicion: 0,
     /** Modificador al impactar (se suma al dado de ataque). */
     impactoMod: 0,
+    /** Segundos acumulados jugados con este héroe. */
+    tiempoTotal: 0,
     auras: [],
     consecuencias: [],
     estados: [],
@@ -169,6 +171,7 @@ export function getHeroExtras(heroId) {
     trauma: Number(entry.trauma) || 0,
     maldicion: Number(entry.maldicion) || 0,
     impactoMod: Number(entry.impactoMod) || 0,
+    tiempoTotal: Math.max(0, Number(entry.tiempoTotal) || 0),
     vida: Number.isFinite(entry.vida) ? entry.vida : base.vida,
     vidaMax: Number(entry.vidaMax) || base.vidaMax,
   };
@@ -317,6 +320,14 @@ export function setEquipmentMod(heroId, slot, patch) {
  * Cambia un valor numérico simple del héroe (p. ej. `impactoMod`).
  * Se acota para que un valor absurdo no rompa la ficha.
  */
+/** Suma segundos jugados al total del héroe y devuelve el nuevo total. */
+export function addHeroTurnTime(heroId, seconds) {
+  if (!Number.isFinite(seconds) || seconds <= 0) return getHeroExtras(heroId).tiempoTotal || 0;
+  const current = getHeroExtras(heroId);
+  const total = Math.max(0, Math.round((current.tiempoTotal || 0) + seconds));
+  patchHeroExtras(heroId, { tiempoTotal: total });
+  return total;
+}
 export function setHeroStat(heroId, field, value) {
   const permitidos = ['impactoMod', 'movimientoExtra', 'ataqueArma'];
   if (!permitidos.includes(field)) return getHeroExtras(heroId);

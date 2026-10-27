@@ -1,13 +1,33 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
+import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
+
 const normalizeBase = (value) => {
   if (!value || value === '/') return '/';
   return `/${value.replace(/^\/+|\/+$/g, '')}/`;
 };
+
+/** Hash corto del commit (o marca de tiempo si no hay git). */
+const buildId = (() => {
+  try {
+    return execSync('git rev-parse --short HEAD', { cwd: rootDir }).toString().trim();
+  } catch {
+    return new Date().toISOString().slice(0, 10);
+  }
+})();
+
+const appVersion = (() => {
+  try {
+    return JSON.parse(readFileSync(path.join(rootDir, 'package.json'), 'utf8')).version || '1.0.0';
+  } catch {
+    return '1.0.0';
+  }
+})();
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, rootDir, '');
@@ -16,6 +36,10 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     base,
+    define: {
+      __BUILD_ID__: JSON.stringify(buildId),
+      __APP_VERSION__: JSON.stringify(env.VITE_APP_VERSION || appVersion),
+    },
     build: {
       // Source maps are useful locally but expose source code in production.
       sourcemap: env.VITE_SOURCEMAP === 'true' || mode !== 'production',
