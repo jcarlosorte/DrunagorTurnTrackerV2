@@ -20,7 +20,8 @@
                     "images:optimize":  "node scripts/optimize-images.mjs",
                     "visual:check":  "node scripts/visual-check.mjs",
                     "test:e2e":  "playwright test",
-                    "test:e2e:ui":  "playwright test --ui"
+                    "test:e2e:ui":  "playwright test --ui",
+                    "images:webp":  "node scripts/convert-to-webp.mjs --apply"
                 },
     "dependencies":  {
                          "classnames":  "^2.5.1",

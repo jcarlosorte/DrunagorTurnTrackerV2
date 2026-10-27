@@ -3115,6 +3115,7 @@ const InitTracker = () => {
 
   // Altura única para TODO el tablero: así todas las etiquetas comparten la misma
   // línea central aunque una posición acumule muchas cartas.
+  // Se pasan NÚMEROS DE CARTAS (no alturas): boardSlotHeightFrom aplica stackHeight.
   const countsPerSlot = Array.from({ length: 11 }, (_, i) => {
     const isRuneSlot = Object.values(runesColorMap).includes(i);
     const isRuneText = i === 10;
@@ -3126,7 +3127,7 @@ const InitTracker = () => {
       (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnBottom.includes(h.role)).length +
       (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'abajo').length : 0) +
       (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'abajo').length : 0);
-    return Math.max(stackHeight(above), stackHeight(below));
+    return Math.max(above, below);
   });
   const boardSlotHeight = boardSlotHeightFrom(countsPerSlot);
 

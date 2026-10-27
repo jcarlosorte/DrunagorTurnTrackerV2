@@ -56,10 +56,10 @@ for (const file of files) {
       after += original.length;
       skipped += 1;
     }
-  } catch (error) {
+  } catch (err) {
     after += original.length;
     skipped += 1;
-    console.warn(`⚠ ${file}: ${error.message}`);
+    console.warn(`⚠ ${file}: ${err.message}`);
   }
 }
 

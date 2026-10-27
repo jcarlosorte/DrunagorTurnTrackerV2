@@ -372,13 +372,15 @@ const TrackerSelect = () => {
                         />
                         <span className="relative block">
                           {hero.image ? (
-                            <img
-                              src={hero.image}
-                              alt=""
-                              loading="lazy"
-                              decoding="async"
-                              className="h-32 w-full object-cover sm:h-40"
-                            />
+                            <span className="flex h-32 w-full items-center justify-center overflow-hidden bg-slate-950 sm:h-40">
+                              <img
+                                src={hero.image}
+                                alt=""
+                                loading="lazy"
+                                decoding="async"
+                                className="h-full w-full object-contain"
+                              />
+                            </span>
                           ) : (
                             <span className="flex h-32 w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
                           )}
@@ -577,16 +579,41 @@ const TrackerSelect = () => {
               <div className="mb-5 rounded-xl border border-slate-700 bg-slate-950 p-3">
                 <p className="mb-2 text-sm font-bold text-slate-200">{t.quickSelect || 'Selección rápida por expansión'}</p>
                 <div className="flex flex-wrap gap-2">
-                  {expansionOptions.map((exp) => (
-                    <button
-                      key={exp}
-                      type="button"
-                      onClick={() => toggleExpansionEnemies(exp)}
-                      className="min-h-11 rounded-full border border-indigo-500 bg-indigo-800 px-4 text-sm font-semibold text-white hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
-                    >
-                      {getExpansionName(exp)}
-                    </button>
-                  ))}
+                  {expansionOptions.map((exp) => {
+                    const ids = ENEMIES.filter((enemy) => enemy.expansionId === exp).map((enemy) => enemy.id);
+                    const seleccionados = ids.filter((id) => selectedEnemies.includes(id)).length;
+                    const todos = ids.length > 0 && seleccionados === ids.length;
+                    const alguno = seleccionados > 0 && !todos;
+                    return (
+                      <button
+                        key={exp}
+                        type="button"
+                        aria-pressed={todos}
+                        onClick={() => toggleExpansionEnemies(exp)}
+                        title={todos
+                          ? (t.quickSelectRemove || 'Quitar todos los enemigos de esta expansión')
+                          : (t.quickSelectAdd || 'Añadir todos los enemigos de esta expansión')}
+                        className={`flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 ${
+                          todos
+                            ? 'border-emerald-300 bg-emerald-600 text-white shadow-md shadow-emerald-950/40'
+                            : alguno
+                              ? 'border-indigo-300 bg-indigo-800 text-white hover:bg-indigo-700'
+                              : 'border-slate-600 bg-slate-900 text-slate-300 hover:border-indigo-400 hover:text-white'
+                        }`}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className={`flex h-5 w-5 items-center justify-center rounded-full border text-[0.65rem] ${
+                            todos ? 'border-emerald-100 bg-emerald-500 text-slate-950' : 'border-slate-500 text-slate-400'
+                          }`}
+                        >
+                          {todos ? <GiCheckMark /> : seleccionados || ''}
+                        </span>
+                        <span className="truncate">{getExpansionName(exp)}</span>
+                        <span className="text-[0.65rem] font-normal opacity-80">{seleccionados}/{ids.length}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}

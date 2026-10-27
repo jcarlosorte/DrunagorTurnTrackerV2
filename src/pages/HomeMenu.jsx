@@ -7,7 +7,7 @@ import { useGame } from "@/context/GameContext";
 import PageTransition from "@/components/PageTransition";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { clearTrackState, isPlainObject, readJsonStorage } from "@/utils/storage";
-import logo from "@/assets/Corebox_Logo-1536x864.png";
+import logo from "@/assets/Corebox_Logo-1536x864.webp";
 
 export default function HomeMenu() {
   const navigate = useNavigate();

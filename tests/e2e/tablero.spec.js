@@ -13,7 +13,7 @@ test.describe('Tablero de iniciativa', () => {
     await expect(page.locator('.track-slot__label')).toHaveCount(11);
   });
 
-  test('el turno activo se marca con una banda y no desborda el slot', async ({ page }) => {
+  test('el turno activo se marca con un haz vertical y un anillo en la etiqueta', async ({ page }) => {
     await openTracker(page);
     await page.getByTestId('next-turn').click();
     await page.waitForTimeout(400);
@@ -23,14 +23,20 @@ test.describe('Tablero de iniciativa', () => {
 
     const metrics = await slot.evaluate((element) => {
       const before = getComputedStyle(element, '::before');
+      const label = element.querySelector('.track-slot__label > div');
       return {
         slotHeight: element.getBoundingClientRect().height,
-        bandHeight: Number.parseFloat(before.height),
+        beamWidth: Number.parseFloat(before.width),
+        beamHeight: Number.parseFloat(before.height),
+        labelShadow: label ? getComputedStyle(label).boxShadow : '',
       };
     });
 
-    expect(metrics.bandHeight).toBeLessThan(metrics.slotHeight);
-    expect(metrics.bandHeight).toBeLessThanOrEqual(160);
+    // Haz estrecho y contenido en el slot; el anillo marca la etiqueta.
+    expect(metrics.beamWidth).toBeLessThan(10);
+    expect(metrics.beamHeight).toBeGreaterThan(0);
+    expect(metrics.beamHeight).toBeLessThanOrEqual(metrics.slotHeight);
+    expect(metrics.labelShadow).toContain('52, 211, 153');
   });
 
   test('la vista de lista usa una altura compacta', async ({ page }) => {

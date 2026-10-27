@@ -39,7 +39,7 @@ export function buildEnemyState({ estadosAlterados = [], vida = 12 } = {}) {
         capacidadesOriginales: [],
         inmunidad: [],
         estadosAlterados,
-        imagen: '/DrunagorTurnTrackerV2/assets/SkeletonArcher-DvxPvUTx.png',
+        imagen: '',
       },
     }],
     huespedActivo: false,

@@ -510,7 +510,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
           {/* Submenú Estados Alterados: paleta fija, siempre visible */}
           <div className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900/60 p-2">
             <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
-            <div className="flex flex-nowrap items-start justify-start gap-1 overflow-hidden">
+            <div className="flex flex-wrap items-start justify-start gap-1">
             {ESTADOS_ALTERADOS
               .filter((config) => config.mostrar === 'si')
               .filter((config) => !todasInmunidades?.includes(config.id) && !(todasInmunidades?.includes('GRANDE') && ['DERRIBO_I', 'ATURDIMIENTO_I'].includes(config.id)))

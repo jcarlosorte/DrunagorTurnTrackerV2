@@ -167,7 +167,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
 
           {/* Iconos de estado activos: hasta 6, con su contador */}
           {estadosActivos.length > 0 && (
-            <div className="mt-2 flex items-center gap-1 overflow-hidden">
+            <div className="mt-2 flex flex-wrap items-center gap-1">
               {estadosActivos.slice(0, 6).map((estado) => {
                 const meta = ESTADOS_ALTERADOS.find((item) => item.id === estado.id);
                 if (!meta) return null;
@@ -197,7 +197,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
             <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
               {t.conditions || 'Estados alterados'}
             </p>
-            <div className="flex flex-nowrap items-start gap-1 overflow-hidden">
+            <div className="flex flex-wrap items-start gap-1">
               {estadosAlteradosDisponibles.map((estadoConfig) => {
                 const count = countAlterado(estadoConfig.id);
                 const maxCount = estadoConfig.max || 1;

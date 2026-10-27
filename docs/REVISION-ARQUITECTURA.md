@@ -417,7 +417,7 @@ npm run test:e2e
 
 ## 13. Estado de implementación
 
-### Aceptado e implementado (2026-10-27)
+### 1.ª tanda — guardados y sincronización de UI
 
 | ID | Cambio | Archivos |
 |---|---|---|
@@ -428,96 +428,79 @@ npm run test:e2e
 | H4 | `schemaVersion: 3` + `migrateSnapshot` (v1/v2 → v3) | `storage.js`, `SavesPanel.jsx` |
 | H10 | `npm audit --omit=dev --audit-level=high` | `deploy.yml` |
 | H12 | Caché de `getHeroExtras` con invalidación en escritura y `storage` | `heroExtras.js` |
-| D6 | Halo del slot activo (`.track-slot--active`) | `InitTracker.jsx`, `index.css` |
+| D6 | Resaltado del slot activo (`.track-slot--active`) | `InitTracker.jsx`, `index.css` |
 | D4 | Avisos de escenario en pila lateral con icono y color por tipo | `InitTracker.jsx`, `toastKind.js` |
 | H13 | Los efectos de inicio de turno persisten (`processed.hero`, `lastHeroTurn`): recargar ya no los repite | `InitTracker.jsx` |
 
-### Segunda tanda aceptada e implementada
+### 2.ª tanda — motor único, accesibilidad y calidad
 
 | ID | Cambio | Archivos |
 |---|---|---|
-| H5 | Motor único `applyStatusEffects` para enemigos y héroes (daño, escudos, reducción, tope 4) | `statusEngine.js`, `heroStatus.js`, `InitTracker.jsx` |
-| H6 | *Focus trap* reutilizable en héroes, enemigos, dados y confirmaciones | `useFocusTrap.js`, `ModalHeroCard.jsx`, `ModalEnemyCard.jsx`, `DiceRoller.jsx` |
-| H7 | `loading="lazy" decoding="async"` en 19 imágenes + optimización de las ilustraciones de `src/assets` (PNG con paleta y tramado) | varios, `vite.config.js`, `optimize-images.mjs` |
-| H9 | ESLint (flat config) + Vitest + *gates* en CI; 3 bugs reales corregidos por el linter | `eslint.config.js`, `vitest.config.js`, `src/**/*.test.js`, `deploy.yml` |
+| H5 | Motor único `applyStatusEffects` para enemigos y héroes (daño, escudos, reducción, tope 4) | `statusEngine.js`, `heroStatus.js` |
+| H6 | *Focus trap* reutilizable en héroes, enemigos, dados y confirmaciones | `useFocusTrap.js`, modales |
+| H7 | `loading="lazy" decoding="async"` en 19 imágenes + optimización PNG en origen | varios, `optimize-images.mjs` |
+| H9 | ESLint (flat config) + Vitest + *gates* en CI | `eslint.config.js`, `vitest.config.js`, `deploy.yml` |
 
-**Resultados medidos**
+**Resultados**: `dist` 32,15 MB → 14,83 MB · 26 tests · 3 bugs reales detectados por el linter (`setHeroStat` sin exportar, `useLanguage` condicional, `t.emptyPila` inexistente).
 
-| Métrica | Antes | Ahora |
-|---|---|---|
-| Tamaño de `dist/` | 32,15 MB | **14,83 MB** (−54 %) |
-| Ilustraciones de origen | 31,96 MB | **14,55 MB** (−54 %) |
-| Linter | — | 0 errores · 105 avisos |
-| Tests | 0 | **26 pasando** |
-| Bugs corregidos por el linter | — | `setHeroStat` sin exportar · `useLanguage` condicional en `TileToast` · `t.emptyPila` inexistente |
+> `vite-plugin-image-optimizer` se descartó: duplicaba los archivos optimizados en la raíz del repositorio en cada build.
 
-> Nota sobre H7: se probó `vite-plugin-image-optimizer`, pero duplicaba los archivos optimizados **en la raíz del repositorio** en cada build, así que se descartó. La optimización se aplica una vez con `npm run images:optimize` sobre `src/assets` y queda versionada con el código.
-
-### Pendiente / pospuesto
-
-H8, D2, D7, D8, D9, A4, F1-F5, P2.
-
-### Quinta tanda aceptada e implementada (A + B del plan)
-
-| ID | Cambio | Archivos |
-|---|---|---|
-| E2 | `.env.example` reescrito en UTF-8 (tenía `raÃ­z`) + `VITE_APP_VERSION` | `.env.example` |
-| E3 | `appVersion` incluido en cada snapshot | `storage.js` |
-| F5 | `robots.txt`, `theme-color`, descripción y metadatos Open Graph | `index.html`, `public/robots.txt` |
-| H11 | Escrituras de `heroExtras` agrupadas (250 ms) con volcado al guardar, ocultar o cerrar | `heroExtras.js`, `storage.js` |
-| F1 | `manualChunks` por paquete: `vendor-icons` (69 KB) y `vendor-router` separados | `vite.config.js` |
-| — | Suite **E2E de Playwright** (10 pruebas) + job en CI con reporte en fallo | `tests/e2e/*`, `playwright.config.js`, `deploy.yml` |
-
-**Cobertura E2E**: 11 posiciones del tablero · banda del turno activo sin desbordar · altura compacta en lista · estados del enemigo que se consumen · paleta siempre disponible · snapshot con versión, `heroManagement` y datos de héroe · saneado al cargar · cabecera del héroe con vida e iconos · *focus trap* y Escape · dado trampa con dos fichas.
-
-**Resultados**
-
-```text
-E2E        10/10 · 3 repeticiones: 30/30 · estable
-Unit       26/26
-Lint       0 errores · 112 avisos
-Build      OK · index 201 KB (antes 266) · vendor-icons 69 KB aparte
-```
-
-Para reducir intermitencias, los tests de sorteo fijan `Math.random` y los selectores usan `data-testid`.
-
-### Cuarta tanda aceptada e implementada
-
-| ID | Cambio | Archivos |
-|---|---|---|
-| — | **Bug**: al consumirse un estado alterado desaparecían todos los botones del panel. Ahora la paleta se genera desde el catálogo y siempre está visible; `+` puede volver a añadir un estado consumido | `ModalEnemyCard.jsx` |
-| A1 (1/2) | Geometría del tablero extraída a módulo propio (`overlapFor`, `stepFor`, `stackHeight`, `boardSlotHeightFrom`, `compactSlotHeight`, `cardDistance`) | `trackLayout.js` |
-| A1 (2/2) | `CharacterCard` y `TrackSlot` extraídos de `InitTracker` como componentes con dependencias explícitas | `CharacterCard.jsx`, `TrackSlot.jsx` |
-
-**Resultado**: `InitTracker.jsx` pasa de **4.199 → 3.829 líneas** (−370), sin cambios de comportamiento.
-
-**Verificación**
-
-```text
-Tablero   11 slots · 11 etiquetas · 9 imágenes · 0 errores de página
-Estados   Quemadura 2 → 1 → 0 tras los turnos del enemigo
-Paleta    11 botones siguen visibles con 0 estados activos
-Lista     slot expandido 360 px con su carta
-```
-
-### Tercera tanda aceptada e implementada
+### 3.ª tanda — historial, cabecera de héroe y limpieza
 
 | ID | Cambio | Archivos |
 |---|---|---|
 | D1 | Historial agrupado por turno con cabeceras colapsables y contadores | `HistoryPanel.jsx` |
-| D3 | Filtros por tipo (turnos, eventos, runas, invocaciones) + búsqueda de texto | `HistoryPanel.jsx` |
-| D5 | Cabecera fija del héroe con vida resumida e iconos de estado (hasta 6) | `ModalHeroCard.jsx` |
-| X1 | Eliminada `lucide-react` (0 usos): un único set de iconos | `package.json` |
-| X2 | Eliminada `uuid`: `createId()` usa `crypto.randomUUID()` | `id.js`, 4 archivos |
-| — | Corrección: el resaltado del turno activo es una banda de 150 px centrada y la vista de lista usa altura compacta | `index.css`, `InitTracker.jsx`, `TurnTrackBoard.jsx` |
+| D3 | Filtros por tipo + búsqueda de texto | `HistoryPanel.jsx` |
+| D5 | Cabecera fija del héroe con vida resumida e iconos de estado | `ModalHeroCard.jsx` |
+| X1 | Eliminada `lucide-react` (0 usos) | `package.json` |
+| X2 | Eliminada `uuid`: `createId()` usa `crypto.randomUUID()` | `id.js` |
 
-**Verificación**
+### 4.ª tanda — bug de la paleta de estados y primera parte de A1
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Bug corregido** | Al consumirse un estado desaparecían todos los botones del panel; ahora la paleta sale del catálogo y siempre está visible | `ModalEnemyCard.jsx` |
+| A1 (1/2) | Geometría del tablero extraída (`overlapFor`, `stepFor`, `stackHeight`, `boardSlotHeightFrom`, `compactSlotHeight`, `cardDistance`) | `trackLayout.js` |
+| A1 (2/2) | `CharacterCard` y `TrackSlot` extraídos con dependencias explícitas | `CharacterCard.jsx`, `TrackSlot.jsx` |
+
+`InitTracker.jsx`: 4.199 → 3.829 líneas (−370).
+
+### 5.ª tanda — deuda pequeña y E2E en CI
+
+| ID | Cambio | Archivos |
+|---|---|---|
+| E2 | `.env.example` en UTF-8 (tenía `raÃ­z`) + `VITE_APP_VERSION` | `.env.example` |
+| E3 | `appVersion` en cada snapshot | `storage.js` |
+| F5 | `robots.txt`, `theme-color`, descripción y Open Graph | `index.html`, `public/robots.txt` |
+| H11 | Escrituras de `heroExtras` agrupadas (250 ms) con volcado al guardar/ocultar/cerrar | `heroExtras.js`, `storage.js` |
+| F1 | `manualChunks` por paquete (`vendor-icons`, `vendor-router`) | `vite.config.js` |
+| — | Suite **E2E Playwright** (10 pruebas) + job en CI con reporte en fallo | `tests/e2e/*`, `playwright.config.js`, `deploy.yml` |
+
+**Cobertura E2E**: 11 posiciones · resaltado del turno · lista compacta · estados del enemigo que se consumen · paleta siempre disponible · snapshot con versión y datos de héroe · saneado al cargar · cabecera del héroe · *focus trap* · dado trampa.
+
+### 6.ª tanda — correcciones visuales y C (WebP)
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Regresión corregida** | `countsPerSlot` devolvía alturas y `boardSlotHeightFrom` volvía a aplicar `stackHeight`: el tablero crecía al doble y había que hacer scroll para ver el track | `InitTracker.jsx`, `trackLayout.test.js` |
+| **Resaltado del turno** | Haz vertical de 3 px sobre la línea + anillo esmeralda en la etiqueta; no tapa cartas y funciona en tablero y lista | `index.css` |
+| Configuración · héroes | Ilustraciones con `object-contain`: ya no se recortan | `Tracker.jsx` |
+| Configuración · enemigos | Selección rápida por expansión con `aria-pressed`, color activo, check, contador `n/total` y tooltip | `Tracker.jsx` |
+| Vistas ampliadas | Paleta de estados con `flex-wrap`: en móvil se reparte en varias filas sin salirse | `ModalEnemyCard.jsx`, `ModalHeroCard.jsx` |
+| **C · WebP** | 57 ilustraciones convertidas (calidad 82) e imports actualizados por script | `convert-to-webp.mjs`, `src/assets/**` |
+
+**Resultados**
 
 ```text
-Historial       6 grupos · 13 entradas · filtros con contador · búsqueda
-Filtro Runas    0 resultados → mensaje "Sin resultados"
-Slot activo     slot 457 px · banda 150 px centrada (top 224 px)
-Vista lista     slot expandido 360 px (antes usaba la altura global del tablero)
-Cabecera héroe  "Vorn · Guerrero · Defensor · 7/12 · Mov.2 · Ata.0 · Imp.+3" + 2 iconos
+dist        32,15 MB → 8,87 MB  (−72 %)
+tablero     slot 457 px · viewport 718/718 (sin scroll vertical)
+resaltado   haz 3×448 px contenido + anillo rgb(52,211,153)
+móvil 390   fila de estados 300/300 y 312/312 → sin desbordar
+E2E         10/10 · Unit 33/33 · Lint 0 errores
 ```
 
+Scripts: `npm run images:webp` (conversión + imports) y `npm run images:optimize` (compresión PNG).
+
+### Pendiente / pospuesto
+
+H8 (resto de A1: `useTurnEngine`, paneles de escenario), D2, D7, D8, D9, A4, F2 (AVIF/`srcset`), F3, F4, P2.

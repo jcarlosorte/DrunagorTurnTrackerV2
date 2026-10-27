@@ -1,6 +1,6 @@
 // @/data/enemies.js
 // Blancos
-import corrupted_farmer from "@/assets/enemies/CorruptedFarmer.png";
+import corrupted_farmer from "@/assets/enemies/CorruptedFarmer.webp";
 import ravager from "@/assets/enemies/Ravager.png";
 import scout_darkness from "@/assets/enemies/ScoutOfDarkness.png";
 import shadow_cultist from "@/assets/enemies/ShadowCultist.png";
@@ -24,32 +24,32 @@ import shadow_knight from "@/assets/enemies/ShadowKnight.png";
 import commander_thern from "@/assets/enemies/Thern.png";
 import commander_twins from "@/assets/enemies/Twin.png";
 // Jefes
-import demon_lord from "@/assets/enemies/DemonLord.png";
-import undead_king_boss from "@/assets/enemies/Lich.png";
-import aralhezec from "@/assets/enemies/Dragon.png";
-import wermunggdir from "@/assets/enemies/Wurm.png";
-import wermunggdir2 from "@/assets/enemies/WurmV2.png";
+import demon_lord from "@/assets/enemies/DemonLord.webp";
+import undead_king_boss from "@/assets/enemies/Lich.webp";
+import aralhezec from "@/assets/enemies/Dragon.webp";
+import wermunggdir from "@/assets/enemies/Wurm.webp";
+import wermunggdir2 from "@/assets/enemies/WurmV2.webp";
 
 // Apocalipsis
 import skeleton_knight from "@/assets/enemies/skeleton_knight.png";
-import the_witch from "@/assets/enemies/the_witch.png";
+import the_witch from "@/assets/enemies/the_witch.webp";
 import dream_titan from "@/assets/enemies/dream_titan.png";
-import chain_master from "@/assets/enemies/chain_master.png";
+import chain_master from "@/assets/enemies/chain_master.webp";
 import larua_mage from "@/assets/enemies/larua_mage.png";
-import war_horsemen from "@/assets/enemies/war_horsemen.png";
-import death_horsemen from "@/assets/enemies/death_horsemen.png";
-import plague_horsemen from "@/assets/enemies/plague_horsemen.png";
-import famine_horsemen from "@/assets/enemies/famine_horsemen.png";
+import war_horsemen from "@/assets/enemies/war_horsemen.webp";
+import death_horsemen from "@/assets/enemies/death_horsemen.webp";
+import plague_horsemen from "@/assets/enemies/plague_horsemen.webp";
+import famine_horsemen from "@/assets/enemies/famine_horsemen.webp";
 import gremlin_horde from "@/assets/enemies/gremlin_horde.png";
 import gorgoness_witch from "@/assets/enemies/gorgoness_witch.png";
 import grim_doctor from "@/assets/enemies/grim_doctor.png";
 import nagian_hunter from "@/assets/enemies/nagian_hunter.png";
-import hellspawn_brute from "@/assets/enemies/hellspawn_brute.png";
+import hellspawn_brute from "@/assets/enemies/hellspawn_brute.webp";
 import night_stalker from "@/assets/enemies/night_stalker.png";
-import gorgon_hexer from "@/assets/enemies/gorgon_hexer.png";
-import soul_harvester from "@/assets/enemies/soul_harvester.png";
-import fell_asteris from "@/assets/enemies/FellAsteris.png";
-import fallen_sisters from "@/assets/enemies/fallen_sisters.png";
+import gorgon_hexer from "@/assets/enemies/gorgon_hexer.webp";
+import soul_harvester from "@/assets/enemies/soul_harvester.webp";
+import fell_asteris from "@/assets/enemies/FellAsteris.webp";
+import fallen_sisters from "@/assets/enemies/fallen_sisters.webp";
 //heroes caidos
 import lorelai from "@/assets/heroes/Lorelai.png";
 import elros from "@/assets/heroes/Elros.png";
@@ -57,8 +57,8 @@ import jaheen from "@/assets/heroes/Jaheen.png";
 import maya from "@/assets/heroes/Maya.png";
 import vorn from "@/assets/heroes/Vorn.png";
 //Especiales
-import corrupted_archer from "@/assets/enemies/corrupted_archer.png";
-import lasse from "@/assets/enemies/lasse.png";
+import corrupted_archer from "@/assets/enemies/corrupted_archer.webp";
+import lasse from "@/assets/enemies/lasse.webp";
 
 export const ENEMIES = [
   { id: "undead_king_boss_1", nombre: "Undead King Boss", invoca: "skeleton_archer_esbirro1", numInvoca: 4, catInvoca: "esbirro", robaRunas: 0, vida: 30, cubo_T: 5, cubo_M: 2, movimiento: 0, color: "jefe", categoria: "jefe", tipo: "enemigo", expansionId: "base", imagen: undead_king_boss, rune: "jefe", runePosition: "jefe", comportamiento: "jefe", inmunidad: ["GRANDE", "INTIMIDAR_I", "SIGILO_I", "VENENO_I"], tipo_ataque: "", capacidades: []  },
