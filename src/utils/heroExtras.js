@@ -35,6 +35,8 @@ export const emptyHeroExtras = (heroId) => {
     vidaMax: baseLife,
     trauma: 0,
     maldicion: 0,
+    /** Modificador al impactar (se suma al dado de ataque). */
+    impactoMod: 0,
     auras: [],
     consecuencias: [],
     estados: [],
@@ -110,6 +112,7 @@ export function getHeroExtras(heroId) {
     cubosMax,
     trauma: Number(entry.trauma) || 0,
     maldicion: Number(entry.maldicion) || 0,
+    impactoMod: Number(entry.impactoMod) || 0,
     vida: Number.isFinite(entry.vida) ? entry.vida : base.vida,
     vidaMax: Number(entry.vidaMax) || base.vidaMax,
   };
@@ -237,7 +240,9 @@ export function setHeroEquipment(heroId, slot, value) {
 export function setEquipmentMod(heroId, slot, patch) {
   const current = getHeroExtras(heroId);
   const mod = current.equipoMods?.[slot] || { value: 0, stat: DEFAULT_MOD_STAT[slot] };
+  // El arma solo puede modificar el ataque; el amuleto permite elegir estadística.
+  const stat = slot === 'arma' ? 'ataque' : (patch.stat || mod.stat);
   return patchHeroExtras(heroId, {
-    equipoMods: { ...current.equipoMods, [slot]: { ...mod, ...patch } },
+    equipoMods: { ...current.equipoMods, [slot]: { ...mod, ...patch, stat } },
   });
 }

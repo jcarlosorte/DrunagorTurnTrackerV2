@@ -40,13 +40,14 @@ import EnemyCard from '@/components/track/EnemyCard';
 import FitText from '@/components/track/FitText';
 import HistoryPanel from '@/components/track/HistoryPanel';
 import ModalHeroCard from '@/components/track/ModalHeroCard';
+import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import CommanderCard from '@/components/CommanderCard';
 import { v4 as uuidv4 } from 'uuid';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { appendGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
-import { getHeroExtras, patchHeroExtras } from '@/utils/heroExtras';
+import { getHeroExtras, patchHeroExtras, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { aplicarEfectosEstadosHeroe } from '@/utils/heroStatus';
 import { ESTADOS_HEROE } from '@/data/heroes/index';
 
@@ -123,6 +124,7 @@ const InitTracker = () => {
   const [onPCConfirm, setOnPCConfirm] = useState(null);
   const [enemyEvolutions, setEnemyEvolutions] = useState(() => persistedSession.enemyEvolutions || []);
   const [selectedHeroId, setSelectedHeroId] = useState(null);
+  const [diceOpen, setDiceOpen] = useState(false);
   const [heroExtrasVersion, setHeroExtrasVersion] = useState(0);
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
   const getHeroName = (id) => translations.heroes?.[id] || id;
@@ -3238,10 +3240,17 @@ const InitTracker = () => {
   
   // Alturas de carta y separación desde la barra central.
   // Las pilas crecen SIEMPRE alejándose del track: la primera carta queda a
-  // BASE_GAP de la barra y cada siguiente se aleja un paso más.
+  // BASE_GAP de la barra y cada siguiente se aleja un paso más. El paso se
+  // reduce al acumular cartas para que el tablero no se estire en exceso.
   const CARD_HEIGHT = 128;
   const BASE_GAP = 26;
-  const overlapFor = (count) => (count <= 1 ? 0 : count === 2 ? 30 : count === 3 ? 38 : 44);
+  const MAX_STACK_HEIGHT = 320;
+  const overlapFor = (count) => {
+    if (count <= 1) return 0;
+    const maxStep = (MAX_STACK_HEIGHT - BASE_GAP - CARD_HEIGHT) / (count - 1);
+    const step = Math.max(30, Math.min(CARD_HEIGHT - 24, maxStep));
+    return CARD_HEIGHT - step;
+  };
   const stepFor = (count) => CARD_HEIGHT - overlapFor(count);
   const stackHeight = (count) => (count === 0 ? 0 : BASE_GAP + (count - 1) * stepFor(count) + CARD_HEIGHT);
 
@@ -3885,6 +3894,8 @@ const InitTracker = () => {
                   onToggleBag={() => setBagOpen((prev) => !prev)}
                   historyOpen={historyOpen}
                   onToggleHistory={() => setHistoryOpen((prev) => !prev)}
+                  diceOpen={diceOpen}
+                  onToggleDice={() => setDiceOpen((prev) => !prev)}
                   status={(
                     <div className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs">
                       <span className="font-semibold text-emerald-200">
@@ -4089,6 +4100,38 @@ const InitTracker = () => {
             onChanged={() => setHeroExtrasVersion((value) => value + 1)}
           />
         )}
+        <DiceRoller
+          open={diceOpen}
+          onClose={() => setDiceOpen(false)}
+          heroes={(trackerData.placedHeroes || []).map((hero) => ({ id: hero.id, name: getHeroName(hero.id) }))}
+          currentEntity={currentTurnEntity}
+          labels={{
+            title: ti.dados || 'Dados',
+            roll: ti.tirarD20 || 'Tirar d20',
+            rollTrap: ti.tirarTrampa || 'Tirar dado de trampa',
+            trapDie: ti.dadoTrampa || 'Trampa',
+            applyTo: ti.aplicarTurno || 'Aplicar al turno actual',
+            noActiveTurn: ti.sinTurno || 'No hay un turno activo',
+            addModifier: ti.sumarModificador || 'Sumar modificador de',
+            noModifier: ti.sinModificador || 'Ninguno (tirada genérica)',
+            close: ti.close || 'Cerrar',
+          }}
+          onApplyEstado={(estadoId, count) => {
+            if (currentTurnEntity?.type === 'hero' && currentTurnEntity.id) {
+              stepHeroEstadoAlterado(currentTurnEntity.id, estadoId, count);
+              setHeroExtrasVersion((value) => value + 1);
+            } else if (currentTurnEntity?.type === 'enemy' && currentTurnEntity.uuid) {
+              setPlacedEnemies((prev) => prev.map((entry) => {
+                if (entry.enemy.uuid !== currentTurnEntity.uuid) return entry;
+                const estados = [...(entry.enemy.estadosAlterados || [])];
+                const index = estados.findIndex((item) => item.id === estadoId);
+                if (index === -1) estados.push({ id: estadoId, count });
+                else estados[index] = { ...estados[index], count: estados[index].count + count };
+                return { ...entry, enemy: { ...entry.enemy, estadosAlterados: estados } };
+              }));
+            }
+          }}
+        />
         {showPCModal && (
           <ModalCommanderPC
               onConfirm={(pcValue) => {

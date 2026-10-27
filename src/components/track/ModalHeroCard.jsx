@@ -144,6 +144,12 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
               <dt className="text-[0.6rem] uppercase text-slate-400">{t.attackShort || 'Ata.'}</dt>
               <dd className="text-base font-bold text-white">{attack}</dd>
             </div>
+            <div>
+              <dt className="text-[0.6rem] uppercase text-slate-400">{t.impactShort || 'Imp.'}</dt>
+              <dd className={`text-base font-bold ${extras.impactoMod ? 'text-emerald-300' : 'text-white'}`}>
+                {extras.impactoMod > 0 ? `+${extras.impactoMod}` : extras.impactoMod}
+              </dd>
+            </div>
           </dl>
         </header>
 
@@ -292,7 +298,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                 </button>
               </div>
 
-              <div className="flex flex-wrap items-center gap-1.5">
+              <div className="grid grid-cols-2 gap-1.5">
                 {ACTION_CUBES.map((cube) => {
                   const value = extras.cubos?.[cube.key] || 0;
                   const max = extras.cubosMax?.[cube.key] ?? 0;
@@ -374,28 +380,31 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
               <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
                 {t.conditionCubes || 'Estado'}
               </p>
-              <div className="flex flex-wrap items-center gap-1.5">
+              <div className="grid grid-cols-1 gap-1.5">
                 {CONDITION_CUBES.map((cube) => {
                   const value = extras[cube.key] || 0;
                   return (
                     <div
                       key={cube.key}
-                      className="flex flex-col items-center gap-0.5 rounded-lg border border-slate-700 bg-slate-800/70 px-0.5 py-0.5"
+                      className="flex items-center justify-between gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-1 py-0.5"
                       title={cube.label[language] || cube.label.es}
                     >
-                      <div className="flex items-center gap-0.5">
+                      <span className="min-w-0 truncate text-[0.6rem] uppercase tracking-wide text-slate-300">
+                        {(cube.label[language] || cube.label.es).split(' · ')[0]}
+                      </span>
+                      <div className="flex shrink-0 items-center gap-0.5">
                         <button
                           type="button"
                           onClick={() => apply(changeHeroCubes(heroId, cube.key, -1))}
                           disabled={value <= 0}
                           aria-label={`${cube.label.es}: −1`}
-                          className="flex h-8 w-6 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
+                          className="flex h-7 w-5 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
                         >
                           −
                         </button>
                         <span
                           aria-hidden="true"
-                          className="flex h-8 w-7 items-center justify-center rounded text-sm font-bold"
+                          className="flex h-7 w-6 items-center justify-center rounded text-xs font-bold"
                           style={{ backgroundColor: cube.color, color: '#fff' }}
                         >
                           {value}
@@ -405,15 +414,12 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                           onClick={() => apply(changeHeroCubes(heroId, cube.key, 1))}
                           disabled={value >= cube.max}
                           aria-label={`${cube.label.es}: +1`}
-                          className="flex h-8 w-6 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
+                          className="flex h-7 w-5 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
                         >
                           +
                         </button>
+                        <span className="w-7 text-right text-[0.55rem] tabular-nums text-slate-500">{value}/{cube.max}</span>
                       </div>
-                      <span className="text-[0.55rem] uppercase tracking-wide text-slate-400">
-                        {(cube.label[language] || cube.label.es).split(' · ')[0]}
-                      </span>
-                      <span className="text-[0.55rem] tabular-nums text-slate-500">{value} / {cube.max}</span>
                     </div>
                   );
                 })}
@@ -423,7 +429,18 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
 
           {/* Equipo: arma y amuleto llevan su modificador al lado */}
           <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
-            <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">{t.equipment || 'Equipo'}</p>
+            <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">{t.equipment || 'Equipo'}</p>
+              <label className="flex items-center gap-1 text-[0.65rem] text-slate-400">
+                <span className="uppercase tracking-wide">{t.impactModifier || 'Mod. al impactar'}</span>
+                <input
+                  type="number"
+                  value={extras.impactoMod ?? 0}
+                  onChange={(event) => apply(setHeroStat(heroId, 'impactoMod', event.target.value))}
+                  className="h-8 w-14 rounded-lg border border-slate-600 bg-slate-900 px-1 text-center text-xs text-white"
+                />
+              </label>
+            </div>
             <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
               {EQUIPMENT.map(({ key, es, en, mod }) => (
                 <div key={key} className="text-[0.65rem] text-slate-400">
@@ -445,18 +462,25 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                           aria-label={`${es}: ${t.modifier || 'modificador'}`}
                           className="h-9 w-12 shrink-0 rounded-lg border border-slate-600 bg-slate-900 px-1 text-center text-xs text-white"
                         />
-                        <select
-                          value={extras.equipoMods?.[key]?.stat || (key === 'arma' ? 'ataque' : 'movimiento')}
-                          onChange={(event) => apply(setEquipmentMod(heroId, key, { stat: event.target.value }))}
-                          aria-label={`${es}: ${t.modifierTarget || 'estadística'}`}
-                          className="h-9 shrink-0 rounded-lg border border-slate-600 bg-slate-900 px-1 text-[0.65rem] text-white"
-                        >
-                          {MOD_STATS.map((stat) => (
-                            <option key={stat} value={stat}>
-                              {(STAT_LABELS[stat][language] || STAT_LABELS[stat].es)}
-                            </option>
-                          ))}
-                        </select>
+                        {/* El arma siempre modifica el ataque; el amuleto puede elegir. */}
+                        {key === 'amuleto' ? (
+                          <select
+                            value={extras.equipoMods?.[key]?.stat || 'movimiento'}
+                            onChange={(event) => apply(setEquipmentMod(heroId, key, { stat: event.target.value }))}
+                            aria-label={`${es}: ${t.modifierTarget || 'estadística'}`}
+                            className="h-9 shrink-0 rounded-lg border border-slate-600 bg-slate-900 px-1 text-[0.65rem] text-white"
+                          >
+                            {MOD_STATS.map((stat) => (
+                              <option key={stat} value={stat}>
+                                {(STAT_LABELS[stat][language] || STAT_LABELS[stat].es)}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <span className="flex h-9 shrink-0 items-center rounded-lg border border-slate-700 bg-slate-900/60 px-1.5 text-[0.6rem] uppercase text-slate-400">
+                            {STAT_LABELS.ataque[language] || STAT_LABELS.ataque.es}
+                          </span>
+                        )}
                       </>
                     )}
                   </div>

@@ -133,7 +133,9 @@
     "recover": "Recover",
     "cursePenaltyWarning": "Don't forget to apply the curse cube penalty set by the scenario.",
     "conditionCubes": "Condition",
-    "maxCubes": "max"
+    "maxCubes": "max",
+    "impactShort": "Hit",
+    "impactModifier": "Hit modifier"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Fallen Mage",
@@ -546,7 +548,17 @@
     "bag": "Rune bag",
     "presentationShort": "Presentation",
     "history": "History",
-    "historyEmpty": "No events yet."
+    "historyEmpty": "No events yet.",
+    "dados": "Dice",
+    "tirarD20": "Roll d20",
+    "tirarTrampa": "Roll trap die",
+    "dadoTrampa": "Trap",
+    "aplicarTurno": "Apply to current turn",
+    "sinTurno": "No active turn to apply it to",
+    "sumarModificador": "Add modifier from",
+    "sinModificador": "None (plain roll)",
+    "impactShort": "Hit",
+    "impactModifier": "Hit modifier"
   },
   "scenarioCard": {
     "Manifiesta": "Manifest",

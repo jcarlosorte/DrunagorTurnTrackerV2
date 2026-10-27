@@ -138,39 +138,43 @@ const TopMenu = ({
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" aria-hidden="true" />
             Drunagor
           </span>
-          <button
-            type="button"
-            onClick={() => toggleMenu('enemies')}
-            aria-expanded={activeMenu === 'enemies'}
-            aria-controls="track-menu-enemies"
-            aria-label={t.enemiesMenu || 'Enemigos'}
-            title={t.enemiesMenu || 'Enemigos'}
-            className={`flex h-11 w-11 items-center justify-center rounded-full text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${activeMenu === 'enemies' ? 'bg-sky-700' : 'bg-slate-800 hover:bg-slate-700'}`}
+          <div
+            className="flex items-center gap-1 rounded-xl border border-slate-700 bg-slate-950/70 p-0.5"
+            role="group"
+            aria-label={t.menuGroup || 'Menús del tablero'}
           >
-            <GiMinions size={24} aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            onClick={() => toggleMenu('runes')}
-            aria-expanded={activeMenu === 'runes'}
-            aria-controls="track-menu-runes"
-            aria-label={t.runesMenu || 'Runas'}
-            title={t.runesMenu || 'Runas'}
-            className={`flex h-11 w-11 items-center justify-center rounded-full text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${activeMenu === 'runes' ? 'bg-sky-700' : 'bg-slate-800 hover:bg-slate-700'}`}
-          >
-            <GiRuneStone size={24} aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            onClick={() => toggleMenu('scenario')}
-            aria-expanded={activeMenu === 'scenario'}
-            aria-controls="track-menu-scenario"
-            aria-label={t.scenarioMenu || 'Escenario'}
-            title={t.scenarioMenu || 'Escenario'}
-            className={`flex h-11 w-11 items-center justify-center rounded-full text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${activeMenu === 'scenario' ? 'bg-sky-700' : 'bg-slate-800 hover:bg-slate-700'}`}
-          >
-            <GiVillage size={24} aria-hidden="true" />
-          </button>
+            {[
+              { id: 'enemies', icon: GiMinions, label: t.enemiesMenu || 'Enemigos', tone: 'sky' },
+              { id: 'runes', icon: GiRuneStone, label: t.runesMenu || 'Runas', tone: 'emerald' },
+              { id: 'scenario', icon: GiVillage, label: t.scenarioMenu || 'Escenario', tone: 'amber' },
+            ].map(({ id, icon: Icon, label, tone }) => {
+              const isActive = activeMenu === id;
+              const activeTone = tone === 'sky'
+                ? 'border-sky-400/80 bg-sky-700 text-white shadow-inner shadow-sky-950/40'
+                : tone === 'emerald'
+                  ? 'border-emerald-400/80 bg-emerald-700 text-white shadow-inner shadow-emerald-950/40'
+                  : 'border-amber-400/80 bg-amber-700 text-white shadow-inner shadow-amber-950/40';
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => toggleMenu(id)}
+                  aria-expanded={isActive}
+                  aria-controls={`track-menu-${id}`}
+                  aria-label={label}
+                  title={label}
+                  className={`flex h-10 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                    isActive
+                      ? activeTone
+                      : 'border-transparent text-slate-200 hover:border-slate-600 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  <Icon size={20} aria-hidden="true" />
+                  <span className="hidden md:inline">{label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="flex items-center gap-1.5">

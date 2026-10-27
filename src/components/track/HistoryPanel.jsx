@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { readGameLog } from '@/utils/gameLog';
+import { useCallback, useEffect, useState } from 'react';
+import { GAME_LOG_EVENT, readGameLog } from '@/utils/gameLog';
 
 const KIND_STYLES = {
   turn: 'bg-sky-900/60 text-sky-100 border-sky-700',
@@ -12,9 +12,28 @@ const KIND_STYLES = {
 export default function HistoryPanel({ limit = 10, labels = {}, refreshKey = 0 }) {
   const [entries, setEntries] = useState([]);
 
-  useEffect(() => {
+  const reload = useCallback(() => {
     setEntries(readGameLog().slice(-limit).reverse());
-  }, [limit, refreshKey]);
+  }, [limit]);
+
+  // Se refresca al instante con cada evento nuevo (turno, runa, daño, invocación),
+  // sin esperar a que se cierre y abra el panel.
+  useEffect(() => {
+    reload();
+  }, [reload, refreshKey]);
+
+  useEffect(() => {
+    const handleChange = () => reload();
+    window.addEventListener(GAME_LOG_EVENT, handleChange);
+    window.addEventListener('storage', handleChange);
+    // Respaldo por si el evento se pierde (p. ej. cambios externos al log).
+    const interval = window.setInterval(handleChange, 2000);
+    return () => {
+      window.removeEventListener(GAME_LOG_EVENT, handleChange);
+      window.removeEventListener('storage', handleChange);
+      window.clearInterval(interval);
+    };
+  }, [reload]);
 
   return (
     <section className="track-surface p-2 shadow-md" aria-label={labels.title || 'Historial'}>

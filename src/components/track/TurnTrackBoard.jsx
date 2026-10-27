@@ -18,6 +18,8 @@ export default function TurnTrackBoard({
   onToggleBag,
   historyOpen = false,
   onToggleHistory,
+  diceOpen = false,
+  onToggleDice,
   canUndo = false,
   labels = {},
 }) {
@@ -185,6 +187,21 @@ export default function TurnTrackBoard({
           >
             <span aria-hidden="true" className="text-sm leading-none">📜</span>
             <span className="hidden lg:inline">{labels.history || 'Historial'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={onToggleDice}
+            aria-pressed={diceOpen}
+            title={labels.dice || 'Dados'}
+            aria-label={labels.dice || 'Dados'}
+            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              diceOpen
+                ? 'border-amber-400/80 bg-amber-700 text-white shadow-inner shadow-amber-950/40'
+                : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <span aria-hidden="true" className="text-sm leading-none">🎲</span>
+            <span className="hidden lg:inline">{labels.dice || 'Dados'}</span>
           </button>
         </div>
 

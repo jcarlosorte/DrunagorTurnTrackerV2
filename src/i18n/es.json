@@ -133,7 +133,9 @@
     "recover": "Recobrar",
     "cursePenaltyWarning": "No olvides aplicar la penalización de cubos de maldición que indique el escenario.",
     "conditionCubes": "Estado",
-    "maxCubes": "máximo"
+    "maxCubes": "máximo",
+    "impactShort": "Imp.",
+    "impactModifier": "Mod. al impactar"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Maga Caída",
@@ -547,7 +549,17 @@
     "bag": "Bolsa de runas",
     "presentationShort": "Presentación",
     "history": "Historial",
-    "historyEmpty": "Sin eventos todavía."
+    "historyEmpty": "Sin eventos todavía.",
+    "dados": "Dados",
+    "tirarD20": "Tirar d20",
+    "tirarTrampa": "Tirar dado de trampa",
+    "dadoTrampa": "Trampa",
+    "aplicarTurno": "Aplicar al turno actual",
+    "sinTurno": "No hay un turno activo al que aplicarlo",
+    "sumarModificador": "Sumar modificador de",
+    "sinModificador": "Ninguno (tirada genérica)",
+    "impactShort": "Imp.",
+    "impactModifier": "Mod. al impactar"
   },
   "scenarioCard": {
     "Manifiesta": "Manifiesta",

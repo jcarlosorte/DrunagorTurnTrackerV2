@@ -15,6 +15,8 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 const MAX_HEROES = 5;
 const BEHAVIORS = ["estandar", "alternativo", "complejo"];
 const STEPS = ['heroes', 'roles', 'enemies'];
+/** Icono de cada paso de configuración. */
+const STEP_ICONS = { heroes: GiAttachedShield, roles: GiShadowFollower, enemies: GiSharpedTeethSkull };
 
 const normalize = (value) => String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
@@ -267,26 +269,32 @@ const TrackerSelect = () => {
 
         {/* Paso actual */}
         <nav aria-label={t.stepsLabel || 'Pasos de configuración'} className="mb-6">
-          <ol className="grid grid-cols-3 gap-2">
+          <ol className="grid grid-cols-3 gap-2 rounded-2xl border border-slate-700 bg-slate-900/60 p-2">
             {STEPS.map((item, index) => {
               const isActive = item === step;
               const isDone = index < stepIndex;
+              const Icon = STEP_ICONS[item];
               return (
                 <li key={item}>
                   <button
                     type="button"
                     onClick={() => goToStep(item)}
                     aria-current={isActive ? 'step' : undefined}
-                    className={`flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border px-2 py-2 text-center text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 sm:text-sm ${
+                    className={`group flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border px-2 py-2 text-center text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 sm:text-sm ${
                       isActive
-                        ? 'border-emerald-400 bg-emerald-600 text-white'
+                        ? 'border-emerald-400 bg-gradient-to-b from-emerald-500 to-emerald-700 text-white shadow-lg shadow-emerald-950/40'
                         : isDone
-                          ? 'border-emerald-700 bg-emerald-950/60 text-emerald-200'
-                          : 'border-slate-700 bg-slate-900 text-slate-400'
+                          ? 'border-emerald-800 bg-emerald-950/60 text-emerald-200 hover:border-emerald-500'
+                          : 'border-slate-700 bg-slate-950/60 text-slate-400 hover:border-slate-500 hover:text-slate-200'
                     }`}
                   >
-                    <span aria-hidden="true" className="flex h-6 w-6 items-center justify-center rounded-full bg-black/30 text-xs">
-                      {isDone ? <GiCheckMark /> : index + 1}
+                    <span
+                      aria-hidden="true"
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm ${
+                        isActive ? 'bg-black/25 text-white' : isDone ? 'bg-emerald-800 text-emerald-100' : 'bg-slate-800 text-slate-300'
+                      }`}
+                    >
+                      {isDone && !isActive ? <GiCheckMark /> : Icon ? <Icon /> : index + 1}
                     </span>
                     <span className="truncate">{stepLabel[item] || item}</span>
                   </button>
