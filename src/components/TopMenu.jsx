@@ -44,9 +44,9 @@ const TopMenu = ({
 
 
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
-  const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState(false);
-  const [confirmResetRunes, setConfirmResetRunes] = useState(false);
-  const { runes, removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, deleteAvailableTileRandom, scenarioMonster, setScenarioMonster, manifestTile } = useGame();
+  const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
+  const [pendingRuneAction, setPendingRuneAction] = useState(null);
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, controlPoints, runeKeys, rescue } = useGame();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [activeMenu, setActiveMenu] = useState(null); // 'runes' | 'enemies' | 'scenario' | null
   const containerRef = useRef(null);
@@ -69,6 +69,9 @@ const TopMenu = ({
 
   useEffect(() => {
     const handleOutside = (e) => {
+      // Los diálogos se montan en un portal fuera del contenedor: pulsar en
+      // ellos no debe cerrar el menú que los abrió.
+      if (e.target?.closest?.('[role="dialog"]')) return;
       if (containerRef.current && !containerRef.current.contains(e.target)) {
         setActiveMenu(null);
       }
@@ -125,7 +128,85 @@ const TopMenu = ({
     // ✅ Si no existe, la añadimos
     onSelectRuneCard(card, timeToken);
   };
-    
+
+  const runeColorName = (color) => (color ? (t.colores?.[color] || color) : (t.removeRandom || 'Aleatoria'));
+
+  // Las fichas solo se retiran tras confirmar: son acciones sin deshacer.
+  const requestRemoveRune = (color) => {
+    const availableColors = ['naranja', 'verde', 'azul', 'rojo', 'gris']
+      .filter((candidate) => usedTiles.some((tile) => tile.runa === candidate));
+    const targetColor = color || availableColors[Math.floor(Math.random() * availableColors.length)];
+    if (!targetColor) {
+      alert(t.noTilesToRemove || 'No hay fichas para eliminar.');
+      return;
+    }
+    setPendingRuneAction({ type: 'remove', color: targetColor });
+  };
+
+  const requestDeleteAvailableTile = (color) => {
+    const targetColor = color || availableTiles[Math.floor(Math.random() * availableTiles.length)]?.runa;
+    if (!targetColor) {
+      alert(t.noTilesToRemove || 'No hay fichas para eliminar.');
+      return;
+    }
+    setPendingRuneAction({ type: 'delete', color: targetColor });
+  };
+
+  const confirmRuneAction = () => {
+    const action = pendingRuneAction;
+    setPendingRuneAction(null);
+    if (!action) return;
+
+    if (action.type === 'reset') {
+      resetPlacedRunes();
+      resetTiles();
+      desactivaAcecho();
+      desactivaHuesped();
+      desactivaOscuridad();
+      desactivaAsalto();
+      return;
+    }
+
+    if (action.type === 'remove') {
+      const removed = removeRune(action.color);
+      if (removed) showTileToast(removed, 'remove');
+      else alert(t.noTilesToRemove || 'No hay fichas para eliminar.');
+      return;
+    }
+
+    const tile = deleteAvailableTileByColor(action.color);
+    if (tile) showTileToast(tile, 'remove');
+    else alert(t.noTilesToRemove || 'No hay fichas para eliminar.');
+  };
+
+  const pendingRuneCopy = (() => {
+    if (!pendingRuneAction) return null;
+    if (pendingRuneAction.type === 'reset') {
+      return {
+        title: t.resetRunesConfirmTitle || 'Borrar runas y fichas',
+        description: t.resetRunesConfirm || 'Se eliminarán las cartas de runa colocadas, todas las fichas de la bolsa y los estados activos de la escena.',
+        confirm: t.resetRunes || 'Resetear Runas',
+      };
+    }
+    if (pendingRuneAction.type === 'remove') {
+      return {
+        title: t.confirmRemoveTileTitle || 'Eliminar ficha del medidor',
+        description: (t.confirmRemoveTileDesc || 'Se retirará la ficha {color} del medidor de iniciativa. Esta acción no se puede deshacer.')
+          .replace('{color}', runeColorName(pendingRuneAction.color)),
+        confirm: t.removeTiles || 'Eliminar Runa del Medidor',
+      };
+    }
+    return {
+      title: t.confirmDeleteTileTitle || 'Eliminar ficha de la bolsa',
+      description: (t.confirmDeleteTileDesc || 'Se descartará la ficha {color} de la bolsa. Esta acción no se puede deshacer.')
+        .replace('{color}', runeColorName(pendingRuneAction.color)),
+      confirm: t.eliminarDirecto || 'Eliminar Runa de la Bolsa',
+    };
+  })();
+
+  const scenarioCards = placedRunes.filter((entry) => ['incursion', 'defensa'].includes(entry.rune?.tipo)).length;
+  const scenarioNodes = spawnPoints.length + controlPoints.length + runeKeys.length + rescue.length + pilas.length + pilasConcentrada.length;
+  
   return (
     <>
     <div ref={containerRef} className="layer-track-bar fixed inset-x-0 top-0 border-b border-slate-700/70 bg-slate-900/95 shadow-lg backdrop-blur-xl">
@@ -344,18 +425,38 @@ const TopMenu = ({
             transition={{ duration: 0.25 }}
             className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-2 overflow-y-auto px-3 pb-3 pt-2 text-white sm:px-4"
           >
-            <div className="flex flex-col gap-4">
-             
-              <div className="flex flex-col md:flex-row gap-4">
-                {/* Añadir Cartas de Runa */}
-                <div className="track-surface-raised flex-1 p-3 shadow-md ">
-                  <div className="flex items-center gap-2 mb-2 justify-center">
-                    <GiCardPlay className="text-indigo-400 text-xl" />
-                    <span className="font-semibold">{t.cartas}</span>
-                  </div>
+            <div className="flex flex-col gap-3">
+              <div data-testid="menu-header" className="sticky top-0 z-10 -mx-3 -mt-2 flex shrink-0 items-center gap-2 border-b border-slate-700 bg-slate-900/95 px-3 py-2 backdrop-blur sm:-mx-4 sm:px-4">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-900/60 text-emerald-300">
+                  <GiRuneStone className="text-lg" />
+                </span>
+                <h2 className="min-w-0 flex-1 truncate text-base font-bold">{t.runesMenu || 'Runas'}</h2>
+                <span className="shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200">
+                  {t.runasChip || 'Runas'} {placedRunes.length}
+                </span>
+                <span className="hidden shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200 sm:inline">
+                  {t.fichasChip || 'Fichas'} {availableTiles.length}/{availableTiles.length + usedTiles.length}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setActiveMenu(null)}
+                  aria-label={t.close || 'Cerrar menú'}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-sm font-bold text-white hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Añadir Cartas de Runa */}
+              <section className="track-surface-raised p-3 shadow-md">
+                <div className="mb-2 flex items-center gap-2">
+                  <GiCardPlay className="text-indigo-400 text-xl" />
+                  <h3 className="min-w-0 flex-1 text-sm font-semibold">{t.cartas}</h3>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
 
                   {/* --- Bloque 1: OSCURIDAD DE CAZA --- */}
-                  <div className="mb-2">
+                  <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
                     <div className="flex flex-wrap gap-2 justify-center items-center">
                       <GiRuneStone className="text-indigo-300 text-xl" />
                       {!oscuridadActivo ? (
@@ -423,7 +524,7 @@ const TopMenu = ({
                   
                   {/* --- Bloque 2: ASALTO (solo si expansión activa) --- */}
                   {selectedExpansions.includes("infernal_desert") && (
-                    <div className="mb-2">
+                    <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
                       <div className="flex flex-wrap gap-2 justify-center">
                         <GiLeechingWorm className="text-indigo-300 text-xl" />
                   
@@ -482,7 +583,7 @@ const TopMenu = ({
                   )}
 
                   {/* --- Bloque 3: ACECHO --- */}
-                  <div className="mb-2"> 
+                  <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"> 
                     <div className="flex flex-col items-center gap-2">
                       <div className="flex flex-wrap gap-2 justify-center items-center">
                         <GiCrownedSkull className="text-indigo-300 text-xl" />
@@ -557,7 +658,7 @@ const TopMenu = ({
 
                  {/* --- Bloque 4: MONSTRUO HUESPED (solo si expansión activa) --- */}
                  {selectedExpansions.includes("undead_dragon") && (
-                  <div className="mb-2"> 
+                  <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"> 
                     <div className="flex flex-wrap gap-2 justify-center">
                       <GiSpikedDragonHead className="text-indigo-300 text-xl" />
                       
@@ -581,7 +682,7 @@ const TopMenu = ({
                 )}
 
                 {/* --- Bloque 5: INVADIDOS --- */}
-                <div className="mb-2"> 
+                <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"> 
                   <div className="flex flex-wrap gap-2 justify-center">
                     <GiReaperScythe className="text-indigo-300 text-xl" />
                     
@@ -608,12 +709,12 @@ const TopMenu = ({
                     )}
                   </div>
                 </div>
-
-                  
                 </div>
+              </section>
 
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {/* 📦 Estado de la bolsa */}
-                <div className="track-surface-raised flex-1 p-3 shadow-md">
+                <div className="track-surface-raised p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiSwapBag className="text-yellow-300 text-xl" />
                     <span className="font-semibold text-white">
@@ -667,12 +768,8 @@ const TopMenu = ({
                   </div>
                 </div>
 
-              {/* FIN PRIMER BLOQUE */}
-              </div>
-                
-              <div className="flex flex-col md:flex-row gap-4">
                 {/* Añadir ficha */}
-                <div className="track-surface-raised flex-1 p-3 shadow-md">
+                <div className="track-surface-raised p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiBrickWall className="text-green-300 text-xl" />
                     <span className="font-semibold">{t.fichas}</span>
@@ -735,102 +832,81 @@ const TopMenu = ({
                 </div>
         
                 
-                {/* Eliminar ficha */}
-                <div className="track-surface-raised flex-1 p-3 shadow-md">
-                  <div className="flex items-center gap-2 mb-2 justify-center">
-                    <GiBrickWall className="text-red-400 text-xl" />
-                    <span className="font-semibold">{t.removeTiles || 'Eliminar fichas de runa'}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {['naranja', 'verde', 'azul', 'rojo', 'gris'].map(color => (
+              </div>
+
+              {/* Zona de riesgo: acciones sin deshacer */}
+              <section aria-labelledby="runas-riesgo" className="rounded-xl border border-red-900/70 bg-red-950/20 p-3">
+                <div className="mb-1 flex items-center gap-2">
+                  <GiTrashCan className="text-red-400 text-xl" />
+                  <h3 id="runas-riesgo" className="min-w-0 flex-1 text-sm font-semibold text-red-200">
+                    {t.riskZone || 'Zona de riesgo'}
+                  </h3>
+                </div>
+                <p className="mb-2 text-xs text-red-200/80">{t.riskZoneHint || 'Estas acciones no se pueden deshacer.'}</p>
+                <div className="grid gap-2 sm:grid-cols-3">
+                  <div role="group" aria-label={t.removeTiles || 'Eliminar Runa del Medidor'} className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
+                    <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-200">
+                      <GiBrickWall className="text-base" />
+                      <span>{t.removeTiles || 'Eliminar Runa del Medidor'}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['naranja', 'verde', 'azul', 'rojo', 'gris'].map(color => (
+                        <button
+                          key={color}
+                          onClick={() => requestRemoveRune(color)}
+                          className={`${colorMap[color]} text-white text-xs px-2 py-1 rounded-full`}
+                        >
+                          {t.colores[color]}
+                        </button>
+                      ))}
                       <button
-                        key={color}
-                        onClick={() => {
-                            const removed = removeRune(color);
-                            if (removed) showTileToast(removed, 'remove');
-                            else alert(`${t.noTilesToRemove}`);
-                          }}
-                        className={`${colorMap[color]} text-white text-xs px-2 py-1 rounded-full`}
+                        onClick={() => requestRemoveRune()}
+                        className="bg-gradient-to-r from-blue-500 via-yellow-400 to-red-500 text-white text-xs px-2 py-1 rounded-full"
                       >
-                        {t.colores[color]}
+                        🎲 {t.removeRandom || 'Aleatoria'}
                       </button>
-                    ))}
-                
-                    {/* ❌ Botón para eliminar una ficha de runa aleatoria */}
+                    </div>
+                  </div>
+
+                  <div role="group" aria-label={t.eliminarDirecto || 'Eliminar Runa de la Bolsa'} className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
+                    <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-200">
+                      <GiTrashCan className="text-base" />
+                      <span>{t.eliminarDirecto}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['naranja', 'verde', 'azul', 'rojo', 'gris'].map(color => (
+                        <button
+                          key={color}
+                          onClick={() => requestDeleteAvailableTile(color)}
+                          className={`${colorMap[color]} text-white text-xs px-2 py-1 rounded-full`}
+                        >
+                          {t.colores[color]}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => requestDeleteAvailableTile()}
+                        className="bg-gradient-to-r from-blue-500 via-yellow-400 to-red-500 text-white text-xs px-2 py-1 rounded-full"
+                      >
+                        🎲 {t.removeRandom || 'Aleatoria'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div role="group" aria-label={t.resetRunes || 'Resetear Runas'} className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
+                    <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-200">
+                      <GiRuneStone className="text-base" />
+                      <span>{t.resetRunes || 'Resetear Runas'}</span>
+                    </div>
                     <button
-                      onClick={() => {
-                        const colors = ['naranja', 'verde', 'azul', 'rojo', 'gris'].filter(c => runes[c] > 0);
-                        if (colors.length === 0) {
-                          alert(t.noTilesToRemove || "No hay fichas para eliminar.");
-                          return;
-                        }
-                        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-                        const removed = removeRune(randomColor);
-                        if (removed && removed.runa) {
-                          showTileToast(removed, 'remove');
-                        }
-                        else {alert(t.noTilesToRemove);}
-                        //alert(`${t.removeOneRandom || "Eliminada una ficha de"} ${t.colores[randomColor]}`);
-                      }}
-                      className="bg-gradient-to-r from-blue-500 via-yellow-400 to-red-500 text-white text-xs px-2 py-1 rounded-full"
+                      type="button"
+                      onClick={() => setPendingRuneAction({ type: 'reset' })}
+                      className="min-h-9 rounded-full bg-yellow-500 px-3 text-xs font-semibold text-slate-900 hover:bg-yellow-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
                     >
-                      🎲 {t.removeRandom || 'Aleatoria'}
+                      {t.resetRunes || 'Resetear Runas'}
                     </button>
                   </div>
                 </div>
-
-                {/* ❌ Eliminación directa */}
-                <div className="track-surface-raised flex-1 p-3 shadow-md">
-                  <div className="flex items-center gap-2 mb-2 justify-center">
-                    <GiTrashCan className="text-red-400 text-xl" />
-                    <span className="font-semibold text-white">
-                      {t.eliminarDirecto}
-                    </span>
-                  </div>
-              
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {['naranja', 'verde', 'azul', 'rojo', 'gris'].map(color => (
-                      <button
-                        key={color}
-                        onClick={() => {
-                          const tile = deleteAvailableTileByColor(color);
-                          if (tile) showTileToast(tile, 'remove');
-                          else alert(`${t.noTilesToRemove} ${t.colores[color]}`);
-                        }}
-                        className={`${colorMap[color]} text-white text-xs px-2 py-1 rounded-full`}
-                      >
-                        {t.colores[color]}
-                      </button>
-                    ))}
-              
-                     <button
-                      onClick={() => {
-                        const tile = deleteAvailableTileRandom();
-                        if (tile) showTileToast(tile, 'remove');
-                        else alert(t.noTilesToRemove || "No hay fichas para eliminar.");
-                      }}
-                      className="bg-gradient-to-r from-blue-500 via-yellow-400 to-red-500 text-white text-xs px-2 py-1 rounded-full"
-                    >
-                      🎲 {t.removeRandom || 'Aleatoria'}
-                    </button>
-                  </div>
-                </div>
-                
-              {/* FIN SEGUNDO BLOQUE */}
-              </div>
-
-              
-              <ScenarioPanels />
-              
-              <div className="flex justify-center gap-4 mt-2">
-                <button
-                  type="button"
-                  onClick={() => setConfirmResetRunes(true)}
-                  className="min-h-11 rounded-full bg-yellow-500 px-4 text-sm font-semibold text-slate-900 hover:bg-yellow-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
-                >
-                  {t.resetRunes}
-                </button>
-              </div>
+              </section>
 
             </div>
           </motion.div>
@@ -850,63 +926,98 @@ const TopMenu = ({
             transition={{ duration: 0.25 }}
             className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-2 overflow-y-auto px-3 pb-3 pt-2 text-white sm:px-4"
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
+              <div data-testid="menu-header" className="sticky top-0 z-10 -mx-3 -mt-2 flex shrink-0 items-center gap-2 border-b border-slate-700 bg-slate-900/95 px-3 py-2 backdrop-blur sm:-mx-4 sm:px-4">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-900/60 text-amber-300">
+                  <GiVillage className="text-lg" />
+                </span>
+                <h2 className="min-w-0 flex-1 truncate text-base font-bold">{t.scenarioMenu || 'Escenario'}</h2>
+                <span className="shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200">
+                  {t.scenarioMonsterChip || 'Monstruo'} {scenarioMonster ? 1 : 0}/{monstruosUnicos.length}
+                </span>
+                <span className="shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200">
+                  {t.scenarioCardsChip || 'Cartas'} {scenarioCards}/2
+                </span>
+                <span className="hidden shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200 sm:inline">
+                  {t.scenarioNodesChip || 'Nodos'} {scenarioNodes}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setActiveMenu(null)}
+                  aria-label={t.close || 'Cerrar menú'}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-sm font-bold text-white hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  ✕
+                </button>
+              </div>
 
-              
-              <div className="track-surface-raised p-2.5 shadow-md">
+              {/* Monstruo de escenario */}
+              <section aria-labelledby="scenario-monstruo" className="track-surface-raised p-2.5 shadow-md">
                 <div className="mb-2 flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-900/60 text-red-300">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-900/60 text-red-300">
                     <GiDaemonSkull className="text-lg" />
                   </span>
-                  <span className="font-semibold">{t.monstruoEscenario}</span>
+                  <h3 id="scenario-monstruo" className="min-w-0 flex-1 text-sm font-semibold">{t.monstruoEscenario}</h3>
+                  <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">
+                    {scenarioMonster ? 1 : 0}/{monstruosUnicos.length}
+                  </span>
                 </div>
-                
-                <div className="flex flex-wrap gap-2 justify-start">
+
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
                   {monstruosUnicos.map(monstruo => {
                     const selected = scenarioMonster?.id === monstruo.id;
+                    const nombre = translations.enemies.escenario?.[monstruo.id] || monstruo.id;
                     return (
-                      <div
+                      <button
                         key={monstruo.id}
+                        type="button"
+                        aria-pressed={selected}
+                        aria-label={nombre}
                         onClick={() => setScenarioMonster(prev => prev?.id === monstruo.id ? null : monstruo)}
-                        className={`relative w-24 h-24 rounded border-2 cursor-pointer transition-transform transform hover:scale-105
-                          ${selected ? 'border-green-500 ring-2 ring-green-300' : 'border-gray-600'}
-                        `}
+                        className={`relative aspect-square w-full overflow-hidden rounded-lg border-2 transition hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200 ${
+                          selected ? 'border-emerald-400 ring-2 ring-emerald-300' : 'border-slate-600'
+                        }`}
                       >
-                        <img 
+                        <img
                           src={monstruo.imagen}
-                          alt={monstruo.id}
-                          className="object-cover w-full h-full rounded" loading="lazy" decoding="async" />
-                        <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-xs text-white text-center px-1 py-0.5">
-                          {translations.enemies.escenario?.[monstruo.id] || monstruo.id}
-                        </div>
-                      </div>
+                          alt=""
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <span className="absolute inset-x-0 bottom-0 truncate bg-black/70 px-1 py-0.5 text-[0.65rem] font-semibold text-white">
+                          {nombre}
+                        </span>
+                      </button>
                     );
                   })}
                 </div>
-              
-                {scenarioMonster && (
-                  <div className="mt-2 text-xs text-slate-300">
+
+                {scenarioMonster ? (
+                  <p className="mt-2 text-xs text-slate-300">
                     ✅ {t.monstruoSeleccionado}: <strong>{translations.enemies.escenario?.[scenarioMonster.id] || scenarioMonster.id}</strong>
-                  </div>
+                  </p>
+                ) : (
+                  <p className="mt-2 text-xs text-slate-400">{t.noMonster || 'Sin monstruo seleccionado'}</p>
                 )}
-              </div>
-  
-              
-                  
-              <div className="track-surface-raised p-2.5 shadow-md">
+              </section>
+
+              {/* Cartas de escenario */}
+              <section aria-labelledby="scenario-cartas" className="track-surface-raised p-2.5 shadow-md">
                 <div className="mb-2 flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-900/60 text-amber-300">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-900/60 text-amber-300">
                     <GiVillage className="text-lg" />
                   </span>
-                  <span className="font-semibold">{t.escenario || 'Cartas de Escenario'}</span>
+                  <h3 id="scenario-cartas" className="min-w-0 flex-1 text-sm font-semibold">{t.scenarioCardsSection || 'Cartas de escenario'}</h3>
+                  <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">{scenarioCards}/2</span>
                 </div>
-                
-                <div className="flex flex-col md:flex-row gap-4 mt-4">
+
+                <div className="grid gap-2 md:grid-cols-2">
                   {/* Incursión */}
-                  <div className="track-surface-raised flex-1 p-3 shadow-md">
-                    <div className="flex text-orange font-semibold p-2 mb-2">
-                      <GiUprising className="text-blue text-xl" />
-                       <span className="font-semibold"> {t.incru1}</span>
+                  <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
+                    <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-orange-200">
+                      <GiUprising className="text-sky-300 text-xl" />
+                      <span>{t.incru1}</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <button
@@ -921,7 +1032,7 @@ const TopMenu = ({
                       >
                         {t.addScenario} ({t.caraA})
                       </button>
-          
+
                       <button
                         disabled={!scenarioMonster}
                         onClick={() => setShowScenarioFaceOptions(prev => ({ ...prev, incursion: !prev.incursion }))}
@@ -940,19 +1051,18 @@ const TopMenu = ({
                             onClick={() => handleSelectUniqueCard(card)}
                             className="bg-indigo-800 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded"
                           >
-                           {t.cara} ({card.cara})
+                            {t.cara} ({card.cara})
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
-    
-          
+
                   {/* Defensa */}
-                  <div className="track-surface-raised flex-1 p-3 shadow-md">
-                    <div className="flex text-white font-semibold p-2 mb-2">
-                      <GiStoneTower className="text-blue text-xl" />
-                       <span className="font-semibold"> {t.defen1}</span>
+                  <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
+                    <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-sky-200">
+                      <GiStoneTower className="text-sky-300 text-xl" />
+                      <span>{t.defen1}</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <button
@@ -964,7 +1074,7 @@ const TopMenu = ({
                       >
                         {t.addScenario} ({t.caraT})
                       </button>
-          
+
                       <button
                         onClick={() => setShowScenarioFaceOptions(prev => ({ ...prev, defensa: !prev.defensa }))}
                         className={`bg-blue-700 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded`}
@@ -986,14 +1096,21 @@ const TopMenu = ({
                       </div>
                     )}
                   </div>
-                  
                 </div>
-                
-              </div>
+              </section>
 
-              
+              {/* Nodos y áreas */}
+              <section aria-labelledby="scenario-nodos" className="track-surface-raised p-2.5 shadow-md">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
+                    <GiRuneStone className="text-lg" />
+                  </span>
+                  <h3 id="scenario-nodos" className="min-w-0 flex-1 text-sm font-semibold">{t.scenarioNodesSection || 'Nodos y áreas'}</h3>
+                  <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">{scenarioNodes}</span>
+                </div>
+                <ScenarioPanels />
+              </section>
             </div>
-            
           </motion.div>
         )}
       </AnimatePresence>
@@ -1004,21 +1121,13 @@ const TopMenu = ({
           que ya incluye la región aria-live y el cierre funcional. */}
 
       <ConfirmDialog
-        open={confirmResetRunes}
-        title={t.resetRunesConfirmTitle || 'Borrar runas y fichas'}
-        description={t.resetRunesConfirm || 'Se eliminarán las cartas de runa colocadas, todas las fichas de la bolsa y los estados activos de la escena.'}
-        confirmLabel={t.resetRunes || 'Borrar runas'}
+        open={Boolean(pendingRuneAction)}
+        title={pendingRuneCopy?.title}
+        description={pendingRuneCopy?.description}
+        confirmLabel={pendingRuneCopy?.confirm}
         cancelLabel={translations.trackerSelect?.cancel || 'Cancelar'}
-        onCancel={() => setConfirmResetRunes(false)}
-        onConfirm={() => {
-          resetPlacedRunes();
-          resetTiles();
-          desactivaAcecho();
-          desactivaHuesped();
-          desactivaOscuridad();
-          desactivaAsalto();
-          setConfirmResetRunes(false);
-        }}
+        onCancel={() => setPendingRuneAction(null)}
+        onConfirm={confirmRuneAction}
       />
     </>
   );

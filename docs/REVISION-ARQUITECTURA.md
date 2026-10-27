@@ -687,11 +687,33 @@ Modal 390×844   chips en 3 líneas · lista 288 px
 Modal 1440×950  lista 322 px
 ```
 
+### 15.ª tanda — rediseño de runas y escenario
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Runas con cabecera fija** | Cabecera sticky con runas colocadas y fichas en bolsa; rejilla responsive de tarjetas (cartas, bolsa, manifestar, fichas, cascada) | `TopMenu.jsx` |
+| **Zona de riesgo** | Las acciones sin deshacer (retirar del medidor, eliminar de la bolsa, reset) se agrupan al final y piden confirmación indicando el color afectado | `TopMenu.jsx`, `es.json`, `en.json` |
+| **Escenario por secciones** | Monstruo, cartas y nodos con contadores en la cabecera; los retratos pasan a botones con `aria-pressed` | `TopMenu.jsx` |
+| **Nodos en su sitio** | `ScenarioPanels` (pilas, nodos, áreas) pasa de Runas a Escenario | `TopMenu.jsx` |
+| **Diálogos en portal** | Pulsar dentro de un `ConfirmDialog` ya no cierra el menú que lo abrió | `TopMenu.jsx` |
+
+**Medición**
+
+```text
+Unit       72 tests
+E2E        24/24 (3 nuevos: runas, confirmación de retirada, escenario)
+Lint       0 problemas
+Build      OK
+Cabecera   sticky verificada tras scroll (top constante)
+Contadores Runas 0 · Fichas 36/36 · Monstruo 0/3 · Cartas 0/2 · Nodos 0
+Anchos     sin overflow horizontal (844 y 1440)
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
-- **Runas (paso 2)**: pendiente el rediseño del submenú (cabecera con contador, rejilla responsiva, acciones destructivas separadas con confirmación).
-- **Escenario (paso 3)**: pendiente agrupar en monstruo/cartas/nodos con contadores.
+- **Runas (paso 2)**: cerrado (cabecera con contadores, rejilla y zona de riesgo con confirmación).
+- **Escenario (paso 3)**: cerrado (secciones de monstruo, cartas y nodos con contadores).
 - **H8**: cerrado en sus tres partes (cursor, orden/historial y paneles de escenario).
 - **D9**: hecho para eventos, facciones y estados; quedan acentos sueltos de botones (verde/rojo) fuera de la paleta.
 - **F2**: `srcset`/AVIF (WebP ya aplicado).
