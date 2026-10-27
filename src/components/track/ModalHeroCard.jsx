@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import useFocusTrap from '@/hooks/useFocusTrap';
 import { useLanguage } from '@/context/LanguageContext';
 import { HEROES } from '@/data/heroes';
 import { ESTADOS_ALTERADOS, INMUNIDADES } from '@/data/estadosAlterados';
@@ -23,6 +24,7 @@ import {
   recobrarCubos,
   setEquipmentMod,
   setHeroEquipment,
+  setHeroStat,
   stepHeroEstado,
   stepHeroEstadoAlterado,
   toggleHeroExtra,
@@ -62,11 +64,14 @@ const STAT_LABELS = {
 
 export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
   const { language, translations } = useLanguage();
+  const dialogRef = useRef(null);
   const closeRef = useRef(null);
   const titleId = useId();
   const [extras, setExtras] = useState(() => getHeroExtras(heroId));
   const [picker, setPicker] = useState(null);
   const [recobrado, setRecobrado] = useState(false);
+
+  useFocusTrap(dialogRef, true);
 
   const hero = useMemo(() => HEROES.find((item) => item.id === heroId), [heroId]);
   const heroName = translations.heroes?.[heroId] || heroId;
@@ -112,6 +117,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
     <div className="layer-modal fixed inset-0 flex items-center justify-center bg-black/70 p-4" role="presentation">
       <div
         role="dialog"
+        ref={dialogRef}
         aria-modal="true"
         aria-labelledby={titleId}
         className="modal-enter relative flex max-h-[92dvh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border-2 border-rose-900/70 bg-slate-900 text-slate-100 shadow-2xl"
@@ -120,7 +126,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
 
         <header className="flex shrink-0 items-center gap-3 border-b border-slate-700 px-3 py-2.5">
           {hero?.image && (
-            <img src={hero.image} alt="" className="h-16 w-16 shrink-0 rounded-xl object-cover ring-2 ring-rose-900" />
+            <img src={hero.image} alt="" className="h-16 w-16 shrink-0 rounded-xl object-cover ring-2 ring-rose-900" loading="lazy" decoding="async" />
           )}
           <div className="min-w-0 flex-1">
             <h2 id={titleId} className="truncate text-lg font-bold text-white">{heroName}</h2>
@@ -179,7 +185,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                     >
                       +
                     </button>
-                    <img src={estadoConfig.imagen} alt={nombre} className="my-0.5 h-5 w-5" />
+                    <img src={estadoConfig.imagen} alt={nombre} className="my-0.5 h-5 w-5" loading="lazy" decoding="async" />
                     <span className="text-[0.6rem] font-bold leading-none text-white">{count}</span>
                     <button
                       type="button"
@@ -210,7 +216,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                         title={translations.condiciones_d?.[clave] || clave}
                         className="inline-flex items-center gap-1 rounded-full border border-slate-600 bg-slate-800 px-1.5 py-0.5 text-[0.6rem] text-slate-200"
                       >
-                        {meta?.imagen && <img src={meta.imagen} alt="" className="h-3.5 w-3.5" />}
+                        {meta?.imagen && <img src={meta.imagen} alt="" className="h-3.5 w-3.5" loading="lazy" decoding="async" />}
                         {translations.condiciones_t?.[clave] || clave}
                       </span>
                     );

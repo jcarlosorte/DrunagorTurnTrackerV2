@@ -77,11 +77,10 @@ const CommanderCard = ({ carta }) => {
                 if (!estadoConfig) return null;
                 return (
                   <div key={estado.id} className="relative group cursor-help">
-                    <img
+                    <img 
                       src={estadoConfig.imagen}
                       alt={estadoConfig.texto}
-                      className="w-6 h-6 border border-white rounded-full shadow-md"
-                    />
+                      className="w-6 h-6 border border-white rounded-full shadow-md" loading="lazy" decoding="async" />
                     {estado.count > 1 && (
                       <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1 rounded-full">
                         {estado.count}

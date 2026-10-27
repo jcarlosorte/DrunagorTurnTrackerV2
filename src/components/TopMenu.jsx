@@ -1216,11 +1216,10 @@ const TopMenu = ({
                                     className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-1 text-white"
                                   >
                                     {evento?.imagen && (
-                                      <img
+                                      <img 
                                         src={evento.imagen}
                                         alt=""
-                                        className="h-6 w-6 object-contain"
-                                      />
+                                        className="h-6 w-6 object-contain" loading="lazy" decoding="async" />
                                     )}
                                     <span>{t.evento || 'Evento'}</span>
                                     <button
@@ -1354,11 +1353,10 @@ const TopMenu = ({
                           ${selected ? 'border-green-500 ring-2 ring-green-300' : 'border-gray-600'}
                         `}
                       >
-                        <img
+                        <img 
                           src={monstruo.imagen}
                           alt={monstruo.id}
-                          className="object-cover w-full h-full rounded"
-                        />
+                          className="object-cover w-full h-full rounded" loading="lazy" decoding="async" />
                         <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-xs text-white text-center px-1 py-0.5">
                           {translations.enemies.escenario?.[monstruo.id] || monstruo.id}
                         </div>

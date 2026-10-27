@@ -17,11 +17,9 @@ function EstadoBadge({ estado, isBoss, label }) {
 
   return (
     <div className="relative" title={text} tabIndex={0} aria-label={text}>
-      <img
-        src={config.imagen}
+      <img         src={config.imagen}
         alt=""
-        className={`${isBoss ? 'h-6 w-6' : 'h-4 w-4'} rounded-full border border-white/80 shadow`}
-      />
+        className={`${isBoss ? 'h-6 w-6' : 'h-4 w-4'} rounded-full border border-white/80 shadow`} loading="lazy" decoding="async" />
       {estado.count > 1 && (
         <span className="absolute -right-1 -top-1 rounded-full bg-red-600 px-1 text-[0.55rem] font-bold leading-none text-white">
           {estado.count}
@@ -39,11 +37,9 @@ function ImmunityBadge({ immunityId, isBoss, label }) {
 
   return (
     <div className="relative" title={text} tabIndex={0} aria-label={text}>
-      <img
-        src={config.imagen}
+      <img         src={config.imagen}
         alt=""
-        className={`${isBoss ? 'h-6 w-6' : 'h-4 w-4'} rounded-full border border-white/80 shadow`}
-      />
+        className={`${isBoss ? 'h-6 w-6' : 'h-4 w-4'} rounded-full border border-white/80 shadow`} loading="lazy" decoding="async" />
     </div>
   );
 }

@@ -49,6 +49,7 @@ import { appendGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { getHeroExtras, patchHeroExtras, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { aplicarEfectosEstadosHeroe } from '@/utils/heroStatus';
+import { applyStatusEffects } from '@/utils/statusEngine';
 import { classifyScenarioToast } from '@/utils/toastKind';
 import { ESTADOS_HEROE } from '@/data/heroes/index';
 
@@ -1252,108 +1253,39 @@ const InitTracker = () => {
   };
 
   
+  /**
+   * Estados alterados de un enemigo. Usa el mismo motor que los héroes
+   * (`applyStatusEffects`) para que ambas fichas se comporten igual.
+   */
   const aplicarEfectosEstados = (enemy, faseTurno) => {
     if (!enemy.estadosAlterados || enemy.estadosAlterados.length === 0) return { enemy, logs: [] };
-    
-    let vidaRestante = enemy.vida;
-    let estados = [...enemy.estadosAlterados];
-    const logs = [];
 
-    if (vidaRestante === 0) return { enemy, logs: [] };
-    
-    // ✅ Buscar ESCUDO antes de aplicar daño
-    const estadoEscudo = estados.find(e => e.id === "ESCUDO");
-    let escudosDisponibles = estadoEscudo ? estadoEscudo.count : 0;
-  
-    const nuevosEstados = estados.map(estado => {
-      const config = ESTADOS_ALTERADOS.find(e => e.id === estado.id);
-      if (!config || estado.count <= 0) return estado;
-
-      // ⏳ Saltamos TIEMPO, se controla en checkTiempoSkip
-      if (estado.id === "TIEMPO") return estado;
-      
-      // ¿Debe ejecutarse en esta fase?
-      if (
-        (faseTurno === "inicio" && config.turno === "principio") ||
-        (faseTurno === "fin" && config.turno === "final")
-      ) {
-        let logMsg = "";
-        let escudosReducidos = 0;
-        let reducir_cal = 0;
-        let daño = 0;
-        
-        // 🔹 Daño
-        if (config.daño > 0) {
-          daño = config.daño * estado.count;
-  
-          if (daño > 0) {
-            if (config.prevenir === "si" && escudosDisponibles > 0) {
-              // ✅ Restar primero a ESCUDO
-              const usados = Math.min(daño, escudosDisponibles);
-              escudosReducidos = usados;
-              escudosDisponibles -= usados;
-              daño -= usados;
-            }
-  
-            if (escudosReducidos > 0) {
-              logMsg += ` ${ti.consume} ${escudosReducidos} ${ti.escudos}`;
-            }
-  
-            if (daño > 0) {
-              vidaRestante -= daño;
-  
-              if (config.prevenir === "no") {
-                // 🔹 Log especial para daño no prevenible
-                logMsg += ` ${ti.inflige} ${daño} ${ti.daño_i} (${ti.ignoraEscudos})`;
-              } else {
-                logMsg += ` ${ti.inflige} ${daño} ${ti.daño_i}`;
-              }
-            }
-          }
-        }
-    
-        // 🔹 Reducir cantidad si reduce = "si"
-        let nuevoCount = estado.count;
-        if (config.reduce === "si") {
-          const reducir = config.numReduce;
-          nuevoCount = Math.max(0, estado.count - reducir);
-          reducir_cal = estado.count - nuevoCount;
-          if (reducir_cal > 0) {
-            logMsg += ` (${ti.reduce} ${reducir_cal})`;
-          }
-        }
-    
-        // ✅ Agregar log solo si hubo cambios
-        if (escudosReducidos > 0 || daño > 0 || reducir_cal > 0) {
-          logMsg = `${tea[config.texto]}${logMsg}`;
-          logs.push(logMsg);
-        }
-    
-        return { ...estado, count: nuevoCount };
-      }
-    
-      return estado;
+    const resultado = applyStatusEffects({
+      vida: enemy.vida,
+      estados: enemy.estadosAlterados,
+      fase: faseTurno,
+      labels: tea,
+      texts: {
+        consume: ti.consume,
+        shields: ti.escudos,
+        inflicts: ti.inflige,
+        damage: ti.daño_i,
+        ignoresShields: ti.ignoraEscudos,
+        reduce: ti.reduce,
+      },
     });
 
-  
-    // ✅ Actualizar ESCUDO si se consumieron
-    if (estadoEscudo) {
-      const consumidos = estadoEscudo.count - escudosDisponibles;
-      if (consumidos > 0) {
-        //logs.push(`${ti.escudosConsumidos} ${consumidos}`);
-      }
-      nuevosEstados.forEach(e => {
-        if (e.id === "ESCUDO") e.count = escudosDisponibles;
-      });
+    if (resultado.logs.length === 0 && resultado.vida === enemy.vida) {
+      return { enemy, logs: [] };
     }
-    
+
     return {
       enemy: {
         ...enemy,
-        vida: Math.max(0, vidaRestante),
-        estadosAlterados: nuevosEstados
+        vida: resultado.vida,
+        estadosAlterados: resultado.estados,
       },
-      logs: logs.length > 0 ? logs : []
+      logs: resultado.logs,
     };
   };
 
@@ -1536,7 +1468,7 @@ const InitTracker = () => {
     
     return {
       vida,
-      estados: [...estados] || [],
+      estados: Array.isArray(estados) ? [...estados] : [],
       logs: logs.length > 0 ? logs : []
     };
   };
@@ -3000,7 +2932,7 @@ const InitTracker = () => {
                      C60,700 40,800 50,900"
                   fill="none"
                   stroke="rgba(0, 255, 150, 0.2)"
-                  stroke-width="10"
+                  strokeWidth="10"
                 />
               </svg>
               <svg className="river-waves3" viewBox="0 0 100 800" preserveAspectRatio="none">
@@ -3011,7 +2943,7 @@ const InitTracker = () => {
                      C60,700 40,800 50,900"
                   fill="none"
                   stroke="rgba(0, 255, 150, 0.2)"
-                  stroke-width="10"
+                  strokeWidth="10"
                 />
               </svg>
             </div>
@@ -3026,11 +2958,10 @@ const InitTracker = () => {
                     if (!estadoConfig) return null;
                     return (
                       <div key={estado.id} className="relative group cursor-help">
-                        <img
+                        <img 
                           src={estadoConfig.imagen}
                           alt={estadoConfig.texto}
-                          className="w-6 h-6 border border-white rounded-full shadow-md"
-                        />
+                          className="w-6 h-6 border border-white rounded-full shadow-md" loading="lazy" decoding="async" />
                         {estado.count > 1 && (
                           <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1 rounded-full">
                             {estado.count}
@@ -3187,11 +3118,10 @@ const InitTracker = () => {
         tabIndex={clickable ? 0 : undefined}
         aria-label={clickable ? `${name} · ${prof}` : undefined}
       >
-        <img
+        <img 
           src={image}
           alt={name}
-          className="w-full h-auto object-cover rounded-lg border-2 border-[#800020]/70"
-        />
+          className="w-full h-auto object-cover rounded-lg border-2 border-[#800020]/70" loading="lazy" decoding="async" />
 
         {/* Estados alterados del héroe sobre la imagen (iconos, como en enemigos) */}
         {clickable && (extras?.estadosAlterados?.length > 0 || extras?.estados?.length > 0) && (
@@ -3201,7 +3131,7 @@ const InitTracker = () => {
               if (!meta) return null;
               return (
                 <span key={estado.id} className="relative" title={`${tea[meta.texto] || meta.texto} ×${estado.count}`}>
-                  <img src={meta.imagen} alt="" className="h-4 w-4 rounded-full border border-white/80 bg-slate-950/60" />
+                  <img src={meta.imagen} alt="" className="h-4 w-4 rounded-full border border-white/80 bg-slate-950/60" loading="lazy" decoding="async" />
                   {estado.count > 1 && (
                     <span className="absolute -right-1 -top-1 rounded-full bg-red-600 px-0.5 text-[0.45rem] font-bold leading-none text-white">
                       {estado.count}
@@ -3424,11 +3354,10 @@ const InitTracker = () => {
                 {(() => {
                   const runeData = COLOR_RUNAS.find(r => r.id === runeColor);
                   return runeData ? (
-                    <img
+                    <img 
                       src={runeData.imagenSin}
                       alt={runeColor}
-                      className="w-12 h-12 object-contain"
-                    />
+                      className="w-12 h-12 object-contain" loading="lazy" decoding="async" />
                   ) : (
                     <GiAbstract065 className="text-white text-sm" />
                   );
@@ -3518,8 +3447,8 @@ const InitTracker = () => {
             {placedEnemies
               .filter(e => e.enemy.categoria === 'jefe' && e.enemy.tipo != 'especial')
               .map(({ enemy }) => (
-                <div className="track-surface mt-3 overflow-hidden p-3">
-                  <div key={enemy.uuid} className="mx-auto flex max-w-full origin-center scale-125 justify-center py-6 sm:scale-150 md:scale-[1.75]">
+                <div key={enemy.uuid} className="track-surface mt-3 overflow-hidden p-3">
+                  <div className="mx-auto flex max-w-full origin-center scale-125 justify-center py-6 sm:scale-150 md:scale-[1.75]">
                     <EnemyCard
                       uuid={enemy.uuid}
                       id={enemy.id}
@@ -3608,7 +3537,7 @@ const InitTracker = () => {
                                   onClick={() => {
                                     const tiles = placeTilesFromPilaToTrack(pila.id);
                                     if (!tiles || tiles.length === 0) {
-                                      alert(t.emptyPila);
+                                      alert(ti.emptyPila);
                                       return;
                                     }
                                   }}
@@ -3762,11 +3691,10 @@ const InitTracker = () => {
                           className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-1 text-white"
                         >
                           {evento?.imagen && (
-                            <img
+                            <img 
                               src={evento.imagen}
                               alt=""
-                              className="h-6 w-6 object-contain"
-                            />
+                              className="h-6 w-6 object-contain" loading="lazy" decoding="async" />
                           )}
                           <span>{ti.evento || 'Evento'}</span>
                           <button
@@ -4018,7 +3946,7 @@ const InitTracker = () => {
                     
                       return (
                         <div key={enemyId} className="track-surface-raised flex flex-col items-center p-2">
-                          <img src={sampleEnemy.imagen} alt={enemyId} className="w-20 h-20 object-cover mb-2 rounded" />
+                          <img src={sampleEnemy.imagen} alt={enemyId} className="w-20 h-20 object-cover mb-2 rounded" loading="lazy" decoding="async" />
                           <div className="text-sm text-white text-center mb-2">{getEnemyName(enemyId, manualSelector.color)}</div>
                     
                           {Object.entries(categories).map(([categoria, variants]) => (

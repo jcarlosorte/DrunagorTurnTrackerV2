@@ -178,7 +178,10 @@ export function migrateSnapshot(snapshot) {
     configuration: version >= 3 ? configuration : { ...configuration },
     track: {
       ...track,
-      heroExtras: sanitizeHeroExtras(track.heroExtras),
+      // Solo se normaliza si el guardado incluye datos de héroe.
+      ...(track.heroExtras !== undefined
+        ? { heroExtras: sanitizeHeroExtras(track.heroExtras) }
+        : {}),
     },
   };
 }

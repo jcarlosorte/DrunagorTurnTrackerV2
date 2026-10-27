@@ -51,11 +51,10 @@ export default function AnimatedEnemyToast({ enemyData, t }) {
       transition={{ duration: 0.3 }}
       className={`inline-flex flex-col sm:flex-row items-center sm:items-start gap-2 rounded-xl shadow-2xl font-semibold px-2 py-2 text-base ${bgClass}`}
     >
-      <img
+      <img 
          src={image}
          alt={name}
-         className="w-24 h-24 sm:w-36 sm:h-36 object-cover rounded-md border border-white shadow-md"
-       />
+         className="w-24 h-24 sm:w-36 sm:h-36 object-cover rounded-md border border-white shadow-md" loading="lazy" decoding="async" />
 
      <div className="flex flex-col items-center justify-center gap-2 text-center sm:text-left">
       <GiBullyMinion className={`text-2xl sm:text-3xl ${iconClass}`} />

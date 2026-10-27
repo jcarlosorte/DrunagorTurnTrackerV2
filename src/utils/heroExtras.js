@@ -278,3 +278,15 @@ export function setEquipmentMod(heroId, slot, patch) {
     equipoMods: { ...current.equipoMods, [slot]: { ...mod, ...patch, stat } },
   });
 }
+
+/**
+ * Cambia un valor numérico simple del héroe (p. ej. `impactoMod`).
+ * Se acota para que un valor absurdo no rompa la ficha.
+ */
+export function setHeroStat(heroId, field, value) {
+  const permitidos = ['impactoMod', 'movimientoExtra', 'ataqueArma'];
+  if (!permitidos.includes(field)) return getHeroExtras(heroId);
+  const numeric = Number(value) || 0;
+  const acotado = Math.max(-20, Math.min(20, Math.round(numeric)));
+  return patchHeroExtras(heroId, { [field]: acotado });
+}

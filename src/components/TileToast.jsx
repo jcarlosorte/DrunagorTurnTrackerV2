@@ -14,8 +14,9 @@ const colorMap = {
 
 
 const TileToast = ({ tile, tipo = 'add', onClose = () => {} }) => {
-  if (!tile?.runa) return null;
+  // El hook debe ejecutarse siempre, antes de cualquier retorno condicional.
   const { translations } = useLanguage();
+  if (!tile?.runa) return null;
   const ti = translations.trackerInit || {};
   const mensaje = tipo === 'remove'
     ? `−1 ${ti.rune}: ${ti.colores[tile.runa]}`

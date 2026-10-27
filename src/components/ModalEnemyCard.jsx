@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useId, useRef } from 'react';
 import { FiInfo } from "react-icons/fi";
 import { useLanguage } from '@/context/LanguageContext';
+import useFocusTrap from '@/hooks/useFocusTrap';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRunes';
 import { useGame } from '@/context/GameContext';
@@ -28,7 +29,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   const ttr = translations.defensaCard.cartas_trad || {};
   const { getRuneCount } = useGame();
   const closeRef = useRef(null);
+  const dialogRef = useRef(null);
   const titleId = useId();
+
+  useFocusTrap(dialogRef, true);
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -370,6 +374,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
     <div className="layer-modal fixed inset-0 flex items-center justify-center bg-black/70 p-4" role="presentation">
       <div
         role="dialog"
+        ref={dialogRef}
         aria-modal="true"
         aria-labelledby={titleId}
         className={`${bgColorMap[color] || ''} modal-enter relative flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border-4 shadow-2xl ${borderColorMap[color] || ''}`}
@@ -403,11 +408,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
           {/* Imagen y stats */}
           <div className="flex w-full items-center gap-1 mt-2">
             <div className="relative">
-              <img
+              <img 
                 src={imagen}
                 alt={name}
-                className={`w-32 h-32 object-cover rounded border-2 ${borderColorMap[color] || ''}`}
-              />
+                className={`w-32 h-32 object-cover rounded border-2 ${borderColorMap[color] || ''}`} loading="lazy" decoding="async" />
               {/* Estados alterados sobre la imagen */}
               <div className="absolute top-1 left-1 grid grid-rows-4 grid-flow-col gap-1">
                 {estadosLocal
@@ -417,11 +421,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                     if (!estadoConfig) return null;
                     return (
                       <div key={estado.id} className="relative">
-                        <img
+                        <img 
                           src={estadoConfig.imagen}
                           alt={estadoConfig.texto}
-                          className="w-6 h-6 border border-white rounded-full shadow-md"
-                        />
+                          className="w-6 h-6 border border-white rounded-full shadow-md" loading="lazy" decoding="async" />
                         {estado.count > 1 && (
                           <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1 rounded-full">
                             {estado.count}
@@ -524,7 +527,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                     </button>
 
                     <div className="relative flex flex-col items-center py-0.5" title={`${nombre} ×${estado.count || 0}`}>
-                      <img src={estadoConfig.imagen} alt={nombre} className="h-6 w-6 flex-shrink" />
+                      <img src={estadoConfig.imagen} alt={nombre} className="h-6 w-6 flex-shrink" loading="lazy" decoding="async" />
                       <span className="text-[0.6rem] font-bold leading-none text-white">{estado.count || 0}</span>
                     </div>
 

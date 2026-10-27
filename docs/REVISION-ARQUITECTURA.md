@@ -432,7 +432,28 @@ npm run test:e2e
 | D4 | Avisos de escenario en pila lateral con icono y color por tipo | `InitTracker.jsx`, `toastKind.js` |
 | H13 | Los efectos de inicio de turno persisten (`processed.hero`, `lastHeroTurn`): recargar ya no los repite | `InitTracker.jsx` |
 
+### Segunda tanda aceptada e implementada
+
+| ID | Cambio | Archivos |
+|---|---|---|
+| H5 | Motor único `applyStatusEffects` para enemigos y héroes (daño, escudos, reducción, tope 4) | `statusEngine.js`, `heroStatus.js`, `InitTracker.jsx` |
+| H6 | *Focus trap* reutilizable en héroes, enemigos, dados y confirmaciones | `useFocusTrap.js`, `ModalHeroCard.jsx`, `ModalEnemyCard.jsx`, `DiceRoller.jsx` |
+| H7 | `loading="lazy" decoding="async"` en 19 imágenes + optimización de las ilustraciones de `src/assets` (PNG con paleta y tramado) | varios, `vite.config.js`, `optimize-images.mjs` |
+| H9 | ESLint (flat config) + Vitest + *gates* en CI; 3 bugs reales corregidos por el linter | `eslint.config.js`, `vitest.config.js`, `src/**/*.test.js`, `deploy.yml` |
+
+**Resultados medidos**
+
+| Métrica | Antes | Ahora |
+|---|---|---|
+| Tamaño de `dist/` | 32,15 MB | **14,83 MB** (−54 %) |
+| Ilustraciones de origen | 31,96 MB | **14,55 MB** (−54 %) |
+| Linter | — | 0 errores · 105 avisos |
+| Tests | 0 | **26 pasando** |
+| Bugs corregidos por el linter | — | `setHeroStat` sin exportar · `useLanguage` condicional en `TileToast` · `t.emptyPila` inexistente |
+
+> Nota sobre H7: se probó `vite-plugin-image-optimizer`, pero duplicaba los archivos optimizados **en la raíz del repositorio** en cada build, así que se descartó. La optimización se aplica una vez con `npm run images:optimize` sobre `src/assets` y queda versionada con el código.
+
 ### Pendiente / pospuesto
 
-H5, H6, H7, H8, H9, H11, D1, D2, D3, D5, D7, D8, D9, A1, A4, X1-X4, F1-F5, P2.
+H8, H11, D1, D2, D3, D5, D7, D8, D9, A1, A4, X1-X4, F1-F5, P2.
 

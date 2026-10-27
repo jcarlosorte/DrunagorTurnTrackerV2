@@ -19,6 +19,15 @@ export default defineConfig(({ mode }) => {
     build: {
       // Source maps are useful locally but expose source code in production.
       sourcemap: env.VITE_SOURCEMAP === 'true' || mode !== 'production',
+      chunkSizeWarningLimit: 900,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-motion': ['framer-motion'],
+          },
+        },
+      },
     },
     resolve: {
       alias: {

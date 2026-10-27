@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { getHeroExtras } from '@/utils/heroExtras';
+import useFocusTrap from '@/hooks/useFocusTrap';
 import './dice.css';
 
 const TRAMPA_FACES = [
@@ -22,6 +23,9 @@ export default function DiceRoller({ open, onClose, heroes = [], currentEntity, 
   const [heroId, setHeroId] = useState('');
   const [reel, setReel] = useState(1);
   const timerRef = useRef(null);
+  const dialogRef = useRef(null);
+
+  useFocusTrap(dialogRef, open);
 
   useEffect(() => {
     if (!open) return;
@@ -90,6 +94,7 @@ export default function DiceRoller({ open, onClose, heroes = [], currentEntity, 
     <div className="layer-modal fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4" role="presentation">
       <div
         role="dialog"
+        ref={dialogRef}
         aria-modal="true"
         aria-label={labels.title || 'Dados'}
         className="modal-enter relative w-full max-w-md overflow-hidden rounded-2xl border-2 border-slate-600 bg-slate-900 text-slate-100 shadow-2xl"
@@ -169,7 +174,7 @@ export default function DiceRoller({ open, onClose, heroes = [], currentEntity, 
                   {rolling ? (
                     <span className="dice-value">{reel}</span>
                   ) : faceEstado ? (
-                    <img src={faceEstado.imagen} alt={face.label.es} className="h-10 w-10" />
+                    <img src={faceEstado.imagen} alt={face.label.es} className="h-10 w-10" loading="lazy" decoding="async" />
                   ) : face ? (
                     <span className="text-2xl">✕</span>
                   ) : (
