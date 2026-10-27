@@ -2808,6 +2808,23 @@ const InitTracker = () => {
     );
   };
 
+  // Registro del turno activo: quién actúa y en qué ronda.
+  useEffect(() => {
+    if (!currentTurnEntity) return;
+    const id = currentTurnEntity.id || currentTurnEntity.uuid;
+    const label = translations.enemies?.[currentTurnEntity.id]
+      || translations.heroes?.[currentTurnEntity.id]
+      || translations.runas?.[currentTurnEntity.id]
+      || currentTurnEntity.name
+      || id;
+    appendGameLog('turn', `Turno de ${label}`, {
+      round: roundRef.current,
+      turn: turnIndex,
+      type: currentTurnEntity.type,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTurnEntity?.uuid, currentTurnEntity?.id]);
+
   const showScenarioToast = (message, action = null, action2 = null, extra = null) => {
     const id = uuidv4();
     // Máximo 5 avisos visibles y cierre automático para no tapar el tablero.
@@ -3108,9 +3125,15 @@ const InitTracker = () => {
     const runesBelow = placedRunes.filter(r => r.rune.colorIndex === index && r.rune.posicion === 'abajo');
 
     const renderStack = (items, isTop, type = 'hero') => {
-      // Solape por margen negativo en flujo: el navegador calcula la altura real,
-      // así la pila crece igual hacia arriba y hacia abajo sin recortes.
-      const overlap = items.length <= 2 ? 0 : items.length === 3 ? 16 : items.length === 4 ? 26 : 34;
+      // La barra central debe quedar SIEMPRE en la misma línea: el slot tiene altura
+      // fija y las pilas se anclan al 50%, creciendo hacia fuera. El solape se calcula
+      // para que todas las cartas quepan en la mitad disponible.
+      const CARD_HEIGHT = 120;
+      const AVAILABLE = 196;
+      const count = items.length;
+      const overlap = count > 1
+        ? Math.min(CARD_HEIGHT - 18, Math.max(0, Math.ceil((count * CARD_HEIGHT - AVAILABLE) / (count - 1))))
+        : 0;
       const ordered = isTop ? [...items].reverse() : items;
 
       return ordered.map((item, i) => {
@@ -3185,19 +3208,19 @@ const InitTracker = () => {
     return (
       <div
         key={index}
-        className="track-slot flex w-full min-w-0 flex-col py-2"
-        style={{ minHeight: '21rem' }}
+        className="track-slot relative w-full min-w-0"
+        style={{ height: '24rem' }}
       >
         
-        {/* Pila superior: crece hacia arriba en flujo */}
-        <div className="track-slot__stack flex w-full flex-1 flex-col-reverse items-center justify-end gap-0 pb-2">
+        {/* Pila superior: anclada al 50%, crece hacia arriba */}
+        <div className="track-slot__stack absolute inset-x-0 bottom-1/2 flex flex-col-reverse items-center pb-4">
           {renderStack(heroesAbove, true, 'hero')}
           {isRune && renderStack(enemiesAbove, true, 'enemy')}
           {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), true, 'rune')}
         </div>
   
-        {/* Centro del slot */}
-        <div className="track-slot__label relative z-10 flex min-w-0 shrink-0 items-center justify-center bg-slate-700 py-1">
+        {/* Centro del slot: siempre en la misma línea */}
+        <div className="track-slot__label absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 items-center justify-center bg-slate-700 py-1">
           <div className={classNames(
             'flex min-w-0 items-center justify-center font-fantasy',
             {
@@ -3244,8 +3267,8 @@ const InitTracker = () => {
           </div>
         </div>
 
-        {/* Pila inferior: crece hacia abajo en flujo */}
-        <div className="track-slot__stack flex w-full flex-1 flex-col items-center justify-start gap-0 pt-2">
+        {/* Pila inferior: anclada al 50%, crece hacia abajo */}
+        <div className="track-slot__stack absolute inset-x-0 top-1/2 flex flex-col items-center pt-4">
           {renderStack(heroesBelow, false, 'hero')}
           {isRune && renderStack(enemiesBelow, false, 'enemy')}
           {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), false, 'rune')}

@@ -372,7 +372,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`${bgColorMap[color] || ''} relative max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-lg border-4 shadow-lg ${borderColorMap[color] || ''}`}
+        className={`${bgColorMap[color] || ''} relative flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border-4 shadow-2xl ${borderColorMap[color] || ''}`}
       >
         
         {/* Botón cerrar */}
@@ -400,26 +400,30 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
           </button>
         )}
 
-        <div className="flex flex-col gap-1 items-center p-6">
+        {/* Franja superior con el color de facción */}
+        <div className={`h-1.5 w-full shrink-0 ${bgColorMap[color] || 'bg-slate-600'}`} aria-hidden="true" />
 
-          {/* Nombre como título */}
-          <h2 id={titleId} className={`text-2xl font-bold text-center text-white px-1 py-0 rounded ${textBgColorMap[color] || ''} ${categoryTextGlowMap[categoria] || ''}`}>
-            {getEnemyName()}
-          </h2>
+        <div className="flex min-h-0 flex-1 flex-col gap-1 items-center overflow-y-auto px-4 pb-6 pt-2">
 
-          {/* Categoría y comportamiento */}
-          <div className="flex gap-1 text-sm">
-            {categoria && categoria!="jefe" && (
-              <span className={`${textBgColorMap[color] || ''} ${categoryTextGlowMap[categoria] || ''}`}>
-                {tc[categoria] || categoria}:
-              </span>
-            )}
-            {comportamiento && categoria!="jefe" && (
-              <span className={`italic ${textBgColorMap[color] || ''} ${categoryTextGlowMap[categoria] || ''}`}>
-                {tb[comportamiento] || comportamiento}
-              </span>
-            )}
-          </div>
+          {/* Cabecera: nombre, categoría y comportamiento */}
+          <header className="sticky top-0 z-10 mb-1 w-full rounded-lg bg-slate-950/80 px-2 py-1.5 backdrop-blur-sm">
+            <h2 id={titleId} className={`text-center text-2xl font-bold text-white ${categoryTextGlowMap[categoria] || ''}`}>
+              {getEnemyName()}
+            </h2>
+
+            <div className="mt-1 flex flex-wrap items-center justify-center gap-1 text-xs">
+              {categoria && categoria !== 'jefe' && (
+                <span className={`rounded-full px-2 py-0.5 font-semibold uppercase tracking-wide text-slate-900 ${bgColorMap[color] || 'bg-slate-500'}`}>
+                  {tc[categoria] || categoria}
+                </span>
+              )}
+              {comportamiento && categoria !== 'jefe' && (
+                <span className="rounded-full border border-white/30 px-2 py-0.5 italic text-white/90">
+                  {tb[comportamiento] || comportamiento}
+                </span>
+              )}
+            </div>
+          </header>
 
           {/* Imagen y stats */}
           <div className="flex w-full items-center gap-1 mt-2">

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { FICHAS } from '@/data/fichas';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
+import { appendGameLog } from '@/utils/gameLog';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { ALDEANO, ERRANTES } from '@/data/cartasEspeciales';
@@ -596,6 +597,8 @@ export const GameProvider = ({ children }) => {
     const uuid = uuidv4();
     const tileWithId = { ...tile, tipo, uuid };
     setTileToasts(prev => [...prev, tileWithId]);
+    // Registro en el historial: color de la runa y origen (robo, retirada, manifestación).
+    appendGameLog('rune', `${tipo}: ${tile?.runa || 'runa'}${tile?.dibujo ? ` (${tile.dibujo})` : ''}`, { tipo });
   };
   
   const manifestTile = () => {
