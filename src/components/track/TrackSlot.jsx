@@ -12,7 +12,7 @@ import { cardDistance, compactSlotHeight } from '@/components/track/trackLayout'
  * Toda la información y las acciones llegan en `deps` para no acoplar el
  * componente al estado global del tracker.
  */
-export default function TrackSlot({ index, compact = false, density = 'normal', deps }) {
+export default function TrackSlot({ index, compact = false, density = 'normal', overlap = 'normal', deps }) {
   const {
     runesColorMap,
     getRuneColorFromIndex,
@@ -57,8 +57,11 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
   const totalBelow = heroesBelow.length + (isRune ? enemiesBelow.length : 0) + (isRuneTextSlot ? runesBelow.length : 0);
   // Densidad compacta: cartas algo más pequeñas y pilas más juntas.
   const densityFactor = density === 'compact' ? 0.85 : 1;
+  // Solape compacto: las cartas se acercan entre sí (sin tocar la separación al track).
+  const overlapFactor = overlap === 'compact' ? 0.72 : 1;
   // En la vista de lista el slot se dibuja solo: usa su altura real y no la del tablero.
-  const slotHeight = (compact ? compactSlotHeight(totalAbove, totalBelow) : boardSlotHeight) * (compact ? 1 : densityFactor);
+  // oardSlotHeight ya llega escalado por densidad y solape desde InitTracker.
+  const slotHeight = compact ? compactSlotHeight(totalAbove, totalBelow) : boardSlotHeight;
 
   const renderStack = (items, side, type = 'hero') => {
     const isTop = side === 'top';
@@ -67,7 +70,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     const ordered = isTop ? [...items].reverse() : items;
 
     return ordered.map((item, i) => {
-      const distance = cardDistance(count, i) * densityFactor;
+      const distance = (i === 0 ? cardDistance(count, 0) : cardDistance(count, i) * overlapFactor) * densityFactor;
       const zIndex = count - i;
 
       const isCurrentTurn = currentTurnEntity && (

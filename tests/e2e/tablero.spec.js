@@ -58,6 +58,35 @@ test.describe('Tablero de iniciativa', () => {
 
     const currentText = await carousel.locator('[data-role="current"]').innerText();
     expect(currentText.toLowerCase()).toContain('turno actual');
+
+    // El carrusel va debajo del tablero.
+    const positions = await page.evaluate(() => {
+      const board = document.querySelector('[role="region"]');
+      const strip = document.querySelector('section[aria-label="Turnos"]');
+      return {
+        boardBottom: board ? board.getBoundingClientRect().bottom : 0,
+        stripTop: strip ? strip.getBoundingClientRect().top : 0,
+      };
+    });
+    expect(positions.stripTop).toBeGreaterThanOrEqual(positions.boardBottom - 1);
+
+    // Se puede ocultar y volver a mostrar.
+    await page.getByTestId('carousel-toggle').click();
+    await expect(carousel).toHaveCount(0);
+    await page.getByTestId('carousel-toggle').click();
+    await expect(carousel).toHaveCount(1);
+  });
+
+  test('la barra de acciones cabe en una sola fila', async ({ page }) => {
+    await openTracker(page);
+    const tops = await page.evaluate(() => {
+      const toolbar = document.querySelector('section > div');
+      return Array.from(toolbar.children).map((el) => el.getBoundingClientRect().top);
+    });
+
+    // `items-center` alinea los centros: los tops pueden diferir unos píxeles.
+    expect(tops.length).toBeGreaterThanOrEqual(3);
+    expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(24);
   });
 
   test('la densidad compacta reduce la altura y se recuerda', async ({ page }) => {

@@ -545,6 +545,27 @@ Héroe img  object-fit cover · object-position 50% 0% · borde superior alinead
 Enemigo    object-fit cover · object-position 50% 0%
 Suite      Lint 0 · Unit 33 · E2E 12/12 · dist 8,88 MB
 ```
+### 8.ª tanda — reorganización de la barra del tablero
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Una sola fila** | Barra en tres zonas: izquierda (Tablero/Lista + ronda), centro (Deshacer/Siguiente) y derecha con dos cuadros: **Vista del tablero** y **Paneles** | `TurnTrackBoard.jsx` |
+| **Cuadro Vista** | Densidad · solape de cartas · zoom (%) · modo presentación | `TurnTrackBoard.jsx` |
+| **Cuadro Paneles** | Bolsa · historial · **turnos** · dados | `TurnTrackBoard.jsx` |
+| **Carrusel abajo** | El panel anterior/actual/siguiente se mueve **debajo del tablero** y se muestra con su propio botón | `TurnTrackBoard.jsx`, `InitTracker.jsx` |
+| **Solape de cartas** | Nuevo modo: acerca las cartas de cada pila al 72 % y reduce la altura del slot; se guarda en `trackOverlap` | `TrackSlot.jsx`, `initTracker` |
+| Etiquetas | Botones de los cuadros solo con icono (tooltip y `aria-label`) para que quepa todo | `TurnTrackBoard.jsx` |
+
+**Medición**
+
+```text
+1600×950   barra 64 px · una fila · grupos: Vista del tablero + Paneles
+1280×800   barra 64 px · una fila
+420×900    se apila en 3 filas (móvil) · carrusel oculto por defecto
+Solape     separación 85 px → 61/53 px · slot 669 → 482 px · persistido
+Carrusel   visible por defecto en escritorio · toggle 1 → 0
+Suite      Lint 0 · Unit 33 · E2E 13/13
+```
 ### Pendiente / pospuesto
 
 - **H8 (2/3 y 3/3)**: extraer `useTurnEngine` (~600 líneas) y los paneles de escenario/pilas (~350). Requiere una sesión dedicada con la suite E2E como red.

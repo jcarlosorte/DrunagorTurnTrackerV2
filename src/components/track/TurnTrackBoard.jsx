@@ -22,6 +22,10 @@ export default function TurnTrackBoard({
   onToggleDice,
   density = 'normal',
   onToggleDensity,
+  overlap = 'normal',
+  onToggleOverlap,
+  carouselOpen = false,
+  onToggleCarousel,
   carousel = null,
   canUndo = false,
   labels = {},
@@ -79,8 +83,9 @@ export default function TurnTrackBoard({
   };
 
   const toolbar = (
-    <div className="mb-2 flex shrink-0 flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-700 bg-slate-900/70 px-2 py-2">
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="mb-2 flex shrink-0 flex-wrap items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/70 px-2 py-2 lg:flex-nowrap lg:overflow-x-auto">
+      {/* Izquierda: vista del tablero y estado de la ronda */}
+      <div className="flex items-center gap-2">
         <div role="group" aria-label={labels.viewMode || 'Vista del tablero'} className="flex rounded-xl border border-slate-700 bg-slate-900 p-1">
           <button
             type="button"
@@ -104,27 +109,11 @@ export default function TurnTrackBoard({
           </button>
         </div>
 
-        {/* Ronda y turno, junto al selector de vista */}
         {status}
       </div>
 
-      {/* Acciones de turno, centradas */}
-      <div className="order-3 flex w-full items-center justify-center gap-2 sm:order-none sm:w-auto sm:flex-1">
-        <button
-          type="button"
-          data-testid="density-toggle"
-          onClick={onToggleDensity}
-          aria-pressed={density === 'compact'}
-          title={density === 'compact' ? (labels.densityNormal || 'Densidad normal') : (labels.densityCompact || 'Densidad compacta')}
-          className={`flex min-h-10 items-center gap-1.5 rounded-xl border px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
-            density === 'compact'
-              ? 'border-sky-300 bg-sky-800 text-white'
-              : 'border-slate-700 bg-slate-900 text-slate-300 hover:text-white'
-          }`}
-        >
-          <span aria-hidden="true" className="text-base leading-none">{density === 'compact' ? '▦' : '▤'}</span>
-          <span className="hidden md:inline">{labels.density || 'Densidad'}</span>
-        </button>
+      {/* Centro: acciones de turno */}
+      <div className="order-3 flex w-full items-center justify-center gap-2 sm:order-none sm:mx-auto sm:w-auto">
         <button
           type="button"
           data-testid="undo-turn"
@@ -145,38 +134,90 @@ export default function TurnTrackBoard({
         </button>
       </div>
 
-      <div className="flex items-center gap-1.5">
-        {view === 'board' && (
-          <div className="flex items-center rounded-xl border border-slate-700 bg-slate-950/70 p-0.5" role="group" aria-label={labels.zoom || 'Zoom'}>
-            <button
-              type="button"
-              onClick={() => setScale((prev) => clamp(prev - 0.1))}
-              aria-label={labels.zoomOut || 'Reducir zoom'}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-200 transition hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-            >
-              −
-            </button>
-            <button
-              type="button"
-              onClick={fitToWidth}
-              title={labels.fit || 'Ajustar'}
-              className="min-h-8 rounded-lg px-1.5 text-[0.7rem] font-semibold tabular-nums text-sky-200 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-            >
-              {Math.round(scale * 100)}%
-            </button>
-            <button
-              type="button"
-              onClick={() => setScale((prev) => clamp(prev + 0.1))}
-              aria-label={labels.zoomIn || 'Aumentar zoom'}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-200 transition hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-            >
-              +
-            </button>
-          </div>
-        )}
+      {/* Derecha: vista del tablero y paneles adicionales */}
+      <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+        <div className="flex items-center gap-0.5 rounded-xl border border-slate-700 bg-slate-950/70 p-0.5" role="group" aria-label={labels.boardGroup || 'Vista del tablero'}>
+          <button
+            type="button"
+            data-testid="density-toggle"
+            onClick={onToggleDensity}
+            aria-pressed={density === 'compact'}
+            title={density === 'compact' ? (labels.densityNormal || 'Densidad normal') : (labels.densityCompact || 'Densidad compacta')}
+            aria-label={labels.density || 'Densidad'}
+            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              density === 'compact'
+                ? 'border-sky-400/80 bg-sky-700 text-white'
+                : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <span aria-hidden="true" className="text-sm leading-none">{density === 'compact' ? '▦' : '▤'}</span>
+            
+          </button>
 
-        {/* Submenús del tablero: bolsa de runas e historial */}
-        <div className="flex items-center gap-1 rounded-xl border border-slate-700 bg-slate-950/70 p-0.5" role="group" aria-label={labels.panels || 'Paneles'}>
+          <button
+            type="button"
+            data-testid="overlap-toggle"
+            onClick={onToggleOverlap}
+            aria-pressed={overlap === 'compact'}
+            title={overlap === 'compact' ? (labels.overlapNormal || 'Separar cartas') : (labels.overlapCompact || 'Superponer más las cartas')}
+            aria-label={labels.overlap || 'Solape de cartas'}
+            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              overlap === 'compact'
+                ? 'border-amber-400/80 bg-amber-700 text-white'
+                : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <span aria-hidden="true" className="text-sm leading-none">{overlap === 'compact' ? '⧉' : '⧈'}</span>
+            
+          </button>
+
+          {view === 'board' && (
+            <div className="flex items-center" role="group" aria-label={labels.zoom || 'Zoom'}>
+              <button
+                type="button"
+                onClick={() => setScale((prev) => clamp(prev - 0.1))}
+                aria-label={labels.zoomOut || 'Reducir zoom'}
+                className="flex h-9 w-8 items-center justify-center rounded-lg text-slate-200 transition hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              >
+                −
+              </button>
+              <button
+                type="button"
+                onClick={fitToWidth}
+                title={labels.fit || 'Ajustar'}
+                className="min-h-9 rounded-lg px-1.5 text-[0.7rem] font-semibold tabular-nums text-sky-200 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              >
+                {Math.round(scale * 100)}%
+              </button>
+              <button
+                type="button"
+                onClick={() => setScale((prev) => clamp(prev + 0.1))}
+                aria-label={labels.zoomIn || 'Aumentar zoom'}
+                className="flex h-9 w-8 items-center justify-center rounded-lg text-slate-200 transition hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              >
+                +
+              </button>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={onTogglePresentation}
+            aria-pressed={presentation}
+            title={labels.presentation || 'Modo presentación'}
+            aria-label={labels.presentation || 'Modo presentación'}
+            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              presentation
+                ? 'border-emerald-400 bg-emerald-700 text-white'
+                : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <span aria-hidden="true">🖵</span>
+            
+          </button>
+        </div>
+
+        <div className="flex items-center gap-0.5 rounded-xl border border-slate-700 bg-slate-950/70 p-0.5" role="group" aria-label={labels.panels || 'Paneles'}>
           <button
             type="button"
             onClick={onToggleBag}
@@ -185,12 +226,12 @@ export default function TurnTrackBoard({
             aria-label={labels.bag || 'Bolsa de runas'}
             className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
               bagOpen
-                ? 'border-emerald-400/80 bg-emerald-700 text-white shadow-inner shadow-emerald-950/40'
+                ? 'border-emerald-400/80 bg-emerald-700 text-white'
                 : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
             }`}
           >
             <span aria-hidden="true" className="text-sm leading-none">🎒</span>
-            <span className="hidden lg:inline">{labels.bag || 'Bolsa'}</span>
+            
           </button>
 
           <button
@@ -202,13 +243,31 @@ export default function TurnTrackBoard({
             aria-label={labels.history || 'Historial'}
             className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
               historyOpen
-                ? 'border-sky-400/80 bg-sky-700 text-white shadow-inner shadow-sky-950/40'
+                ? 'border-sky-400/80 bg-sky-700 text-white'
                 : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
             }`}
           >
             <span aria-hidden="true" className="text-sm leading-none">📜</span>
-            <span className="hidden lg:inline">{labels.history || 'Historial'}</span>
+            
           </button>
+
+          <button
+            type="button"
+            data-testid="carousel-toggle"
+            onClick={onToggleCarousel}
+            aria-pressed={carouselOpen}
+            title={labels.carousel || 'Turnos'}
+            aria-label={labels.carousel || 'Turnos'}
+            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              carouselOpen
+                ? 'border-indigo-400/80 bg-indigo-700 text-white'
+                : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <span aria-hidden="true" className="text-sm leading-none">⏱</span>
+            
+          </button>
+
           <button
             type="button"
             data-testid="dice-toggle"
@@ -218,29 +277,14 @@ export default function TurnTrackBoard({
             aria-label={labels.dice || 'Dados'}
             className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
               diceOpen
-                ? 'border-amber-400/80 bg-amber-700 text-white shadow-inner shadow-amber-950/40'
+                ? 'border-amber-400/80 bg-amber-700 text-white'
                 : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
             }`}
           >
             <span aria-hidden="true" className="text-sm leading-none">🎲</span>
-            <span className="hidden lg:inline">{labels.dice || 'Dados'}</span>
+            
           </button>
         </div>
-
-        <button
-          type="button"
-          onClick={onTogglePresentation}
-          aria-pressed={presentation}
-          title={labels.presentation || 'Modo presentación'}
-          className={`flex h-9 items-center gap-1.5 rounded-xl border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
-            presentation
-              ? 'border-emerald-400 bg-emerald-700 text-white'
-              : 'border-slate-700 bg-slate-950/70 text-slate-200 hover:border-slate-500 hover:text-white'
-          }`}
-        >
-          <span aria-hidden="true">🖵</span>
-          <span className="hidden lg:inline">{presentation ? (labels.exitPresentation || 'Salir') : (labels.presentation || 'Presentación')}</span>
-        </button>
       </div>
     </div>
   );
@@ -259,7 +303,7 @@ export default function TurnTrackBoard({
         <div style={{ width: `${BASE_WIDTH}px`, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
           <div className="grid snap-x snap-mandatory grid-cols-11 auto-rows-auto items-start gap-0 bg-slate-800 p-2">
             {summaries.map(({ index }) => (
-              <div key={index} className="min-w-0">{renderSlot(index, { density })}</div>
+              <div key={index} className="min-w-0">{renderSlot(index, { density, overlap })}</div>
             ))}
           </div>
         </div>
@@ -341,6 +385,9 @@ export default function TurnTrackBoard({
         </div>
       ) : toolbar}
       {content}
+      {carouselOpen && carousel && (
+        <div className="mt-2 shrink-0">{carousel}</div>
+      )}
     </section>
   );
 }

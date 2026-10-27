@@ -2037,6 +2037,24 @@ const InitTracker = () => {
     });
   };
 
+  // Solape de cartas: normal o más superpuestas para compactar las pilas.
+  const [overlap, setOverlap] = useState(() => {
+    const stored = readJsonStorage('trackOverlap', 'normal');
+    return stored === 'compact' ? 'compact' : 'normal';
+  });
+  const toggleOverlap = () => {
+    setOverlap((prev) => {
+      const next = prev === 'compact' ? 'normal' : 'compact';
+      writeJsonStorage('trackOverlap', next);
+      return next;
+    });
+  };
+
+  // Carrusel de turnos: oculto por defecto en móvil, visible en escritorio.
+  const [carouselOpen, setCarouselOpen] = useState(() => (
+    typeof window === 'undefined' ? true : window.innerWidth >= 1024
+  ));
+
   // Guarda los conjuntos de efectos ya procesados para no repetirlos al restaurar la partida.
   const persistProcessed = () => {
     const session = readJsonStorage('trackerSession', {}, isPlainObject) || {};
@@ -3103,9 +3121,11 @@ const InitTracker = () => {
       (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'abajo').length : 0);
     return Math.max(above, below);
   });
-  // La densidad compacta reduce cartas y separaciones un 15 %.
+  // La densidad compacta reduce cartas y separaciones un 15 %; el solape
+  // compacto acerca las cartas entre sí dentro de cada pila.
   const densityFactor = density === 'compact' ? 0.85 : 1;
-  const boardSlotHeight = boardSlotHeightFrom(countsPerSlot) * densityFactor;
+  const overlapFactor = overlap === 'compact' ? 0.72 : 1;
+  const boardSlotHeight = boardSlotHeightFrom(countsPerSlot) * densityFactor * overlapFactor;
 
   const currentSlotIndex = (() => {
     if (!currentTurnEntity) return -1;
@@ -3148,6 +3168,7 @@ const InitTracker = () => {
       index={index}
       compact={Boolean(options.compact)}
       density={options.density || density}
+      overlap={options.overlap || overlap}
       deps={slotDeps}
     />
   );
@@ -3608,18 +3629,6 @@ const InitTracker = () => {
             
             <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                <TurnCarousel
-                  prev={carouselPrev}
-                  current={carouselCurrent}
-                  next={carouselNext}
-                  labels={{
-                    title: ti.carousel || 'Turnos',
-                    prev: ti.previousTurn || 'Anterior',
-                    current: ti.currentTurn || 'Turno actual',
-                    next: ti.nextTurnShort || 'Siguiente',
-                    none: ti.noTurn || '—',
-                  }}
-                />
                 <TurnTrackBoard
                   renderSlot={renderSlot}
                   summaries={slotSummaries}
@@ -3631,6 +3640,24 @@ const InitTracker = () => {
                   canUndo={undoCount > 0}
                   density={density}
                   onToggleDensity={toggleDensity}
+                  overlap={overlap}
+                  onToggleOverlap={toggleOverlap}
+                  carouselOpen={carouselOpen}
+                  onToggleCarousel={() => setCarouselOpen((prev) => !prev)}
+                  carousel={(
+                    <TurnCarousel
+                      prev={carouselPrev}
+                      current={carouselCurrent}
+                      next={carouselNext}
+                      labels={{
+                        title: ti.carousel || 'Turnos',
+                        prev: ti.previousTurn || 'Anterior',
+                        current: ti.currentTurn || 'Turno actual',
+                        next: ti.nextTurnShort || 'Siguiente',
+                        none: ti.noTurn || '—',
+                      }}
+                    />
+                  )}
                   bagOpen={bagOpen}
                   onToggleBag={() => setBagOpen((prev) => !prev)}
                   historyOpen={historyOpen}
@@ -3638,19 +3665,21 @@ const InitTracker = () => {
                   diceOpen={diceOpen}
                   onToggleDice={() => setDiceOpen((prev) => !prev)}
                   status={(
-                    <div className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs">
+                    <div className="flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-900 px-2 py-1 text-xs">
                       <span className="font-semibold text-emerald-200">
                         {ti.roundShort || 'Ronda'} <b className="text-white">{roundNumber || 0}</b>
                       </span>
-                      <span className="h-4 w-px bg-slate-700" aria-hidden="true" />
+                      <span className="h-3.5 w-px bg-slate-700" aria-hidden="true" />
                       <span className="text-slate-300">
                         {ti.turno || 'Turno'} <b className="text-white">{turnIndex >= 0 ? turnIndex + 1 : '—'}</b>
                       </span>
                       {currentEntityName && (
-                        <>
-                          <span className="h-4 w-px bg-slate-700" aria-hidden="true" />
-                          <span className="max-w-[10rem] truncate text-sky-200" title={currentEntityName}>{currentEntityName}</span>
-                        </>
+                        <span
+                          className="hidden max-w-[8rem] truncate text-sky-200 2xl:inline"
+                          title={currentEntityName}
+                        >
+                          · {currentEntityName}
+                        </span>
                       )}
                     </div>
                   )}
