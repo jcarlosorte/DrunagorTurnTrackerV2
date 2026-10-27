@@ -375,31 +375,6 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
         className={`${bgColorMap[color] || ''} relative flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border-4 shadow-2xl ${borderColorMap[color] || ''}`}
       >
         
-        {/* Botón cerrar */}
-        <button
-          ref={closeRef}
-          type="button"
-          onClick={onClose}
-          className="absolute right-2 top-2 flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-xl font-bold text-white hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-          aria-label={ti.close || 'Cerrar'}
-        >
-          X
-        </button>
-
-        {/* Botón eliminar */}
-        {onDelete && (
-          <button
-            type="button"
-            onClick={() => {
-              onDelete(uuid);
-              onClose();
-            }}
-            className="absolute left-2 top-2 rounded-full bg-red-600 px-3 py-2 text-xs text-white hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-          >
-            🗑 {ti.remove || 'Eliminar'}
-          </button>
-        )}
-
         {/* Franja superior con el color de facción */}
         <div className={`h-1.5 w-full shrink-0 ${bgColorMap[color] || 'bg-slate-600'}`} aria-hidden="true" />
 
@@ -518,7 +493,9 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
           </div>
 
           {/* Submenú Estados Alterados */}
-          <div className="w-full bg-gray-800 rounded-lg p-2 mt-2 flex flex-row flex-nowrap gap-2 justify-around items-center">
+          <div className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900/60 p-2">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
             {estadosLocal
               .filter((estado) => !todasInmunidades?.includes(estado.id) && !(todasInmunidades?.includes("GRANDE") && ["DERRIBO_I", "ATURDIMIENTO_I"].includes(estado.id)))
               .filter((estado) => {
@@ -530,21 +507,16 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                 if (!estadoConfig) return null;
                 const [hover, setHover] = React.useState(false);
                 const maxCount = estado.max || estadoConfig.max || 1;
-            
-                // 🔹 Ajuste de tamaño dinámico
-                const totalEstados = estadosLocal.length;
-                let iconSize = "w-8 h-8";
-                if (totalEstados > 6 && totalEstados <= 10) iconSize = "w-6 h-6";
-                if (totalEstados > 10) iconSize = "w-5 h-5";
+                const nombre = tea[estadoConfig.texto] || estadoConfig.texto;
             
                 return (
-                  <div key={estado.id} className="flex flex-col items-center w-14">
+                  <div key={estado.id} className="flex flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 p-1.5">
                     <button
                       type="button"
                       onClick={() => handleEstadoChangeLocal(estado.id, +1)}
                       disabled={maxCount === 1 && (estado.count || 0) >= maxCount}
-                      aria-label={`${tea[estadoConfig.texto] || estadoConfig.texto}: +1`}
-                      className="mb-1 flex h-11 w-11 items-center justify-center rounded bg-green-600 text-lg text-white hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-50"
+                      aria-label={`${nombre}: +1`}
+                      className="mb-1 flex h-9 w-9 items-center justify-center rounded bg-green-700 text-base text-white hover:bg-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
                     >
                       +
                     </button>
@@ -557,33 +529,35 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                       onFocus={() => setHover(true)}
                       onBlur={() => setHover(false)}
                       tabIndex={0}
-                      aria-label={tea[estadoConfig.texto] || estadoConfig.texto}
+                      aria-label={nombre}
                     >
                       <img
                         src={estadoConfig.imagen}
-                        alt={estadoConfig.texto}
-                        className={`${iconSize} flex-shrink`}
+                        alt=""
+                        className="h-8 w-8 flex-shrink"
                       />
                       {/* Tooltip */}
                       {hover && (
-                        <div className="absolute right-full top-1/2 -translate-y-1/2 mr-2 
+                        <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 
                                         bg-black text-white text-[0.65rem] rounded px-2 py-1 
                                         whitespace-nowrap z-20">
-                          <strong>{tea[estadoConfig.texto]}</strong>
+                          <strong>{nombre}</strong>
                         </div>
                       )}
                     </div>
-                    
-                    {maxCount > 1 && (
-                      <div className="text-white text-sm font-bold">{estado.count || 0}</div>
-                    )}
+
+                    <div className="mt-0.5 flex items-center gap-1 text-xs font-bold text-white">
+                      <span aria-hidden="true">×</span>
+                      <span className="tabular-nums">{estado.count || 0}</span>
+                    </div>
+                    <p className="mt-0.5 w-full truncate text-center text-[0.6rem] leading-tight text-slate-300" title={nombre}>{nombre}</p>
             
                     <button
                       type="button"
                       onClick={() => handleEstadoChangeLocal(estado.id, -1)}
                       disabled={(estado.count || 0) <= 0}
-                      aria-label={`${tea[estadoConfig.texto] || estadoConfig.texto}: −1`}
-                      className="mt-1 flex h-11 w-11 items-center justify-center rounded bg-red-600 text-lg text-white hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-50"
+                      aria-label={`${nombre}: −1`}
+                      className="mt-1 flex h-9 w-9 items-center justify-center rounded bg-red-700 text-base text-white hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
                     >
                       −
                     </button>
@@ -591,47 +565,70 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                 );
               })
             }
+            </div>
           </div>
 
           
-            {/* Barra de vida con botones a los lados */}
-            <div className="flex items-center w-full h-5 mt-2 gap-2">
-              {/* Botón − */}
-              <button
-                type="button"
-                onClick={() => handleVidaChange(-1)}
-                aria-label={`${ti.vida || 'Vida'}: −1`}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-red-600 text-lg text-white hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-              >
-                −
-              </button>
-            
-              {/* Barra de vida */}
-              <div className="flex-1 relative h-full">
-                <div className="absolute inset-0 flex items-center justify-center text-white text-[0.65rem] font-bold z-10">
-                  {vidaLocal} / {vidaMax}
-                </div>
-                <div className="w-full h-full bg-red-900 rounded">
-                  <div
-                    className="h-full bg-red-500 rounded"
-                    style={{ width: `${(vidaLocal / vidaMax) * 100}%` }}
-                  />
-                </div>
+            {/* Bloque de vida dominante */}
+            <section className="mt-3 w-full rounded-xl border border-red-900/60 bg-red-950/40 p-2" aria-label={ti.vida || 'Vida'}>
+              <div className="mb-1.5 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-red-200">
+                <span>{ti.vida || 'Vida'}</span>
+                <span className="tabular-nums text-base text-white">{vidaLocal} / {vidaMax}</span>
               </div>
-            
-              {/* Botón + */}
-              <button
-                type="button"
-                onClick={() => handleVidaChange(1)}
-                aria-label={`${ti.vida || 'Vida'}: +1`}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-green-600 text-lg text-white hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-              >
-                +
-              </button>
-            </div>
+
+              <div className="h-4 w-full overflow-hidden rounded-full bg-red-950">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-400 transition-[width] duration-300"
+                  style={{ width: `${Math.max(0, Math.min(100, (vidaLocal / Math.max(vidaMaxLocal, 1)) * 100))}%` }}
+                />
+              </div>
+
+              <div className="mt-2 grid grid-cols-4 gap-1.5">
+                {[
+                  { delta: -5, label: '−5', tone: 'border-red-800 bg-red-900/70 text-red-100 hover:bg-red-800' },
+                  { delta: -1, label: '−1', tone: 'border-red-800 bg-red-900/70 text-red-100 hover:bg-red-800' },
+                  { delta: 1, label: '+1', tone: 'border-emerald-800 bg-emerald-900/70 text-emerald-100 hover:bg-emerald-800' },
+                  { delta: 5, label: '+5', tone: 'border-emerald-800 bg-emerald-900/70 text-emerald-100 hover:bg-emerald-800' },
+                ].map(({ delta, label, tone }) => (
+                  <button
+                    key={delta}
+                    type="button"
+                    onClick={() => handleVidaChange(delta)}
+                    aria-label={`${ti.vida || 'Vida'} ${label}`}
+                    className={`min-h-11 rounded-lg border text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 ${tone}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </section>
 
           
         </div>
+
+        {/* Pie fijo de acciones */}
+        <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-slate-700/60 bg-slate-950/70 px-3 py-2">
+          {onDelete ? (
+            <button
+              type="button"
+              onClick={() => {
+                onDelete(uuid);
+                onClose();
+              }}
+              className="min-h-11 rounded-xl border border-red-700 bg-red-900/60 px-4 text-sm font-semibold text-red-100 hover:bg-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
+            >
+              🗑 {ti.remove || 'Eliminar'}
+            </button>
+          ) : <span />}
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={onClose}
+            className="min-h-11 rounded-xl bg-slate-700 px-5 text-sm font-bold text-white hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+          >
+            {ti.close || 'Cerrar'}
+          </button>
+        </footer>
       </div>
 
       {/* Avisos flotantes centrados */}

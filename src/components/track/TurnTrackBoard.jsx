@@ -74,7 +74,7 @@ export default function TurnTrackBoard({
   };
 
   const toolbar = (
-    <div className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-700 bg-slate-900/70 px-2 py-2">
+    <div className="mb-2 flex shrink-0 flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-700 bg-slate-900/70 px-2 py-2">
       <div className="flex flex-wrap items-center gap-2">
         <div role="group" aria-label={labels.viewMode || 'Vista del tablero'} className="flex rounded-xl border border-slate-700 bg-slate-900 p-1">
           <button
@@ -109,7 +109,7 @@ export default function TurnTrackBoard({
           type="button"
           onClick={onUndoTurn}
           disabled={!canUndo}
-          className="flex min-h-10 items-center gap-2 rounded-xl border border-slate-600 bg-slate-800 px-3 text-sm font-semibold text-slate-100 shadow-sm transition hover:border-slate-500 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 disabled:opacity-40"
+          className="flex min-h-10 items-center gap-2 rounded-xl border border-emerald-800 bg-emerald-950/60 px-3 text-sm font-semibold text-emerald-100 transition hover:border-emerald-600 hover:bg-emerald-900/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:opacity-40"
         >
           <span aria-hidden="true" className="text-base">↶</span>
           <span className="hidden sm:inline">{labels.undoTurn || 'Deshacer'}</span>
@@ -117,7 +117,7 @@ export default function TurnTrackBoard({
         <button
           type="button"
           onClick={onNextTurn}
-          className="min-h-10 rounded-xl bg-gradient-to-b from-yellow-400 to-yellow-500 px-4 text-sm font-bold text-slate-950 shadow-lg shadow-yellow-900/30 transition hover:from-yellow-300 hover:to-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
+          className="min-h-10 rounded-xl bg-gradient-to-b from-emerald-500 to-emerald-700 px-4 text-sm font-bold text-white shadow-lg shadow-emerald-950/40 transition hover:from-emerald-400 hover:to-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
         >
           {labels.nextTurn || 'Siguiente turno'}
         </button>
@@ -200,7 +200,7 @@ export default function TurnTrackBoard({
   const boardView = (
     <div
       ref={viewportRef}
-      className="max-h-[75dvh] overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
+      className="h-full min-h-0 flex-1 overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       role="region"
@@ -277,7 +277,10 @@ export default function TurnTrackBoard({
   const content = view === 'board' ? boardView : listView;
 
   return (
-    <section aria-label={labels.section || 'Tablero de iniciativa'} className={presentation ? 'text-base' : ''}>
+    <section
+      aria-label={labels.section || 'Tablero de iniciativa'}
+      className={`flex h-full min-h-0 flex-col ${presentation ? 'text-base' : ''}`}
+    >
       {presentation ? (
         <div className="mb-2 flex justify-end">
           <button

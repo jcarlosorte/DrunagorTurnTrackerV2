@@ -1,18 +1,27 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useExpansions } from "@/context/ExpansionContext";
 import { languages as availableLanguages, languageNames } from "@/i18n/languageData";
 import { EXPANSIONS } from "@/data/expansions";
 import PageTransition from "@/components/PageTransition";
+import { isHeroManagementEnabled, setHeroManagementEnabled } from "@/utils/heroSettings";
 
 export default function Config() {
   const navigate = useNavigate();
   const { language, setLanguage, translations } = useLanguage();
   const { selectedExpansions, toggleExpansion } = useExpansions();
+  const [heroManagement, setHeroManagement] = useState(isHeroManagementEnabled);
   const config = translations.config || {};
   const saves = translations.saves || {};
 
   const activeExpansions = EXPANSIONS.filter((exp) => exp.active !== 'off');
+
+  const toggleHeroManagement = () => {
+    const next = !heroManagement;
+    setHeroManagement(next);
+    setHeroManagementEnabled(next);
+  };
 
   return (
     <PageTransition>
@@ -38,6 +47,35 @@ export default function Config() {
               <option key={lang} value={lang}>{languageNames[lang]}</option>
             ))}
           </select>
+        </section>
+
+        <section className="rounded-2xl border border-slate-700 bg-slate-900/80 p-4 sm:p-6" aria-labelledby="hero-management-title">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 id="hero-management-title" className="text-xl font-bold">{config.heroManagementTitle || 'Gestión de héroes'}</h2>
+              <p className="mt-1 max-w-2xl text-sm text-slate-400">
+                {config.heroManagementHint || 'Activa las funcionalidades ampliadas de la vista de héroe: auras, consecuencias y estados.'}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={toggleHeroManagement}
+              aria-pressed={heroManagement}
+              className={`flex min-h-11 items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 ${
+                heroManagement
+                  ? 'border-emerald-400 bg-emerald-600 text-white'
+                  : 'border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-400'
+              }`}
+            >
+              <span
+                aria-hidden="true"
+                className={`flex h-5 w-9 items-center rounded-full p-0.5 transition ${heroManagement ? 'bg-emerald-950/60' : 'bg-slate-700'}`}
+              >
+                <span className={`h-4 w-4 rounded-full bg-white transition ${heroManagement ? 'translate-x-4' : ''}`} />
+              </span>
+              {heroManagement ? (config.heroManagementOn || 'Activado') : (config.heroManagementOff || 'Desactivado')}
+            </button>
+          </div>
         </section>
 
         <section aria-labelledby="expansions-section-title">

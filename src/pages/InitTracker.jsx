@@ -3128,11 +3128,11 @@ const InitTracker = () => {
       // La barra central debe quedar SIEMPRE en la misma línea: el slot tiene altura
       // fija y las pilas se anclan al 50%, creciendo hacia fuera. El solape se calcula
       // para que todas las cartas quepan en la mitad disponible.
-      const CARD_HEIGHT = 120;
-      const AVAILABLE = 196;
+      const CARD_HEIGHT = 128;
+      const AVAILABLE = 160;
       const count = items.length;
       const overlap = count > 1
-        ? Math.min(CARD_HEIGHT - 18, Math.max(0, Math.ceil((count * CARD_HEIGHT - AVAILABLE) / (count - 1))))
+        ? Math.min(CARD_HEIGHT - 16, Math.max(0, Math.ceil((count * CARD_HEIGHT - AVAILABLE) / (count - 1))))
         : 0;
       const ordered = isTop ? [...items].reverse() : items;
 
@@ -3150,7 +3150,7 @@ const InitTracker = () => {
         return (
           <div
             key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : item.id}
-            className="relative w-[104px] max-w-full shrink-0 transition-transform duration-300"
+            className="relative w-[108px] max-w-full shrink-0 transition-transform duration-300"
             style={{
               marginTop: isTop ? 0 : stackedOffset,
               marginBottom: isTop ? stackedOffset : 0,
@@ -3209,11 +3209,11 @@ const InitTracker = () => {
       <div
         key={index}
         className="track-slot relative w-full min-w-0"
-        style={{ height: '24rem' }}
+        style={{ minHeight: '28rem' }}
       >
         
         {/* Pila superior: anclada al 50%, crece hacia arriba */}
-        <div className="track-slot__stack absolute inset-x-0 bottom-1/2 flex flex-col-reverse items-center pb-4">
+        <div className="track-slot__stack absolute inset-x-0 bottom-1/2 flex flex-col-reverse items-center pb-10">
           {renderStack(heroesAbove, true, 'hero')}
           {isRune && renderStack(enemiesAbove, true, 'enemy')}
           {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), true, 'rune')}
@@ -3268,7 +3268,7 @@ const InitTracker = () => {
         </div>
 
         {/* Pila inferior: anclada al 50%, crece hacia abajo */}
-        <div className="track-slot__stack absolute inset-x-0 top-1/2 flex flex-col items-center pt-4">
+        <div className="track-slot__stack absolute inset-x-0 top-1/2 flex flex-col items-center pt-10">
           {renderStack(heroesBelow, false, 'hero')}
           {isRune && renderStack(enemiesBelow, false, 'enemy')}
           {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), false, 'rune')}
@@ -3326,7 +3326,7 @@ const InitTracker = () => {
       <PageTransition>
        
         <div className="min-w-0">
-          <div className={`min-h-screen overflow-x-hidden bg-slate-950 p-3 pt-20 text-slate-200 sm:p-4 sm:pt-20 md:pb-6 ${presentation ? 'text-lg' : ''}`}>
+          <div className={`flex min-h-[100dvh] flex-col overflow-x-hidden bg-slate-950 p-3 pt-20 text-slate-200 sm:p-4 sm:pt-20 md:pb-4 ${presentation ? 'text-lg' : ''}`}>
             {!presentation && (
               <TopMenu
                 onAddEnemy={openCategorySelector}
@@ -3720,8 +3720,8 @@ const InitTracker = () => {
               </div>
             )}
             
-            <div className="mt-3 flex flex-col gap-3 lg:flex-row">
-              <div className="min-w-0 flex-1">
+            <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col">
                 <TurnTrackBoard
                   renderSlot={renderSlot}
                   summaries={slotSummaries}
@@ -3771,31 +3771,31 @@ const InitTracker = () => {
                 />
               </div>
 
-              {bagOpen && (
-                <aside className="lg:w-56 lg:shrink-0">
-                  <BagStatusPanel
-                    usedTiles={usedTiles}
-                    availableTiles={availableTiles}
-                    labels={{
-                      title: ti.bag || 'Bolsa de runas',
-                      drawn: ti.extraidas || 'Extraídas',
-                      total: ti.total || 'Total',
-                    }}
-                    colors={ti.colores || {}}
-                  />
-                </aside>
-              )}
+              {(bagOpen || historyOpen) && (
+                <aside className="flex w-full flex-col gap-3 lg:w-64 lg:shrink-0">
+                  {bagOpen && (
+                    <BagStatusPanel
+                      usedTiles={usedTiles}
+                      availableTiles={availableTiles}
+                      labels={{
+                        title: ti.bag || 'Bolsa de runas',
+                        drawn: ti.extraidas || 'Extraídas',
+                        total: ti.total || 'Total',
+                      }}
+                      colors={ti.colores || {}}
+                    />
+                  )}
 
-              {historyOpen && (
-                <aside className="lg:w-64 lg:shrink-0">
-                  <HistoryPanel
-                    limit={10}
-                    refreshKey={scenarioToasts.length + turnIndex + roundNumber}
-                    labels={{
-                      title: ti.history || 'Historial',
-                      empty: ti.historyEmpty || 'Sin eventos todavía.',
-                    }}
-                  />
+                  {historyOpen && (
+                    <HistoryPanel
+                      limit={10}
+                      refreshKey={scenarioToasts.length + turnIndex + roundNumber}
+                      labels={{
+                        title: ti.history || 'Historial',
+                        empty: ti.historyEmpty || 'Sin eventos todavía.',
+                      }}
+                    />
+                  )}
                 </aside>
               )}
             </div>

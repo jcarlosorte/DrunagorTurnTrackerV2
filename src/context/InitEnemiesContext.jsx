@@ -4,6 +4,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useGame } from '@/context/GameContext';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
+import { appendGameLog } from '@/utils/gameLog';
 
 const InitEnemiesContext = createContext();
 
@@ -105,11 +106,16 @@ export const InitEnemiesProvider = ({ children }) => {
   };
   
   const placeEnemy = (enemyWithPosition) => {
-    //console.log('Placing enemy:', enemyWithPosition);
-    setPlacedEnemies(prev => {
-      const updated = [...prev, enemyWithPosition];
-      //console.log('Updated placedEnemies:', updated);
-      return updated;
+    setPlacedEnemies(prev => [...prev, enemyWithPosition]);
+
+    // Historial: alta de enemigo (manual, aleatorio o invocado).
+    const enemy = enemyWithPosition?.enemy || enemyWithPosition;
+    const enemyId = enemy?.id;
+    const name = translations.enemies?.[enemyId] || enemyId || 'Enemigo';
+    const color = translations.trackerInit?.colores?.[enemy?.color] || enemy?.color || '';
+    appendGameLog('summon', `Aparece ${name}${color ? ` (${color})` : ''}`, {
+      position: enemy?.position,
+      runePosition: enemy?.runePosition,
     });
   };
 

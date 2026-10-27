@@ -597,8 +597,11 @@ export const GameProvider = ({ children }) => {
     const uuid = uuidv4();
     const tileWithId = { ...tile, tipo, uuid };
     setTileToasts(prev => [...prev, tileWithId]);
-    // Registro en el historial: color de la runa y origen (robo, retirada, manifestación).
-    appendGameLog('rune', `${tipo}: ${tile?.runa || 'runa'}${tile?.dibujo ? ` (${tile.dibujo})` : ''}`, { tipo });
+    // Registro en el historial: color traducido de la runa y forma (dibujo).
+    const colorName = ti.colores?.[tile?.runa] || tile?.runa || 'runa';
+    const shape = tile?.dibujo ? tile.dibujo : '';
+    const action = tipo === 'add' ? ti.robaRuna || 'Roba' : tipo === 'show' ? ti.manifestar || 'Manifiesta' : ti.retira || 'Retira';
+    appendGameLog('rune', `${action} ${colorName}${shape ? ` · ${shape}` : ''}`, { tipo, runa: tile?.runa, dibujo: tile?.dibujo });
   };
   
   const manifestTile = () => {

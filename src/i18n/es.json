@@ -15,7 +15,11 @@
     "select_expansions": "Selecciona las expansiones",
     "waiting_for_spanish_copy": "Esperando copia en español",
     "expansionsHint": "Las expansiones activas determinan qué héroes y enemigos aparecen en la selección de partida.",
-    "noActiveExpansions": "No hay expansiones activas disponibles."
+    "noActiveExpansions": "No hay expansiones activas disponibles.",
+    "heroManagementTitle": "Gestión de héroes",
+    "heroManagementHint": "Activa las funcionalidades ampliadas de la vista de héroe: auras, consecuencias y estados.",
+    "heroManagementOn": "Activado",
+    "heroManagementOff": "Desactivado"
   },
   "expansions": {
     "base": "Crónicas de Drunagor (Juego Base)",

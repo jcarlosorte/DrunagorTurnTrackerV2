@@ -484,8 +484,10 @@ textarea:focus-visible {
   min-width: 0;
 }
 
+/* Sin `position` aquí: la clase utilitaria del markup decide cómo se coloca
+   (absolute centrada en el 50% del slot). Si se fuerza `relative`, la etiqueta
+   vuelve al flujo y se queda pegada arriba del slot. */
 .track-slot__label {
-  position: relative;
   z-index: 3;
 }
 

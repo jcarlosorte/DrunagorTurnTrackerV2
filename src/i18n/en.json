@@ -15,7 +15,11 @@
     "select_expansions": "Select expansions",
     "waiting_for_spanish_copy": "Awaiting Spanish edition",
     "expansionsHint": "Active expansions determine which heroes and enemies appear in the game setup.",
-    "noActiveExpansions": "There are no active expansions available."
+    "noActiveExpansions": "There are no active expansions available.",
+    "heroManagementTitle": "Hero management",
+    "heroManagementHint": "Enable the expanded hero view features: auras, consequences and conditions.",
+    "heroManagementOn": "Enabled",
+    "heroManagementOff": "Disabled"
   },
   "expansions": {
     "base": "Chronicles of Drunagor (Base Game)",
