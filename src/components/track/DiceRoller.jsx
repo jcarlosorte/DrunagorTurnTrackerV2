@@ -208,10 +208,6 @@ export default function DiceRoller({ open, onClose, heroes = [], currentEntity, 
               )}
             </>
           )}
-
-          <p className="mt-2 text-center text-[0.6rem] text-slate-500">
-            {labels.trapHint || 'Trampa: 2 caras en blanco · veneno 2 · lentitud 2 · quemadura 2 · hemorragia 2'}
-          </p>
         </div>
 
         <footer className="flex justify-end border-t border-slate-700 bg-slate-950/70 px-3 py-2">

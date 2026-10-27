@@ -549,4 +549,38 @@ textarea:focus-visible {
   animation: cardPop 0.22s ease-out;
 }
 
+/* ------------------------------------------------------------------
+   Paneles de los submenús de la barra superior (enemigos, runas,
+   escenario): radios, foco y microinteracción homogéneos sin tocar
+   los colores ni la lógica de cada botón.
+   ------------------------------------------------------------------ */
+.menu-panel :where(button) {
+  border-radius: 0.6rem;
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.menu-panel :where(button:not(:disabled):hover) {
+  transform: translateY(-1px);
+}
+
+.menu-panel :where(button:focus-visible) {
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(125 211 252 / 0.7);
+}
+
+.menu-panel :where(select),
+.menu-panel :where(input) {
+  border-radius: 0.6rem;
+}
+
+/* Encabezado de sección dentro de los submenús. */
+.menu-panel h3,
+.menu-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgb(203 213 225);
+}
+
 

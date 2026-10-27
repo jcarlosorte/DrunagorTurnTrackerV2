@@ -5,7 +5,7 @@ import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { languages as availableLanguages, languageNames } from '@/i18n/languageData';
 import { useSavesUi } from '@/context/SavesUiContext';
-import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDiceTarget, GiShield, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiCardDraw, GiCardPick, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer } from 'react-icons/gi';
+import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDiceTarget, GiShield, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiCardDraw, GiCardPick, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes } from 'react-icons/gi';
 import { MdAddCircleOutline } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { ENEMIES } from '@/data/enemies';
@@ -190,6 +190,15 @@ const TopMenu = ({
           </button>
           <button
             type="button"
+            onClick={() => window.open('https://tabletopaudio.com/', '_blank', 'noopener,noreferrer')}
+            aria-label={t.music || 'Música'}
+            title={t.music || 'Música'}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800 text-white transition hover:bg-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+          >
+            <GiMusicalNotes size={20} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
             onClick={() => navigate('/')}
             aria-label={t.goHome || 'Ir al inicio'}
             title={t.goHome || 'Ir al inicio'}
@@ -242,71 +251,77 @@ const TopMenu = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
+            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
           >
             {/* Aleatorios */}
             <div className="track-surface-raised p-3 shadow-md">
-              <div className="flex items-center gap-2 mb-2">
-                <GiSwordClash className="text-blue-400 text-xl" />
+              <div className="mb-2 flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-900/60 text-blue-300">
+                  <GiSwordClash className="text-lg" />
+                </span>
                 <span className="font-semibold">{t.addEnemies || 'Enemigos aleatorios'}</span>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[
-                  { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white' },
-                  { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400' },
-                  { key: 'negro', label: t.addBlackEnemies, color: 'text-black bg-white rounded' },
-                  { key: 'comandante', label: t.addCommanders, color: 'text-yellow-500' },
-                ].map(({ key, label, color }) => (
+                  { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white', ring: 'ring-white/30' },
+                  { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400', ring: 'ring-slate-400/30' },
+                  { key: 'negro', label: t.addBlackEnemies, color: 'text-black', ring: 'ring-slate-200/40' },
+                  { key: 'comandante', label: t.addCommanders, color: 'text-yellow-500', ring: 'ring-yellow-500/30' },
+                ].map(({ key, label, color, ring }) => (
                   <button
                     key={key}
                     onClick={() => {
                       setEnemySelect(key);
                       handleEnemySelect({ target: { value: key } });
                     }}
-                    className={`flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-sm font-semibold transition ${
-                      enemySelect === key ? 'border-sky-400 bg-sky-700 text-white shadow-lg' : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
+                    className={`flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                      enemySelect === key
+                        ? 'border-sky-400 bg-sky-700 text-white shadow-lg shadow-sky-950/50'
+                        : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
                     }`}
                   >
-                    <GiBullyMinion className={`text-2xl ${color}`} />
-                    <span className="text-xs text-center">{label}</span>
+                    <GiBullyMinion className={`text-2xl ${key === 'negro' ? 'rounded bg-white text-black' : color} ${ring}`} />
+                    <span className="text-center text-xs">{label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Manuales */}
-            <div className="bg-slate-800 rounded-lg p-3 shadow-md">
-              <div className="flex items-center gap-2 mb-2">
-                <MdAddCircleOutline className="text-purple-400 text-xl" />
+            <div className="track-surface-raised p-3 shadow-md">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-900/60 text-purple-300">
+                  <MdAddCircleOutline className="text-lg" />
+                </span>
                 <span className="font-semibold">{t.addManualEnemy || 'Enemigos manuales'}</span>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-9 gap-2">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-9">
                 {[
                   { key: 'esbirro', label: t.addMinionEnemies, color: 'text-cyan-300' },
                   { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white' },
                   { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400' },
-                  { key: 'negro', label: t.addBlackEnemies, color: 'text-black bg-white rounded' },
+                  { key: 'negro', label: t.addBlackEnemies, color: 'text-black' },
                   { key: 'comandante', label: t.addCommanders, color: 'text-yellow-500' },
                   { key: 'overlord', label: t.selectOverlord, color: 'text-red-400' },
                   { key: 'jefe', label: t.selectBosses, color: 'text-purple-400' },
                   { key: 'hero', label: t.selectHeroFall, color: 'text-orange-400' },
                   { key: 'escenario', label: t.selectScenario, color: 'text-cyan-600' },
                 ].map(({ key, label, color }) => (
-                  <React.Fragment key={key}>
-                    <button
-                      onClick={() => {
-                        setManualSelect(key);
-                        handleManualSelect({ target: { value: key } });
-                      }}
-                      className={`flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-sm font-semibold transition ${
-                        manualSelect === key ? 'border-purple-400 bg-purple-700 text-white shadow-lg' : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
-                      }`}
-                    >
-                      <GiBullyMinion className={`text-2xl ${color}`} />
-                      <span className="text-xs text-center">{label}</span>
-                    </button>
-    
-                  </React.Fragment>
+                  <button
+                    key={key}
+                    onClick={() => {
+                      setManualSelect(key);
+                      handleManualSelect({ target: { value: key } });
+                    }}
+                    className={`flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 ${
+                      manualSelect === key
+                        ? 'border-purple-400 bg-purple-700 text-white shadow-lg shadow-purple-950/50'
+                        : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
+                    }`}
+                  >
+                    <GiBullyMinion className={`text-2xl ${key === 'negro' ? 'rounded bg-white text-black' : color}`} />
+                    <span className="text-center text-xs">{label}</span>
+                  </button>
                 ))}
               </div>
             </div>
@@ -315,9 +330,9 @@ const TopMenu = ({
               <button
                 type="button"
                 onClick={resetPlacedEnemies}
-                className="min-h-11 rounded-full bg-yellow-600 px-4 text-sm font-semibold text-slate-950 hover:bg-yellow-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
+                className="min-h-11 rounded-xl border border-amber-600/70 bg-amber-950/50 px-4 text-sm font-semibold text-amber-100 transition hover:border-amber-400 hover:bg-amber-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
               >
-                {t.resetEnemies || 'Resetear enemigos'}
+                ↺ {t.resetEnemies || 'Resetear enemigos'}
               </button>
             </div>
           </motion.div>
@@ -335,9 +350,9 @@ const TopMenu = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
+            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
           >
-            <div className="flex flex-col gap-4 max-h-[calc(100vh-100px)] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 hover:scrollbar-thumb-gray-500">
+            <div className="flex flex-col gap-4">
              
               <div className="flex flex-col md:flex-row gap-4">
                 {/* Añadir Cartas de Runa */}
@@ -1315,14 +1330,16 @@ const TopMenu = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
+            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
           >
-            <div className="flex flex-col gap-4 max-h-[calc(100vh-100px)] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 hover:scrollbar-thumb-gray-500">
+            <div className="flex flex-col gap-4">
 
               
-              <div className="bg-slate-800 rounded-lg p-3 shadow-md">
-                <div className="flex items-center gap-2 mb-2">
-                  <GiDaemonSkull className="text-red-400 text-xl" />
+              <div className="track-surface-raised p-3 shadow-md">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-900/60 text-red-300">
+                    <GiDaemonSkull className="text-lg" />
+                  </span>
                   <span className="font-semibold">{t.monstruoEscenario}</span>
                 </div>
                 
@@ -1359,9 +1376,11 @@ const TopMenu = ({
   
               
                   
-              <div className="bg-slate-800 rounded-lg p-3 shadow-md">
-                <div className="flex items-center gap-2 mb-2">
-                  <GiVillage className="text-yellow-300 text-xl" />
+              <div className="track-surface-raised p-3 shadow-md">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-900/60 text-amber-300">
+                    <GiVillage className="text-lg" />
+                  </span>
                   <span className="font-semibold">{t.escenario || 'Cartas de Escenario'}</span>
                 </div>
                 

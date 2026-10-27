@@ -173,7 +173,9 @@ export function stepHeroEstadoAlterado(heroId, estadoId, delta) {
   const index = list.findIndex((item) => item.id === estadoId);
 
   if (index === -1) {
-    if (delta > 0) list.push({ id: estadoId, count: 1 });
+    // Si aún no tiene el estado, se añade con la cantidad completa indicada
+    // (p. ej. el dado de trampa aplica veneno 2 de golpe).
+    if (delta > 0) list.push({ id: estadoId, count: delta });
   } else {
     const nextCount = list[index].count + delta;
     if (nextCount <= 0) list.splice(index, 1);
