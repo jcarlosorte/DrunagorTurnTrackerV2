@@ -3733,7 +3733,7 @@ const InitTracker = () => {
               </div>
 
               {(bagOpen || historyOpen) && (
-                <aside className="flex w-full flex-col gap-3 lg:w-64 lg:shrink-0">
+                <aside className="flex min-h-0 w-full max-h-[70dvh] flex-col gap-3 overflow-hidden lg:max-h-none lg:w-64 lg:shrink-0">
                   {bagOpen && (
                     <BagStatusPanel
                       usedTiles={usedTiles}

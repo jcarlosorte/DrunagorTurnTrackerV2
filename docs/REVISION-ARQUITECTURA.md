@@ -629,6 +629,23 @@ Estadísticas cara A  ataque 6 (+2 evolución) · movimiento 4 (+1) · vida 24
 TopMenu     1.503 → 1.029 líneas · ScenarioPanels 540 líneas
 Suite       Lint 0 · Unit 45 · E2E 18/18
 ```
+### 12.ª tanda — historial acotado, versión y almacenamiento
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Historial acotado** | El panel ya no crece sin límite: `max-h-[55dvh]` en móvil y `max-h-[calc(100dvh-17rem)]` en escritorio, con scroll interno | `HistoryPanel.jsx`, `InitTracker.jsx` |
+| **Sin arrastre** | Con el historial abierto la página vuelve a medir 900 px (antes 958): el tablero y la barra quedan fijos | `InitTracker.jsx` |
+| **Versión solo en portada** | El badge `v1.0.0 · <commit>` sale del track y se coloca al pie de la página inicial | `TopMenu.jsx`, `HomeMenu.jsx` |
+| **Rescate de cuota** | Si la escritura falla, se recorta el historial a 40 entradas y se reintenta; el aviso indica clave y tamaño | `storage.js`, `StorageWarning.jsx` |
+
+**Medición**
+
+```text
+Historial   panel 628 px ≤ tablero 658 px · scroll interno activo
+Página      900 px = ventana (sin arrastre)
+Badge       track: ausente · portada: v1.0.0 · 1021a684
+Suite       Lint 0 · Unit 45 · E2E 18/18
+```
 ### Pendiente / pospuesto
 
 - **H8**: cerrado en sus tres partes (cursor, orden/historial y paneles de escenario).

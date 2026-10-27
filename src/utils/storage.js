@@ -24,11 +24,39 @@ export function readJsonStorage(key, fallback, validate = () => true) {
 let lastWriteAt = 0;
 export const getLastWriteAt = () => lastWriteAt;
 
+/** Claves prescindibles, de la más a la menos importante, para liberar espacio. */
+const PRUNABLE_KEYS = ['gameLog', 'drunagor:saves:index:v1', 'heroExtras'];
+
+function pruneForKey(key) {
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return false;
+
+    // El historial es lo único que se puede recortar sin perder la partida.
+    if (key === 'gameLog') {
+      const log = JSON.parse(raw);
+      if (Array.isArray(log) && log.length > 40) {
+        window.localStorage.setItem(key, JSON.stringify(log.slice(-40)));
+        return true;
+      }
+    }
+  } catch {
+    // Si no se puede leer o recortar, se sigue con el resto de intentos.
+  }
+  return false;
+}
+
+/**
+ * Guarda un valor JSON. Si el navegador rechaza la escritura (cuota llena),
+ * recorta el historial y reintenta una vez antes de avisar.
+ */
 export function writeJsonStorage(key, value) {
   if (!canUseStorage()) return false;
 
+  const persist = () => window.localStorage.setItem(key, JSON.stringify(value));
+
   try {
-    window.localStorage.setItem(key, JSON.stringify(value));
+    persist();
     lastWriteAt = Date.now();
     try {
       window.dispatchEvent(new CustomEvent('drunagor:storage-write', { detail: { key, at: lastWriteAt } }));
@@ -37,9 +65,30 @@ export function writeJsonStorage(key, value) {
     }
     return true;
   } catch {
-    // Persistence is best-effort; in-memory state remains usable.
+    // Primer intento de recuperación: liberar espacio del historial y reintentar.
+    for (const prunable of PRUNABLE_KEYS) {
+      if (prunable === key) continue;
+      if (pruneForKey(prunable)) {
+        try {
+          persist();
+          lastWriteAt = Date.now();
+          window.dispatchEvent(new CustomEvent('drunagor:storage-write', { detail: { key, at: lastWriteAt } }));
+          return true;
+        } catch {
+          // Se agotaron las opciones: se notifica con detalle.
+        }
+      }
+    }
+
+    // Persistencia best-effort: el estado en memoria sigue funcionando.
+    let sizeKb = 0;
     try {
-      window.dispatchEvent(new CustomEvent('drunagor:storage-error', { detail: { key } }));
+      sizeKb = Math.round((JSON.stringify(value).length / 1024) * 10) / 10;
+    } catch {
+      // Un valor no serializable también cae aquí.
+    }
+    try {
+      window.dispatchEvent(new CustomEvent('drunagor:storage-error', { detail: { key, sizeKb } }));
     } catch {
       // Ignore event dispatch failures.
     }

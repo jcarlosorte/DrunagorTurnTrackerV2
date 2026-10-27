@@ -7,7 +7,6 @@ import { languages as availableLanguages, languageNames } from '@/i18n/languageD
 import { useSavesUi } from '@/context/SavesUiContext';
 import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes } from 'react-icons/gi';
 import { MdAddCircleOutline } from 'react-icons/md';
-import BuildBadge from '@/components/BuildBadge';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { ENEMIES } from '@/data/enemies';
 import { INCURSION } from '@/data/incursion';
@@ -208,7 +207,6 @@ const TopMenu = ({
           >
             <GiGearHammer size={20} aria-hidden="true" />
           </button>
-          <BuildBadge />
           <label htmlFor="track-lang" className="sr-only">{savesT.language || 'Idioma'}</label>
           <select
             id="track-lang"

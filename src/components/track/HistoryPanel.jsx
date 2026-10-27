@@ -99,7 +99,7 @@ export default function HistoryPanel({ limit = 60, labels = {}, refreshKey = 0 }
   };
 
   return (
-    <section className="track-surface flex min-h-0 flex-col p-2 shadow-md" aria-label={labels.title || 'Historial'}>
+    <section className="track-surface flex min-h-0 max-h-[55dvh] flex-col overflow-hidden p-2 shadow-md lg:max-h-[calc(100dvh-17rem)]" aria-label={labels.title || 'Historial'}>
       <h2 className="mb-1.5 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-200">
         <span>{labels.title || 'Historial'}</span>
         <span className="rounded-full bg-slate-800 px-1.5 text-[0.6rem] font-semibold tabular-nums text-slate-300">
