@@ -98,10 +98,11 @@ export const GAME_STORAGE_KEYS = [
   'initRunesState',
   'trackerSession',
   'gameLog',
+  'heroExtras',
 ];
 
 const CONFIG_STORAGE_KEYS = ['expansions', 'trackerData'];
-const TRACK_STORAGE_KEYS = ['gameState', 'initEnemiesState', 'initRunesState', 'trackerSession', 'gameLog'];
+const TRACK_STORAGE_KEYS = ['gameState', 'initEnemiesState', 'initRunesState', 'trackerSession', 'gameLog', 'heroExtras'];
 
 function readStorageData() {
   const data = {};
@@ -138,7 +139,7 @@ function validateStorageData(data) {
   if (!isPlainObject(data)) throw new Error('Datos de partida no válidos');
   if (data.lang !== undefined && typeof data.lang !== 'string') throw new Error('Idioma no válido');
   if (data.expansions !== undefined && !Array.isArray(data.expansions)) throw new Error('Expansiones no válidas');
-  ['trackerData', 'gameState', 'initEnemiesState', 'initRunesState', 'trackerSession']
+  ['trackerData', 'gameState', 'initEnemiesState', 'initRunesState', 'trackerSession', 'heroExtras']
     .forEach((key) => {
       if (data[key] !== undefined && !isPlainObject(data[key])) throw new Error(`Estado no válido: ${key}`);
     });

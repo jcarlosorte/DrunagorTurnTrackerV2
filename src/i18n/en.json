@@ -102,7 +102,18 @@
       "Guerrero_Sombrio": "Shadow Knight",
       "Adalid": "Warlord",
       "Monje": "Monk"
-    }
+    },
+    "lifeTitle": "Life",
+    "traumaCubes": "Trauma cubes",
+    "curseCubes": "Curse cubes",
+    "equipment": "Equipment",
+    "add": "Add",
+    "remove": "Remove",
+    "noneAdded": "None added.",
+    "noConditions": "No active conditions.",
+    "allAdded": "All added.",
+    "baseMoveLabel": "Move",
+    "managementHint": "Saved with the game"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Fallen Mage",

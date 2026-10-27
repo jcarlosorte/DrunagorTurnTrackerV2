@@ -102,7 +102,18 @@
       "Guerrero_Sombrio": "Guerrero Sombrío",
       "Adalid": "Adalid",
       "Monje": "Monje"
-    }
+    },
+    "lifeTitle": "Vida",
+    "traumaCubes": "Cubos de Trauma",
+    "curseCubes": "Cubos de Maldición",
+    "equipment": "Equipo",
+    "add": "Añadir",
+    "remove": "Quitar",
+    "noneAdded": "Ninguna añadida.",
+    "noConditions": "Sin estados activos.",
+    "allAdded": "Todas añadidas.",
+    "baseMoveLabel": "Mov.",
+    "managementHint": "Se guarda con la partida"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Maga Caída",

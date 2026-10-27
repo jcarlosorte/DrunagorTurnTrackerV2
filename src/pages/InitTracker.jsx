@@ -3133,8 +3133,8 @@ const InitTracker = () => {
   // Las pilas crecen SIEMPRE alejándose del track: la primera carta queda a
   // BASE_GAP de la barra y cada siguiente se aleja un paso más.
   const CARD_HEIGHT = 128;
-  const BASE_GAP = 44;
-  const overlapFor = (count) => (count <= 1 ? 0 : count === 2 ? 12 : count === 3 ? 22 : 30);
+  const BASE_GAP = 26;
+  const overlapFor = (count) => (count <= 1 ? 0 : count === 2 ? 30 : count === 3 ? 38 : 44);
   const stepFor = (count) => CARD_HEIGHT - overlapFor(count);
   const stackHeight = (count) => (count === 0 ? 0 : BASE_GAP + (count - 1) * stepFor(count) + CARD_HEIGHT);
 
@@ -3258,12 +3258,10 @@ const InitTracker = () => {
         className="track-slot relative w-full min-w-0"
         style={{ height: `${slotHeight}px` }}
       >
-        {/* Pila superior: crece hacia arriba, alejándose del track */}
-        <div className="absolute inset-x-0 top-0 bottom-1/2">
-          {renderStack(heroesAbove, 'top', 'hero')}
-          {isRune && renderStack(enemiesAbove, 'top', 'enemy')}
-          {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), 'top', 'rune')}
-        </div>
+        {/* Pilas: se anclan al 50% del propio slot y crecen hacia fuera */}
+        {renderStack(heroesAbove, 'top', 'hero')}
+        {isRune && renderStack(enemiesAbove, 'top', 'enemy')}
+        {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), 'top', 'rune')}
   
         {/* Centro del slot: siempre en la misma línea */}
         <div className="track-slot__label absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 items-center justify-center bg-slate-700 py-1">
@@ -3313,12 +3311,10 @@ const InitTracker = () => {
           </div>
         </div>
 
-        {/* Pila inferior: crece hacia abajo, alejándose del track */}
-        <div className="absolute inset-x-0 top-1/2 bottom-0">
-          {renderStack(heroesBelow, 'bottom', 'hero')}
-          {isRune && renderStack(enemiesBelow, 'bottom', 'enemy')}
-          {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), 'bottom', 'rune')}
-        </div>
+        {/* Pila inferior: se ancla al 50% del slot y crece hacia abajo */}
+        {renderStack(heroesBelow, 'bottom', 'hero')}
+        {isRune && renderStack(enemiesBelow, 'bottom', 'enemy')}
+        {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), 'bottom', 'rune')}
   
       </div>
     );
