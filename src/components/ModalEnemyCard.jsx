@@ -492,10 +492,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
             </div>
           </div>
 
-          {/* Submenú Estados Alterados */}
+          {/* Submenú Estados Alterados: una sola línea, sin nombres */}
           <div className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900/60 p-2">
-            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+            <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
+            <div className="flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-1">
             {estadosLocal
               .filter((estado) => !todasInmunidades?.includes(estado.id) && !(todasInmunidades?.includes("GRANDE") && ["DERRIBO_I", "ATURDIMIENTO_I"].includes(estado.id)))
               .filter((estado) => {
@@ -505,61 +505,37 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               .map((estado) => {
                 const estadoConfig = ESTADOS_ALTERADOS.find(e => e.id === estado.id);
                 if (!estadoConfig) return null;
-                const [hover, setHover] = React.useState(false);
                 const maxCount = estado.max || estadoConfig.max || 1;
                 const nombre = tea[estadoConfig.texto] || estadoConfig.texto;
             
                 return (
-                  <div key={estado.id} className="flex flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 p-1.5">
-                    <button
-                      type="button"
-                      onClick={() => handleEstadoChangeLocal(estado.id, +1)}
-                      disabled={maxCount === 1 && (estado.count || 0) >= maxCount}
-                      aria-label={`${nombre}: +1`}
-                      className="mb-1 flex h-9 w-9 items-center justify-center rounded bg-green-700 text-base text-white hover:bg-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
-                    >
-                      +
-                    </button>
-            
-                    {/* Icono con tooltip */}
-                    <div
-                      className="relative flex cursor-help items-center justify-center"
-                      onMouseEnter={() => setHover(true)}
-                      onMouseLeave={() => setHover(false)}
-                      onFocus={() => setHover(true)}
-                      onBlur={() => setHover(false)}
-                      tabIndex={0}
-                      aria-label={nombre}
-                    >
-                      <img
-                        src={estadoConfig.imagen}
-                        alt=""
-                        className="h-8 w-8 flex-shrink"
-                      />
-                      {/* Tooltip */}
-                      {hover && (
-                        <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 
-                                        bg-black text-white text-[0.65rem] rounded px-2 py-1 
-                                        whitespace-nowrap z-20">
-                          <strong>{nombre}</strong>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mt-0.5 flex items-center gap-1 text-xs font-bold text-white">
-                      <span aria-hidden="true">×</span>
-                      <span className="tabular-nums">{estado.count || 0}</span>
-                    </div>
-                    <p className="mt-0.5 w-full truncate text-center text-[0.6rem] leading-tight text-slate-300" title={nombre}>{nombre}</p>
-            
+                  <div
+                    key={estado.id}
+                    className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-1 py-0.5"
+                  >
                     <button
                       type="button"
                       onClick={() => handleEstadoChangeLocal(estado.id, -1)}
                       disabled={(estado.count || 0) <= 0}
                       aria-label={`${nombre}: −1`}
-                      className="mt-1 flex h-9 w-9 items-center justify-center rounded bg-red-700 text-base text-white hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
+                      className="flex h-7 w-7 items-center justify-center rounded bg-red-700 text-sm text-white hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
                     >
                       −
+                    </button>
+
+                    <div className="relative flex flex-col items-center" title={`${nombre} ×${estado.count || 0}`}>
+                      <img src={estadoConfig.imagen} alt={nombre} className="h-7 w-7 flex-shrink" />
+                      <span className="text-[0.6rem] font-bold leading-none text-white">{estado.count || 0}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleEstadoChangeLocal(estado.id, +1)}
+                      disabled={maxCount === 1 && (estado.count || 0) >= maxCount}
+                      aria-label={`${nombre}: +1`}
+                      className="flex h-7 w-7 items-center justify-center rounded bg-green-700 text-sm text-white hover:bg-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
+                    >
+                      +
                     </button>
                   </div>
                 );

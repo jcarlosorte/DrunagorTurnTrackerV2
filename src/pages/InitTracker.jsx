@@ -39,11 +39,13 @@ import TrackTurnHeader from '@/components/track/TrackTurnHeader';
 import EnemyCard from '@/components/track/EnemyCard';
 import FitText from '@/components/track/FitText';
 import HistoryPanel from '@/components/track/HistoryPanel';
+import ModalHeroCard from '@/components/track/ModalHeroCard';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import CommanderCard from '@/components/CommanderCard';
 import { v4 as uuidv4 } from 'uuid';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { appendGameLog } from '@/utils/gameLog';
+import { isHeroManagementEnabled } from '@/utils/heroSettings';
 
 const rolesPositionMap = {
   defensor: 0,
@@ -117,6 +119,8 @@ const InitTracker = () => {
   const [showPCModal, setShowPCModal] = useState(false);
   const [onPCConfirm, setOnPCConfirm] = useState(null);
   const [enemyEvolutions, setEnemyEvolutions] = useState(() => persistedSession.enemyEvolutions || []);
+  const [selectedHeroId, setSelectedHeroId] = useState(null);
+  const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
   const getHeroName = (id) => translations.heroes?.[id] || id;
   const getEnemyName = (id, color = null) => {
     if (color === 'escenario') {
@@ -3092,9 +3096,21 @@ const InitTracker = () => {
   };
 
 
- const CharacterCard = ({ name, image, prof, position }) => (
+ const CharacterCard = ({ name, image, prof, position, heroId, onOpen, clickable }) => (
     <div className="flex flex-col items-center mx-1">
-      <div className="relative w-full max-w-[140px] hover:scale-105">
+      <div
+        className={`relative w-full max-w-[140px] hover:scale-105 ${clickable ? 'cursor-pointer' : ''}`}
+        onClick={clickable ? onOpen : undefined}
+        onKeyDown={clickable ? (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onOpen?.();
+          }
+        } : undefined}
+        role={clickable ? 'button' : undefined}
+        tabIndex={clickable ? 0 : undefined}
+        aria-label={clickable ? `${name} · ${prof}` : undefined}
+      >
         <img
           src={image}
           alt={name}
@@ -3113,6 +3129,34 @@ const InitTracker = () => {
     </div>
   );
   
+  // Alturas de carta y separación desde la barra central.
+  // Las pilas crecen SIEMPRE alejándose del track: la primera carta queda a
+  // BASE_GAP de la barra y cada siguiente se aleja un paso más.
+  const CARD_HEIGHT = 128;
+  const BASE_GAP = 44;
+  const overlapFor = (count) => (count <= 1 ? 0 : count === 2 ? 12 : count === 3 ? 22 : 30);
+  const stepFor = (count) => CARD_HEIGHT - overlapFor(count);
+  const stackHeight = (count) => (count === 0 ? 0 : BASE_GAP + (count - 1) * stepFor(count) + CARD_HEIGHT);
+
+  // Altura única para TODO el tablero: así todas las etiquetas comparten la misma
+  // línea central aunque una posición acumule muchas cartas.
+  const boardSlotHeight = (() => {
+    const tallest = Array.from({ length: 11 }, (_, i) => {
+      const isRuneSlot = Object.values(runesColorMap).includes(i);
+      const isRuneText = i === 10;
+      const above =
+        (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnTop.includes(h.role)).length +
+        (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'arriba').length : 0) +
+        (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'arriba').length : 0);
+      const below =
+        (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnBottom.includes(h.role)).length +
+        (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'abajo').length : 0) +
+        (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'abajo').length : 0);
+      return Math.max(stackHeight(above), stackHeight(below));
+    });
+    return Math.max(448, 2 * Math.max(...tallest) + 16);
+  })();
+
   const renderSlot = (index) => {
     const isRune = Object.values(runesColorMap).includes(index);
     const isRuneTextSlot = index === 10;
@@ -3124,20 +3168,20 @@ const InitTracker = () => {
     const runesAbove = placedRunes.filter(r => r.rune.colorIndex === index && r.rune.posicion === 'arriba');
     const runesBelow = placedRunes.filter(r => r.rune.colorIndex === index && r.rune.posicion === 'abajo');
 
-    const renderStack = (items, isTop, type = 'hero') => {
-      // La barra central debe quedar SIEMPRE en la misma línea: el slot tiene altura
-      // fija y las pilas se anclan al 50%, creciendo hacia fuera. El solape se calcula
-      // para que todas las cartas quepan en la mitad disponible.
-      const CARD_HEIGHT = 128;
-      const AVAILABLE = 160;
+    const totalAbove = heroesAbove.length + (isRune ? enemiesAbove.length : 0) + (isRuneTextSlot ? runesAbove.length : 0);
+    const totalBelow = heroesBelow.length + (isRune ? enemiesBelow.length : 0) + (isRuneTextSlot ? runesBelow.length : 0);
+    const slotHeight = boardSlotHeight;
+
+    const renderStack = (items, side, type = 'hero') => {
+      const isTop = side === 'top';
       const count = items.length;
-      const overlap = count > 1
-        ? Math.min(CARD_HEIGHT - 16, Math.max(0, Math.ceil((count * CARD_HEIGHT - AVAILABLE) / (count - 1))))
-        : 0;
+      if (count === 0) return null;
+      const step = stepFor(count);
       const ordered = isTop ? [...items].reverse() : items;
 
       return ordered.map((item, i) => {
-        const zIndex = isTop ? items.length + i : items.length - i;
+        const distance = BASE_GAP + i * step;
+        const zIndex = count - i;
     
         const isCurrentTurn = currentTurnEntity && (
           (type === 'enemy' && item.enemy.uuid === currentTurnEntity.uuid) ||
@@ -3145,17 +3189,17 @@ const InitTracker = () => {
           (type === 'hero' && item.id === currentTurnEntity.id)
         );
         const isEntityFlipping = type === 'enemy' && flippedCards.includes(item.enemy.uuid);
-        const stackedOffset = i === 0 ? 0 : -overlap;
 
         return (
           <div
-            key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : item.id}
-            className="relative w-[108px] max-w-full shrink-0 transition-transform duration-300"
+            key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : `${type}-${item.id}`}
+            className="absolute left-1/2 w-[108px] max-w-full transition-transform duration-300"
             style={{
-              marginTop: isTop ? 0 : stackedOffset,
-              marginBottom: isTop ? stackedOffset : 0,
+              ...(isTop
+                ? { bottom: `calc(50% + ${distance}px)` }
+                : { top: `calc(50% + ${distance}px)` }),
+              transform: 'translateX(-50%)',
               zIndex: isCurrentTurn ? 40 : zIndex,
-              transform: isCurrentTurn ? 'scale(1.06)' : 'scale(1)',
             }}
           >
             <div className="relative items-center">
@@ -3197,6 +3241,9 @@ const InitTracker = () => {
                   image={item.image}
                   prof={getHeroProf(item.id)}
                   position={isTop ? "top" : "bottom"}
+                  heroId={item.id}
+                  clickable={heroManagementEnabled}
+                  onOpen={() => setSelectedHeroId(item.id)}
                 />
               )}
             </div>
@@ -3209,14 +3256,13 @@ const InitTracker = () => {
       <div
         key={index}
         className="track-slot relative w-full min-w-0"
-        style={{ minHeight: '28rem' }}
+        style={{ height: `${slotHeight}px` }}
       >
-        
-        {/* Pila superior: anclada al 50%, crece hacia arriba */}
-        <div className="track-slot__stack absolute inset-x-0 bottom-1/2 flex flex-col-reverse items-center pb-10">
-          {renderStack(heroesAbove, true, 'hero')}
-          {isRune && renderStack(enemiesAbove, true, 'enemy')}
-          {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), true, 'rune')}
+        {/* Pila superior: crece hacia arriba, alejándose del track */}
+        <div className="absolute inset-x-0 top-0 bottom-1/2">
+          {renderStack(heroesAbove, 'top', 'hero')}
+          {isRune && renderStack(enemiesAbove, 'top', 'enemy')}
+          {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), 'top', 'rune')}
         </div>
   
         {/* Centro del slot: siempre en la misma línea */}
@@ -3267,11 +3313,11 @@ const InitTracker = () => {
           </div>
         </div>
 
-        {/* Pila inferior: anclada al 50%, crece hacia abajo */}
-        <div className="track-slot__stack absolute inset-x-0 top-1/2 flex flex-col items-center pt-10">
-          {renderStack(heroesBelow, false, 'hero')}
-          {isRune && renderStack(enemiesBelow, false, 'enemy')}
-          {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), false, 'rune')}
+        {/* Pila inferior: crece hacia abajo, alejándose del track */}
+        <div className="absolute inset-x-0 top-1/2 bottom-0">
+          {renderStack(heroesBelow, 'bottom', 'hero')}
+          {isRune && renderStack(enemiesBelow, 'bottom', 'enemy')}
+          {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), 'bottom', 'rune')}
         </div>
   
       </div>
@@ -3930,6 +3976,14 @@ const InitTracker = () => {
             getEffectiveStats={getEnemyEffectiveStats}
           />
           )}
+        {selectedHeroId && (
+          <ModalHeroCard
+            key={selectedHeroId}
+            heroId={selectedHeroId}
+            role={trackerData.roles?.[selectedHeroId]}
+            onClose={() => setSelectedHeroId(null)}
+          />
+        )}
         {showPCModal && (
           <ModalCommanderPC
               onConfirm={(pcValue) => {
