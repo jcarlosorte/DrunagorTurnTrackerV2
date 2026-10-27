@@ -2564,46 +2564,96 @@ const InitTracker = () => {
         
     // 🔄 Si hay carta con cara, rotarla
     if (currentTurnEntity?.cara) {
-      const nuevaCara = currentTurnEntity.cara === 'A' ? 'B' : 'A';
       if (currentTurnEntity.type === 'enemy') {
-        const nuevo = ENEMIES.find(e => e.id === currentTurnEntity.id && e.cara === nuevaCara);
+        // La cara actual se lee del tablero: la entidad puede venir de un turno
+        // anterior y quedarse con la cara antigua.
+        const enTablero = placedEnemies.find(e => e.enemy.uuid === currentTurnEntity.uuid)?.enemy;
+        const caraActual = enTablero?.cara || currentTurnEntity.cara;
+        const caraDestino = caraActual === 'A' ? 'B' : 'A';
+        // El catálogo repite id/cara por categoría y comportamiento.
+        const candidatos = ENEMIES.filter(e => e.id === currentTurnEntity.id && e.cara === caraDestino);
+        const nuevo = candidatos.find(e => (
+          e.categoria === (enTablero?.categoria ?? currentTurnEntity.categoria)
+          && (e.comportamiento || 'estandar') === (enTablero?.comportamiento ?? currentTurnEntity.comportamiento ?? 'estandar')
+        )) || candidatos[0];
         if (nuevo) {
           setPlacedEnemies(prev => prev.map(item => {
-            if (item.enemy.uuid === currentTurnEntity.uuid) {
+            if (item.enemy.uuid !== currentTurnEntity.uuid) return item;
+
+            // Las caras B no repiten vida ni estadísticas: se guarda una copia
+            // de la cara A para restaurarla exactamente al volver.
+            if (caraDestino === 'B') {
+              // Se respalda también cuando el guardado antiguo no traía `cara`.
+              const respaldoA = item.enemy.respaldoA || (caraActual === 'A' ? {
+                vida: item.enemy.vida,
+                vidaMax: item.enemy.vidaMax,
+                movimiento: item.enemy.movimiento,
+                ataque: item.enemy.ataque,
+                capacidades: item.enemy.capacidades,
+                capacidadesOriginales: item.enemy.capacidadesOriginales,
+                inmunidad: item.enemy.inmunidad,
+                tipo_ataque: item.enemy.tipo_ataque,
+              } : undefined);
+
               const nuevasProps = {};
               for (const key of PROPIEDADES_ACTUALIZABLES) {
                 if (nuevo[key] !== undefined) nuevasProps[key] = nuevo[key];
               }
-              // 🔹 Clonamos el enemigo base con sus nuevas propiedades
-              let updatedEnemy = {
+
+              return {
+                ...item,
+                enemy: {
+                  ...item.enemy,
+                  ...nuevasProps,
+                  cara: 'B',
+                  respaldoA,
+                  capacidades: adjustCapabilitiesByRunes(nuevo.capacidades, nuevo.rune, getRuneCount),
+                  capacidadesOriginales: nuevo.capacidades,
+                },
+              };
+            }
+
+            // Vuelta a la cara A: se recupera el respaldo si existe.
+            const respaldo = item.enemy.respaldoA;
+            let updatedEnemy = respaldo
+              ? {
                 ...item.enemy,
-                ...nuevasProps,
-                cara: nuevaCara,
+                ...respaldo,
+                cara: 'A',
+                capacidades: adjustCapabilitiesByRunes(
+                  respaldo.capacidadesOriginales || respaldo.capacidades || [],
+                  nuevo.rune || item.enemy.rune,
+                  getRuneCount,
+                ),
+              }
+              : {
+                ...item.enemy,
+                ...Object.fromEntries(
+                  PROPIEDADES_ACTUALIZABLES
+                    .filter((key) => nuevo[key] !== undefined)
+                    .map((key) => [key, nuevo[key]]),
+                ),
+                cara: 'A',
                 capacidades: adjustCapabilitiesByRunes(nuevo.capacidades, nuevo.rune, getRuneCount),
                 capacidadesOriginales: nuevo.capacidades,
               };
-              // ⚡️ Si pasa a cara A y tiene evolución activa, aplicar bonificación
-              if (nuevaCara === 'A') {
-                const evo = enemyEvolutions.find(e => e.uuid === item.enemy.uuid);
-                if (evo && evo.count > 0) {
-                  updatedEnemy = {
-                    ...updatedEnemy,
-                    ataque: (nuevo.ataque || updatedEnemy.ataque) + (2 * evo.count),
-                    movimiento: (nuevo.movimiento || updatedEnemy.movimiento) + (1 * evo.count),
-                  };
-                  //console.log(`🧬 Evolución aplicada a ${updatedEnemy.nombre}: +${2 * evo.count} ATQ, +${1 * evo.count} MOV`);
-                }
-              }
-    
-              return { ...item, enemy: updatedEnemy };
-              
+
+            // ⚡️ Si pasa a cara A y tiene evolución activa, aplicar bonificación
+            const evo = enemyEvolutions.find(e => e.uuid === item.enemy.uuid);
+            if (evo && evo.count > 0) {
+              updatedEnemy = {
+                ...updatedEnemy,
+                ataque: (updatedEnemy.ataque || 0) + (2 * evo.count),
+                movimiento: (updatedEnemy.movimiento || 0) + (1 * evo.count),
+              };
             }
-            return item;
+
+            return { ...item, enemy: updatedEnemy };
           }));
-          setFlippedCards(prev => [...prev, currentTurnEntity.uuid]);
+          setFlippedCards(prev => (prev.includes(currentTurnEntity.uuid) ? prev : [...prev, currentTurnEntity.uuid]));
           setTimeout(() => {
             setFlippedCards(prev => prev.filter(id => id !== currentTurnEntity.uuid));
-          }, 600);
+          }, 650);
         }
       }
   
@@ -2613,19 +2663,23 @@ const InitTracker = () => {
         if (currentTurnEntity.tipo === 'defensa') dataSource = DEFENSA;
         if (currentTurnEntity.tipo === 'incursion') dataSource = INCURSION;
         if (currentTurnEntity.tipo === 'asalto') dataSource = ASALTO;
+        // La cara actual se toma del tablero para no repetir siempre la misma.
+        const runaEnTablero = placedRunes.find(r => r.rune.uuid === currentTurnEntity.uuid)?.rune;
+        const caraRuna = runaEnTablero?.cara || currentTurnEntity.cara;
+        const caraDestinoRuna = caraRuna === 'A' ? 'B' : 'A';
         // Buscar la misma carta pero en la cara opuesta
-        const nueva = dataSource.find(r => r.id === currentTurnEntity.id && r.cara === nuevaCara);
-        
+        const nueva = dataSource.find(r => r.id === currentTurnEntity.id && r.cara === caraDestinoRuna);
+
         if (nueva) {
           setPlacedRunes(prev => prev.map(item =>
             item.rune.uuid === currentTurnEntity.uuid
-              ? { rune: { ...item.rune, ...nueva, cara: nuevaCara } }
+              ? { rune: { ...item.rune, ...nueva, cara: caraDestinoRuna } }
               : item
           ));
-          setFlippedCards(prev => [...prev, currentTurnEntity.uuid]);
+          setFlippedCards(prev => (prev.includes(currentTurnEntity.uuid) ? prev : [...prev, currentTurnEntity.uuid]));
           setTimeout(() => {
             setFlippedCards(prev => prev.filter(id => id !== currentTurnEntity.uuid));
-          }, 600);
+          }, 650);
         }
       }
     }
@@ -3047,9 +3101,7 @@ const InitTracker = () => {
       <div className={`w-full perspective hover:scale-105`}>
         
         <div
-          className={`relative w-full h-full transition-transform duration-1000 transform-style preserve-3d ${
-            flipped ? 'rotate-y-180' : ''
-          }`}
+          className={`relative w-full h-full transform-style preserve-3d ${flipped ? 'card-flip' : ''}`}
         >
           {renderSide(false)}
           {renderSide(true)}

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { ESTADOS_ALTERADOS, INMUNIDADES } from '@/data/estadosAlterados';
 import { ENEMY_RING_COLORS } from '@/data/enemyRings';
@@ -59,7 +58,6 @@ export default function EnemyCard({
   estadosAlterados = [],
   inmunidad = [],
 }) {
-  const [flipped, setFlipped] = useState(false);
   const { translations } = useLanguage();
   const conditions = translations.condiciones_t || {};
   const immunityLabels = translations.condiciones_d || {};
@@ -70,19 +68,15 @@ export default function EnemyCard({
     || ENEMY_RING_COLORS_BIG.find((ring) => ring.id === ringColor)?.className
     || '';
 
-  useEffect(() => {
-    if (!isFlipping) return undefined;
-    setFlipped(true);
-    const timer = setTimeout(() => setFlipped(false), 1100);
-    return () => clearTimeout(timer);
-  }, [isFlipping]);
+
 
   return (
     <div
       key={uuid}
+      data-enemy-card={uuid}
       className={classNames(
-        'relative mx-1 flex transform-style-preserve-3d flex-col items-center transition-transform duration-1000',
-        flipped ? 'rotate-y-180' : '',
+        'relative mx-1 flex flex-col items-center',
+        isFlipping ? 'card-flip' : '',
       )}
       style={{ perspective: '1000px' }}
     >

@@ -610,9 +610,28 @@ Estados        chip rgba(30,41,59,.7) · + rgb(21,128,61) · − rgb(185,28,28)
 InitTracker    4.087 → 4.000 líneas
 Suite          Lint 0 errores/0 avisos · Unit 45 · E2E 16/16
 ```
+### 11.ª tanda — volteo de cartas y fin de H8
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Volteo sin quedarse girado** | La carta ya no rota 180° de forma permanente: animación `cardFlipY` (0→90°→0) que la deja recta. El estado interno que se quedaba atascado desaparece | `index.css`, `EnemyCard.jsx`, `InitTracker.jsx` |
+| **Alternancia A/B fiable** | La cara de partida se lee del tablero (no de la entidad, que puede estar desfasada) y la vuelta a A restaura un **respaldo** guardado en la propia carta | `InitTracker.jsx` |
+| **Variante correcta** | Antes se copiaban estadísticas de otra categoría (`ataque 6 → 8`); ahora el respaldo conserva vida, ataque, movimiento y capacidades de la cara A, y la evolución se suma aparte | `InitTracker.jsx` |
+| **Runas** | Mismo tratamiento: cara actual desde el tablero y animación sin giro persistente | `InitTracker.jsx` |
+| **H8 3/3** | Paneles de escenario/pilas extraídos a `ScenarioPanels` (pilas, pila concentrada, barricadas, puntos de aparición, claves de runa y rescate): consume los contextos, sin props | `components/scenario/ScenarioPanels.jsx`, `TopMenu.jsx` |
+
+**Medición**
+
+```text
+Animación   clase card-flip durante 0,6 s · al terminar transform:none
+Caras       A → B → A → B alternando en turnos consecutivos
+Estadísticas cara A  ataque 6 (+2 evolución) · movimiento 4 (+1) · vida 24
+TopMenu     1.503 → 1.029 líneas · ScenarioPanels 540 líneas
+Suite       Lint 0 · Unit 45 · E2E 18/18
+```
 ### Pendiente / pospuesto
 
-- **H8 (3/3)**: paneles de escenario/pilas (~350 líneas) y el resto de `useTurnEngine` (efectos de turno).
+- **H8**: cerrado en sus tres partes (cursor, orden/historial y paneles de escenario).
 - **D9**: hecho para eventos, facciones y estados; quedan acentos sueltos de botones (verde/rojo) fuera de la paleta.
 - **F2**: `srcset`/AVIF (WebP ya aplicado).
 - **F4**: CSP por `<meta>`; `frame-ancestors`/`report-uri` siguen requiriendo cabeceras (solo con otro hosting).
