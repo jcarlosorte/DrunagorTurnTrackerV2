@@ -76,11 +76,34 @@ export function readHeroExtras() {
   return readJsonStorage(HERO_EXTRAS_KEY, {}, isPlainObject);
 }
 
+// Caché por héroe: evita leer y normalizar localStorage en cada render de carta.
+// Se invalida en cada escritura (y al importar o cargar una partida).
+const cache = new Map();
+
+/** Invalida la caché de extras (tras escribir, importar o cargar partida). */
+export function invalidateHeroExtrasCache() {
+  cache.clear();
+}
+
+// Otra pestaña puede haber cargado una partida: mantenemos la caché al día.
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('storage', (event) => {
+    if (!event.key || event.key === HERO_EXTRAS_KEY) invalidateHeroExtrasCache();
+  });
+}
+
 export function getHeroExtras(heroId) {
+  const cached = cache.get(heroId);
+  if (cached) return cached;
+
   const stored = readHeroExtras();
   const entry = stored[heroId];
   const base = emptyHeroExtras(heroId);
-  if (!isPlainObject(entry)) return base;
+
+  if (!isPlainObject(entry)) {
+    cache.set(heroId, base);
+    return base;
+  }
 
   const equipoMods = normalizeMods(entry.equipoMods, base.equipoMods);
   // Si cambian los cubos oficiales de un héroe, se refrescan los guardados.
@@ -98,7 +121,7 @@ export function getHeroExtras(heroId) {
     cubos[key] = Math.max(0, Math.min(Number(cubos[key]) || 0, max));
   });
 
-  return {
+  const value = {
     ...base,
     ...entry,
     auras: Array.isArray(entry.auras) ? entry.auras : [],
@@ -117,6 +140,9 @@ export function getHeroExtras(heroId) {
     vida: Number.isFinite(entry.vida) ? entry.vida : base.vida,
     vidaMax: Number(entry.vidaMax) || base.vidaMax,
   };
+
+  cache.set(heroId, value);
+  return value;
 }
 
 export function setHeroExtras(heroId, extras) {
@@ -127,6 +153,7 @@ export function setHeroExtras(heroId, extras) {
     cubosVersion: HERO_CUBES_VERSION,
   };
   writeJsonStorage(HERO_EXTRAS_KEY, stored);
+  invalidateHeroExtrasCache();
   return stored[heroId];
 }
 

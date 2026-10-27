@@ -85,6 +85,8 @@ export function removeStorage(key) {
   }
 }
 
+import { sanitizeHeroExtras } from '@/utils/heroSanitize';
+
 export const isPlainObject = (value) => (
   value !== null && typeof value === 'object' && !Array.isArray(value)
 );
@@ -99,10 +101,14 @@ export const GAME_STORAGE_KEYS = [
   'trackerSession',
   'gameLog',
   'heroExtras',
+  'heroManagement',
 ];
 
-const CONFIG_STORAGE_KEYS = ['expansions', 'trackerData'];
+const CONFIG_STORAGE_KEYS = ['expansions', 'trackerData', 'heroManagement'];
 const TRACK_STORAGE_KEYS = ['gameState', 'initEnemiesState', 'initRunesState', 'trackerSession', 'gameLog', 'heroExtras'];
+
+/** Versión actual del formato de guardado. */
+export const SNAPSHOT_SCHEMA_VERSION = 3;
 
 function readStorageData() {
   const data = {};
@@ -127,7 +133,7 @@ export function createStorageSnapshot(scope = 'full') {
 
   return {
     app: 'drunagor-turn-tracker',
-    schemaVersion: 2,
+    schemaVersion: SNAPSHOT_SCHEMA_VERSION,
     scope,
     exportedAt: new Date().toISOString(),
     configuration,
@@ -139,6 +145,9 @@ function validateStorageData(data) {
   if (!isPlainObject(data)) throw new Error('Datos de partida no válidos');
   if (data.lang !== undefined && typeof data.lang !== 'string') throw new Error('Idioma no válido');
   if (data.expansions !== undefined && !Array.isArray(data.expansions)) throw new Error('Expansiones no válidas');
+  if (data.heroManagement !== undefined && typeof data.heroManagement !== 'boolean') {
+    throw new Error('Ajuste de gestión de héroes no válido');
+  }
   ['trackerData', 'gameState', 'initEnemiesState', 'initRunesState', 'trackerSession', 'heroExtras']
     .forEach((key) => {
       if (data[key] !== undefined && !isPlainObject(data[key])) throw new Error(`Estado no válido: ${key}`);
@@ -146,30 +155,75 @@ function validateStorageData(data) {
   if (data.gameLog !== undefined && !Array.isArray(data.gameLog)) throw new Error('Historial no válido');
 }
 
-export function extractSnapshotData(snapshot, scope = 'full') {
+/**
+ * Migra guardados antiguos al formato actual.
+ *
+ * v1 → datos planos · v2 → configuration/track · v3 → + gestión de héroes.
+ * Nunca lanza: si falta `heroExtras` lo deja vacío para que la app aplique
+ * los valores base de cada héroe.
+ */
+export function migrateSnapshot(snapshot) {
   if (!isPlainObject(snapshot)) throw new Error('Formato de partida no compatible');
 
+  const version = Number(snapshot.schemaVersion) || 1;
+  if (version === 1) {
+    return { schemaVersion: SNAPSHOT_SCHEMA_VERSION, data: { ...(snapshot.data || {}) } };
+  }
+
+  const configuration = isPlainObject(snapshot.configuration) ? snapshot.configuration : {};
+  const track = isPlainObject(snapshot.track) ? snapshot.track : {};
+
+  return {
+    schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+    configuration: version >= 3 ? configuration : { ...configuration },
+    track: {
+      ...track,
+      heroExtras: sanitizeHeroExtras(track.heroExtras),
+    },
+  };
+}
+
+export function extractSnapshotData(snapshot, scope = 'full') {
+  if (!isPlainObject(snapshot)) throw new Error('Formato de partida no compatible');
+  if (![1, 2, 3].includes(Number(snapshot.schemaVersion))) {
+    throw new Error('Formato de partida no compatible');
+  }
+
+  const migrated = migrateSnapshot(snapshot);
   let data;
-  if (snapshot.schemaVersion === 1 && isPlainObject(snapshot.data)) {
-    // Compatibilidad con las exportaciones anteriores.
-    data = snapshot.data;
-  } else if (snapshot.schemaVersion === 2 && isPlainObject(snapshot.configuration) && isPlainObject(snapshot.track)) {
+
+  if (migrated.data) {
+    data = migrated.data;
+  } else {
+    if (!isPlainObject(migrated.configuration) || !isPlainObject(migrated.track)) {
+      throw new Error('Formato de partida no compatible');
+    }
     const selectedScope = scope === 'configuration' || scope === 'track' ? scope : 'full';
     data = selectedScope === 'configuration'
-      ? snapshot.configuration
+      ? migrated.configuration
       : selectedScope === 'track'
-        ? snapshot.track
-        : { ...snapshot.configuration, ...snapshot.track };
-  } else {
-    throw new Error('Formato de partida no compatible');
+        ? migrated.track
+        : { ...migrated.configuration, ...migrated.track };
+  }
+
+  // Los datos de héroe siempre se normalizan antes de tocar el almacenamiento.
+  if (data.heroExtras !== undefined) {
+    data = { ...data, heroExtras: sanitizeHeroExtras(data.heroExtras) };
   }
 
   validateStorageData(data);
   return data;
 }
 
-export function applyStorageData(data) {
+/**
+ * Escribe un snapshot en el almacenamiento.
+ *
+ * Al cargar una partida completa se limpian antes las claves de track para no
+ * arrastrar restos de la partida anterior (héroes, historial o enemigos).
+ */
+export function applyStorageData(data, { scope = 'full' } = {}) {
   if (!isPlainObject(data)) throw new Error('Datos de partida no válidos');
+  if (scope === 'full' || scope === 'track') clearTrackState();
   Object.entries(data).forEach(([key, value]) => {
     if (GAME_STORAGE_KEYS.includes(key)) writeJsonStorage(key, value);
   });
@@ -180,14 +234,13 @@ export function importStorageSnapshot(snapshot, scope = 'full', options = {}) {
   const sanitized = typeof options.validateConfiguration === 'function'
     ? (options.validateConfiguration(data) || data)
     : data;
-  applyStorageData(sanitized);
+  applyStorageData(sanitized, { scope });
   return sanitized;
 }
 
 export function clearGameSession() {
   if (!canUseStorage()) return;
-  ['trackerData', 'gameState', 'initEnemiesState', 'initRunesState', 'trackerSession']
-    .forEach((key) => removeStorage(key));
+  ['trackerData', ...TRACK_STORAGE_KEYS].forEach((key) => removeStorage(key));
 }
 
 export function clearTrackState() {

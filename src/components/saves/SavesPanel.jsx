@@ -81,7 +81,7 @@ export default function SavesPanel({ mode = 'page' }) {
       const record = loadGame(id);
       const data = extractSnapshotData(record.snapshot, 'full');
       const { data: sanitized } = sanitizeConfiguration(data);
-      applyStorageData(sanitized);
+      applyStorageData(sanitized, { scope: 'full' });
       window.location.reload();
     } catch (error) {
       notify('error', error.message || 'No se pudo cargar la partida.');
@@ -102,8 +102,8 @@ export default function SavesPanel({ mode = 'page' }) {
 
     try {
       const snapshot = JSON.parse(await file.text());
-      if (!snapshot || ![1, 2].includes(snapshot.schemaVersion)) throw new Error('Formato no compatible');
-      const fileScope = snapshot.schemaVersion === 2 ? snapshot.scope : 'full';
+      if (!snapshot || ![1, 2, 3].includes(Number(snapshot.schemaVersion))) throw new Error('Formato no compatible');
+      const fileScope = Number(snapshot.schemaVersion) >= 2 ? snapshot.scope : 'full';
       const allowedScope = ['configuration', 'track', 'full'].includes(fileScope) ? fileScope : 'full';
       const initialScope = allowedScope === 'full' ? 'full' : allowedScope;
 
@@ -123,7 +123,7 @@ export default function SavesPanel({ mode = 'page' }) {
     try {
       const extracted = extractSnapshotData(pendingImport.snapshot, importScope);
       const { data } = sanitizeConfiguration(extracted);
-      applyStorageData(data);
+      applyStorageData(data, { scope: importScope });
       window.location.reload();
     } catch {
       setPendingImport(null);

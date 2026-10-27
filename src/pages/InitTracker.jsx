@@ -49,6 +49,7 @@ import { appendGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { getHeroExtras, patchHeroExtras, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { aplicarEfectosEstadosHeroe } from '@/utils/heroStatus';
+import { classifyScenarioToast } from '@/utils/toastKind';
 import { ESTADOS_HEROE } from '@/data/heroes/index';
 
 const rolesPositionMap = {
@@ -2117,8 +2118,8 @@ const InitTracker = () => {
   const previousTurnIndexRef = useRef(persistedSession.previousTurnIndex ?? null);
   const processedStartEffectsRef = useRef(toSet(persistedSession?.processed?.start));
   const processedEndEffectsRef = useRef(toSet(persistedSession?.processed?.end));
-  const processedHeroEffectsRef = useRef(new Set());
-  const lastHeroTurnRef = useRef(null);
+  const processedHeroEffectsRef = useRef(toSet(persistedSession?.processed?.hero));
+  const lastHeroTurnRef = useRef(persistedSession?.processed?.lastHeroTurn || null);
   const processedCardsRef = useRef(toSet(persistedSession?.processed?.cards));
   const processedTiempoRef = useRef(toSet(persistedSession?.processed?.tiempo));
   const [extraTurnsQueue, setExtraTurnsQueue] = useState(() => persistedSession.extraTurnsQueue || []);
@@ -2143,6 +2144,8 @@ const InitTracker = () => {
         end: [...processedEndEffectsRef.current],
         cards: [...processedCardsRef.current],
         tiempo: [...processedTiempoRef.current],
+        hero: [...processedHeroEffectsRef.current],
+        lastHeroTurn: lastHeroTurnRef.current || null,
       },
     });
   };
@@ -2190,6 +2193,8 @@ const InitTracker = () => {
       processedEndEffectsRef.current.clear();
       processedCardsRef.current.clear();
       processedTiempoRef.current = new Set();
+      processedHeroEffectsRef.current = new Set();
+      lastHeroTurnRef.current = null;
       setExecutedRunes([]);
       roundRef.current += 1;
       setRoundNumber(roundRef.current);
@@ -2838,6 +2843,8 @@ const InitTracker = () => {
     processedEndEffectsRef.current.clear();
     processedCardsRef.current.clear();
     processedTiempoRef.current = new Set();
+    processedHeroEffectsRef.current = new Set();
+    lastHeroTurnRef.current = null;
   
     showScenarioToast(`🔁 ${ti.rondaInicial}`);
   };
@@ -2887,12 +2894,14 @@ const InitTracker = () => {
   const turnSignature = `${roundNumber}-${turnIndex}-${currentTurnEntity?.type || ''}-${currentTurnEntity?.id || currentTurnEntity?.uuid || ''}`;
 
   // Efectos de INICIO del turno del héroe (estados alterados), igual que en enemigos.
+  // La firma del turno se persiste para que recargar la página no vuelva a aplicarlos.
   useEffect(() => {
     if (!heroManagementEnabled) return;
     if (currentTurnEntity?.type !== 'hero' || !currentTurnEntity.id) return;
     if (lastHeroTurnRef.current === turnSignature) return;
     lastHeroTurnRef.current = turnSignature;
     aplicarEfectosHeroe(currentTurnEntity.id, 'inicio');
+    persistProcessed();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turnSignature]);
 
@@ -3379,7 +3388,7 @@ const InitTracker = () => {
     return (
       <div
         key={index}
-        className="track-slot relative w-full min-w-0"
+        className={`track-slot relative w-full min-w-0 ${index === currentSlotIndex ? 'track-slot--active' : ''}`}
         style={{ height: `${slotHeight}px` }}
       >
         {/* Pilas: se anclan al 50% del propio slot y crecen hacia fuera */}
@@ -4197,45 +4206,57 @@ const InitTracker = () => {
                 </button>
               </div>
             ))}
-            {/* Contenedor de Toasts de Cartas de Defensa de la Aldea */}
-            {scenarioToasts.map(toast => (
-              <div
-                key={toast.id}
-                className="relative bg-purple-800 text-white px-4 py-2 rounded-lg shadow-lg text-sm flex items-center gap-3"
-              >
-                <div className="flex flex-col">
-                  {/* ✅ Mensaje del toast */}
-                  {toast.message && (
-                    <div className="font-semibold mt-1 uppercase text-yellow-300">{toast.message}</div> // nombre de la carta
-                  )}
-    
-                  {toast.action && (
-                    <div className="text-sm mt-1 whitespace-pre-line">{toast.action}</div> // acción principal
-                  )}
-    
-                   {toast.action2 && (
-                    <div className="text-sm mt-1 whitespace-pre-line">{toast.action2}</div> // acción principal
-                  )}
-                  
-                  {toast.extra && (
-                    <div className="text-xs mt-1 text-slate-300 whitespace-pre-line">
-                      {toast.extra}
-                    </div>
-                  )}
-                </div>
-                {/* ✅ Botón para cerrar manualmente */}
-                <button
-                  onClick={() => {
-                    setScenarioToasts(prev => prev.filter(t => t.id !== toast.id));
-                  }}
-                  className="ml-2 bg-red-600 hover:bg-red-700 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                  title="Cerrar"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
           </div>
+        </AnimatePresence>
+
+        {/* Avisos de escenario: pila lateral para no tapar el tablero */}
+        <AnimatePresence>
+          {scenarioToasts.length > 0 && (
+            <div
+              className="layer-toast fixed bottom-3 left-3 flex max-h-[62dvh] w-[min(92vw,26rem)] flex-col gap-2 overflow-y-auto pr-1"
+              role="status"
+              aria-live="polite"
+              aria-atomic="false"
+            >
+              {scenarioToasts.map((toast) => {
+                const { icon, tone } = classifyScenarioToast(toast.message);
+                // El icono ya se muestra aparte: se quita el emoji inicial del texto.
+                const cleanMessage = toast.message
+                  ? String(toast.message).replace(/^[^\p{L}\p{N}]+/u, '').trim()
+                  : '';
+                return (
+                  <motion.div
+                    key={toast.id}
+                    initial={{ opacity: 0, x: -16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -16 }}
+                    transition={{ duration: 0.2 }}
+                    className={`relative rounded-xl border-l-4 ${tone} px-3 py-2 text-sm text-white shadow-xl backdrop-blur`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <span aria-hidden="true" className="mt-0.5 text-base leading-none">{icon}</span>
+                      <div className="min-w-0 flex-1">
+                        {cleanMessage && (
+                          <p className="font-semibold uppercase tracking-wide text-yellow-300">{cleanMessage}</p>
+                        )}
+                        {toast.action && <p className="mt-1 whitespace-pre-line">{toast.action}</p>}
+                        {toast.action2 && <p className="mt-1 whitespace-pre-line">{toast.action2}</p>}
+                        {toast.extra && <p className="mt-1 whitespace-pre-line text-xs text-slate-300">{toast.extra}</p>}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setScenarioToasts((prev) => prev.filter((item) => item.id !== toast.id))}
+                        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-800/80 text-xs hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                        aria-label={ti.close || 'Cerrar aviso'}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </AnimatePresence>
       </PageTransition>
   );
