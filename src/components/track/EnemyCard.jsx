@@ -5,6 +5,7 @@ import { ENEMY_RING_COLORS } from '@/data/enemyRings';
 import { ENEMY_RING_COLORS_BIG } from '@/data/enemyRingsBig';
 import { useLanguage } from '@/context/LanguageContext';
 import { borderColorMap, categoryTextGlowMap, textBgColorMap } from './enemyVisuals';
+import FitText from './FitText';
 
 // Los ayudas usan `title` nativo: el tablero tiene scroll y `overflow`, así que
 // cualquier tooltip absoluto quedaría recortado o tapado por otras tarjetas.
@@ -138,12 +139,12 @@ export default function EnemyCard({
           type="button"
           onClick={() => openEnemyModal(uuid)}
           aria-label={name}
-          className={`enemy-text-wrapper absolute bottom-0 left-1/2 -translate-x-1/2 cursor-pointer rounded-lg border-2 px-1 py-0.5 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+          className={`enemy-text-wrapper absolute bottom-0 left-1/2 w-[94%] -translate-x-1/2 cursor-pointer rounded-lg border-2 px-1 py-0.5 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
             borderColorMap[color] || ''
           } ${textBgColorMap[color] || 'bg-black/60'} ${categoryTextGlowMap[categoria] || ''}`}
         >
           <span className="flex w-full flex-col items-center leading-none">
-            <span className="enemy-text leading-none">{name}</span>
+            <FitText text={name} max={12} min={6.5} className="enemy-text w-full text-center font-semibold leading-none" />
             {!isBoss && comportamiento && (
               <span className="mt-0.5 text-[0.5rem] italic leading-none opacity-90">
                 {behaviors[comportamiento] || comportamiento}

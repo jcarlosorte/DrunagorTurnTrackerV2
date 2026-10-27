@@ -37,6 +37,8 @@ import TileToast from '@/components/TileToast';
 import BagStatusPanel from '@/components/track/BagStatusPanel';
 import TrackTurnHeader from '@/components/track/TrackTurnHeader';
 import EnemyCard from '@/components/track/EnemyCard';
+import FitText from '@/components/track/FitText';
+import HistoryPanel from '@/components/track/HistoryPanel';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import CommanderCard from '@/components/CommanderCard';
 import { v4 as uuidv4 } from 'uuid';
@@ -2077,6 +2079,7 @@ const InitTracker = () => {
   const [extraTurnTotal, setExtraTurnTotal] = useState(() => persistedSession.extraTurnTotal || 0);
   const [presentation, setPresentation] = useState(false);
   const [bagOpen, setBagOpen] = useState(true);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [undoCount, setUndoCount] = useState(0);
   const turnHistoryRef = useRef([]);
 
@@ -2807,7 +2810,11 @@ const InitTracker = () => {
 
   const showScenarioToast = (message, action = null, action2 = null, extra = null) => {
     const id = uuidv4();
-    setScenarioToasts(prev => [...prev, { id, message, action, action2, extra }]);
+    // Máximo 5 avisos visibles y cierre automático para no tapar el tablero.
+    setScenarioToasts(prev => [...prev, { id, message, action, action2, extra }].slice(-5));
+    window.setTimeout(() => {
+      setScenarioToasts(prev => prev.filter(item => item.id !== id));
+    }, 9000);
     // Historial exportable: registra el evento junto al guardado de la partida.
     appendGameLog('event', [message, action, action2].filter(Boolean).join(' · '), {
       round: roundRef.current,
@@ -3077,12 +3084,12 @@ const InitTracker = () => {
           className="w-full h-auto object-cover rounded-lg border-2 border-[#800020]/70"
         />
         <div
-          className="absolute w-full bottom-0 left-1/2 transform -translate-x-1/2 px-1 rounded-lg text-white text-xs text-center bg-[#800020] leading-tight mt-2"
+          className="absolute bottom-0 left-1/2 w-[94%] -translate-x-1/2 rounded-lg bg-[#800020] px-1 text-center text-white leading-tight"
           style={{
             textShadow: '0 0 4px #b87333aa',
           }}
         >
-          <span className="block">{name}</span>
+          <FitText text={name} max={12} min={6.5} className="w-full text-center font-semibold" />
           <span className="block text-[0.50rem] italic opacity-90 mb-1">{prof}</span>
         </div>
       </div>
@@ -3101,13 +3108,13 @@ const InitTracker = () => {
     const runesBelow = placedRunes.filter(r => r.rune.colorIndex === index && r.rune.posicion === 'abajo');
 
     const renderStack = (items, isTop, type = 'hero') => {
-      const spacing = items.length <= 2 ? 62 : items.length === 3 ? 48 : items.length === 4 ? 38 : 30;
-      const reversed = isTop ? [...items].reverse() : items;
-      
-      return reversed.map((item, i) => {
+      // Solape por margen negativo en flujo: el navegador calcula la altura real,
+      // así la pila crece igual hacia arriba y hacia abajo sin recortes.
+      const overlap = items.length <= 2 ? 0 : items.length === 3 ? 16 : items.length === 4 ? 26 : 34;
+      const ordered = isTop ? [...items].reverse() : items;
+
+      return ordered.map((item, i) => {
         const zIndex = isTop ? items.length + i : items.length - i;
-        const offset = i * spacing;
-        const style = isTop ? { bottom: `${offset}px`, zIndex } : { top: `${offset}px`, zIndex };
     
         const isCurrentTurn = currentTurnEntity && (
           (type === 'enemy' && item.enemy.uuid === currentTurnEntity.uuid) ||
@@ -3115,14 +3122,17 @@ const InitTracker = () => {
           (type === 'hero' && item.id === currentTurnEntity.id)
         );
         const isEntityFlipping = type === 'enemy' && flippedCards.includes(item.enemy.uuid);
+        const stackedOffset = i === 0 ? 0 : -overlap;
+
         return (
           <div
             key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : item.id}
-            className="absolute left-1/2 w-[104px] max-w-full -translate-x-1/2 transition-transform duration-300"
+            className="relative w-[104px] max-w-full shrink-0 transition-transform duration-300"
             style={{
-              ...style,
-              zIndex: isCurrentTurn ? 40 : style.zIndex ?? 100,
-              transform: isCurrentTurn ? 'translateX(-50%) scale(1.08)' : 'translateX(-50%) scale(1)',
+              marginTop: isTop ? 0 : stackedOffset,
+              marginBottom: isTop ? stackedOffset : 0,
+              zIndex: isCurrentTurn ? 40 : zIndex,
+              transform: isCurrentTurn ? 'scale(1.06)' : 'scale(1)',
             }}
           >
             <div className="relative items-center">
@@ -3175,17 +3185,15 @@ const InitTracker = () => {
     return (
       <div
         key={index}
-        className={`track-slot flex w-full min-w-0 flex-col ${slotHeightClass} py-2`}
+        className="track-slot flex w-full min-w-0 flex-col py-2"
         style={{ minHeight: '21rem' }}
       >
         
-        {/* Escalonado arriba */}
-        <div className="relative flex h-[9rem] w-full shrink-0 justify-center">
-          <div className="track-slot__stack absolute inset-x-0 bottom-0 flex justify-center">
-            {renderStack(heroesAbove, true, 'hero')}
-            {isRune && renderStack(enemiesAbove, true, 'enemy')}
-            {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), true, 'rune')}
-          </div>
+        {/* Pila superior: crece hacia arriba en flujo */}
+        <div className="track-slot__stack flex w-full flex-1 flex-col-reverse items-center justify-end gap-0 pb-2">
+          {renderStack(heroesAbove, true, 'hero')}
+          {isRune && renderStack(enemiesAbove, true, 'enemy')}
+          {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), true, 'rune')}
         </div>
   
         {/* Centro del slot */}
@@ -3236,13 +3244,11 @@ const InitTracker = () => {
           </div>
         </div>
 
-        {/* Escalonado abajo */}
-        <div className="relative mt-3 flex h-[9rem] w-full shrink-0 justify-center">
-          <div className="track-slot__stack absolute inset-x-0 top-0 flex justify-center">
-            {renderStack(heroesBelow, false, 'hero')}
-            {isRune && renderStack(enemiesBelow, false, 'enemy')}
-            {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), false, 'rune')}
-          </div>
+        {/* Pila inferior: crece hacia abajo en flujo */}
+        <div className="track-slot__stack flex w-full flex-1 flex-col items-center justify-start gap-0 pt-2">
+          {renderStack(heroesBelow, false, 'hero')}
+          {isRune && renderStack(enemiesBelow, false, 'enemy')}
+          {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), false, 'rune')}
         </div>
   
       </div>
@@ -3704,6 +3710,8 @@ const InitTracker = () => {
                   canUndo={undoCount > 0}
                   bagOpen={bagOpen}
                   onToggleBag={() => setBagOpen((prev) => !prev)}
+                  historyOpen={historyOpen}
+                  onToggleHistory={() => setHistoryOpen((prev) => !prev)}
                   status={(
                     <div className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs">
                       <span className="font-semibold text-emerald-200">
@@ -3741,16 +3749,29 @@ const InitTracker = () => {
               </div>
 
               {bagOpen && (
-                <aside className="lg:w-72 lg:shrink-0">
+                <aside className="lg:w-56 lg:shrink-0">
                   <BagStatusPanel
                     usedTiles={usedTiles}
                     availableTiles={availableTiles}
                     labels={{
-                      title: ti.estadoBolsa || 'Estado de la Bolsa de Runas',
+                      title: ti.bag || 'Bolsa de runas',
                       drawn: ti.extraidas || 'Extraídas',
                       total: ti.total || 'Total',
                     }}
                     colors={ti.colores || {}}
+                  />
+                </aside>
+              )}
+
+              {historyOpen && (
+                <aside className="lg:w-64 lg:shrink-0">
+                  <HistoryPanel
+                    limit={10}
+                    refreshKey={scenarioToasts.length + turnIndex + roundNumber}
+                    labels={{
+                      title: ti.history || 'Historial',
+                      empty: ti.historyEmpty || 'Sin eventos todavía.',
+                    }}
                   />
                 </aside>
               )}

@@ -510,7 +510,9 @@
     "viewMode": "Vista del tablero",
     "roundShort": "Ronda",
     "bag": "Bolsa de runas",
-    "presentationShort": "Presentación"
+    "presentationShort": "Presentación",
+    "history": "Historial",
+    "historyEmpty": "Sin eventos todavía."
   },
   "scenarioCard": {
     "Manifiesta": "Manifiesta",

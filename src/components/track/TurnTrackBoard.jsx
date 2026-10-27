@@ -16,6 +16,8 @@ export default function TurnTrackBoard({
   status = null,
   bagOpen = false,
   onToggleBag,
+  historyOpen = false,
+  onToggleHistory,
   canUndo = false,
   labels = {},
 }) {
@@ -41,6 +43,16 @@ export default function TurnTrackBoard({
   // Ajuste inicial para que el tablero quepa al entrar.
   useEffect(() => {
     if (view === 'board') fitToWidth();
+  }, [view, fitToWidth]);
+
+  // El panel lateral cambia el ancho disponible: reajustamos el zoom automáticamente.
+  useEffect(() => {
+    if (view !== 'board') return undefined;
+    const element = viewportRef.current;
+    if (!element || typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver(() => fitToWidth());
+    observer.observe(element);
+    return () => observer.disconnect();
   }, [view, fitToWidth]);
 
   const handleTouchStart = (event) => {
@@ -152,6 +164,19 @@ export default function TurnTrackBoard({
           }`}
         >
           🎒
+        </button>
+
+        <button
+          type="button"
+          onClick={onToggleHistory}
+          aria-pressed={historyOpen}
+          title={labels.history || 'Historial'}
+          aria-label={labels.history || 'Historial'}
+          className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+            historyOpen ? 'border-sky-400 bg-sky-700 text-white' : 'border-slate-700 bg-slate-900 text-slate-200 hover:text-white'
+          }`}
+        >
+          📜
         </button>
 
         <button
