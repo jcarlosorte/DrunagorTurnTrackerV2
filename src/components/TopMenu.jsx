@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
-import { languages as availableLanguages, languageNames } from '@/i18n/languageData';
 import { useSavesUi } from '@/context/SavesUiContext';
 import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes } from 'react-icons/gi';
 import { MdAddCircleOutline } from 'react-icons/md';
@@ -14,6 +13,7 @@ import { DEFENSA } from '@/data/defensa';
 import { } from '@/data/estadosAlterados';
 import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useLanguage } from "@/context/LanguageContext";
+import LanguageMenu from "@/components/LanguageMenu";
 import ScenarioPanels from '@/components/scenario/ScenarioPanels';
 import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
@@ -31,7 +31,7 @@ const TopMenu = ({
   onTileDraw
 }) => {
 
-  const { translations, language, setLanguage } = useLanguage();
+  const { translations } = useLanguage();
   const navigate = useNavigate();
   const { openSaves } = useSavesUi() || {};
   const savesT = translations?.saves || {};
@@ -185,39 +185,33 @@ const TopMenu = ({
             onClick={() => window.open('https://tabletopaudio.com/', '_blank', 'noopener,noreferrer')}
             aria-label={t.music || 'Música'}
             title={t.music || 'Música'}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800 text-white transition hover:bg-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+            className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-slate-800 px-2.5 text-sm font-semibold text-white transition hover:bg-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
           >
             <GiMusicalNotes size={20} aria-hidden="true" />
+            <span className="hidden lg:inline">{t.music || 'Música'}</span>
           </button>
           <button
             type="button"
             onClick={() => navigate('/')}
             aria-label={t.goHome || 'Ir al inicio'}
             title={t.goHome || 'Ir al inicio'}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800 text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-slate-800 px-2.5 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
           >
             <AiOutlineMenu size={20} aria-hidden="true" />
+            <span className="hidden lg:inline">{t.goHome || 'Inicio'}</span>
           </button>
           <button
             type="button"
             onClick={() => navigate('/tracker')}
             aria-label={t.backToConfig || 'Volver a configuración'}
             title={t.backToConfig || 'Volver a configuración'}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800 text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-slate-800 px-2.5 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
           >
             <GiGearHammer size={20} aria-hidden="true" />
+            <span className="hidden lg:inline">{t.backToConfig || 'Configuración'}</span>
           </button>
-          <label htmlFor="track-lang" className="sr-only">{savesT.language || 'Idioma'}</label>
-          <select
-            id="track-lang"
-            value={language}
-            onChange={(event) => setLanguage(event.target.value)}
-            className="min-h-11 rounded-lg border border-slate-600 bg-slate-800 px-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-          >
-            {availableLanguages.map((lang) => (
-              <option key={lang} value={lang}>{languageNames[lang]}</option>
-            ))}
-          </select>
+          <LanguageMenu label={savesT.language || 'Idioma'} />
+
           {activeMenu && (
             <button
               type="button"

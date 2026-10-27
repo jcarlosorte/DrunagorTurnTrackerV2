@@ -35,7 +35,6 @@ import TileWarningModal from '@/components/TileWarningModal';
 import TileToast from '@/components/TileToast';
 import BagStatusPanel from '@/components/track/BagStatusPanel';
 
-import EnemyCard from '@/components/track/EnemyCard';
 
 import HistoryPanel from '@/components/track/HistoryPanel';
 import ModalHeroCard from '@/components/track/ModalHeroCard';
@@ -59,6 +58,7 @@ import { classifyScenarioToast } from '@/utils/toastKind';
 
 import TrackSlot from '@/components/track/TrackSlot';
 import TurnCarousel from '@/components/track/TurnCarousel';
+import BossBanner from '@/components/track/BossBanner';
 import { boardSlotHeightFrom } from '@/components/track/trackLayout';
 
 
@@ -3260,39 +3260,6 @@ const InitTracker = () => {
               />
             )}
 
-            {/* Zona especial para Jefes */}
-            {placedEnemies
-              .filter(e => e.enemy.categoria === 'jefe' && e.enemy.tipo != 'especial')
-              .map(({ enemy }) => (
-                <div key={enemy.uuid} className="track-surface mt-3 overflow-hidden p-3">
-                  <div className="mx-auto flex max-w-full origin-center scale-125 justify-center py-6 sm:scale-150 md:scale-[1.75]">
-                    <EnemyCard
-                      uuid={enemy.uuid}
-                      id={enemy.id}
-                      name={getEnemyName(enemy.id, enemy.color)}
-                      image={enemy.imagen}
-                      comportamiento={enemy.comportamiento}
-                      categoria={enemy.categoria}
-                      position={enemy.runePosition}
-                      color={enemy.color}
-                      onRemove={onRemove}
-                      vida={enemy.vida}
-                      vidaMax={enemy.vidaMax}
-                      movimiento={enemy.movimiento}
-                      ataque={enemy.ataque}
-                      openEnemyModal={openEnemyModal}
-                      inmunidad={enemy.inmunidad}
-                      tipo_ataque={enemy.tipo_ataque}
-                      capacidades={enemy.capacidades}
-                      ringColor={enemy.ringColor}
-                      isFlipping={false}
-                      estadosAlterados={enemy.estadosAlterados}
-                    />
-                  </div>
-                </div>
-            ))}
-
-            
             {/* Puntos de aparición visibles encima del track */}
             {pilas.length > 0 && (
                 <div className="track-surface mt-3 p-3">
@@ -3657,6 +3624,14 @@ const InitTracker = () => {
                   onToggleOverlap={toggleOverlap}
                   carouselOpen={carouselOpen}
                   onToggleCarousel={() => setCarouselOpen((prev) => !prev)}
+                  bossBanner={(
+                    <BossBanner
+                      enemies={placedEnemies}
+                      getEnemyName={getEnemyName}
+                      onOpen={(uuid) => openEnemyModal?.(uuid)}
+                      labels={{ boss: ti.jefe || 'Jefe', open: ti.abrirFicha || 'Abrir ficha' }}
+                    />
+                  )}
                   carousel={(
                     <TurnCarousel
                       prev={carouselPrev}

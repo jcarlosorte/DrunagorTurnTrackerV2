@@ -27,6 +27,7 @@ export default function TurnTrackBoard({
   carouselOpen = false,
   onToggleCarousel,
   carousel = null,
+  bossBanner = null,
   canUndo = false,
   labels = {},
 }) {
@@ -384,6 +385,7 @@ export default function TurnTrackBoard({
           </button>
         </div>
       ) : toolbar}
+      {bossBanner}
       {content}
       {carouselOpen && carousel && (
         <div className="mt-2 shrink-0">{carousel}</div>

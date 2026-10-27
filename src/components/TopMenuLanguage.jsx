@@ -1,13 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
-import { languages as availableLanguages, languageNames } from '@/i18n/languageData';
+import LanguageMenu from '@/components/LanguageMenu';
 import { FaLanguage } from 'react-icons/fa';
 import { GiArchiveRegister } from 'react-icons/gi';
 import SaveStatusIndicator from '@/components/SaveStatusIndicator';
 import { useSavesUi } from '@/context/SavesUiContext';
 
 export default function TopMenuLanguage() {
-  const { language, setLanguage, translations } = useLanguage();
+  const { translations } = useLanguage();
   const { openSaves } = useSavesUi() || {};
   const location = useLocation();
   const t = translations?.saves || {};
@@ -55,16 +55,7 @@ export default function TopMenuLanguage() {
           <div className="flex items-center gap-1.5 text-sm text-slate-200">
             <FaLanguage className="hidden text-sky-300 sm:block" aria-hidden="true" />
             <label htmlFor="lang" className="sr-only">{translations.trackerInit?.language || 'Idioma'}</label>
-            <select
-              id="lang"
-              value={language}
-              onChange={(event) => setLanguage(event.target.value)}
-              className="min-h-11 rounded-lg border border-slate-600 bg-slate-800 px-2 text-sm text-white outline-none transition focus-visible:ring-2 focus-visible:ring-sky-300"
-            >
-              {availableLanguages.map((lang) => (
-                <option key={lang} value={lang}>{languageNames[lang]}</option>
-              ))}
-            </select>
+            <LanguageMenu label={t.language || 'Idioma'} />
           </div>
         </div>
       </div>
