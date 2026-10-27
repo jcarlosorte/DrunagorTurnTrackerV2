@@ -3120,17 +3120,31 @@ const InitTracker = () => {
           className="w-full h-auto object-cover rounded-lg border-2 border-[#800020]/70"
         />
 
-        {/* Estados del héroe sobre la imagen (solo con gestión activa) */}
-        {clickable && extras?.estados?.length > 0 && (
-          <div className="absolute left-1 top-1 grid grid-rows-3 grid-flow-col gap-0.5">
-            {extras.estados.slice(0, 6).map((estado) => {
+        {/* Estados alterados del héroe sobre la imagen (iconos, como en enemigos) */}
+        {clickable && (extras?.estadosAlterados?.length > 0 || extras?.estados?.length > 0) && (
+          <div className="absolute left-0.5 top-0.5 grid grid-rows-3 grid-flow-col gap-0.5">
+            {(extras.estadosAlterados || []).slice(0, 5).map((estado) => {
+              const meta = ESTADOS_ALTERADOS.find((item) => item.id === estado.id);
+              if (!meta) return null;
+              return (
+                <span key={estado.id} className="relative" title={`${tea[meta.texto] || meta.texto} ×${estado.count}`}>
+                  <img src={meta.imagen} alt="" className="h-4 w-4 rounded-full border border-white/80 bg-slate-950/60" />
+                  {estado.count > 1 && (
+                    <span className="absolute -right-1 -top-1 rounded-full bg-red-600 px-0.5 text-[0.45rem] font-bold leading-none text-white">
+                      {estado.count}
+                    </span>
+                  )}
+                </span>
+              );
+            })}
+            {(extras.estados || []).slice(0, 4).map((estado) => {
               const meta = ESTADOS_HEROE.find((item) => item.id === estado.id);
               if (!meta) return null;
               return (
                 <span
-                  key={estado.id}
-                  title={`${tea[meta.name?.es] || meta.name?.es} ×${estado.count}`}
-                  className="flex h-4 w-4 items-center justify-center rounded-full border border-white/80 bg-slate-950/70 text-[0.5rem] font-bold leading-none text-white"
+                  key={`cond-${estado.id}`}
+                  title={`${meta.name?.es} ×${estado.count}`}
+                  className="flex h-4 w-4 items-center justify-center rounded-full border border-white/80 bg-amber-600/80 text-[0.45rem] font-bold leading-none text-white"
                 >
                   {estado.count > 1 ? estado.count : '•'}
                 </span>

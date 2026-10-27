@@ -128,7 +128,8 @@
     "cubes": "Cubes",
     "actionCubesHint": "action · states",
     "modifier": "modifier",
-    "modifierTarget": "stat"
+    "modifierTarget": "stat",
+    "immunities": "Immunities"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Fallen Mage",

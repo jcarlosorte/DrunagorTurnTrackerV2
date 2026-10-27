@@ -128,7 +128,8 @@
     "cubes": "Cubos",
     "actionCubesHint": "acción · estados",
     "modifier": "modificador",
-    "modifierTarget": "estadística"
+    "modifierTarget": "estadística",
+    "immunities": "Inmunidades"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Maga Caída",

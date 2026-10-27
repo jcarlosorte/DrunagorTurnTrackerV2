@@ -34,6 +34,8 @@ export const emptyHeroExtras = (heroId) => {
     auras: [],
     consecuencias: [],
     estados: [],
+    /** Iconos de estado alterado (quemadura, veneno, escudo…) con contador. */
+    estadosAlterados: [],
     equipo: Object.fromEntries(EQUIPMENT_SLOTS.map((slot) => [slot, ''])),
     equipoMods: Object.fromEntries(
       MOD_SLOTS.map((slot) => [slot, { value: 0, stat: DEFAULT_MOD_STAT[slot] }]),
@@ -79,6 +81,9 @@ export function getHeroExtras(heroId) {
     auras: Array.isArray(entry.auras) ? entry.auras : [],
     consecuencias: Array.isArray(entry.consecuencias) ? entry.consecuencias : [],
     estados: Array.isArray(entry.estados) ? entry.estados.map(normalizeEstado) : [],
+    estadosAlterados: Array.isArray(entry.estadosAlterados)
+      ? entry.estadosAlterados.map(normalizeEstado)
+      : [],
     equipo: { ...base.equipo, ...(isPlainObject(entry.equipo) ? entry.equipo : {}) },
     equipoMods,
     cubos: { ...base.cubos, ...(isPlainObject(entry.cubos) ? entry.cubos : {}) },
@@ -131,6 +136,23 @@ export function stepHeroEstado(heroId, estadoId, delta) {
   }
 
   return patchHeroExtras(heroId, { estados: list });
+}
+
+/** Iconos de estado alterado (quemadura, veneno, escudo…): contador +/−. */
+export function stepHeroEstadoAlterado(heroId, estadoId, delta) {
+  const current = getHeroExtras(heroId);
+  const list = [...(current.estadosAlterados || [])];
+  const index = list.findIndex((item) => item.id === estadoId);
+
+  if (index === -1) {
+    if (delta > 0) list.push({ id: estadoId, count: 1 });
+  } else {
+    const nextCount = list[index].count + delta;
+    if (nextCount <= 0) list.splice(index, 1);
+    else list[index] = { ...list[index], count: nextCount };
+  }
+
+  return patchHeroExtras(heroId, { estadosAlterados: list });
 }
 
 /** Vida actual: curar nunca supera el máximo; el daño no baja de 0. */

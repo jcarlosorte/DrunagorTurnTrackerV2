@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { HEROES } from '@/data/heroes';
+import { ESTADOS_ALTERADOS, INMUNIDADES } from '@/data/estadosAlterados';
 import {
   AURAS,
   CONSECUENCIAS,
@@ -21,6 +22,7 @@ import {
   setEquipmentMod,
   setHeroEquipment,
   stepHeroEstado,
+  stepHeroEstadoAlterado,
   toggleHeroExtra,
 } from '@/utils/heroExtras';
 
@@ -36,6 +38,7 @@ const EQUIPMENT = [
 const GROUPS = [
   { key: 'auras', label: { es: 'Auras', en: 'Auras' }, catalogue: AURAS },
   { key: 'consecuencias', label: { es: 'Consecuencias', en: 'Consequences' }, catalogue: CONSECUENCIAS },
+  { key: 'estados', label: { es: 'Estados', en: 'Conditions' }, catalogue: ESTADOS_HEROE },
 ];
 
 const SOURCE_LABELS = {
@@ -93,6 +96,12 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
     (item) => !extras.estados.some((estado) => estado.id === item.id),
   );
 
+  // Iconos de estado alterado (quemadura, veneno, escudo…), igual que en enemigos.
+  const estadosAlteradosDisponibles = ESTADOS_ALTERADOS.filter((item) => item.mostrar === 'si');
+  const countAlterado = (id) => (extras.estadosAlterados || []).find((item) => item.id === id)?.count || 0;
+  // Inmunidades: solo si los datos del héroe las definen.
+  const inmunidades = Array.isArray(hero?.inmunidad) ? hero.inmunidad : [];
+
   return (
     <div className="layer-modal fixed inset-0 flex items-center justify-center bg-black/70 p-4" role="presentation">
       <div
@@ -133,72 +142,68 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
         </header>
 
         <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-3 py-3">
-          {/* Estados: igual que en los enemigos, sobre la vida */}
+          {/* Estados alterados: iconos sobre la tarjeta, igual que en enemigos */}
           <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
-            <div className="mb-1.5 flex items-center justify-between">
-              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">{t.conditions || 'Estados'}</p>
-              <button
-                type="button"
-                onClick={() => setPicker(picker === 'estados' ? null : 'estados')}
-                className="min-h-7 rounded-lg bg-rose-800 px-2 text-[0.7rem] font-semibold text-white hover:bg-rose-700"
-              >
-                + {t.add || 'Añadir'}
-              </button>
-            </div>
-
-            {picker === 'estados' && (
-              <div className="mb-1.5 max-h-40 space-y-1 overflow-y-auto rounded-lg border border-slate-700 bg-slate-900 p-1">
-                {estadosDisponibles.length === 0 && (
-                  <p className="px-1 py-1 text-[0.7rem] text-slate-400">{t.allAdded || 'Todos añadidos'}</p>
-                )}
-                {estadosDisponibles.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => {
-                      apply(stepHeroEstado(heroId, item.id, 1));
-                      setPicker(null);
-                    }}
-                    className="block w-full rounded px-1.5 py-1 text-left text-[0.7rem] text-slate-200 hover:bg-slate-800"
-                  >
-                    {getHeroEffectName(item.id, language)}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {estadosConDatos.length === 0 ? (
-              <p className="px-1 text-[0.7rem] text-slate-400">{t.noConditions || 'Sin estados activos.'}</p>
-            ) : (
-              <div className="flex flex-nowrap items-start gap-1 overflow-hidden">
-                {estadosConDatos.map((estado) => (
+            <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+              {t.conditions || 'Estados alterados'}
+            </p>
+            <div className="flex flex-nowrap items-start gap-1 overflow-hidden">
+              {estadosAlteradosDisponibles.map((estadoConfig) => {
+                const count = countAlterado(estadoConfig.id);
+                const maxCount = estadoConfig.max || 1;
+                const nombre = translations.estadosAlterados?.[estadoConfig.texto] || estadoConfig.texto;
+                return (
                   <div
-                    key={estado.id}
-                    className="flex w-11 shrink-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
-                    title={`${getHeroEffectName(estado.id, language)} ×${estado.count}`}
+                    key={estadoConfig.id}
+                    className="flex w-9 shrink-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
+                    title={`${nombre} ×${count}`}
                   >
                     <button
                       type="button"
-                      onClick={() => apply(stepHeroEstado(heroId, estado.id, 1))}
-                      aria-label={`${estado.id}: +1`}
-                      className="flex h-5 w-9 items-center justify-center rounded bg-emerald-700 text-xs font-bold text-white hover:bg-emerald-600"
+                      onClick={() => apply(stepHeroEstadoAlterado(heroId, estadoConfig.id, +1))}
+                      disabled={maxCount === 1 && count >= maxCount}
+                      aria-label={`${nombre}: +1`}
+                      className="flex h-5 w-8 items-center justify-center rounded bg-emerald-700 text-xs font-bold leading-none text-white hover:bg-emerald-600 disabled:opacity-40"
                     >
                       +
                     </button>
-                    <span className="w-full truncate px-0.5 py-0.5 text-center text-[0.5rem] leading-tight text-slate-200">
-                      {getHeroEffectName(estado.id, language)}
-                    </span>
-                    <span className="text-[0.65rem] font-bold leading-none text-white">{estado.count}</span>
+                    <img src={estadoConfig.imagen} alt={nombre} className="my-0.5 h-5 w-5" />
+                    <span className="text-[0.6rem] font-bold leading-none text-white">{count}</span>
                     <button
                       type="button"
-                      onClick={() => apply(stepHeroEstado(heroId, estado.id, -1))}
-                      aria-label={`${estado.id}: −1`}
-                      className="mt-0.5 flex h-5 w-9 items-center justify-center rounded bg-red-700 text-xs font-bold text-white hover:bg-red-600"
+                      onClick={() => apply(stepHeroEstadoAlterado(heroId, estadoConfig.id, -1))}
+                      disabled={count <= 0}
+                      aria-label={`${nombre}: −1`}
+                      className="mt-0.5 flex h-5 w-8 items-center justify-center rounded bg-red-700 text-xs font-bold leading-none text-white hover:bg-red-600 disabled:opacity-40"
                     >
                       −
                     </button>
                   </div>
-                ))}
+                );
+              })}
+            </div>
+
+            {/* Inmunidades: solo si el héroe las declara */}
+            {inmunidades.length > 0 && (
+              <div className="mt-2 border-t border-slate-700 pt-1.5">
+                <p className="mb-1 text-[0.65rem] font-bold uppercase tracking-wide text-slate-400">
+                  {t.immunities || 'Inmunidades'}
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {inmunidades.map((clave) => {
+                    const meta = INMUNIDADES.find((item) => item.id === clave);
+                    return (
+                      <span
+                        key={clave}
+                        title={translations.condiciones_d?.[clave] || clave}
+                        className="inline-flex items-center gap-1 rounded-full border border-slate-600 bg-slate-800 px-1.5 py-0.5 text-[0.6rem] text-slate-200"
+                      >
+                        {meta?.imagen && <img src={meta.imagen} alt="" className="h-3.5 w-3.5" />}
+                        {translations.condiciones_t?.[clave] || clave}
+                      </span>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </section>
