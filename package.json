@@ -1,51 +1,53 @@
 {
-    "name": "drunagor-turn-tracker-v2",
-    "version": "1.0.0",
-    "private": true,
-    "type": "module",
-    "engines": {
-        "node": ">=22 <25",
-        "npm": ">=10"
-    },
-    "homepage": "https://jcarlosorte.github.io/DrunagorTurnTrackerV2",
-    "scripts": {
-        "dev": "vite",
-        "build": "vite build && node scripts/copy-spa-fallback.mjs",
-        "preview": "vite preview",
-        "predeploy": "npm run build",
-        "deploy": "gh-pages -d dist",
-        "lint": "eslint . --max-warnings 200",
-        "test": "vitest run",
-        "test:watch": "vitest",
-        "images:optimize": "node scripts/optimize-images.mjs",
-        "visual:check": "node scripts/visual-check.mjs"
-    },
-    "dependencies": {
-        "classnames": "^2.5.1",
-        "framer-motion": "^12.10.2",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "react-icons": "^5.5.0",
-        "react-router-dom": "^7.18.4",
-        "react-toastify": "^11.0.5"
-    },
-    "devDependencies": {
-        "@eslint/js": "^9.39.5",
-        "@playwright/test": "^1.64.1",
-        "@vitejs/plugin-react": "^4.1.0",
-        "autoprefixer": "^10.4.21",
-        "eslint": "^9.39.5",
-        "eslint-plugin-react": "^7.37.5",
-        "eslint-plugin-react-hooks": "^7.1.1",
-        "gh-pages": "^6.3.0",
-        "globals": "^17.13.0",
-        "postcss": "^8.5.3",
-        "sharp": "^0.35.5",
-        "tailwindcss": "^3.4.17",
-        "vite": "^6.3.3",
-        "vitest": "^5.0.5"
-    },
-    "allowScripts": {
-        "esbuild@0.25.12": true
-    }
+    "name":  "drunagor-turn-tracker-v2",
+    "version":  "1.0.0",
+    "private":  true,
+    "type":  "module",
+    "engines":  {
+                    "node":  "\u003e=22 \u003c25",
+                    "npm":  "\u003e=10"
+                },
+    "homepage":  "https://jcarlosorte.github.io/DrunagorTurnTrackerV2",
+    "scripts":  {
+                    "dev":  "vite",
+                    "build":  "vite build \u0026\u0026 node scripts/copy-spa-fallback.mjs",
+                    "preview":  "vite preview",
+                    "predeploy":  "npm run build",
+                    "deploy":  "gh-pages -d dist",
+                    "lint":  "eslint . --max-warnings 200",
+                    "test":  "vitest run",
+                    "test:watch":  "vitest",
+                    "images:optimize":  "node scripts/optimize-images.mjs",
+                    "visual:check":  "node scripts/visual-check.mjs",
+                    "test:e2e":  "playwright test",
+                    "test:e2e:ui":  "playwright test --ui"
+                },
+    "dependencies":  {
+                         "classnames":  "^2.5.1",
+                         "framer-motion":  "^12.10.2",
+                         "react":  "^18.2.0",
+                         "react-dom":  "^18.2.0",
+                         "react-icons":  "^5.5.0",
+                         "react-router-dom":  "^7.18.4",
+                         "react-toastify":  "^11.0.5"
+                     },
+    "devDependencies":  {
+                            "@eslint/js":  "^9.39.5",
+                            "@playwright/test":  "^1.64.1",
+                            "@vitejs/plugin-react":  "^4.1.0",
+                            "autoprefixer":  "^10.4.21",
+                            "eslint":  "^9.39.5",
+                            "eslint-plugin-react":  "^7.37.5",
+                            "eslint-plugin-react-hooks":  "^7.1.1",
+                            "gh-pages":  "^6.3.0",
+                            "globals":  "^17.13.0",
+                            "postcss":  "^8.5.3",
+                            "sharp":  "^0.35.5",
+                            "tailwindcss":  "^3.4.17",
+                            "vite":  "^6.3.3",
+                            "vitest":  "^5.0.5"
+                        },
+    "allowScripts":  {
+                         "esbuild@0.25.12":  true
+                     }
 }

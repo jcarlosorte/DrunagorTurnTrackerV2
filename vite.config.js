@@ -22,9 +22,13 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 900,
       rollupOptions: {
         output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-motion': ['framer-motion'],
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return undefined;
+            if (id.includes('react-icons')) return 'vendor-icons';
+            if (id.includes('framer-motion')) return 'vendor-motion';
+            if (id.includes('react-router')) return 'vendor-router';
+            if (id.includes('react-dom') || id.includes('/react/')) return 'vendor-react';
+            return undefined;
           },
         },
       },

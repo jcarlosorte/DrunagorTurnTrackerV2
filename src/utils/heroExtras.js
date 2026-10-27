@@ -1,4 +1,4 @@
-import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
+import { FLUSH_EVENT, isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { HEROES } from '@/data/heroes';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 
@@ -8,6 +8,8 @@ export const HERO_CUBES_VERSION = 2;
 export const MAX_TRAUMA = 2;
 export const MAX_MALDICION = 5;
 export const MAX_CUBOS = 6;
+/** Retardo del volcado a localStorage (agrupa pulsaciones rápidas de +/-). */
+const WRITE_DELAY = 250;
 
 const EQUIPMENT_SLOTS = ['arma', 'manoTorpe', 'armadura', 'amuleto', 'bolsa1', 'bolsa2'];
 const CUBE_KEYS = ['amarillo', 'rojo', 'verde', 'azul'];
@@ -85,10 +87,40 @@ export function invalidateHeroExtrasCache() {
   cache.clear();
 }
 
-// Otra pestaña puede haber cargado una partida: mantenemos la caché al día.
+// ------------------------------------------------------------------
+// Escrituras diferidas: pulsar +/− repetidamente hacía un JSON.stringify
+// y una escritura síncrona por clic. Se agrupan en un único volcado.
+// ------------------------------------------------------------------
+let pendingStore = null;
+let writeTimer = null;
+
+/** Vuelca ya las escrituras pendientes (se llama al guardar o al salir). */
+export function flushHeroExtras() {
+  if (writeTimer !== null) {
+    clearTimeout(writeTimer);
+    writeTimer = null;
+  }
+  if (!pendingStore) return;
+  writeJsonStorage(HERO_EXTRAS_KEY, pendingStore);
+  pendingStore = null;
+}
+
+function scheduleHeroExtrasWrite(store) {
+  pendingStore = store;
+  if (writeTimer !== null) clearTimeout(writeTimer);
+  writeTimer = setTimeout(flushHeroExtras, WRITE_DELAY);
+}
+
 if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  // Otra pestaña puede haber cargado una partida: mantenemos la caché al día.
   window.addEventListener('storage', (event) => {
     if (!event.key || event.key === HERO_EXTRAS_KEY) invalidateHeroExtrasCache();
+  });
+  // Antes de leer para un guardado, y al ocultar/cerrar la pestaña.
+  window.addEventListener(FLUSH_EVENT, flushHeroExtras);
+  window.addEventListener('pagehide', flushHeroExtras);
+  document?.addEventListener?.('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushHeroExtras();
   });
 }
 
@@ -96,7 +128,7 @@ export function getHeroExtras(heroId) {
   const cached = cache.get(heroId);
   if (cached) return cached;
 
-  const stored = readHeroExtras();
+  const stored = pendingStore || readHeroExtras();
   const entry = stored[heroId];
   const base = emptyHeroExtras(heroId);
 
@@ -146,15 +178,17 @@ export function getHeroExtras(heroId) {
 }
 
 export function setHeroExtras(heroId, extras) {
-  const stored = readHeroExtras();
-  stored[heroId] = {
+  const stored = pendingStore || readHeroExtras();
+  const actualizado = {
     ...getHeroExtras(heroId),
     ...extras,
     cubosVersion: HERO_CUBES_VERSION,
   };
-  writeJsonStorage(HERO_EXTRAS_KEY, stored);
-  invalidateHeroExtrasCache();
-  return stored[heroId];
+  stored[heroId] = actualizado;
+  // La caché se actualiza al momento; el volcado a disco va agrupado.
+  cache.set(heroId, actualizado);
+  scheduleHeroExtrasWrite(stored);
+  return actualizado;
 }
 
 export const patchHeroExtras = (heroId, patch) => setHeroExtras(heroId, patch);

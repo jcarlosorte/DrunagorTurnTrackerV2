@@ -109,6 +109,7 @@ export default function TurnTrackBoard({
       <div className="order-3 flex w-full items-center justify-center gap-2 sm:order-none sm:w-auto sm:flex-1">
         <button
           type="button"
+          data-testid="undo-turn"
           onClick={onUndoTurn}
           disabled={!canUndo}
           className="flex min-h-10 items-center gap-2 rounded-xl border border-emerald-800 bg-emerald-950/60 px-3 text-sm font-semibold text-emerald-100 transition hover:border-emerald-600 hover:bg-emerald-900/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:opacity-40"
@@ -118,6 +119,7 @@ export default function TurnTrackBoard({
         </button>
         <button
           type="button"
+          data-testid="next-turn"
           onClick={onNextTurn}
           className="min-h-10 rounded-xl bg-gradient-to-b from-emerald-500 to-emerald-700 px-4 text-sm font-bold text-white shadow-lg shadow-emerald-950/40 transition hover:from-emerald-400 hover:to-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
         >
@@ -175,6 +177,7 @@ export default function TurnTrackBoard({
 
           <button
             type="button"
+            data-testid="history-toggle"
             onClick={onToggleHistory}
             aria-pressed={historyOpen}
             title={labels.history || 'Historial'}
@@ -190,6 +193,7 @@ export default function TurnTrackBoard({
           </button>
           <button
             type="button"
+            data-testid="dice-toggle"
             onClick={onToggleDice}
             aria-pressed={diceOpen}
             title={labels.dice || 'Dados'}

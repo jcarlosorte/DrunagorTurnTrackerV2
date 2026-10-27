@@ -110,7 +110,23 @@ const TRACK_STORAGE_KEYS = ['gameState', 'initEnemiesState', 'initRunesState', '
 /** Versión actual del formato de guardado. */
 export const SNAPSHOT_SCHEMA_VERSION = 3;
 
+/** Evento para forzar el volcado de escrituras diferidas antes de leer. */
+export const FLUSH_EVENT = 'dsh:flush-storage';
+
+/** Versión de la app incluida en los guardados. */
+export const APP_VERSION = (() => {
+  try {
+    return import.meta?.env?.VITE_APP_VERSION || '1.0.0';
+  } catch {
+    return '1.0.0';
+  }
+})();
+
 function readStorageData() {
+  // Vacía cualquier escritura pendiente (p. ej. `heroExtras` con debounce).
+  if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+    window.dispatchEvent(new CustomEvent(FLUSH_EVENT));
+  }
   const data = {};
   GAME_STORAGE_KEYS.forEach((key) => {
     const value = readJsonStorage(key, undefined);
@@ -134,6 +150,7 @@ export function createStorageSnapshot(scope = 'full') {
   return {
     app: 'drunagor-turn-tracker',
     schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+    appVersion: APP_VERSION,
     scope,
     exportedAt: new Date().toISOString(),
     configuration,

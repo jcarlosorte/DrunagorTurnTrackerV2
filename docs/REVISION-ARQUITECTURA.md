@@ -455,7 +455,31 @@ npm run test:e2e
 
 ### Pendiente / pospuesto
 
-H8, H11, D2, D7, D8, D9, A4, F1-F5, P2.
+H8, D2, D7, D8, D9, A4, F1-F5, P2.
+
+### Quinta tanda aceptada e implementada (A + B del plan)
+
+| ID | Cambio | Archivos |
+|---|---|---|
+| E2 | `.env.example` reescrito en UTF-8 (tenía `raÃ­z`) + `VITE_APP_VERSION` | `.env.example` |
+| E3 | `appVersion` incluido en cada snapshot | `storage.js` |
+| F5 | `robots.txt`, `theme-color`, descripción y metadatos Open Graph | `index.html`, `public/robots.txt` |
+| H11 | Escrituras de `heroExtras` agrupadas (250 ms) con volcado al guardar, ocultar o cerrar | `heroExtras.js`, `storage.js` |
+| F1 | `manualChunks` por paquete: `vendor-icons` (69 KB) y `vendor-router` separados | `vite.config.js` |
+| — | Suite **E2E de Playwright** (10 pruebas) + job en CI con reporte en fallo | `tests/e2e/*`, `playwright.config.js`, `deploy.yml` |
+
+**Cobertura E2E**: 11 posiciones del tablero · banda del turno activo sin desbordar · altura compacta en lista · estados del enemigo que se consumen · paleta siempre disponible · snapshot con versión, `heroManagement` y datos de héroe · saneado al cargar · cabecera del héroe con vida e iconos · *focus trap* y Escape · dado trampa con dos fichas.
+
+**Resultados**
+
+```text
+E2E        10/10 · 3 repeticiones: 30/30 · estable
+Unit       26/26
+Lint       0 errores · 112 avisos
+Build      OK · index 201 KB (antes 266) · vendor-icons 69 KB aparte
+```
+
+Para reducir intermitencias, los tests de sorteo fijan `Math.random` y los selectores usan `data-testid`.
 
 ### Cuarta tanda aceptada e implementada
 
