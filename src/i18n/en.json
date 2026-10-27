@@ -129,7 +129,11 @@
     "actionCubesHint": "action · states",
     "modifier": "modifier",
     "modifierTarget": "stat",
-    "immunities": "Immunities"
+    "immunities": "Immunities",
+    "recover": "Recover",
+    "cursePenaltyWarning": "Don't forget to apply the curse cube penalty set by the scenario.",
+    "conditionCubes": "Condition",
+    "maxCubes": "max"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Fallen Mage",

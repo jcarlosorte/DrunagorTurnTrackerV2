@@ -125,12 +125,12 @@ export default function TurnTrackBoard({
 
       <div className="flex items-center gap-1.5">
         {view === 'board' && (
-          <div className="flex items-center rounded-xl border border-slate-700 bg-slate-900 p-0.5">
+          <div className="flex items-center rounded-xl border border-slate-700 bg-slate-950/70 p-0.5" role="group" aria-label={labels.zoom || 'Zoom'}>
             <button
               type="button"
               onClick={() => setScale((prev) => clamp(prev - 0.1))}
               aria-label={labels.zoomOut || 'Reducir zoom'}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-200 transition hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
             >
               −
             </button>
@@ -138,7 +138,7 @@ export default function TurnTrackBoard({
               type="button"
               onClick={fitToWidth}
               title={labels.fit || 'Ajustar'}
-              className="min-h-8 rounded-lg px-1.5 text-[0.7rem] font-semibold text-sky-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              className="min-h-8 rounded-lg px-1.5 text-[0.7rem] font-semibold tabular-nums text-sky-200 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
             >
               {Math.round(scale * 100)}%
             </button>
@@ -146,38 +146,47 @@ export default function TurnTrackBoard({
               type="button"
               onClick={() => setScale((prev) => clamp(prev + 0.1))}
               aria-label={labels.zoomIn || 'Aumentar zoom'}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-200 transition hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
             >
               +
             </button>
           </div>
         )}
 
-        <button
-          type="button"
-          onClick={onToggleBag}
-          aria-pressed={bagOpen}
-          title={labels.bag || 'Bolsa de runas'}
-          aria-label={labels.bag || 'Bolsa de runas'}
-          className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
-            bagOpen ? 'border-emerald-400 bg-emerald-700 text-white' : 'border-slate-700 bg-slate-900 text-slate-200 hover:text-white'
-          }`}
-        >
-          🎒
-        </button>
+        {/* Submenús del tablero: bolsa de runas e historial */}
+        <div className="flex items-center gap-1 rounded-xl border border-slate-700 bg-slate-950/70 p-0.5" role="group" aria-label={labels.panels || 'Paneles'}>
+          <button
+            type="button"
+            onClick={onToggleBag}
+            aria-pressed={bagOpen}
+            title={labels.bag || 'Bolsa de runas'}
+            aria-label={labels.bag || 'Bolsa de runas'}
+            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              bagOpen
+                ? 'border-emerald-400/80 bg-emerald-700 text-white shadow-inner shadow-emerald-950/40'
+                : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <span aria-hidden="true" className="text-sm leading-none">🎒</span>
+            <span className="hidden lg:inline">{labels.bag || 'Bolsa'}</span>
+          </button>
 
-        <button
-          type="button"
-          onClick={onToggleHistory}
-          aria-pressed={historyOpen}
-          title={labels.history || 'Historial'}
-          aria-label={labels.history || 'Historial'}
-          className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
-            historyOpen ? 'border-sky-400 bg-sky-700 text-white' : 'border-slate-700 bg-slate-900 text-slate-200 hover:text-white'
-          }`}
-        >
-          📜
-        </button>
+          <button
+            type="button"
+            onClick={onToggleHistory}
+            aria-pressed={historyOpen}
+            title={labels.history || 'Historial'}
+            aria-label={labels.history || 'Historial'}
+            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              historyOpen
+                ? 'border-sky-400/80 bg-sky-700 text-white shadow-inner shadow-sky-950/40'
+                : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <span aria-hidden="true" className="text-sm leading-none">📜</span>
+            <span className="hidden lg:inline">{labels.history || 'Historial'}</span>
+          </button>
+        </div>
 
         <button
           type="button"
@@ -187,7 +196,7 @@ export default function TurnTrackBoard({
           className={`flex h-9 items-center gap-1.5 rounded-xl border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
             presentation
               ? 'border-emerald-400 bg-emerald-700 text-white'
-              : 'border-slate-700 bg-slate-900 text-slate-200 hover:text-white'
+              : 'border-slate-700 bg-slate-950/70 text-slate-200 hover:border-slate-500 hover:text-white'
           }`}
         >
           <span aria-hidden="true">🖵</span>

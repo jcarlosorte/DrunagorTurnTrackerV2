@@ -46,7 +46,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { appendGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
-import { getHeroExtras } from '@/utils/heroExtras';
+import { getHeroExtras, patchHeroExtras } from '@/utils/heroExtras';
+import { aplicarEfectosEstadosHeroe } from '@/utils/heroStatus';
 import { ESTADOS_HEROE } from '@/data/heroes/index';
 
 const rolesPositionMap = {
@@ -1354,6 +1355,41 @@ const InitTracker = () => {
   };
 
 
+  /**
+   * Estados alterados de un héroe: misma lógica que en enemigos (inicio/fin de
+   * turno, daño, escudos y reducción de fichas). Se guarda con la partida.
+   */
+  const aplicarEfectosHeroe = (heroId, fase) => {
+    const extras = getHeroExtras(heroId);
+    if (!extras.estadosAlterados || extras.estadosAlterados.length === 0) return;
+
+    const { extras: siguiente, logs } = aplicarEfectosEstadosHeroe(extras, fase, {
+      labels: tea,
+      texts: {
+        consume: ti.consume,
+        shields: ti.escudos,
+        inflicts: ti.inflige,
+        damage: ti.daño_i,
+        ignoresShields: ti.ignoraEscudos,
+        reduce: ti.reduce,
+      },
+    });
+
+    if (logs.length === 0 && siguiente.vida === extras.vida) return;
+
+    patchHeroExtras(heroId, {
+      vida: siguiente.vida,
+      estadosAlterados: siguiente.estadosAlterados,
+    });
+    setHeroExtrasVersion((value) => value + 1);
+
+    const nombre = translations.heroes?.[heroId] || heroId;
+    logs.forEach((log) => showScenarioToast(`🌀 ${nombre}: ${log}`));
+    if (siguiente.vida <= 0) {
+      showScenarioToast(`☠ ${nombre} ${ti.muere_2 || 'cae'}`);
+    }
+  };
+
   const aplicarCapacidadesActivadas = (enemy, placedEnemies) => {
     let vida = enemy.vida;
     let estados = [...(enemy.estadosAlterados || [])];
@@ -2079,6 +2115,7 @@ const InitTracker = () => {
   const previousTurnIndexRef = useRef(persistedSession.previousTurnIndex ?? null);
   const processedStartEffectsRef = useRef(toSet(persistedSession?.processed?.start));
   const processedEndEffectsRef = useRef(toSet(persistedSession?.processed?.end));
+  const processedHeroEffectsRef = useRef(new Set());
   const processedCardsRef = useRef(toSet(persistedSession?.processed?.cards));
   const processedTiempoRef = useRef(toSet(persistedSession?.processed?.tiempo));
   const [extraTurnsQueue, setExtraTurnsQueue] = useState(() => persistedSession.extraTurnsQueue || []);
@@ -2605,6 +2642,15 @@ const InitTracker = () => {
       return;
     }
 
+    // Efectos de fin de turno del héroe (estados alterados), igual que en enemigos.
+    if (heroManagementEnabled && currentTurnEntity?.type === 'hero' && currentTurnEntity?.id) {
+      const heroKey = `fin-${currentTurnEntity.id}-${turnIndex}`;
+      if (!processedHeroEffectsRef.current.has(heroKey)) {
+        processedHeroEffectsRef.current.add(heroKey);
+        aplicarEfectosHeroe(currentTurnEntity.id, 'fin');
+      }
+    }
+
     if (currentTurnEntity?.type === "enemy" && !processedEndEffectsRef.current.has(currentTurnEntity.uuid)) {
       processedEndEffectsRef.current.add(currentTurnEntity.uuid);
     
@@ -2829,6 +2875,15 @@ const InitTracker = () => {
       turn: turnIndex,
       type: currentTurnEntity.type,
     });
+
+    // Efectos de inicio de turno del héroe (estados alterados), como en enemigos.
+    if (heroManagementEnabled && currentTurnEntity.type === 'hero' && currentTurnEntity.id) {
+      const heroKey = `inicio-${currentTurnEntity.id}-${turnIndex}`;
+      if (!processedHeroEffectsRef.current.has(heroKey)) {
+        processedHeroEffectsRef.current.add(heroKey);
+        aplicarEfectosHeroe(currentTurnEntity.id, 'inicio');
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTurnEntity?.uuid, currentTurnEntity?.id]);
 

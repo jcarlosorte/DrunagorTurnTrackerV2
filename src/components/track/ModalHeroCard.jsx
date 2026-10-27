@@ -14,11 +14,13 @@ import {
   MAX_CUBOS,
   MOD_STATS,
   changeHeroActionCube,
+  changeHeroActionCubeMax,
   changeHeroCubes,
   changeHeroVida,
   changeHeroVidaMax,
   getEquipmentBonus,
   getHeroExtras,
+  recobrarCubos,
   setEquipmentMod,
   setHeroEquipment,
   stepHeroEstado,
@@ -41,6 +43,9 @@ const GROUPS = [
   { key: 'estados', label: { es: 'Estados', en: 'Conditions' }, catalogue: ESTADOS_HEROE },
 ];
 
+const ACTION_CUBES = CUBE_META.filter((cube) => !['trauma', 'maldicion'].includes(cube.key));
+const CONDITION_CUBES = CUBE_META.filter((cube) => ['trauma', 'maldicion'].includes(cube.key));
+
 const SOURCE_LABELS = {
   core: 'Adv.',
   desert: 'DH',
@@ -61,6 +66,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
   const titleId = useId();
   const [extras, setExtras] = useState(() => getHeroExtras(heroId));
   const [picker, setPicker] = useState(null);
+  const [recobrado, setRecobrado] = useState(false);
 
   const hero = useMemo(() => HEROES.find((item) => item.id === heroId), [heroId]);
   const heroName = translations.heroes?.[heroId] || heroId;
@@ -267,69 +273,151 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
             )}
           </section>
 
-          {/* Cubos: trauma, maldición y acción en el mismo estilo */}
-          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
-            <div className="mb-1.5 flex items-center justify-between">
-              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-                {t.cubes || 'Cubos'}
-              </p>
-              <span className="text-[0.6rem] text-slate-500">{t.actionCubesHint || 'acción · estados'}</span>
-            </div>
-            <div className="flex flex-wrap items-center gap-1.5">
-              {CUBE_META.map((cube) => {
-                const isEstado = cube.key === 'trauma' || cube.key === 'maldicion';
-                const value = isEstado ? (extras[cube.key] || 0) : (extras.cubos?.[cube.key] || 0);
-                const max = isEstado ? cube.max : MAX_CUBOS;
-                return (
-                  <div
-                    key={cube.key}
-                    className="flex flex-col items-center gap-0.5 rounded-lg border border-slate-700 bg-slate-800/70 px-0.5 py-0.5"
-                    title={cube.label[language] || cube.label.es}
-                  >
-                    <div className="flex items-center gap-0.5">
-                      <button
-                        type="button"
-                        onClick={() => apply(
-                          isEstado
-                            ? changeHeroCubes(heroId, cube.key, -1)
-                            : changeHeroActionCube(heroId, cube.key, -1),
-                        )}
-                        disabled={value <= 0}
-                        aria-label={`${cube.label.es}: −1`}
-                        className="flex h-8 w-7 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
-                      >
-                        −
-                      </button>
-                      <span
-                        aria-hidden="true"
-                        className="flex h-8 w-8 items-center justify-center rounded text-sm font-bold"
-                        style={{
-                          backgroundColor: cube.color,
-                          color: cube.key === 'maldicion' || cube.key === 'azul' ? '#fff' : '#0f172a',
-                        }}
-                      >
-                        {value}
+          {/* Cubos: acción a la izquierda, trauma/maldición a la derecha */}
+          <section className="grid grid-cols-1 gap-2 sm:grid-cols-[1.6fr_1fr]">
+            <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+              <div className="mb-1.5 flex items-center justify-between">
+                <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+                  {t.actionCubes || 'Cubos de acción'}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    apply(recobrarCubos(heroId));
+                    setRecobrado(true);
+                  }}
+                  className="min-h-7 rounded-lg bg-emerald-700 px-2 text-[0.7rem] font-semibold text-white hover:bg-emerald-600"
+                >
+                  ↺ {t.recover || 'Recobrar'}
+                </button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                {ACTION_CUBES.map((cube) => {
+                  const value = extras.cubos?.[cube.key] || 0;
+                  const max = extras.cubosMax?.[cube.key] ?? 0;
+                  return (
+                    <div
+                      key={cube.key}
+                      className="flex flex-col items-center gap-0.5 rounded-lg border border-slate-700 bg-slate-800/70 px-0.5 py-0.5"
+                      title={cube.label[language] || cube.label.es}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        <button
+                          type="button"
+                          onClick={() => apply(changeHeroActionCube(heroId, cube.key, -1))}
+                          disabled={value <= 0}
+                          aria-label={`${cube.label.es}: −1`}
+                          className="flex h-8 w-7 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
+                        >
+                          −
+                        </button>
+                        <span
+                          aria-hidden="true"
+                          className="flex h-8 w-8 items-center justify-center rounded text-sm font-bold"
+                          style={{
+                            backgroundColor: cube.color,
+                            color: cube.key === 'azul' ? '#fff' : '#0f172a',
+                          }}
+                        >
+                          {value}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => apply(changeHeroActionCube(heroId, cube.key, 1))}
+                          disabled={value >= max}
+                          aria-label={`${cube.label.es}: +1`}
+                          className="flex h-8 w-7 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      {/* Máximo alterable del color */}
+                      <div className="flex items-center gap-0.5 text-[0.6rem] text-slate-400">
+                        <button
+                          type="button"
+                          onClick={() => apply(changeHeroActionCubeMax(heroId, cube.key, -1))}
+                          disabled={max <= 0}
+                          aria-label={`${cube.label.es}: ${t.maxCubes || 'máximo'} −1`}
+                          className="flex h-4 w-4 items-center justify-center rounded bg-slate-700 leading-none text-white hover:bg-slate-600 disabled:opacity-40"
+                        >
+                          −
+                        </button>
+                        <span className="min-w-3 text-center tabular-nums">{max}</span>
+                        <button
+                          type="button"
+                          onClick={() => apply(changeHeroActionCubeMax(heroId, cube.key, 1))}
+                          aria-label={`${cube.label.es}: ${t.maxCubes || 'máximo'} +1`}
+                          className="flex h-4 w-4 items-center justify-center rounded bg-slate-700 leading-none text-white hover:bg-slate-600"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <span className="max-w-[4.5rem] truncate text-[0.55rem] uppercase tracking-wide text-slate-400">
+                        {(cube.label[language] || cube.label.es).split(' · ')[0]}
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => apply(
-                          isEstado
-                            ? changeHeroCubes(heroId, cube.key, 1)
-                            : changeHeroActionCube(heroId, cube.key, 1),
-                        )}
-                        disabled={value >= max}
-                        aria-label={`${cube.label.es}: +1`}
-                        className="flex h-8 w-7 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
-                      >
-                        +
-                      </button>
                     </div>
-                    <span className="max-w-[4.5rem] truncate text-[0.55rem] uppercase tracking-wide text-slate-400">
-                      {(cube.label[language] || cube.label.es).split(' · ')[0]}
-                    </span>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+
+              {recobrado && (
+                <p className="mt-1.5 rounded-lg border border-amber-700/60 bg-amber-950/40 px-2 py-1 text-[0.65rem] leading-snug text-amber-200">
+                  ⚠ {t.cursePenaltyWarning || 'No olvides aplicar la penalización de cubos de maldición que indique el escenario.'}
+                </p>
+              )}
+            </div>
+
+            <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+              <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+                {t.conditionCubes || 'Estado'}
+              </p>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {CONDITION_CUBES.map((cube) => {
+                  const value = extras[cube.key] || 0;
+                  return (
+                    <div
+                      key={cube.key}
+                      className="flex flex-col items-center gap-0.5 rounded-lg border border-slate-700 bg-slate-800/70 px-0.5 py-0.5"
+                      title={cube.label[language] || cube.label.es}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        <button
+                          type="button"
+                          onClick={() => apply(changeHeroCubes(heroId, cube.key, -1))}
+                          disabled={value <= 0}
+                          aria-label={`${cube.label.es}: −1`}
+                          className="flex h-8 w-6 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
+                        >
+                          −
+                        </button>
+                        <span
+                          aria-hidden="true"
+                          className="flex h-8 w-7 items-center justify-center rounded text-sm font-bold"
+                          style={{ backgroundColor: cube.color, color: '#fff' }}
+                        >
+                          {value}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => apply(changeHeroCubes(heroId, cube.key, 1))}
+                          disabled={value >= cube.max}
+                          aria-label={`${cube.label.es}: +1`}
+                          className="flex h-8 w-6 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <span className="text-[0.55rem] uppercase tracking-wide text-slate-400">
+                        {(cube.label[language] || cube.label.es).split(' · ')[0]}
+                      </span>
+                      <span className="text-[0.55rem] tabular-nums text-slate-500">{value} / {cube.max}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </section>
 

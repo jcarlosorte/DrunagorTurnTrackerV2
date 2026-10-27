@@ -34,6 +34,7 @@ import vacrem from "@/assets/heroes/Vacrem.png";
 import andreas from "@/assets/heroes/Andreas.png";
 import nyx from "@/assets/heroes/Nyx.png";
 import catharina from "@/assets/heroes/Catharina.png";
+import { getHeroBaseCubes } from "@/data/heroCubes";
 
 export const HEROES = [
   { id: "lorelai", expansionId: "base", baseLife: 10, baseMove: 2, type: "hero", profession: "Maga", image: lorelai },
@@ -73,3 +74,14 @@ export const HEROES = [
   { id: "nyx", expansionId: "apocalypse_awakenings", baseLife: 10, baseMove: 2, type: "hero", profession: "Mago_Espadachin", image: nyx },
   { id: "catharina", expansionId: "apocalypse_awakenings", baseLife: 10, baseMove: 2, type: "hero", profession: "Chamana", image: catharina },
 ];
+
+/**
+ * Cubos de acción base: 5 por héroe (1 de cada color + 1 del color de su clase).
+ * Se calcula aquí para no repetir el dato en cada entrada y poder ajustarlo en
+ * un único sitio cuando lleguen los valores definitivos.
+ */
+HEROES.forEach((hero) => {
+  if (!hero.cubos) hero.cubos = getHeroBaseCubes(hero.profession);
+});
+
+export { getHeroBaseCubes, getClassCubeColor, CUBE_COLORS } from '@/data/heroCubes';

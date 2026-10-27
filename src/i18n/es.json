@@ -129,7 +129,11 @@
     "actionCubesHint": "acción · estados",
     "modifier": "modificador",
     "modifierTarget": "estadística",
-    "immunities": "Inmunidades"
+    "immunities": "Inmunidades",
+    "recover": "Recobrar",
+    "cursePenaltyWarning": "No olvides aplicar la penalización de cubos de maldición que indique el escenario.",
+    "conditionCubes": "Estado",
+    "maxCubes": "máximo"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Maga Caída",

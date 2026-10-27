@@ -26,6 +26,8 @@ export const CUBE_META = [
 export const emptyHeroExtras = (heroId) => {
   const hero = HEROES.find((item) => item.id === heroId);
   const baseLife = hero?.baseLife ?? 10;
+  // Cubos base del héroe: 5 (1 de cada color + 1 del color de su clase).
+  const baseCubos = hero?.cubos || { amarillo: 1, rojo: 1, verde: 1, azul: 2 };
   return {
     vida: baseLife,
     vidaMax: baseLife,
@@ -40,7 +42,9 @@ export const emptyHeroExtras = (heroId) => {
     equipoMods: Object.fromEntries(
       MOD_SLOTS.map((slot) => [slot, { value: 0, stat: DEFAULT_MOD_STAT[slot] }]),
     ),
-    cubos: Object.fromEntries(CUBE_KEYS.map((key) => [key, 2])),
+    // Cubos disponibles y su máximo (el máximo puede alterarse como la vida).
+    cubos: Object.fromEntries(CUBE_KEYS.map((key) => [key, baseCubos[key] ?? 1])),
+    cubosMax: Object.fromEntries(CUBE_KEYS.map((key) => [key, baseCubos[key] ?? 1])),
   };
 };
 
@@ -74,6 +78,14 @@ export function getHeroExtras(heroId) {
   if (!isPlainObject(entry)) return base;
 
   const equipoMods = normalizeMods(entry.equipoMods, base.equipoMods);
+  const cubos = { ...base.cubos, ...(isPlainObject(entry.cubos) ? entry.cubos : {}) };
+  const cubosMax = { ...base.cubosMax, ...(isPlainObject(entry.cubosMax) ? entry.cubosMax : {}) };
+  // El valor nunca puede superar el máximo vigente.
+  CUBE_KEYS.forEach((key) => {
+    const max = Math.max(0, Number(cubosMax[key]) || 0);
+    cubosMax[key] = max;
+    cubos[key] = Math.max(0, Math.min(Number(cubos[key]) || 0, max));
+  });
 
   return {
     ...base,
@@ -86,7 +98,8 @@ export function getHeroExtras(heroId) {
       : [],
     equipo: { ...base.equipo, ...(isPlainObject(entry.equipo) ? entry.equipo : {}) },
     equipoMods,
-    cubos: { ...base.cubos, ...(isPlainObject(entry.cubos) ? entry.cubos : {}) },
+    cubos,
+    cubosMax,
     trauma: Number(entry.trauma) || 0,
     maldicion: Number(entry.maldicion) || 0,
     vida: Number.isFinite(entry.vida) ? entry.vida : base.vida,
@@ -179,8 +192,29 @@ export function changeHeroCubes(heroId, type, delta) {
 
 export function changeHeroActionCube(heroId, color, delta) {
   const current = getHeroExtras(heroId);
-  const next = Math.max(0, Math.min((current.cubos?.[color] || 0) + delta, MAX_CUBOS));
+  const max = current.cubosMax?.[color] ?? MAX_CUBOS;
+  const next = Math.max(0, Math.min((current.cubos?.[color] || 0) + delta, max));
   return patchHeroExtras(heroId, { cubos: { ...current.cubos, [color]: next } });
+}
+
+/** Máximo de un color: puede subir o bajar; el valor se recorta al nuevo tope. */
+export function changeHeroActionCubeMax(heroId, color, delta) {
+  const current = getHeroExtras(heroId);
+  const max = Math.max(0, Math.min((current.cubosMax?.[color] ?? 0) + delta, 10));
+  const value = Math.min(current.cubos?.[color] || 0, max);
+  return patchHeroExtras(heroId, {
+    cubosMax: { ...current.cubosMax, [color]: max },
+    cubos: { ...current.cubos, [color]: value },
+  });
+}
+
+/** Recobrar: todos los cubos de acción vuelven a su máximo. */
+export function recobrarCubos(heroId) {
+  const current = getHeroExtras(heroId);
+  const cubos = Object.fromEntries(
+    CUBE_KEYS.map((key) => [key, current.cubosMax?.[key] ?? 0]),
+  );
+  return patchHeroExtras(heroId, { cubos });
 }
 
 export function setHeroEquipment(heroId, slot, value) {
