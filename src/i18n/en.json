@@ -113,7 +113,18 @@
     "noConditions": "No active conditions.",
     "allAdded": "All added.",
     "baseMoveLabel": "Move",
-    "managementHint": "Saved with the game"
+    "managementHint": "Saved with the game",
+    "maxLife": "Max life",
+    "movementLabel": "Movement",
+    "attackLabel": "Attack",
+    "base": "Base",
+    "amuletBonus": "Amulet",
+    "weapon": "Weapon",
+    "actionCubes": "Action cubes",
+    "maxPerColor": "max",
+    "movementShort": "Mov.",
+    "attackShort": "Att.",
+    "stats": "Stats"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Fallen Mage",

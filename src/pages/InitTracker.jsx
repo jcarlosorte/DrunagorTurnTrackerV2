@@ -46,6 +46,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { appendGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
+import { getHeroExtras } from '@/utils/heroExtras';
+import { ESTADOS_HEROE } from '@/data/heroes/index';
 
 const rolesPositionMap = {
   defensor: 0,
@@ -120,6 +122,7 @@ const InitTracker = () => {
   const [onPCConfirm, setOnPCConfirm] = useState(null);
   const [enemyEvolutions, setEnemyEvolutions] = useState(() => persistedSession.enemyEvolutions || []);
   const [selectedHeroId, setSelectedHeroId] = useState(null);
+  const [heroExtrasVersion, setHeroExtrasVersion] = useState(0);
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
   const getHeroName = (id) => translations.heroes?.[id] || id;
   const getEnemyName = (id, color = null) => {
@@ -3096,7 +3099,7 @@ const InitTracker = () => {
   };
 
 
- const CharacterCard = ({ name, image, prof, position, heroId, onOpen, clickable }) => (
+ const CharacterCard = ({ name, image, prof, position, heroId, onOpen, clickable, extras }) => (
     <div className="flex flex-col items-center mx-1">
       <div
         className={`relative w-full max-w-[140px] hover:scale-105 ${clickable ? 'cursor-pointer' : ''}`}
@@ -3116,6 +3119,26 @@ const InitTracker = () => {
           alt={name}
           className="w-full h-auto object-cover rounded-lg border-2 border-[#800020]/70"
         />
+
+        {/* Estados del héroe sobre la imagen (solo con gestión activa) */}
+        {clickable && extras?.estados?.length > 0 && (
+          <div className="absolute left-1 top-1 grid grid-rows-3 grid-flow-col gap-0.5">
+            {extras.estados.slice(0, 6).map((estado) => {
+              const meta = ESTADOS_HEROE.find((item) => item.id === estado.id);
+              if (!meta) return null;
+              return (
+                <span
+                  key={estado.id}
+                  title={`${tea[meta.name?.es] || meta.name?.es} ×${estado.count}`}
+                  className="flex h-4 w-4 items-center justify-center rounded-full border border-white/80 bg-slate-950/70 text-[0.5rem] font-bold leading-none text-white"
+                >
+                  {estado.count > 1 ? estado.count : '•'}
+                </span>
+              );
+            })}
+          </div>
+        )}
+
         <div
           className="absolute bottom-0 left-1/2 w-[94%] -translate-x-1/2 rounded-lg bg-[#800020] px-1 text-center text-white leading-tight"
           style={{
@@ -3124,6 +3147,21 @@ const InitTracker = () => {
         >
           <FitText text={name} max={12} min={6.5} className="w-full text-center font-semibold" />
           <span className="block text-[0.50rem] italic opacity-90 mb-1">{prof}</span>
+
+          {/* Vida del héroe, como en las cartas de enemigo */}
+          {clickable && extras && (
+            <span className="relative mb-0.5 mt-0.5 block h-1.5 w-full">
+              <span className="absolute inset-0 z-10 flex items-center justify-center text-[0.5rem] font-bold leading-none text-white">
+                {extras.vida}/{extras.vidaMax}
+              </span>
+              <span className="block h-full w-full rounded bg-red-900">
+                <span
+                  className={`block h-full rounded ${extras.vida > extras.vidaMax ? 'bg-amber-400' : 'bg-red-500'}`}
+                  style={{ width: `${Math.max(0, Math.min(100, (extras.vida / Math.max(extras.vidaMax, 1)) * 100))}%` }}
+                />
+              </span>
+            </span>
+          )}
         </div>
       </div>
     </div>
@@ -3243,6 +3281,7 @@ const InitTracker = () => {
                   position={isTop ? "top" : "bottom"}
                   heroId={item.id}
                   clickable={heroManagementEnabled}
+                  extras={heroManagementEnabled ? getHeroExtras(item.id) : null}
                   onOpen={() => setSelectedHeroId(item.id)}
                 />
               )}
@@ -3978,6 +4017,7 @@ const InitTracker = () => {
             heroId={selectedHeroId}
             role={trackerData.roles?.[selectedHeroId]}
             onClose={() => setSelectedHeroId(null)}
+            onChanged={() => setHeroExtrasVersion((value) => value + 1)}
           />
         )}
         {showPCModal && (

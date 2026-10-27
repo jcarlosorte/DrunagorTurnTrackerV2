@@ -372,7 +372,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`${bgColorMap[color] || ''} relative flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border-4 shadow-2xl ${borderColorMap[color] || ''}`}
+        className={`${bgColorMap[color] || ''} modal-enter relative flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border-4 shadow-2xl ${borderColorMap[color] || ''}`}
       >
         
         {/* Franja superior con el color de facción */}
@@ -492,10 +492,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
             </div>
           </div>
 
-          {/* Submenú Estados Alterados: una sola línea, sin nombres */}
+          {/* Submenú Estados Alterados: columnas compactas en una sola fila */}
           <div className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900/60 p-2">
             <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
-            <div className="flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-1">
+            <div className="flex flex-nowrap items-start justify-start gap-1 overflow-hidden">
             {estadosLocal
               .filter((estado) => !todasInmunidades?.includes(estado.id) && !(todasInmunidades?.includes("GRANDE") && ["DERRIBO_I", "ATURDIMIENTO_I"].includes(estado.id)))
               .filter((estado) => {
@@ -511,31 +511,31 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                 return (
                   <div
                     key={estado.id}
-                    className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-1 py-0.5"
+                    className="flex w-9 shrink-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
                   >
-                    <button
-                      type="button"
-                      onClick={() => handleEstadoChangeLocal(estado.id, -1)}
-                      disabled={(estado.count || 0) <= 0}
-                      aria-label={`${nombre}: −1`}
-                      className="flex h-7 w-7 items-center justify-center rounded bg-red-700 text-sm text-white hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
-                    >
-                      −
-                    </button>
-
-                    <div className="relative flex flex-col items-center" title={`${nombre} ×${estado.count || 0}`}>
-                      <img src={estadoConfig.imagen} alt={nombre} className="h-7 w-7 flex-shrink" />
-                      <span className="text-[0.6rem] font-bold leading-none text-white">{estado.count || 0}</span>
-                    </div>
-
                     <button
                       type="button"
                       onClick={() => handleEstadoChangeLocal(estado.id, +1)}
                       disabled={maxCount === 1 && (estado.count || 0) >= maxCount}
                       aria-label={`${nombre}: +1`}
-                      className="flex h-7 w-7 items-center justify-center rounded bg-green-700 text-sm text-white hover:bg-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
+                      className="flex h-5 w-8 items-center justify-center rounded bg-green-700 text-xs font-bold leading-none text-white hover:bg-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
                     >
                       +
+                    </button>
+
+                    <div className="relative flex flex-col items-center py-0.5" title={`${nombre} ×${estado.count || 0}`}>
+                      <img src={estadoConfig.imagen} alt={nombre} className="h-6 w-6 flex-shrink" />
+                      <span className="text-[0.6rem] font-bold leading-none text-white">{estado.count || 0}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleEstadoChangeLocal(estado.id, -1)}
+                      disabled={(estado.count || 0) <= 0}
+                      aria-label={`${nombre}: −1`}
+                      className="flex h-5 w-8 items-center justify-center rounded bg-red-700 text-xs font-bold leading-none text-white hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
+                    >
+                      −
                     </button>
                   </div>
                 );

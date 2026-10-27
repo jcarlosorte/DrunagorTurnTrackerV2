@@ -113,7 +113,18 @@
     "noConditions": "Sin estados activos.",
     "allAdded": "Todas añadidas.",
     "baseMoveLabel": "Mov.",
-    "managementHint": "Se guarda con la partida"
+    "managementHint": "Se guarda con la partida",
+    "maxLife": "Vida máxima",
+    "movementLabel": "Movimiento",
+    "attackLabel": "Ataque",
+    "base": "Base",
+    "amuletBonus": "Amuleto",
+    "weapon": "Arma",
+    "actionCubes": "Cubos de acción",
+    "maxPerColor": "máx.",
+    "movementShort": "Mov.",
+    "attackShort": "Ata.",
+    "stats": "Estadísticas"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Maga Caída",

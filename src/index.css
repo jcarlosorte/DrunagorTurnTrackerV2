@@ -502,4 +502,51 @@ textarea:focus-visible {
   z-index: 2;
 }
 
+/* ------------------------------------------------------------------
+   Animaciones de interfaz: apertura de diálogos y destacado del turno.
+   Se desactivan con prefers-reduced-motion (regla global más arriba).
+   ------------------------------------------------------------------ */
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-enter {
+  animation: modalIn 0.18s ease-out;
+}
+
+@keyframes turnPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(52, 211, 153, 0);
+  }
+}
+
+.turn-active {
+  animation: turnPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes cardPop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.track-card-enter {
+  animation: cardPop 0.22s ease-out;
+}
+
 
