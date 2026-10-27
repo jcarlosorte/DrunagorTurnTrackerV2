@@ -484,8 +484,7 @@ textarea:focus-visible {
   min-width: 0;
 }
 
-/* Slot activo: haz vertical tenue sobre la línea del track. El anillo real se
-   dibuja sobre la carta en turno (ver `.track-card--active`). */
+/* El turno activo se marca con la flecha sobre la carta; sin halo ni haz. */
 /* ------------------------------------------------------------------
    Tokens de color (D9): una sola fuente para eventos y acentos.
    Las clases de abajo los consumen; migrar el resto es incremental.
@@ -515,42 +514,7 @@ textarea:focus-visible {
 .history-kind-summon { background: var(--event-summon-bg); color: var(--event-summon-fg); border-color: var(--event-summon-border); }
 .history-kind-event { background: var(--event-default-bg); color: var(--event-default-fg); border-color: var(--event-default-border); }
 
-.track-slot--active::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  transform: translateX(-50%);
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgb(52 211 153 / 0.45) 42%,
-    rgb(52 211 153 / 0.45) 58%,
-    transparent 100%
-  );
-  pointer-events: none;
-  z-index: 0;
-  animation: slotBeam 2.2s ease-in-out infinite;
-}
-
-/* Carta del turno activo: anillo ajustado a la tarjeta. */
-.track-card--active {
-  border-radius: 0.75rem;
-  box-shadow: 0 0 0 2px rgb(52 211 153 / 0.95), 0 0 18px rgb(16 185 129 / 0.55);
-  animation: slotBeam 2.2s ease-in-out infinite;
-}
-
-@keyframes slotBeam {
-  0%, 100% { opacity: 0.45; }
-  50% { opacity: 1; }
-}
-
-@keyframes slotGlow {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 1; }
-}/* Sin `position` aquí: la clase utilitaria del markup decide cómo se coloca
+/* Sin `position` aquí: la clase utilitaria del markup decide cómo se coloca
    (absolute centrada en el 50% del slot). Si se fuerza `relative`, la etiqueta
    vuelve al flujo y se queda pegada arriba del slot. */
 .track-slot__label {

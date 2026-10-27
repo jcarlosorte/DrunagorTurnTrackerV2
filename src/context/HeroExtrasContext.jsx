@@ -37,10 +37,18 @@ export function HeroExtrasProvider({ children }) {
   return <HeroExtrasContext.Provider value={value}>{children}</HeroExtrasContext.Provider>;
 }
 
+/**
+ * Acceso tolerante: si el componente se ejecuta sin proveedor (por ejemplo con
+ * fragmentos antiguos en caché tras un despliegue) se usan las utilidades
+ * directamente en vez de romper la página.
+ */
+const FALLBACK = {
+  version: 0,
+  getExtras: getHeroExtras,
+  updateExtras: (heroId, patch) => patchHeroExtras(heroId, patch),
+  refresh: () => invalidateHeroExtrasCache(),
+};
+
 export function useHeroExtras() {
-  const context = useContext(HeroExtrasContext);
-  if (!context) {
-    throw new Error('useHeroExtras debe usarse dentro de HeroExtrasProvider');
-  }
-  return context;
+  return useContext(HeroExtrasContext) || FALLBACK;
 }

@@ -13,7 +13,7 @@ test.describe('Tablero de iniciativa', () => {
     await expect(page.locator('.track-slot__label')).toHaveCount(11);
   });
 
-  test('el turno activo se marca con un anillo sobre su carta', async ({ page }) => {
+  test('el turno activo se marca sobre su carta', async ({ page }) => {
     await openTracker(page);
     await page.getByTestId('next-turn').click();
     await page.waitForTimeout(400);
@@ -21,23 +21,17 @@ test.describe('Tablero de iniciativa', () => {
     const slot = page.locator('.track-slot--active').first();
     await expect(slot).toHaveCount(1);
 
+    // Sin halo: solo la flecha y el atributo que identifica la carta en turno.
     const metrics = await slot.evaluate((element) => {
       const before = getComputedStyle(element, '::before');
-      const card = element.querySelector('.track-card--active');
       return {
-        slotHeight: element.getBoundingClientRect().height,
-        beamWidth: Number.parseFloat(before.width),
-        beamHeight: Number.parseFloat(before.height),
-        card: card ? { shadow: getComputedStyle(card).boxShadow, radius: getComputedStyle(card).borderRadius } : null,
+        hasBeam: before.content !== 'none' && before.content !== '',
+        card: Boolean(element.querySelector('[data-current-turn]')),
       };
     });
 
-    // Haz estrecho y contenido en el slot + anillo ajustado a la carta.
-    expect(metrics.beamWidth).toBeLessThan(10);
-    expect(metrics.beamHeight).toBeLessThanOrEqual(metrics.slotHeight);
-    expect(metrics.card).not.toBeNull();
-    expect(metrics.card.shadow).toContain('52, 211, 153');
-    expect(metrics.card.radius).not.toBe('0px');
+    expect(metrics.hasBeam).toBe(false);
+    expect(metrics.card).toBe(true);
   });
 
   test('la vista de lista usa una altura compacta', async ({ page }) => {

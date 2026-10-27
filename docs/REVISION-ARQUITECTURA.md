@@ -527,6 +527,24 @@ Móvil 320   paleta enemigo 230/230 · héroe 242/242
 Suite       Lint 0 errores · Unit 33 · E2E 12/12 · dist 8,88 MB
 ```
 
+### 7.ª tanda (ajustes)
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Halo eliminado** | Fuera el haz y el anillo delánime turno activo. Queda la flecha sobre la carta y `data-current-turn` como marca | `index.css`, `TrackSlot.jsx` |
+| **Imágenes al ras** | Configuración de héroes y enemigos: `object-cover object-top`, de modo que el borde superior de la ilustración coincide con el marco | `Tracker.jsx` |
+| **Arranque blindado** | `useHeroExtras` ya no lanza si falta el proveedor (caso de fragmentos antiguos en caché): usa las utilidades directamente | `HeroExtrasContext.jsx` |
+| **ErrorBoundary útil** | Detecta fallos de *chunk* (“Hay una versión nueva…”), ofrece **Recargar** y muestra los detalles técnicos bajo demanda | `ErrorBoundary.jsx` |
+
+**Verificación**
+
+```text
+Turno      ::before content = none · flecha presente · carta marcada
+Tablero    slot 347 px · sin scroll de página
+Héroe img  object-fit cover · object-position 50% 0% · borde superior alineado
+Enemigo    object-fit cover · object-position 50% 0%
+Suite      Lint 0 · Unit 33 · E2E 12/12 · dist 8,88 MB
+```
 ### Pendiente / pospuesto
 
 - **H8 (2/3 y 3/3)**: extraer `useTurnEngine` (~600 líneas) y los paneles de escenario/pilas (~350). Requiere una sesión dedicada con la suite E2E como red.

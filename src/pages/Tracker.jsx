@@ -372,15 +372,13 @@ const TrackerSelect = () => {
                         />
                         <span className="relative block">
                           {hero.image ? (
-                            <span className="flex h-32 w-full items-center justify-center overflow-hidden bg-slate-950 sm:h-40">
-                              <img
-                                src={hero.image}
-                                alt=""
-                                loading="lazy"
-                                decoding="async"
-                                className="h-full w-full object-contain"
-                              />
-                            </span>
+                            <img
+                              src={hero.image}
+                              alt=""
+                              loading="lazy"
+                              decoding="async"
+                              className="h-32 w-full object-cover object-top sm:h-40"
+                            />
                           ) : (
                             <span className="flex h-32 w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
                           )}
@@ -672,7 +670,7 @@ const TrackerSelect = () => {
                                     alt=""
                                     loading="lazy"
                                     decoding="async"
-                                    className="h-28 w-full object-cover sm:h-32"
+                                    className="h-28 w-full object-cover object-top sm:h-32"
                                   />
                                 ) : (
                                   <span className="flex h-28 w-full items-center justify-center bg-slate-800 text-slate-500">—</span>

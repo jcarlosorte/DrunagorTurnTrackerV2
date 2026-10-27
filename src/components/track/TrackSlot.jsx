@@ -90,7 +90,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
             zIndex: isCurrentTurn ? 40 : zIndex,
           }}
         >
-          <div className={`relative items-center ${isCurrentTurn ? 'track-card--active' : ''}`} data-current-turn={isCurrentTurn || undefined}>
+          <div className="relative items-center" data-current-turn={isCurrentTurn || undefined}>
             {isCurrentTurn && (
               <div className="absolute bottom-10 left-1/2 z-30 -translate-x-1/2 transform rounded-full border-2 border-white bg-purple-600">
                 <GiWingedSword className="animate-bounce text-white" size={40} />
