@@ -73,8 +73,13 @@ const TopMenu = ({
         setActiveMenu(null);
       }
     };
-    document.addEventListener('mousedown', handleOutside);
-    return () => document.removeEventListener('mousedown', handleOutside);
+    const handleKey = (event) => { if (event.key === 'Escape') setActiveMenu(null); };
+    document.addEventListener('pointerdown', handleOutside);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('pointerdown', handleOutside);
+      document.removeEventListener('keydown', handleKey);
+    };
   }, []);
 
   
@@ -212,10 +217,11 @@ const TopMenu = ({
           </button>
           <LanguageMenu label={savesT.language || 'Idioma'} />
 
-          {activeMenu && (
+          {['enemies', 'runes', 'scenario'].includes(activeMenu) && (
             <button
               type="button"
-              onClick={toggleMenu}
+              data-testid="close-menu"
+              onClick={() => setActiveMenu(null)}
               aria-label={t.close || 'Cerrar menú'}
               className="flex h-11 items-center gap-1 rounded-full bg-slate-700 px-3 text-sm font-semibold text-white hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
             >

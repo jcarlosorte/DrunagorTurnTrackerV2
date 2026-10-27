@@ -1,3 +1,6 @@
+import { INMUNIDADES } from '@/data/estadosAlterados';
+import { useLanguage } from '@/context/LanguageContext';
+
 /**
  * Ficha destacada del jefe, encima del tablero.
  *
@@ -5,6 +8,8 @@
  * para que no pase desapercibida.
  */
 export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels = {} }) {
+  const { translations } = useLanguage();
+  const immunityLabels = translations.condiciones_d || {};
   const jefes = enemies.filter((entry) => (
     entry?.enemy?.categoria === 'jefe' && entry.enemy.tipo !== 'especial'
   ));
@@ -62,18 +67,38 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                   </span>
                 </span>
 
-                <span className="flex flex-wrap gap-1 text-[0.65rem] font-semibold text-slate-300">
-                  <span className="rounded bg-slate-800 px-1.5 py-0.5">👣 {enemy.movimiento ?? '—'}</span>
-                  <span className="rounded bg-slate-800 px-1.5 py-0.5">⚔ {enemy.ataque ?? '—'}</span>
-                  {(enemy.estadosAlterados || [])
-                    .filter((estado) => (estado?.count || 0) > 0)
-                    .slice(0, 4)
-                    .map((estado) => (
-                      <span key={estado.id} className="rounded bg-red-900/70 px-1.5 py-0.5 text-red-100">
-                        {estado.id.replace(/_[IV]+$/, '')} ×{estado.count}
-                      </span>
-                    ))}
-                </span>
+                {(enemy.inmunidad || []).length > 0 && (
+                  <span className="flex flex-wrap items-center gap-1">
+                    {(enemy.inmunidad || []).slice(0, 8).map((immunityId) => {
+                      const config = INMUNIDADES.find((item) => item.id === immunityId);
+                      if (!config) return null;
+                      const text = immunityLabels[immunityId] || immunityId;
+                      return (
+                        <img
+                          key={immunityId}
+                          src={config.imagen}
+                          alt={text}
+                          title={text}
+                          className="h-5 w-5 rounded-full border border-white/80 shadow sm:h-6 sm:w-6"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      );
+                    })}
+                  </span>
+                )}
+                {(enemy.estadosAlterados || []).filter((estado) => (estado?.count || 0) > 0).length > 0 && (
+                  <span className="flex flex-wrap gap-1 text-[0.65rem] font-semibold text-slate-300">
+                    {(enemy.estadosAlterados || [])
+                      .filter((estado) => (estado?.count || 0) > 0)
+                      .slice(0, 4)
+                      .map((estado) => (
+                        <span key={estado.id} className="rounded bg-red-900/70 px-1.5 py-0.5 text-red-100">
+                          {estado.id.replace(/_[IV]+$/, '')} ×{estado.count}
+                        </span>
+                      ))}
+                  </span>
+                )}
               </span>
             </button>
           );
