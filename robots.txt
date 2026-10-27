@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# La aplicación no expone rutas privadas; todo el estado vive en el navegador.

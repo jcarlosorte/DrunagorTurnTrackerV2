@@ -1,1 +1,0 @@
-import{j as t,m as a}from"./vendor-motion-C7WQVu2C.js";function n({children:i}){return t.jsx(a.div,{initial:{opacity:0,y:20},animate:{opacity:1,y:0},exit:{opacity:0,y:-20},transition:{duration:.4},children:i})}export{n as P};
