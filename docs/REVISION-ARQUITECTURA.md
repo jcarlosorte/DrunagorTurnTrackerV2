@@ -588,10 +588,32 @@ Paleta 360     2 filas · 0 desbordamiento
 Portada        logo homeLogoBeat · esqueleto homeSkeletonDrift (opacidad 0,07)
 Suite          Lint 0 · Unit 36 · E2E 15/15 · dist 8,89 MB
 ```
+### 10.ª tanda — seguridad, motor de turno y tokens
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **F4 · CSP** | `<meta http-equiv="Content-Security-Policy">` inyectada solo en el build (GitHub Pages no permite cabeceras): `default-src 'self'`, `script-src 'self'`, `object-src 'none'`, `base-uri 'self'`, fuentes de Google permitidas | `vite.config.js` |
+| **H8 2/3 · cursor** | `useTurnCursor` aísla índice, ronda, turnos extra y pila de deshacer (límite 10) | `hooks/useTurnCursor.js` |
+| **H8 2/3 · orden** | `findNextActiveEntity` / `indexOfEntityInOrder` puros, con tests | `utils/turnOrder.js` |
+| **H8 2/3 · historial** | `pushEntry` / `popEntry` con límite, con tests | `utils/turnHistory.js` |
+| **D9 · facciones** | Tokens `--faction-*` y `--category-*`; clases `.faction-bg-*` y bordes tokenizados | `index.css` |
+| **D9 · estados** | `--state-add`, `--state-remove`, `--state-chip-*` con `.state-btn-*` y `.state-chip` | `index.css`, `ModalEnemyCard.jsx` |
+| **Avisos de lint** | **116 → 0**: imports muertos, variables sin usar, mapas obsoletos y 4 dependencias de hooks corregidas; los 2 efectos de turno intencionales quedan documentados con su `eslint-disable` | varios |
+| **Tests** | +9 unitarios (`turnOrder`, `turnHistory`) y +1 E2E de CSP | `*.test.js`, `tests/e2e/seguridad.spec.js` |
+
+**Medición**
+
+```text
+CSP            meta presente · 0 violaciones al cargar y al abrir modales
+Facciones      borde rgb(255,255,255) desde --faction-blanco
+Estados        chip rgba(30,41,59,.7) · + rgb(21,128,61) · − rgb(185,28,28)
+InitTracker    4.087 → 4.000 líneas
+Suite          Lint 0 errores/0 avisos · Unit 45 · E2E 16/16
+```
 ### Pendiente / pospuesto
 
-- **H8 (2/3 y 3/3)**: extraer `useTurnEngine` (~600 líneas) y los paneles de escenario/pilas (~350). Requiere una sesión dedicada con la suite E2E como red.
-- **D9 completo**: migrar facciones y estados a los tokens (hoy solo la paleta de eventos).
+- **H8 (3/3)**: paneles de escenario/pilas (~350 líneas) y el resto de `useTurnEngine` (efectos de turno).
+- **D9**: hecho para eventos, facciones y estados; quedan acentos sueltos de botones (verde/rojo) fuera de la paleta.
 - **F2**: `srcset`/AVIF (WebP ya aplicado).
-- **F4**: CSP al mover el hosting a Cloudflare Pages/Netlify.
+- **F4**: CSP por `<meta>`; `frame-ancestors`/`report-uri` siguen requiriendo cabeceras (solo con otro hosting).
 - **P2**: API de sincronización (pospuesta por decisión de producto).

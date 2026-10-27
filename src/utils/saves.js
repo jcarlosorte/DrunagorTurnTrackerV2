@@ -1,4 +1,4 @@
-import { isPlainObject, readJsonStorage, removeStorage, writeJsonStorage } from '@/utils/storage';
+import { SNAPSHOT_SCHEMA_VERSION, isPlainObject, readJsonStorage, removeStorage, writeJsonStorage } from '@/utils/storage';
 
 export const SAVE_INDEX_KEY = 'drunagor:saves:index:v1';
 export const SAVE_PREFIX = 'drunagor:save:';
@@ -31,7 +31,7 @@ export function saveGame({ id, name, snapshot }) {
     name: (name || '').trim() || `Partida ${existing.length + 1}`,
     createdAt: existing.find((entry) => entry.id === saveId)?.createdAt || now,
     updatedAt: now,
-    schemaVersion: 2,
+    schemaVersion: SNAPSHOT_SCHEMA_VERSION,
     snapshot,
   };
 

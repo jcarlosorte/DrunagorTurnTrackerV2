@@ -1,9 +1,8 @@
 // src/pages/InitTracker.jsx
-import { useNavigate } from 'react-router-dom';
-import { flushSync } from "react-dom";
+
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useState, useRef } from 'react';
-import { GiAbstract065, GiWingedSword } from 'react-icons/gi';
+
 import { RiArrowTurnBackLine, RiArrowTurnForwardLine } from "react-icons/ri";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,8 +11,8 @@ import { ENEMIES } from '@/data/enemies';
 import { RUNAS, ASALTO } from '@/data/runas';
 import { INCURSION } from '@/data/incursion';
 import { DEFENSA } from '@/data/defensa';
-import { ESTADOS_ALTERADOS, INMUNIDADES, CAPACIDADES_ACTIVADAS, OTROS } from '@/data/estadosAlterados';
-import { CARTAS_COMANDANTE, CARTAS_OVERLORD, CARTAS_JEFE, CARTAS_HEROE_CAIDO, ALDEANO, ERRANTES, ASALTO_GUSANO, ACECHO, IRA } from '@/data/cartasEspeciales';
+import { ESTADOS_ALTERADOS, OTROS } from '@/data/estadosAlterados';
+import { CARTAS_COMANDANTE, CARTAS_OVERLORD, CARTAS_JEFE, CARTAS_HEROE_CAIDO, ASALTO_GUSANO, ACECHO, IRA } from '@/data/cartasEspeciales';
 import { TURN_ORDER } from '@/data/turnOrder';
 import { ENEMY_RING_COLORS } from '@/data/enemyRings';
 import { ENEMY_RING_COLORS_BIG } from '@/data/enemyRingsBig';
@@ -25,45 +24,42 @@ import { useExpansions } from '@/context/ExpansionContext';
 import { useGame } from '@/context/GameContext';
 import { useInitRunes } from '@/context/initRunesContext';
 import TopMenu from '@/components/TopMenu';
-import classNames from 'classnames';
+
 import AnimatedEnemyToast from '@/components/AnimatedEnemyToast';
 import PageTransition from "@/components/PageTransition";
 import ModalCommanderPC from '@/components/ModalCommanderPC';
 import { ModalEnemyCard } from '@/components/ModalEnemyCard';
 import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRunes';
-import { useRenderEnemyCapabilities } from '@/components/renderEnemyCapabilities';
+
 import TileWarningModal from '@/components/TileWarningModal';
 import TileToast from '@/components/TileToast';
 import BagStatusPanel from '@/components/track/BagStatusPanel';
-import TrackTurnHeader from '@/components/track/TrackTurnHeader';
+
 import EnemyCard from '@/components/track/EnemyCard';
-import FitText from '@/components/track/FitText';
+
 import HistoryPanel from '@/components/track/HistoryPanel';
 import ModalHeroCard from '@/components/track/ModalHeroCard';
 import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
-import CommanderCard from '@/components/CommanderCard';
+
 import { createId } from '@/utils/id';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { appendGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, stepHeroEstadoAlterado } from '@/utils/heroExtras';
-import { formatClock, isOverWarning } from '@/utils/turnTimer';
+import { formatClock } from '@/utils/turnTimer';
+import { findNextActiveEntity, indexOfEntityInOrder } from '@/utils/turnOrder';
 import { useHeroExtras } from '@/context/HeroExtrasContext';
 import useStatusEffects from '@/hooks/useStatusEffects';
-import { aplicarEfectosEstadosHeroe } from '@/utils/heroStatus';
-import { applyStatusEffects } from '@/utils/statusEngine';
+import useTurnCursor from '@/hooks/useTurnCursor';
+
+
 import { classifyScenarioToast } from '@/utils/toastKind';
-import CharacterCard from '@/components/track/CharacterCard';
+
 import TrackSlot from '@/components/track/TrackSlot';
 import TurnCarousel from '@/components/track/TurnCarousel';
-import {
-  boardSlotHeightFrom,
-  cardDistance,
-  compactSlotHeight,
-  stackHeight,
-} from '@/components/track/trackLayout';
-import { ESTADOS_HEROE } from '@/data/heroes/index';
+import { boardSlotHeightFrom } from '@/components/track/trackLayout';
+
 
 const rolesPositionMap = {
   defensor: 0,
@@ -82,7 +78,6 @@ const runesColorMap = {
 };
 
 const allowedCategories = ['campeon', 'veterano', 'soldado', 'bisoño'];
-const behaviorOptions = ['estandar', 'alternativo', 'complejo'];
 const PROPIEDADES_ACTUALIZABLES = ['movimiento', 'ataque', 'capacidades', 'inmunidad', 'tipo_ataque'];
 const EnemiesNoShow = ['undead_king_boss_Acecho_1', 'undead_king_boss_Acecho_2', 'corrupted_worm_esbirro'];
 const commanderNoPc = ['dark_vampire_scenario_com'];
@@ -91,12 +86,9 @@ const toSet = (value) => new Set(Array.isArray(value) ? value : []);
 
 const InitTracker = () => {
   const { trackerData, setTrackerData } = useTracker();
-  const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyAt, removeEnemyByUUID, resetPlacedEnemies, assignColorToEnemy, 
-         releaseColor, usedColors, setUsedColors, usedColorsBig, setUsedColorsBig, enemyColorMap, setEnemyColorMap, 
-         avisos, removeAviso, huespedActivo, acechoActivo, invadidosActivo } = useInitEnemies();
-  const { language, translations } = useLanguage();
+  const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, acechoActivo, invadidosActivo } = useInitEnemies();
+  const { translations } = useLanguage();
   const { selectedExpansions } = useExpansions();
-  const navigate = useNavigate();
   const ti = translations.trackerInit || {};
   const tr = translations.roles || {};
   const tc = translations.enemies?.categoria || {};
@@ -110,8 +102,6 @@ const InitTracker = () => {
   const tw = translations.asalto_gusano || {};
   const t_acecho = translations.acecho || {};
   const t_ira = translations.ira || {};
-  const t_con = translations.condiciones_t || {};
-  const t_con_d = translations.condiciones_d || {};
   const persistedSession = readJsonStorage('trackerSession', {}, isPlainObject);
   const behaviors = trackerData.behaviors;
   const enemies = trackerData.enemies;
@@ -119,19 +109,17 @@ const InitTracker = () => {
   const numHeroes = selectedHeroes.length;
   const [categorySelector, setCategorySelector] = useState({ open: false, color: null });
   const [manualSelector, setManualSelector] = useState({ open: false, color: null });
-  const [toastMessage, setToastMessage] = useState('');
+
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, drawTilePreviewByColor, drawTileByColor, discardTileByColor, runes, addRune, removeRune, getRuneCount, clearRunes, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, 
-         spawnPoints, removeSpawnPoint, controlPoints, removeControlPoint, runeKeys, removeRuneKey, rescue, removeRescue, pilas, pilasConcentrada, activarPilaConcentrada, activarPila, codigosPilas, setCodigosPilas, handleCodigoChange, addTileToPila, addTileToPilaConcentrada,
-         initializeDecks, drawCardFromDeck, removeTileFromPila, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack } = useGame();
-  const [selectedRuneCards, setSelectedRuneCards] = useState(() => persistedSession.selectedRuneCards || []);
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, removeSpawnPoint, controlPoints, removeControlPoint, runeKeys, removeRuneKey, rescue, removeRescue, pilas, pilasConcentrada, activarPilaConcentrada, activarPila, codigosPilas, handleCodigoChange, addTileToPila, addTileToPilaConcentrada, initializeDecks, drawCardFromDeck, removeTileFromPila, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack } = useGame();
+
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
   const [warningMessage, setWarningMessage] = useState(null);
   const [overhealedEnemies, setOverhealedEnemies] = useState(() => new Set(persistedSession.overhealedEnemies || []));
-  const [rotatingUUIDs, setRotatingUUIDs] = useState([]);
+
   const [flippedCards, setFlippedCards] = useState([]);
   const [scenarioToasts, setScenarioToasts] = useState([]);
   const [showPCModal, setShowPCModal] = useState(false);
@@ -139,7 +127,7 @@ const InitTracker = () => {
   const [enemyEvolutions, setEnemyEvolutions] = useState(() => persistedSession.enemyEvolutions || []);
   const [selectedHeroId, setSelectedHeroId] = useState(null);
   const [diceOpen, setDiceOpen] = useState(false);
-  const { version: heroExtrasVersion, getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
+  const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
   const getHeroName = (id) => translations.heroes?.[id] || id;
   const getEnemyName = (id, color = null) => {
@@ -364,7 +352,6 @@ const InitTracker = () => {
   
     const placedMonsters = placedEnemies.filter(e => e.enemy.id === enemiesId);
     const alreadyPlaced = placedMonsters.length;
-    const totalHeroes = trackerData.placedHeroes?.length || 0;
     const faltan = Math.max(0, maxMonstruos - alreadyPlaced);
   
     let simulatedUsedSmall = [...usedColors];
@@ -431,7 +418,6 @@ const InitTracker = () => {
       // ✅ --- ESCUDO ---
       if (cap.startsWith("ESCUDO")) {
         const partes = cap.split("_");
-        const tieneCondicion = partes.includes("?");
         const puedeSobrepasar = partes.includes("SI");
         const configEscudo = ESTADOS_ALTERADOS.find(e => e.id === "ESCUDO");
         const maxEscudo = configEscudo?.max || Infinity;
@@ -1968,12 +1954,6 @@ const InitTracker = () => {
   };
   
     
-  const categoryGlowMap = {
-    bisoño: 'drop-shadow-[0_0_6px_rgba(59,130,246,1)]',    // azul
-    soldado: 'drop-shadow-[0_0_6px_rgba(234,179,8,1)]',     // amarillo
-    veterano: 'drop-shadow-[0_0_6px_rgba(251,146,60,1)]',   // naranja
-    campeon: 'drop-shadow-[0_0_6px_rgba(239,68,68,1)]'      // rojo
-  };
 
   const colorMap = {
     rojo: 'bg-red-700 hover:bg-red-600',
@@ -1992,19 +1972,37 @@ const InitTracker = () => {
       })
       .filter(Boolean);
     setTrackerData(prev => ({ ...prev, placedHeroes: initialHeroes }));
+    // Solo al montar: inicializa posiciones desde la configuración guardada.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
-  const [turnIndex, setTurnIndex] = useState(() => persistedSession.turnIndex ?? -1);
+  // Cursor del turno e historial de deshacer (H8 2/3).
+  const {
+    turnIndex,
+    setTurnIndex,
+    roundNumber,
+    setRoundNumber,
+    previousTurnIndex,
+    setPreviousTurnIndex,
+    groupTurnTracker,
+    setGroupTurnTracker,
+    extraTurnsQueue,
+    setExtraTurnsQueue,
+    extraTurnIndex,
+    setExtraTurnIndex,
+    extraTurnTotal,
+    setExtraTurnTotal,
+    undoCount,
+    pushHistory,
+    popHistory,
+    restoreCursor,
+    resetCursor,
+  } = useTurnCursor(persistedSession);
   const [currentTurnEntity, setCurrentTurnEntity] = useState(null);
-  const [groupTurnTracker, setGroupTurnTracker] = useState(() => persistedSession.groupTurnTracker || { group: [], index: 0 });
   const processedVoragineRef = useRef(toSet(persistedSession?.processed?.voragine));
   const processedDefenseTurnRef = useRef(toSet(persistedSession?.processed?.defenseTurn));
   const [lastRealTurnIndex, setLastRealTurnIndex] = useState(() => persistedSession.lastRealTurnIndex ?? null);
-  const [roundNumber, setRoundNumber] = useState(() => persistedSession.roundNumber ?? persistedSession.round ?? 0);
-  const placedHeroes = trackerData.placedHeroes;
-  const groupIndex = groupTurnTracker.index;
   const roundRef = useRef(roundNumber);
-  const [previousTurnIndex, setPreviousTurnIndex] = useState(() => persistedSession.previousTurnIndex ?? null);
   const previousTurnIndexRef = useRef(persistedSession.previousTurnIndex ?? null);
   const processedStartEffectsRef = useRef(toSet(persistedSession?.processed?.start));
   const processedEndEffectsRef = useRef(toSet(persistedSession?.processed?.end));
@@ -2012,17 +2010,12 @@ const InitTracker = () => {
   const lastHeroTurnRef = useRef(persistedSession?.processed?.lastHeroTurn || null);
   const processedCardsRef = useRef(toSet(persistedSession?.processed?.cards));
   const processedTiempoRef = useRef(toSet(persistedSession?.processed?.tiempo));
-  const [extraTurnsQueue, setExtraTurnsQueue] = useState(() => persistedSession.extraTurnsQueue || []);
-  const [extraTurnIndex, setExtraTurnIndex] = useState(() => persistedSession.extraTurnIndex || 0);
-  const [extraTurnTotal, setExtraTurnTotal] = useState(() => persistedSession.extraTurnTotal || 0);
   const [presentation, setPresentation] = useState(false);
   // En móvil la bolsa arranca cerrada: libera altura para el tablero.
   const [bagOpen, setBagOpen] = useState(() => (
     typeof window === 'undefined' ? true : window.innerWidth >= 1024
   ));
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [undoCount, setUndoCount] = useState(0);
-  const turnHistoryRef = useRef([]);
   // Rastro de los últimos turnos para el carrusel (anterior / actual / siguiente).
   const turnTrailRef = useRef([]);
   // Cronómetro: segundos del turno actual y marca de inicio del turno.
@@ -2290,7 +2283,6 @@ const InitTracker = () => {
     }
   
     // 🔍 RUNES
-    let numRune = 0;
     if (step.type === 'rune') {
       const runes = placedRunes
         .filter(r => r.rune.colorIndex === step.index && r.rune.posicion === step.position)
@@ -2471,12 +2463,13 @@ const InitTracker = () => {
     const entity = getNextActiveEntity(turnIndex);
     setCurrentTurnEntity(entity);
     setGroupTurnTracker({ group: [], index: 0 });
+    // Efecto de turno: depende del cursor y de las pilas, no de cada callback.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turnIndex, placedEnemies, placedRunes]);
 
   // Se declara después del efecto de turno para leer los conjuntos ya actualizados.
   useEffect(() => {
     persistProcessed();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turnIndex]);
 
   const addExtraTurn = (enemyUUID) => {
@@ -2487,50 +2480,17 @@ const InitTracker = () => {
     });
   };
   
-  const getNextActiveEntity = (startIndex) => {
-    
-    for (let i = 0; i < TURN_ORDER.length; i++) {
-      const idx = (startIndex + i) % TURN_ORDER.length;
-      const step = TURN_ORDER[idx];
-  
-      if (step.type === 'hero') {
-        const hero = trackerData.placedHeroes?.find(h =>
-          h.role === step.role && h.position === step.index);
-        if (hero) return { ...hero, type: 'hero' };
-      } else if (step.type === 'enemy') {
-        const enemies = placedEnemies
-          .filter(e =>
-            e.enemy.rune === step.rune &&
-            e.enemy.position === step.index &&
-            e.enemy.runePosition === step.position)
-          .map(e => e.enemy);
-        if (enemies.length > 0) return { ...enemies[0], type: 'enemy', group: enemies };
-      } else if (step.type === 'rune') {
-        const runes = placedRunes
-          .filter(r =>
-            r.rune.colorIndex === step.index &&
-            r.rune.posicion === step.position)
-          .map(r => r.rune);
-        if (runes.length > 0) return { ...runes[0], type: 'rune', group: runes };
-      }
-    }
-    return null;
-  };
-
+  /** Siguiente entidad activa en el orden de iniciativa (utilidad pura). */
+  const getNextActiveEntity = (startIndex) => findNextActiveEntity({
+    order: TURN_ORDER,
+    startIndex,
+    heroes: trackerData.placedHeroes || [],
+    enemies: placedEnemies,
+    runes: placedRunes,
+  });
   const handleNextTurn = () => {
     // Guardamos el cursor de turno para poder deshacer el último avance.
-    turnHistoryRef.current.push({
-      turnIndex,
-      roundNumber,
-      previousTurnIndex,
-      groupTurnTracker,
-      extraTurnsQueue,
-      extraTurnIndex,
-      extraTurnTotal,
-      currentTurnEntity,
-    });
-    if (turnHistoryRef.current.length > 10) turnHistoryRef.current.shift();
-    setUndoCount(turnHistoryRef.current.length);
+    pushHistory({ currentTurnEntity });
 
     if (extraTurnsQueue.length > 0) {
       const [nextUUID, ...rest] = extraTurnsQueue;
@@ -2564,12 +2524,7 @@ const InitTracker = () => {
     if (turnIndex === -1) {
       const next = getNextActiveEntity(0);
       if (next) {
-        const idx = TURN_ORDER.findIndex(step =>
-          step.type === next.type &&
-          ((step.type === 'hero' && step.role === next.role && step.index === next.position) ||
-           (step.type === 'enemy' && step.rune === next.rune && step.index === next.position && step.position === next.runePosition) ||
-           (step.type === 'rune' && step.index === next.colorIndex && step.position === next.posicion))
-        );
+        const idx = indexOfEntityInOrder(TURN_ORDER, next);
         if (idx !== -1) {
           setTurnIndex(idx);
           setLastRealTurnIndex(idx);
@@ -2738,32 +2693,22 @@ const InitTracker = () => {
   };
 
   const undoTurn = () => {
-    const snapshot = turnHistoryRef.current.pop();
+    const snapshot = popHistory();
     if (!snapshot) {
       showScenarioToast(ti.noUndo || 'No hay turnos que deshacer');
       return;
     }
-    setUndoCount(turnHistoryRef.current.length);
-    setTurnIndex(snapshot.turnIndex);
-    setRoundNumber(snapshot.roundNumber);
+    restoreCursor(snapshot);
     roundRef.current = snapshot.roundNumber;
-    setPreviousTurnIndex(snapshot.previousTurnIndex);
     previousTurnIndexRef.current = snapshot.previousTurnIndex;
-    setGroupTurnTracker(snapshot.groupTurnTracker);
-    setExtraTurnsQueue(snapshot.extraTurnsQueue);
-    setExtraTurnIndex(snapshot.extraTurnIndex);
-    setExtraTurnTotal(snapshot.extraTurnTotal);
     setCurrentTurnEntity(snapshot.currentTurnEntity);
     showScenarioToast(ti.undoDone || 'Turno anterior restaurado');
   };
   const restartTurnOrder = () => {
-    setTurnIndex(0);
+    resetCursor();
     previousTurnIndexRef.current = null;
-    setPreviousTurnIndex(null);
     roundRef.current = 1;
-    setRoundNumber(1);
     setCurrentTurnEntity(null);
-    setGroupTurnTracker({ group: [], index: 0 });
     setExecutedRunes([]);
     processedVoragineRef.current = new Set();
     processedDefenseTurnRef.current = new Set();
@@ -2778,7 +2723,6 @@ const InitTracker = () => {
   };
   
   const showToast = (enemyData) => {
-    const translatedName = translations?.enemies?.[enemyData.id];
   
     toast(
       <AnimatedEnemyToast
@@ -2898,25 +2842,6 @@ const InitTracker = () => {
   const rolesOnTop = ['defensor', 'lider', 'controlador'];
   const rolesOnBottom = ['apoyo', 'agresor'];
 
-  const countsPerIndex = Array(11).fill(0).map((_, index) => {
-    const heroesAbove = (trackerData.placedHeroes || []).filter(h => h.position === index && rolesOnTop.includes(h.role));
-    const heroesBelow = (trackerData.placedHeroes || []).filter(h => h.position === index && rolesOnBottom.includes(h.role));
-    const enemiesAbove = placedEnemies.filter(e => e.enemy.position === index && e.enemy.runePosition === 'arriba');
-    const enemiesBelow = placedEnemies.filter(e => e.enemy.position === index && e.enemy.runePosition === 'abajo');
-    return Math.max(heroesAbove.length + enemiesAbove.length, heroesBelow.length + enemiesBelow.length);
-  });
-
-  const maxCharactersInAnySlot = Math.max(...countsPerIndex);
-
-  let slotHeightClass = 'h-[34rem]'; // Base height (ej. 192px o 48rem)
-    if (maxCharactersInAnySlot >= 5) {
-        slotHeightClass = 'h-[40rem]'; // Taller height (ej. 256px o 64rem)
-    } else if (maxCharactersInAnySlot >= 3) {
-        slotHeightClass = 'h-[40rem]'; // Intermediate height (ej. 224px o 56rem) - puedes añadir más granularidad
-    } else if (maxCharactersInAnySlot >= 2) {
-        slotHeightClass = 'h-[34rem]'; // Intermediate height (ej. 224px o 56rem) - puedes añadir más granularidad
-    }
-
   const RuneCard = ({ rune, onRemove, flipped }) => {
     const tipo = rune.tipo;
     const [estadosLocal, setEstadosLocal] = useState(rune?.estadosAlterados || []);
@@ -2925,13 +2850,6 @@ const InitTracker = () => {
     const totalEnemies = placedEnemies.length;
     const totalHeroes = trackerData.placedHeroes?.length || 0;
     const replacementValue = totalHeroes <= 2 ? '2' : totalHeroes <= 4 ? '3' : '4';
-  
-    const bgColorMap = {
-      runa: 'bg-indigo-700',
-      asalto: 'bg-indigo-600',
-      defensa: 'bg-green-700',
-      incursion: 'bg-red-700'
-    };
   
     const borderColorMap = {
       runa: 'border-indigo-400',
@@ -2945,18 +2863,13 @@ const InitTracker = () => {
     
     const renderSide = (caraB = false) => {
       const isCaraB = rune.cara === 'B';
-      const isCaraA = rune.cara === 'A';
-      const bgColor = bgColorMap[tipo] || 'bg-indigo-700';
       const borderColor = borderColorMap[tipo] || 'border-indigo-400';
       const title = ts[rune.id];
       const accion = ts[rune.accion];
       const accion2 = ts[rune.accion2];
       const y = ts.Y;
       const nombre = ts[rune.nombre]?.replace('{x}', replacementValue) || rune.nombre;
-      const cartas = ts[rune.cartas] || rune.cartas;
       const posicion = rune.posicion;
-      const isIncursion = tipo === 'incursion';
-      const shouldHideContentIncursion = isIncursion && !caraB && totalEnemies > 0;
       return (
         <div className={`${posicion === 'abajo' ? 'absolute top-0 left-0 right-0' : 'absolute bottom-0 left-0 right-0'} backface-hidden ${ caraB ? 'rotate-y-180' : '' }`} >
           <div className="relative">

@@ -5,7 +5,7 @@ import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { languages as availableLanguages, languageNames } from '@/i18n/languageData';
 import { useSavesUi } from '@/context/SavesUiContext';
-import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDiceTarget, GiShield, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiCardDraw, GiCardPick, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes } from 'react-icons/gi';
+import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiCardDraw, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes } from 'react-icons/gi';
 import { MdAddCircleOutline } from 'react-icons/md';
 import BuildBadge from '@/components/BuildBadge';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
@@ -19,7 +19,7 @@ import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
 import ConfirmDialog from '@/components/ConfirmDialog';
-import { createId } from '@/utils/id';
+
 
 const TopMenu = ({
   onAddEnemy,
@@ -30,7 +30,7 @@ const TopMenu = ({
   onSelectRuneCard,
   onTileDraw
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+
   const { translations, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const { openSaves } = useSavesUi() || {};
@@ -42,20 +42,13 @@ const TopMenu = ({
   const [manualSelect, setManualSelect] = useState('');
   const [showRuneFaceOptions, setShowRuneFaceOptions] = useState(false);
   const [showAssaultFaceOptions, setshowAssaultFaceOptions] = useState(false);
-  const [isRunesOpen, setIsRunesOpen] = useState(false);
-  const [isScenarioOpen, setIsScenarioOpen] = useState(false);
+
+
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState(false);
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
   const [confirmResetRunes, setConfirmResetRunes] = useState(false);
-  const { runes, addRune, removeRune, getRuneCount, clearRunes, availableTiles, usedTiles, showTileToast, setTileToasts, tileToasts,
-         drawTileByColor, drawTilePreviewByColor, drawMultipleTiles, discardedTiles, discardTileByColor, discardTileRandom, restoreDiscardedTile, 
-         pilas, setPilas, addNewPila, activarPila, removeTileFromPila, addRunesCascade, addTileToPilaConcentrada, addTileToPila,
-         pilasConcentrada, setPilasConcentrada, addNewPilaConcentrada, activarPilaConcentrada, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, codigosPilas, setCodigosPilas, handleCodigoChange,
-         resetTiles, tileWarning, setTileWarning, deleteAvailableTileByColor, deleteAvailableTileRandom, scenarioMonster, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack,
-         setScenarioMonster, setSpawnPoints, spawnPoints, initializeSpawnPoints, removeSpawnPoint, controlPoints, setControlPoints, initializeControlPoints, removeControlPoint, 
-         setRuneKeys, runeKeys, initializeRuneKeys, removeRuneKey, setRescue, rescue, initializeRescue, removeRescue,
-         initializeDecks, drawCardFromDeck, showCardToast, manifestTile } = useGame();
+  const { runes, removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, pilas, addNewPila, activarPila, removeTileFromPila, addRunesCascade, addTileToPilaConcentrada, addTileToPila, pilasConcentrada, addNewPilaConcentrada, activarPilaConcentrada, removeSingleTileFromPilaConcentrada, codigosPilas, handleCodigoChange, resetTiles, deleteAvailableTileByColor, deleteAvailableTileRandom, scenarioMonster, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack, setScenarioMonster, setSpawnPoints, spawnPoints, initializeSpawnPoints, removeSpawnPoint, controlPoints, setControlPoints, initializeControlPoints, removeControlPoint, setRuneKeys, runeKeys, initializeRuneKeys, removeRuneKey, setRescue, rescue, initializeRescue, removeRescue, manifestTile } = useGame();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [activeMenu, setActiveMenu] = useState(null); // 'runes' | 'enemies' | 'scenario' | null
   const containerRef = useRef(null);

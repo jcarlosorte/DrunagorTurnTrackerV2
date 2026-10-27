@@ -1,5 +1,5 @@
 import { runeDependentCapabilities } from '@/components/constants';
-import { useGame } from '@/context/GameContext';
+
 
 export const adjustCapabilitiesByRunes = (capacidades, runeColor, getRuneCount) => {
   if (!Array.isArray(capacidades)) {

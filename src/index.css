@@ -87,6 +87,24 @@
   border-color: cyan;
 }
 
+
+/* Rellenos de facción (D9): sustituyen a las clases sueltas de Tailwind. */
+.faction-bg-blanco { background-color: var(--faction-blanco); }
+.faction-bg-gris { background-color: var(--faction-gris); }
+.faction-bg-negro { background-color: var(--faction-negro); }
+.faction-bg-dorado { background-color: var(--faction-dorado); }
+.faction-bg-naranja { background-color: var(--category-veterano); }
+.faction-bg-morado { background-color: var(--faction-morado); }
+.faction-bg-morado-oscuro { background-color: #6b21a8; }
+.faction-bg-cyan { background-color: var(--faction-cyan); }
+
+/* Botones y ficha de la paleta de estados. */
+.state-btn-add { background-color: var(--state-add); }
+.state-btn-add:hover:not(:disabled) { background-color: var(--state-add-hover); }
+.state-btn-remove { background-color: var(--state-remove); }
+.state-btn-remove:hover:not(:disabled) { background-color: var(--state-remove-hover); }
+.state-chip { background-color: var(--state-chip-bg); border-color: var(--state-chip-border); }
+
 .border-blue {
   border-color: blue;
 }
@@ -489,7 +507,26 @@ textarea:focus-visible {
    Tokens de color (D9): una sola fuente para eventos y acentos.
    Las clases de abajo los consumen; migrar el resto es incremental.
    ------------------------------------------------------------------ */
+/* Facciones y categorías (D9): una sola fuente para todos los paneles. */
 :root {
+  --faction-blanco: #ffffff;
+  --faction-gris: #9ca3af;
+  --faction-negro: #0b0f19;
+  --faction-dorado: #fbbf24;
+  --faction-morado: #a855f7;
+  --faction-cyan: #22d3ee;
+  --faction-azul: #3b82f6;
+  --category-bisono: #3b82f6;
+  --category-soldado: #eab308;
+  --category-veterano: #fb923c;
+  --category-campeon: #ef4444;
+  --state-add: #15803d;
+  --state-add-hover: #16a34a;
+  --state-remove: #b91c1c;
+  --state-remove-hover: #dc2626;
+  --state-chip-bg: rgb(30 41 59 / 0.7);
+  --state-chip-border: #334155;
+
   --accent: #34d399;
   --event-turn-bg: #0c4a6e;
   --event-turn-fg: #e0f2fe;

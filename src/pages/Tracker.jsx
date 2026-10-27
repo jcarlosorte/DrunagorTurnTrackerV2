@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { GiAttachedShield, GiBadGnome, GiShadowFollower, GiSharpedTeethSkull, GiCheckMark, GiMagnifyingGlass } from 'react-icons/gi';
 import { useNavigate } from "react-router-dom";
 import { EXPANSIONS } from '@/data/expansions';
@@ -48,12 +48,13 @@ const TrackerSelect = () => {
 
   const expansionKey = selectedExpansions.join(',');
 
+  // Se depende de `expansionKey` (cadena estable) en lugar del array.
   const heroesInSelectedExpansions = useMemo(
-    () => HEROES.filter((h) => selectedExpansions.includes(h.expansionId)),
+    () => HEROES.filter((h) => expansionKey.split(',').includes(h.expansionId)),
     [expansionKey]
   );
   const enemiesInSelectedExpansions = useMemo(
-    () => ENEMIES.filter((e) => selectedExpansions.includes(e.expansionId)),
+    () => ENEMIES.filter((e) => expansionKey.split(',').includes(e.expansionId)),
     [expansionKey]
   );
 
@@ -79,8 +80,8 @@ const TrackerSelect = () => {
     setSelectedBehaviors(behaviors.length > 0 ? behaviors : BEHAVIORS);
   }, [expansionKey, trackerData, heroesInSelectedExpansions, enemiesInSelectedExpansions]);
 
-  const getHeroName = (heroId) => translations.heroes?.[heroId] || heroId;
-  const getEnemyName = (enemyId) => translations.enemies?.[enemyId] || enemyId;
+  const getHeroName = useCallback((heroId) => translations.heroes?.[heroId] || heroId, [translations]);
+  const getEnemyName = useCallback((enemyId) => translations.enemies?.[enemyId] || enemyId, [translations]);
   const getRoleName = (roleId) => translations.roles?.[roleId] || roleId;
   const getExpansionName = (id) => translations.expansions?.[id] || id;
 
@@ -200,7 +201,7 @@ const TrackerSelect = () => {
     return heroesInSelectedExpansions.filter((hero) => (
       !q || normalize(getHeroName(hero.id)).includes(q) || normalize(hero.id).includes(q)
     ));
-  }, [heroQuery, heroesInSelectedExpansions, translations]);
+  }, [heroQuery, heroesInSelectedExpansions, getHeroName]);
 
   const enemiesOfExpansion = useMemo(() => (
     enemyExpansion === 'all'
@@ -235,7 +236,7 @@ const TrackerSelect = () => {
         )),
       }))
       .filter(({ items }) => items.length > 0);
-  }, [enemyColor, enemyFilters, enemyQuery, translations]);
+  }, [enemyColor, enemyFilters, enemyQuery, getEnemyName]);
 
   const filteredEnemyCount = visibleEnemyGroups.reduce((total, group) => total + group.items.length, 0);
 

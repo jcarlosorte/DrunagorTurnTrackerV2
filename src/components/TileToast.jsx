@@ -1,5 +1,5 @@
 // src/components/TileToast.jsx
-import React, { useEffect } from 'react';
+
 import { useLanguage } from '@/context/LanguageContext';
 import TetrisPiece from './TetrisPiece';
 import { IoClose } from 'react-icons/io5';

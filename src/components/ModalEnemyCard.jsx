@@ -13,13 +13,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   const [vidaLocal, setVidaLocal] = useState(enemy?.vida || 0);
   const [vidaMaxLocal, setVidaMaxLocal] = useState(enemy?.vidaMax || 0);
   const [estadosLocal, setEstadosLocal] = useState(enemy?.estadosAlterados || []);
-  const { language, translations } = useLanguage();
-  const hasConfirmedOverheal = overhealedEnemies?.has(uuid) ?? false;
+  const { translations } = useLanguage();
   const [avisos, setAvisos] = useState([]);
 
   const ti = translations.trackerInit || {};
-  const tr = translations.roles || {};
-  const te = translations.enemies || {};
   const tc = translations.enemies?.categoria || {};
   const tb = translations.trackerSelect?.comportamientos || {};
   const tt = translations.condiciones_t || {};
@@ -62,7 +59,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
     //);
   }
 
-  const { id, name, rune, imagen, vida, vidaMax, movimiento, ataque, color, comportamiento, categoria, inmunidad, tipo_ataque, capacidades, capacidadesOriginales, estadosAlterados } = enemy;
+  const { id, name, rune, imagen, vidaMax, movimiento, ataque, color, comportamiento, categoria, inmunidad, tipo_ataque, capacidadesOriginales } = enemy;
   const numeroIconos = [    <MdLooksOne key="1" />,    <MdLooksTwo key="2" />,    <MdLooks3 key="3" />,    <MdLooks4 key="4" />,    <MdLooks5 key="5" />,    <MdLooks6 key="6" />,  ];
   const capacidadesAjustadas = adjustCapabilitiesByRunes(capacidadesOriginales, rune, getRuneCount);
   const effectiveStats = getEffectiveStats(uuid);
@@ -137,33 +134,17 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
     escenario: 'border-blue',
   };
 
+  // Colores de facción desde tokens (D9).
   const bgColorMap = {
-    esbirro: 'bg-cyan-300',
-    blanco: 'bg-white',
-    gris: 'bg-gray-500',
-    negro: 'bg-black',
-    comandante: 'bg-yellow-400',
-    hero: 'bg-orange-400',
-    jefe: 'bg-purple-500',
-    overlord: 'bg-purple-800',
-    escenario: 'bg-cyan-600',
-  };
-  
-  const textBgColorMap = {
-    blanco: 'bg-white/70',
-    gris: 'bg-gray-500/70',
-    negro: 'bg-black/70',
-    comandante: 'bg-yellow-400/70',
-    hero: 'bg-orange-400/70',
-    jefe: 'bg-purple-500/70',
-    overlord: 'bg-purple-700/70',
-  };
-
-  const categoryGlowMap = {
-    bisoño: 'drop-shadow-[0_0_6px_rgba(59,130,246,1)]',
-    soldado: 'drop-shadow-[0_0_6px_rgba(234,179,8,1)]',
-    veterano: 'drop-shadow-[0_0_6px_rgba(251,146,60,1)]',
-    campeon: 'drop-shadow-[0_0_6px_rgba(239,68,68,1)]',
+    esbirro: 'faction-bg-cyan',
+    blanco: 'faction-bg-blanco',
+    gris: 'faction-bg-gris',
+    negro: 'faction-bg-negro',
+    comandante: 'faction-bg-dorado',
+    hero: 'faction-bg-naranja',
+    jefe: 'faction-bg-morado',
+    overlord: 'faction-bg-morado-oscuro',
+    escenario: 'faction-bg-cyan',
   };
 
   const categoryTextGlowMap = {
@@ -523,14 +504,14 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                 return (
                   <div
                     key={estado.id}
-                    className="flex min-w-[2.1rem] max-w-[3.5rem] flex-1 basis-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
+                    className="state-chip flex min-w-[2.1rem] max-w-[3.5rem] flex-1 basis-0 flex-col items-center rounded-lg border py-0.5"
                   >
                     <button
                       type="button"
                       onClick={() => handleEstadoChangeLocal(estado.id, +1)}
                       disabled={maxCount === 1 && (estado.count || 0) >= maxCount}
                       aria-label={`${nombre}: +1`}
-                      className="flex h-5 w-8 items-center justify-center rounded bg-green-700 text-xs font-bold leading-none text-white hover:bg-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
+                      className="state-btn-add flex h-5 w-8 items-center justify-center rounded text-xs font-bold leading-none text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
                     >
                       +
                     </button>
@@ -545,7 +526,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                       onClick={() => handleEstadoChangeLocal(estado.id, -1)}
                       disabled={(estado.count || 0) <= 0}
                       aria-label={`${nombre}: −1`}
-                      className="flex h-5 w-8 items-center justify-center rounded bg-red-700 text-xs font-bold leading-none text-white hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
+                      className="state-btn-remove flex h-5 w-8 items-center justify-center rounded text-xs font-bold leading-none text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
                     >
                       −
                     </button>

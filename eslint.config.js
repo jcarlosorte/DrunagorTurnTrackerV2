@@ -41,7 +41,13 @@ export default [
       // React 17+ con el runtime automático.
       'react/react-in-jsx-scope': 'off',
       // Avisos, no errores: no deben romper el build.
-      'no-unused-vars': ['warn', { args: 'none', varsIgnorePattern: '^_' }],
+      // `ignoreRestSiblings` permite omitir campos con `const { a, ...resto } = obj`.
+      'no-unused-vars': ['warn', {
+        args: 'none',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+        caughtErrors: 'none',
+      }],
       'no-empty': 'warn',
       'no-cond-assign': 'warn',
       'react/no-unescaped-entities': 'warn',

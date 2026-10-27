@@ -9,7 +9,7 @@ import { appendGameLog } from '@/utils/gameLog';
 const InitEnemiesContext = createContext();
 
 export const InitEnemiesProvider = ({ children }) => {
-  const { language, translations } = useLanguage();
+  const { translations } = useLanguage();
   const ti = translations.trackerInit || {};
   const persisted = readJsonStorage('initEnemiesState', {}, isPlainObject);
   const [placedEnemies, setPlacedEnemies] = useState(() => persisted.placedEnemies || []);
@@ -40,7 +40,7 @@ export const InitEnemiesProvider = ({ children }) => {
     oscuridadActivo, asaltoActivo, usedColors, usedColorsBig, enemyColorMap,
   ]);
   
-  const { tileToasts, setTileToasts, showTileToast, handleTileDraw, drawMultipleTiles, tileWarning, setTileWarning } = useGame();
+  const { handleTileDraw, drawMultipleTiles } = useGame();
 
   const activaHuesped = () => setHuespedActivo(true);
   const desactivaHuesped = () => setHuespedActivo(false);

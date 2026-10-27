@@ -10,25 +10,7 @@ import {
   getHeroEffectName,
   getHeroEffectDescription,
 } from '@/data/heroes/index';
-import {
-  CUBE_META,
-  MAX_CUBOS,
-  MOD_STATS,
-  changeHeroActionCube,
-  changeHeroActionCubeMax,
-  changeHeroCubes,
-  changeHeroVida,
-  changeHeroVidaMax,
-  getEquipmentBonus,
-  getHeroExtras,
-  recobrarCubos,
-  setEquipmentMod,
-  setHeroEquipment,
-  setHeroStat,
-  stepHeroEstado,
-  stepHeroEstadoAlterado,
-  toggleHeroExtra,
-} from '@/utils/heroExtras';
+import { CUBE_META, MOD_STATS, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, setEquipmentMod, setHeroEquipment, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 
 const EQUIPMENT = [
@@ -101,13 +83,6 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
   const attack = getEquipmentBonus(extras, 'ataque');
   const lifeBonus = getEquipmentBonus(extras, 'vida');
   const vidaMaxTotal = extras.vidaMax + lifeBonus;
-
-  const estadosConDatos = extras.estados
-    .map((estado) => ({ ...estado, meta: ESTADOS_HEROE.find((item) => item.id === estado.id) }))
-    .filter((estado) => estado.meta);
-  const estadosDisponibles = ESTADOS_HEROE.filter(
-    (item) => !extras.estados.some((estado) => estado.id === item.id),
-  );
 
   // Iconos de estado alterado (quemadura, veneno, escudo…), igual que en enemigos.
   const estadosActivos = (extras.estadosAlterados || []).filter((estado) => estado.count > 0);

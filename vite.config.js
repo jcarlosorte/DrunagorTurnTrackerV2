@@ -29,12 +29,44 @@ const appVersion = (() => {
   }
 })();
 
+/**
+ * F4 · CSP en producción.
+ *
+ * GitHub Pages no permite cabeceras propias, así que se inyecta como `<meta>`.
+ * `frame-ancestors` y `report-uri` solo funcionan por cabecera: quedan fuera y
+ * se documentan como limitación conocida del hosting.
+ */
+const CSP_DIRECTIVES = [
+  "default-src 'self'",
+  "script-src 'self'",
+  // framer-motion y react-toastify aplican estilos en línea.
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "img-src 'self' data: blob:",
+  "connect-src 'self'",
+  "manifest-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'none'",
+];
+
+function cspMetaPlugin() {
+  return {
+    name: 'drunagor-csp-meta',
+    apply: 'build',
+    transformIndexHtml(html) {
+      const meta = `    <meta http-equiv="Content-Security-Policy" content="${CSP_DIRECTIVES.join('; ')}" />\n`;
+      return html.replace('<head>', `<head>\n${meta}`);
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, rootDir, '');
   const base = normalizeBase(env.VITE_BASE_PATH || '/DrunagorTurnTrackerV2/');
 
   return {
-    plugins: [react()],
+    plugins: [react(), cspMetaPlugin()],
     base,
     define: {
       __BUILD_ID__: JSON.stringify(buildId),

@@ -34,7 +34,7 @@ export const GameProvider = ({ children }) => {
   const [tileWarning, setTileWarning] = useState(null);
   const [tileToasts, setTileToasts] = useState([]);
 
-  const { language, translations } = useLanguage();
+  const { translations } = useLanguage();
   const ti = translations.trackerInit || {};
   const decksInitialized = useRef(false);
   const { trackerData } = useTracker();
@@ -113,7 +113,6 @@ export const GameProvider = ({ children }) => {
     let avail = [...availableTiles];
     let used = [...usedTiles];
     let runesCopy = { ...runes };
-    const drawnForToast = [];
   
     colores.forEach(color => {
       for (let i = 0; i < n; i++) {
