@@ -56,9 +56,9 @@ const TopMenu = ({
   const { selectedExpansions } = useExpansions();
   
   const colorMap = {
-    rojo: 'bg-red-700 hover:bg-red-600',
+    rojo: 'state-btn-remove',
     azul: 'bg-blue-700 hover:bg-blue-600',
-    verde: 'bg-green-700 hover:bg-green-600',
+    verde: 'state-btn-add',
     naranja: 'bg-orange-700 hover:bg-orange-600',
     gris: 'bg-slate-600 hover:bg-slate-500',
   };
@@ -205,7 +205,7 @@ const TopMenu = ({
   })();
 
   const scenarioCards = placedRunes.filter((entry) => ['incursion', 'defensa'].includes(entry.rune?.tipo)).length;
-  const scenarioNodes = spawnPoints.length + controlPoints.length + runeKeys.length + rescue.length + pilas.length + pilasConcentrada.length;
+  const activeNodes = spawnPoints.length + controlPoints.length + runeKeys.length + rescue.length + pilas.length + pilasConcentrada.length;
   
   return (
     <>
@@ -437,6 +437,9 @@ const TopMenu = ({
                 <span className="hidden shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200 sm:inline">
                   {t.fichasChip || 'Fichas'} {availableTiles.length}/{availableTiles.length + usedTiles.length}
                 </span>
+                <span className="hidden shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200 lg:inline">
+                  {t.nodesChip || 'Nodos'} {activeNodes}
+                </span>
                 <button
                   type="button"
                   onClick={() => setActiveMenu(null)}
@@ -467,7 +470,7 @@ const TopMenu = ({
                               const defaultRunes = RUNAS.filter(r => r.cara === 'A');
                               defaultRunes.forEach(r => handleSelectUniqueCard(r));
                             }}
-                            className="bg-green-700 hover:bg-green-600 text-white text-xs px-2 py-1 rounded"
+                            className="state-btn-add text-white text-xs px-2 py-1 rounded"
                           >
                             {t.addRunes}
                           </button>
@@ -536,7 +539,7 @@ const TopMenu = ({
                                 const defaultRunes = ASALTO.filter(r => r.cara === 'A');
                                 defaultRunes.forEach(r => handleSelectUniqueCard(r));
                               }}
-                              className="bg-green-700 hover:bg-green-600 text-white text-xs px-2 py-1 rounded"
+                              className="state-btn-add text-white text-xs px-2 py-1 rounded"
                             >
                               {t.addRunes_w}
                             </button>
@@ -591,7 +594,7 @@ const TopMenu = ({
                         {!acechoActivo ? (
                           <button
                             onClick={() => setShowEmbrujoOptions(prev => !prev)}
-                            className="bg-green-700 hover:bg-green-600 text-white text-xs px-2 py-1 rounded"
+                            className="state-btn-add text-white text-xs px-2 py-1 rounded"
                           >
                             {t.activaAcecho}
                           </button>
@@ -665,7 +668,7 @@ const TopMenu = ({
                       {!huespedActivo ? (
                         <button
                           onClick={activaHuesped}
-                          className="bg-green-700 hover:bg-green-600 text-white text-xs px-2 py-1 rounded"
+                          className="state-btn-add text-white text-xs px-2 py-1 rounded"
                         >
                           {t.activaHuesped}
                         </button>
@@ -692,7 +695,7 @@ const TopMenu = ({
                           activaInvadidos();
                           setScenarioMonster(prev => prev?.id === "dark_vampire" ? null : "dark_vampire");
                         }}
-                        className="bg-green-700 hover:bg-green-600 text-white text-xs px-2 py-1 rounded"
+                        className="state-btn-add text-white text-xs px-2 py-1 rounded"
                       >
                         {t.activaInvadidos}
                       </button>
@@ -834,6 +837,18 @@ const TopMenu = ({
                 
               </div>
 
+              {/* Nodos y áreas (pilas, nieblas, barricadas, apariciones…) */}
+              <section aria-labelledby="runas-nodos" className="track-surface-raised p-2.5 shadow-md">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
+                    <GiRuneStone className="text-lg" />
+                  </span>
+                  <h3 id="runas-nodos" className="min-w-0 flex-1 text-sm font-semibold">{t.nodesSection || 'Nodos y áreas'}</h3>
+                  <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">{activeNodes}</span>
+                </div>
+                <ScenarioPanels />
+              </section>
+
               {/* Zona de riesgo: acciones sin deshacer */}
               <section aria-labelledby="runas-riesgo" className="rounded-xl border border-red-900/70 bg-red-950/20 p-3">
                 <div className="mb-1 flex items-center gap-2">
@@ -938,9 +953,6 @@ const TopMenu = ({
                 <span className="shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200">
                   {t.scenarioCardsChip || 'Cartas'} {scenarioCards}/2
                 </span>
-                <span className="hidden shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200 sm:inline">
-                  {t.scenarioNodesChip || 'Nodos'} {scenarioNodes}
-                </span>
                 <button
                   type="button"
                   onClick={() => setActiveMenu(null)}
@@ -1026,7 +1038,7 @@ const TopMenu = ({
                           const carta = INCURSION.find(c => c.cara === 'A');
                           if (carta) handleSelectUniqueCard(carta);
                         }}
-                        className={`bg-green-700 hover:bg-green-600 text-white text-xs px-2 py-1 rounded 
+                        className={`state-btn-add text-white text-xs px-2 py-1 rounded 
                           ${!scenarioMonster ? 'opacity-50 cursor-not-allowed' : ''}
                         `}
                       >
@@ -1070,7 +1082,7 @@ const TopMenu = ({
                           const carta = DEFENSA.find(c => c.cara === 'A');
                           if (carta) handleSelectUniqueCard(carta, true);
                         }}
-                        className={`bg-green-700 hover:bg-green-600 text-white text-xs px-2 py-1 rounded`}
+                        className={`state-btn-add text-white text-xs px-2 py-1 rounded`}
                       >
                         {t.addScenario} ({t.caraT})
                       </button>
@@ -1097,18 +1109,6 @@ const TopMenu = ({
                     )}
                   </div>
                 </div>
-              </section>
-
-              {/* Nodos y áreas */}
-              <section aria-labelledby="scenario-nodos" className="track-surface-raised p-2.5 shadow-md">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
-                    <GiRuneStone className="text-lg" />
-                  </span>
-                  <h3 id="scenario-nodos" className="min-w-0 flex-1 text-sm font-semibold">{t.scenarioNodesSection || 'Nodos y áreas'}</h3>
-                  <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">{scenarioNodes}</span>
-                </div>
-                <ScenarioPanels />
               </section>
             </div>
           </motion.div>

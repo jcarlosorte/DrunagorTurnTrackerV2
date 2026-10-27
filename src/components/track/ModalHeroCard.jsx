@@ -201,7 +201,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                       onClick={() => apply(stepHeroEstadoAlterado(heroId, estadoConfig.id, -1))}
                       disabled={count <= 0}
                       aria-label={`${nombre}: −1`}
-                      className="mt-0.5 flex h-5 w-8 items-center justify-center rounded bg-red-700 text-xs font-bold leading-none text-white hover:bg-red-600 disabled:opacity-40"
+                      className="mt-0.5 flex h-5 w-8 items-center justify-center rounded state-btn-remove text-xs font-bold leading-none text-white disabled:opacity-40"
                     >
                       −
                     </button>

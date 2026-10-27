@@ -2001,9 +2001,9 @@ const InitTracker = () => {
     
 
   const colorMap = {
-    rojo: 'bg-red-700 hover:bg-red-600',
+    rojo: 'state-btn-remove',
     azul: 'bg-blue-700 hover:bg-blue-600',
-    verde: 'bg-green-700 hover:bg-green-600',
+    verde: 'state-btn-add',
     naranja: 'bg-orange-700 hover:bg-orange-600',
     gris: 'bg-slate-700 hover:bg-slate-600',
   };
@@ -3298,7 +3298,7 @@ const InitTracker = () => {
                           <>
                             <div className="font-bold mb-2">{ti.pila} 🗃️</div>
                             <button
-                              className="bg-green-700 hover:bg-green-600 text-white px-3 py-1 rounded text-xs"
+                              className="state-btn-add text-white px-3 py-1 rounded text-xs"
                               onClick={() => activarPila(pila.id)}
                             >
                               ✅ {ti.activaPila || 'Activar Pila'}
@@ -3323,13 +3323,13 @@ const InitTracker = () => {
                             </div>
                             <div className="flex flex-col items-center gap-1">
                               <button
-                                className="bg-green-700 hover:bg-green-600 text-white px-3 py-1 rounded text-xs"
+                                className="state-btn-add text-white px-3 py-1 rounded text-xs"
                                 onClick={() => {addTileToPila(pila.id);}}
                               >
                                 {ti.addRunaToPila}
                               </button>
                               <button
-                                className="bg-red-700 hover:bg-red-600 text-white px-3 py-1 rounded text-xs"
+                                className="state-btn-remove text-white px-3 py-1 rounded text-xs"
                                 onClick={() => {
                                   const tilesRemoved = removeTileFromPila(pila.id);
                                     if (tilesRemoved && tilesRemoved.length > 0) {
@@ -3372,7 +3372,7 @@ const InitTracker = () => {
                             <>
                               <div className="font-bold mb-2">{ti.nodo || 'Nodo'} 🗃️</div>
                               <button
-                                className="bg-green-700 hover:bg-green-600 text-white px-3 py-1 rounded text-xs"
+                                className="state-btn-add text-white px-3 py-1 rounded text-xs"
                                 onClick={() => activarPilaConcentrada(pila.id)}
                               >
                                 ✅ {ti.activaNodo || 'Activar Nodo'}
@@ -3397,13 +3397,13 @@ const InitTracker = () => {
                               </div>
                               <div className="flex flex-col items-center gap-1">
                                 <button
-                                  className="bg-green-700 hover:bg-green-600 text-white px-3 py-1 rounded text-xs"
+                                  className="state-btn-add text-white px-3 py-1 rounded text-xs"
                                   onClick={() => {addTileToPilaConcentrada(pila.id);}}
                                 >
                                   {ti.addRunaToPila}
                                 </button>
                                 <button
-                                  className="bg-red-700 hover:bg-red-600 text-white px-3 py-1 rounded text-xs"
+                                  className="state-btn-remove text-white px-3 py-1 rounded text-xs"
                                   aria-expanded={pilaConcentradaEliminarAbierta === pila.id}
                                   onClick={() =>
                                     setPilaConcentradaEliminarAbierta(prev =>
@@ -3781,7 +3781,7 @@ const InitTracker = () => {
                   <div className="mt-4 text-center">
                     <button
                       type="button"
-                      className="min-h-11 rounded-lg bg-red-700 px-4 py-2 text-white hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                      className="min-h-11 rounded-lg state-btn-remove px-4 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
                       onClick={() => setCategorySelector({ open: false, color: null })}
                     >
                       {ti.close || 'Cerrar'}
@@ -3988,7 +3988,7 @@ const InitTracker = () => {
                   </div>
                   <div className="manual-dialog__footer shrink-0 border-t border-slate-700 px-4 py-3 text-center">
                     <button
-                      className="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded"
+                      className="state-btn-remove text-white px-4 py-2 rounded"
                       onClick={() => setManualSelector({ open: false, color: null })}
                     >
                       {ti.close || 'Cerrar'}

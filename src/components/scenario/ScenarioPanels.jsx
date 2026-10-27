@@ -52,9 +52,9 @@ export default function ScenarioPanels() {
   } = useGame();
 
   const colorMap = {
-    rojo: 'bg-red-700 hover:bg-red-600',
+    rojo: 'state-btn-remove',
     azul: 'bg-blue-700 hover:bg-blue-600',
-    verde: 'bg-green-700 hover:bg-green-600',
+    verde: 'state-btn-add',
     naranja: 'bg-orange-700 hover:bg-orange-600',
     gris: 'bg-slate-600 hover:bg-slate-500',
   };
@@ -92,7 +92,7 @@ export default function ScenarioPanels() {
                                 <>
                                   <div className="font-bold mb-2">{t.pila} 🗃️</div>
                                   <button
-                                    className="bg-green-700 hover:bg-green-600 text-white px-3 py-1 rounded text-xs"
+                                    className="state-btn-add text-white px-3 py-1 rounded text-xs"
                                     onClick={() => activarPila(pila.id)}
                                   >
                                     ✅ {t.activaPila || 'Activar Pila'}
@@ -117,13 +117,13 @@ export default function ScenarioPanels() {
                                   </div>
                                   <div className="flex flex-col items-center gap-1">
                                     <button
-                                      className="bg-green-700 hover:bg-green-600 text-white px-3 py-1 rounded text-xs"
+                                      className="state-btn-add text-white px-3 py-1 rounded text-xs"
                                       onClick={() => {addTileToPila(pila.id);}}
                                     >
                                       {t.addRunaToPila}
                                     </button>
                                     <button
-                                      className="bg-red-700 hover:bg-red-600 text-white px-3 py-1 rounded text-xs"
+                                      className="state-btn-remove text-white px-3 py-1 rounded text-xs"
                                       onClick={() => {
                                         const tilesRemoved = removeTileFromPila(pila.id);
                                         if (tilesRemoved && tilesRemoved.length > 0) {
@@ -181,7 +181,7 @@ export default function ScenarioPanels() {
                                 <>
                                   <div className="font-bold mb-2">{t.nodo || 'Nodo'} 🗃️</div>
                                   <button
-                                    className="bg-green-700 hover:bg-green-600 text-white px-3 py-1 rounded text-xs"
+                                    className="state-btn-add text-white px-3 py-1 rounded text-xs"
                                     onClick={() => activarPilaConcentrada(pila.id)}
                                   >
                                     ✅ {t.activaNodo || 'Activar Nodo'}
@@ -206,13 +206,13 @@ export default function ScenarioPanels() {
                                   </div>
                                   <div className="flex flex-col items-center gap-1">
                                     <button
-                                      className="bg-green-700 hover:bg-green-600 text-white px-3 py-1 rounded text-xs"
+                                      className="state-btn-add text-white px-3 py-1 rounded text-xs"
                                       onClick={() => {addTileToPilaConcentrada(pila.id);}}
                                     >
                                       {t.addRunaToPila}
                                     </button>
                                     <button
-                                      className="bg-red-700 hover:bg-red-600 text-white px-3 py-1 rounded text-xs"
+                                      className="state-btn-remove text-white px-3 py-1 rounded text-xs"
                                       aria-expanded={pilaConcentradaEliminarAbierta === pila.id}
                                       onClick={() =>
                                         setPilaConcentradaEliminarAbierta(prev =>
@@ -323,7 +323,7 @@ export default function ScenarioPanels() {
                           </button>
                           <button
                             onClick={() => setControlPoints([])}
-                            className="bg-red-700 hover:bg-red-600 text-white text-xs px-3 py-1 rounded"
+                            className="state-btn-remove text-white text-xs px-3 py-1 rounded"
                           >
                             ✕ {t.removeCA}
                           </button>
@@ -357,7 +357,7 @@ export default function ScenarioPanels() {
                           {/* Botón eliminar */}
                           <button
                             onClick={() => setSpawnPoints([])}
-                            className="bg-red-700 hover:bg-red-600 text-white text-xs px-3 py-1 rounded"
+                            className="state-btn-remove text-white text-xs px-3 py-1 rounded"
                           >
                             ✕ {t.removeSP}
                           </button>
@@ -380,7 +380,7 @@ export default function ScenarioPanels() {
                           </button>
                           <button
                             onClick={() => setRuneKeys([])}
-                            className="bg-red-700 hover:bg-red-600 text-white text-xs px-3 py-1 rounded"
+                            className="state-btn-remove text-white text-xs px-3 py-1 rounded"
                           >
                             ✕ {t.removeRK}
                           </button>
@@ -403,7 +403,7 @@ export default function ScenarioPanels() {
                           </button>
                           <button
                             onClick={() => setRescue([])}
-                            className="bg-red-700 hover:bg-red-600 text-white text-xs px-3 py-1 rounded"
+                            className="state-btn-remove text-white text-xs px-3 py-1 rounded"
                           >
                             ✕ {t.removeRV}
                           </button>

@@ -693,8 +693,8 @@ Modal 1440×950  lista 322 px
 |---|---|---|
 | **Runas con cabecera fija** | Cabecera sticky con runas colocadas y fichas en bolsa; rejilla responsive de tarjetas (cartas, bolsa, manifestar, fichas, cascada) | `TopMenu.jsx` |
 | **Zona de riesgo** | Las acciones sin deshacer (retirar del medidor, eliminar de la bolsa, reset) se agrupan al final y piden confirmación indicando el color afectado | `TopMenu.jsx`, `es.json`, `en.json` |
-| **Escenario por secciones** | Monstruo, cartas y nodos con contadores en la cabecera; los retratos pasan a botones con `aria-pressed` | `TopMenu.jsx` |
-| **Nodos en su sitio** | `ScenarioPanels` (pilas, nodos, áreas) pasa de Runas a Escenario | `TopMenu.jsx` |
+| **Escenario por secciones** | Monstruo y cartas con contadores en la cabecera; los retratos pasan a botones con `aria-pressed` | `TopMenu.jsx` |
+| **Nodos en Runas** | `ScenarioPanels` (pilas, nodos, áreas) se mantiene en Runas con sección y contador propios | `TopMenu.jsx` |
 | **Diálogos en portal** | Pulsar dentro de un `ConfirmDialog` ya no cierra el menú que lo abrió | `TopMenu.jsx` |
 
 **Medición**
@@ -705,17 +705,37 @@ E2E        24/24 (3 nuevos: runas, confirmación de retirada, escenario)
 Lint       0 problemas
 Build      OK
 Cabecera   sticky verificada tras scroll (top constante)
-Contadores Runas 0 · Fichas 36/36 · Monstruo 0/3 · Cartas 0/2 · Nodos 0
+Contadores Runas 0 · Fichas 36/36 · Nodos 0 · Monstruo 0/3 · Cartas 0/2
 Anchos     sin overflow horizontal (844 y 1440)
+```
+
+### 16.ª tanda — nodos de vuelta a Runas y cierre de D9
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nodos en Runas** | `ScenarioPanels` vuelve a Runas como sección «Nodos y áreas» con contador; Escenario queda en monstruo y cartas | `TopMenu.jsx`, `es.json`, `en.json`, `runas-escenario.spec.js` |
+| **D9 · botones** | 30 pares verde/rojo (`green-700`/`red-700`) pasan a `.state-btn-add`/`.state-btn-remove`; mismos colores, sin cambio visual | `TopMenu.jsx`, `ScenarioPanels.jsx`, `InitTracker.jsx`, `ModalHeroCard.jsx` |
+| **D9 · verificación** | El E2E comprueba la clase y el color computado del botón de activación | `runas-escenario.spec.js` |
+
+**Medición**
+
+```text
+Unit       72 tests
+E2E        24/24
+Lint       0 problemas
+Build      OK
+Botones    30 sustituciones automáticas + 2 manuales
+Color      Activa Invadidos → rgb(21, 128, 61) desde --state-add
+Nodos      chip «Nodos 0» y sección con «Añadir Pila de Runas» en Runas
 ```
 
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
-- **Runas (paso 2)**: cerrado (cabecera con contadores, rejilla y zona de riesgo con confirmación).
-- **Escenario (paso 3)**: cerrado (secciones de monstruo, cartas y nodos con contadores).
+- **Runas (paso 2)**: cerrado (cabecera con contadores, rejilla, zona de riesgo y nodos).
+- **Escenario (paso 3)**: cerrado (monstruo y cartas con contadores; retratos accesibles).
 - **H8**: cerrado en sus tres partes (cursor, orden/historial y paneles de escenario).
-- **D9**: hecho para eventos, facciones y estados; quedan acentos sueltos de botones (verde/rojo) fuera de la paleta.
+- **D9**: cerrado (eventos, facciones, estados y botones de acción tokenizados; los badges y rojos oscuros conservan su matiz propio).
 - **F2**: `srcset`/AVIF (WebP ya aplicado).
 - **F4**: CSP por `<meta>`; `frame-ancestors`/`report-uri` siguen requiriendo cabeceras (solo con otro hosting).
 - **P2**: API de sincronización (pospuesta por decisión de producto).
