@@ -243,17 +243,17 @@ const TopMenu = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
+            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-2 overflow-y-auto px-3 pb-3 pt-2 text-white sm:px-4"
           >
             {/* Aleatorios */}
-            <div className="track-surface-raised p-3 shadow-md">
+            <div className="track-surface-raised p-2.5 shadow-md">
               <div className="mb-2 flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-900/60 text-blue-300">
                   <GiSwordClash className="text-lg" />
                 </span>
                 <span className="font-semibold">{t.addEnemies || 'Enemigos aleatorios'}</span>
               </div>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
                 {[
                   { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white', ring: 'ring-white/30' },
                   { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400', ring: 'ring-slate-400/30' },
@@ -266,7 +266,7 @@ const TopMenu = ({
                       setEnemySelect(key);
                       handleEnemySelect({ target: { value: key } });
                     }}
-                    className={`flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                    className={`state-chip flex min-h-16 flex-col items-center justify-center gap-0.5 rounded-lg border px-1.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
                       enemySelect === key
                         ? 'border-sky-400 bg-sky-700 text-white shadow-lg shadow-sky-950/50'
                         : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
@@ -280,14 +280,14 @@ const TopMenu = ({
             </div>
 
             {/* Manuales */}
-            <div className="track-surface-raised p-3 shadow-md">
+            <div className="track-surface-raised p-2.5 shadow-md">
               <div className="mb-2 flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-900/60 text-purple-300">
                   <MdAddCircleOutline className="text-lg" />
                 </span>
                 <span className="font-semibold">{t.addManualEnemy || 'Enemigos manuales'}</span>
               </div>
-              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-9">
+              <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5 lg:grid-cols-9">
                 {[
                   { key: 'esbirro', label: t.addMinionEnemies, color: 'text-cyan-300' },
                   { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white' },
@@ -305,7 +305,7 @@ const TopMenu = ({
                       setManualSelect(key);
                       handleManualSelect({ target: { value: key } });
                     }}
-                    className={`flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-sm font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 ${
+                    className={`state-chip flex min-h-16 flex-col items-center justify-center gap-0.5 rounded-lg border px-1.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 ${
                       manualSelect === key
                         ? 'border-purple-400 bg-purple-700 text-white shadow-lg shadow-purple-950/50'
                         : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
@@ -342,7 +342,7 @@ const TopMenu = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
+            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-2 overflow-y-auto px-3 pb-3 pt-2 text-white sm:px-4"
           >
             <div className="flex flex-col gap-4">
              
@@ -848,12 +848,12 @@ const TopMenu = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-4 pt-2 text-white sm:px-4"
+            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-2 overflow-y-auto px-3 pb-3 pt-2 text-white sm:px-4"
           >
             <div className="flex flex-col gap-4">
 
               
-              <div className="track-surface-raised p-3 shadow-md">
+              <div className="track-surface-raised p-2.5 shadow-md">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-900/60 text-red-300">
                     <GiDaemonSkull className="text-lg" />
@@ -893,7 +893,7 @@ const TopMenu = ({
   
               
                   
-              <div className="track-surface-raised p-3 shadow-md">
+              <div className="track-surface-raised p-2.5 shadow-md">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-900/60 text-amber-300">
                     <GiVillage className="text-lg" />

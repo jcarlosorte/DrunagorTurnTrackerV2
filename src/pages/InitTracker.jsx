@@ -49,6 +49,7 @@ import { addHeroTurnTime, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import { findNextActiveEntity, indexOfEntityInOrder } from '@/utils/turnOrder';
 import { findEnemyVariant } from '@/utils/enemyVariant';
+import { resolveEntityLabel } from '@/utils/entityLabel';
 import { useHeroExtras } from '@/context/HeroExtrasContext';
 import useStatusEffects from '@/hooks/useStatusEffects';
 import useTurnCursor from '@/hooks/useTurnCursor';
@@ -110,6 +111,7 @@ const InitTracker = () => {
   const numHeroes = selectedHeroes.length;
   const [categorySelector, setCategorySelector] = useState({ open: false, color: null });
   const [manualSelector, setManualSelector] = useState({ open: false, color: null });
+  const [manualQuery, setManualQuery] = useState('');
 
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
@@ -147,7 +149,10 @@ const InitTracker = () => {
     return translations.heroes?.profession?.[heroe.profession] || heroe.profession || '';
   };
   const openCategorySelector = (color) => setCategorySelector({ open: true, color });
-  const openManualSelector = (color) => setManualSelector({ open: true, color });
+  const openManualSelector = (color) => {
+    setManualQuery('');
+    setManualSelector({ open: true, color });
+  };
   const openManualBoss = (id) => handleManualEnemyAdd(id, "jefe", "jefe");
 
   const getRuneColorFromIndex = (index) => {
@@ -2806,11 +2811,7 @@ const InitTracker = () => {
   useEffect(() => {
     if (!currentTurnEntity) return;
     const id = currentTurnEntity.id || currentTurnEntity.uuid;
-    const label = translations.enemies?.[currentTurnEntity.id]
-      || translations.heroes?.[currentTurnEntity.id]
-      || translations.runas?.[currentTurnEntity.id]
-      || currentTurnEntity.name
-      || id;
+    const label = resolveEntityLabel({ id: currentTurnEntity.id, name: currentTurnEntity.name, translations });
 
     // Rastro para el carrusel: solo cuando cambia la entidad.
     const trail = turnTrailRef.current;
@@ -3189,13 +3190,7 @@ const InitTracker = () => {
   const currentEntityName = (() => {
     const entity = currentTurnEntity;
     if (!entity) return '';
-    const id = entity.id;
-    return translations.enemies?.[id]
-      || translations.heroes?.[id]
-      || translations.runas?.[id]
-      || entity.name
-      || id
-      || '';
+    return resolveEntityLabel({ id: entity.id, name: entity.name, translations });
   })();
 
   // Carrusel: anterior (rastro), actual y siguiente (orden de iniciativa).
@@ -3210,12 +3205,7 @@ const InitTracker = () => {
     if (turnIndex < 0) return null;
     const next = getNextActiveEntity((turnIndex + 1) % TURN_ORDER.length);
     if (!next) return null;
-    const name = translations.enemies?.[next.id]
-      || translations.heroes?.[next.id]
-      || translations.runas?.[next.id]
-      || next.name
-      || next.id
-      || '';
+    const name = resolveEntityLabel({ id: next.id, name: next.name, translations });
     return { name, type: next.type };
   })();
 
@@ -3768,11 +3758,49 @@ const InitTracker = () => {
             {/* Manual Selector Modal */}
             {manualSelector.open && (
               <div className="layer-modal fixed inset-0 flex flex-col items-center justify-center bg-black/75 p-4">
-                <div role="dialog" aria-modal="true" aria-label={ti.manualTitle || 'Seleccionar enemigo manualmente'} className="max-h-[80vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
-                  <h2 className="text-xl text-yellow-300 mb-4">{ti.manualTitle || 'Seleccionar enemigo manualmente'}</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label={ti.manualTitle || 'Seleccionar enemigo manualmente'}
+                  className="flex max-h-[80vh] w-full max-w-3xl flex-col rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl"
+                >
+                  <div className="flex items-center gap-2 border-b border-slate-700 px-4 py-3">
+                    <span aria-hidden="true" className="text-lg">👾</span>
+                    <h2 className="min-w-0 flex-1 truncate text-base font-bold text-yellow-300">
+                      {ti.manualTitle || 'Seleccionar enemigo manualmente'}
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={() => setManualSelector({ open: false, color: null })}
+                      aria-label={translations.trackerInit?.close || 'Cerrar'}
+                      className="min-h-9 shrink-0 rounded-lg bg-slate-700 px-3 text-sm font-bold text-white hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <div className="border-b border-slate-700 px-4 py-2">
+                    <label htmlFor="manual-enemy-search" className="sr-only">{ti.search || 'Buscar enemigo'}</label>
+                    <input
+                      id="manual-enemy-search"
+                      type="search"
+                      value={manualQuery}
+                      onChange={(event) => setManualQuery(event.target.value)}
+                      placeholder={ti.search || 'Buscar enemigo…'}
+                      className="h-9 w-full rounded-lg border border-slate-700 bg-slate-950 px-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-2 overflow-y-auto p-3 sm:grid-cols-2 lg:grid-cols-3">
                     {Object.entries(
-                      getEnemiesByColor(enemiesInSelectedExpansions, manualSelector.color).reduce((acc, enemy) => {
+                      getEnemiesByColor(enemiesInSelectedExpansions, manualSelector.color)
+                        .filter((enemy) => {
+                          const q = manualQuery.trim().toLowerCase();
+                          if (!q) return true;
+                          const nombre = String(getEnemyName(enemy.id, enemy.color) || '').toLowerCase();
+                          return nombre.includes(q) || String(enemy.id).toLowerCase().includes(q);
+                        })
+                        .reduce((acc, enemy) => {
                         if (!acc[enemy.id]) acc[enemy.id] = {};
                         if (!acc[enemy.id][enemy.categoria]) acc[enemy.id][enemy.categoria] = [];
                         acc[enemy.id][enemy.categoria].push(enemy);
@@ -3783,9 +3811,13 @@ const InitTracker = () => {
                       const sampleEnemy = Object.values(categories)[0][0]; // Para imagen y nombre
                     
                       return (
-                        <div key={enemyId} className="track-surface-raised flex flex-col items-center p-2">
-                          <img src={sampleEnemy.imagen} alt={enemyId} className="w-20 h-20 object-cover mb-2 rounded" loading="lazy" decoding="async" />
-                          <div className="text-sm text-white text-center mb-2">{getEnemyName(enemyId, manualSelector.color)}</div>
+                        <div key={enemyId} className="state-chip flex flex-col gap-1.5 rounded-xl border p-2">
+                          <div className="flex items-center gap-2">
+                            <img src={sampleEnemy.imagen} alt="" className="h-12 w-12 shrink-0 rounded object-cover object-top" loading="lazy" decoding="async" />
+                            <span className="min-w-0 flex-1 truncate text-sm font-bold text-white">
+                              {getEnemyName(enemyId, manualSelector.color)}
+                            </span>
+                          </div>
                     
                           {Object.entries(categories).map(([categoria, variants]) => (
                             <div key={categoria} className="w-full mb-2">
@@ -3807,7 +3839,7 @@ const InitTracker = () => {
                                         className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded"
                                         onClick={() => handleManualEnemyAdd(variant.id, variant.comportamiento, variant.categoria)}
                                       >
-                                        {ti.addEnemy}
+                                        {ti.addEnemy} · {tc?.[variant.categoria] || variant.categoria}
                                       </button>
                                     ))}
                                 </div>

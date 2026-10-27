@@ -5,6 +5,7 @@ import { useGame } from '@/context/GameContext';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { compactPlacedEnemies } from '@/utils/enemySanitize';
+import { resolveEntityLabel } from '@/utils/entityLabel';
 import { appendGameLog } from '@/utils/gameLog';
 
 const InitEnemiesContext = createContext();
@@ -113,7 +114,7 @@ export const InitEnemiesProvider = ({ children }) => {
     // Historial: alta de enemigo (manual, aleatorio o invocado).
     const enemy = enemyWithPosition?.enemy || enemyWithPosition;
     const enemyId = enemy?.id;
-    const name = translations.enemies?.[enemyId] || enemyId || 'Enemigo';
+    const name = resolveEntityLabel({ id: enemyId, name: enemy?.name || enemy?.nombre, translations }) || 'Enemigo';
     const color = translations.trackerInit?.colores?.[enemy?.color] || enemy?.color || '';
     appendGameLog('summon', `Aparece ${name}${color ? ` (${color})` : ''}`, {
       position: enemy?.position,
