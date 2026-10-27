@@ -124,7 +124,11 @@
     "maxPerColor": "max",
     "movementShort": "Mov.",
     "attackShort": "Att.",
-    "stats": "Stats"
+    "stats": "Stats",
+    "cubes": "Cubes",
+    "actionCubesHint": "action · states",
+    "modifier": "modifier",
+    "modifierTarget": "stat"
   },
   "enemies": {
     "lorelai_corrupted": "Lorelai Fallen Mage",

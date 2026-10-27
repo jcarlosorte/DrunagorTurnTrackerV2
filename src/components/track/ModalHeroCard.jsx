@@ -11,25 +11,24 @@ import {
 import {
   CUBE_META,
   MAX_CUBOS,
-  MAX_MALDICION,
-  MAX_TRAUMA,
+  MOD_STATS,
   changeHeroActionCube,
   changeHeroCubes,
   changeHeroVida,
   changeHeroVidaMax,
+  getEquipmentBonus,
   getHeroExtras,
-  patchHeroExtras,
+  setEquipmentMod,
   setHeroEquipment,
-  setHeroStat,
   stepHeroEstado,
   toggleHeroExtra,
 } from '@/utils/heroExtras';
 
 const EQUIPMENT = [
-  { key: 'arma', es: 'Arma', en: 'Weapon' },
+  { key: 'arma', es: 'Arma', en: 'Weapon', mod: true },
   { key: 'manoTorpe', es: 'Mano torpe', en: 'Off hand' },
   { key: 'armadura', es: 'Armadura', en: 'Armor' },
-  { key: 'amuleto', es: 'Amuleto', en: 'Amulet' },
+  { key: 'amuleto', es: 'Amuleto', en: 'Amulet', mod: true },
   { key: 'bolsa1', es: 'Objeto de bolsa 1', en: 'Bag item 1' },
   { key: 'bolsa2', es: 'Objeto de bolsa 2', en: 'Bag item 2' },
 ];
@@ -45,6 +44,12 @@ const SOURCE_LABELS = {
   undead_dragon: 'UD',
   shadow_world: 'SW',
   luccanor: 'LU',
+};
+
+const STAT_LABELS = {
+  movimiento: { es: 'Movimiento', en: 'Movement' },
+  ataque: { es: 'Ataque', en: 'Attack' },
+  vida: { es: 'Vida', en: 'Life' },
 };
 
 export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
@@ -76,8 +81,10 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
     onChanged?.();
   };
 
-  const movement = (hero?.baseMove ?? 0) + (extras.movimientoExtra || 0);
-  const attack = extras.ataqueArma || 0;
+  const movement = (hero?.baseMove ?? 0) + getEquipmentBonus(extras, 'movimiento');
+  const attack = getEquipmentBonus(extras, 'ataque');
+  const lifeBonus = getEquipmentBonus(extras, 'vida');
+  const vidaMaxTotal = extras.vidaMax + lifeBonus;
 
   const estadosConDatos = extras.estados
     .map((estado) => ({ ...estado, meta: ESTADOS_HEROE.find((item) => item.id === estado.id) }))
@@ -125,215 +132,8 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
           </dl>
         </header>
 
-        <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3 py-3">
-          {/* Vida + vida máxima */}
-          <section className="rounded-xl border border-red-900/60 bg-red-950/40 p-2" aria-label={t.lifeTitle || 'Vida'}>
-            <div className="mb-1.5 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-red-200">
-              <span>{t.lifeTitle || 'Vida'}</span>
-              <span className="tabular-nums text-base text-white">{extras.vida} / {extras.vidaMax}</span>
-            </div>
-            <div className="h-4 w-full overflow-hidden rounded-full bg-red-950">
-              <div
-                className={`h-full rounded-full transition-[width] duration-300 ${
-                  extras.vida > extras.vidaMax
-                    ? 'bg-gradient-to-r from-amber-500 to-amber-300'
-                    : 'bg-gradient-to-r from-red-600 to-red-400'
-                }`}
-                style={{ width: `${Math.max(0, Math.min(100, (extras.vida / Math.max(extras.vidaMax, 1)) * 100))}%` }}
-              />
-            </div>
-
-            <div className="mt-2 grid grid-cols-4 gap-1.5">
-              {[-5, -1, 1, 5].map((delta) => (
-                <button
-                  key={delta}
-                  type="button"
-                  onClick={() => apply(changeHeroVida(heroId, delta))}
-                  className={`min-h-10 rounded-lg border text-sm font-bold transition ${
-                    delta < 0
-                      ? 'border-red-800 bg-red-900/70 text-red-100 hover:bg-red-800'
-                      : 'border-emerald-800 bg-emerald-900/70 text-emerald-100 hover:bg-emerald-800'
-                  }`}
-                >
-                  {delta > 0 ? `+${delta}` : delta}
-                </button>
-              ))}
-            </div>
-
-            <div className="mt-1.5 flex items-center justify-between gap-2 rounded-lg border border-slate-700 bg-slate-950/60 px-2 py-1">
-              <span className="text-[0.7rem] uppercase tracking-wide text-slate-400">{t.maxLife || 'Vida máxima'}</span>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => apply(changeHeroVidaMax(heroId, -1))}
-                  aria-label={`${t.maxLife || 'Vida máxima'}: −1`}
-                  className="flex h-8 w-8 items-center justify-center rounded bg-slate-700 text-white hover:bg-slate-600"
-                >
-                  −
-                </button>
-                <span className="w-8 text-center text-sm font-bold tabular-nums text-white">{extras.vidaMax}</span>
-                <button
-                  type="button"
-                  onClick={() => apply(changeHeroVidaMax(heroId, 1))}
-                  aria-label={`${t.maxLife || 'Vida máxima'}: +1`}
-                  className="flex h-8 w-8 items-center justify-center rounded bg-slate-700 text-white hover:bg-slate-600"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </section>
-
-          {/* Trauma y Maldición */}
-          <section className="grid grid-cols-2 gap-2">
-            {[
-              { key: 'trauma', label: t.traumaCubes || 'Trauma', max: MAX_TRAUMA, tone: 'amber' },
-              { key: 'maldicion', label: t.curseCubes || 'Maldición', max: MAX_MALDICION, tone: 'violet' },
-            ].map(({ key, label, max, tone }) => (
-              <div key={key} className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
-                <p className="mb-1 text-center text-[0.7rem] font-semibold uppercase tracking-wide text-slate-300">{label}</p>
-                <div className="flex items-center justify-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => apply(changeHeroCubes(heroId, key, -1))}
-                    disabled={extras[key] <= 0}
-                    aria-label={`${label}: −1`}
-                    className="flex h-8 w-8 items-center justify-center rounded bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-40"
-                  >
-                    −
-                  </button>
-                  <div className="flex gap-0.5" aria-hidden="true">
-                    {Array.from({ length: max }, (_, i) => (
-                      <span
-                        key={i}
-                        className={`h-2.5 w-2.5 rounded-sm ${
-                          i < extras[key]
-                            ? (tone === 'amber' ? 'bg-amber-400' : 'bg-violet-400')
-                            : 'bg-slate-700'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => apply(changeHeroCubes(heroId, key, 1))}
-                    disabled={extras[key] >= max}
-                    aria-label={`${label}: +1`}
-                    className="flex h-8 w-8 items-center justify-center rounded bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-40"
-                  >
-                    +
-                  </button>
-                </div>
-                <p className="mt-1 text-center text-xs font-bold tabular-nums text-white">{extras[key]} / {max}</p>
-              </div>
-            ))}
-          </section>
-
-          {/* Movimiento y ataque */}
-          <section className="grid grid-cols-2 gap-2">
-            <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
-              <p className="mb-1 text-[0.7rem] font-semibold uppercase tracking-wide text-slate-300">
-                {t.movementLabel || 'Movimiento'}
-              </p>
-              <div className="flex items-center justify-between gap-2 text-xs">
-                <span className="text-slate-400">{t.base || 'Base'} {hero?.baseMove ?? '—'}</span>
-                <label className="flex items-center gap-1">
-                  <span className="text-slate-400">{t.amuletBonus || 'Amuleto'}</span>
-                  <input
-                    type="number"
-                    value={extras.movimientoExtra || 0}
-                    onChange={(event) => apply(setHeroStat(heroId, 'movimientoExtra', event.target.value))}
-                    className="h-8 w-14 rounded border border-slate-600 bg-slate-900 px-1 text-center text-white"
-                  />
-                </label>
-                <span className="font-bold text-white">{movement}</span>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
-              <p className="mb-1 text-[0.7rem] font-semibold uppercase tracking-wide text-slate-300">
-                {t.attackLabel || 'Ataque'}
-              </p>
-              <div className="flex items-center justify-between gap-2 text-xs">
-                <label className="flex items-center gap-1">
-                  <span className="text-slate-400">{t.weapon || 'Arma'}</span>
-                  <input
-                    type="number"
-                    value={extras.ataqueArma || 0}
-                    onChange={(event) => apply(setHeroStat(heroId, 'ataqueArma', event.target.value))}
-                    className="h-8 w-14 rounded border border-slate-600 bg-slate-900 px-1 text-center text-white"
-                  />
-                </label>
-                <span className="font-bold text-white">{attack}</span>
-              </div>
-            </div>
-          </section>
-
-          {/* Equipo */}
-          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
-            <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">{t.equipment || 'Equipo'}</p>
-            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-              {EQUIPMENT.map(({ key, es, en }) => (
-                <label key={key} className="text-[0.65rem] text-slate-400">
-                  <span className="mb-0.5 block truncate">{language === 'en' ? en : es}</span>
-                  <input
-                    type="text"
-                    value={extras.equipo?.[key] || ''}
-                    onChange={(event) => apply(setHeroEquipment(heroId, key, event.target.value))}
-                    maxLength={40}
-                    className="min-h-9 w-full rounded-lg border border-slate-600 bg-slate-900 px-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
-                  />
-                </label>
-              ))}
-            </div>
-          </section>
-
-          {/* Cubos de acción */}
-          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
-            <div className="mb-1.5 flex items-center justify-between">
-              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-                {t.actionCubes || 'Cubos de acción'}
-              </p>
-              <span className="text-[0.6rem] text-slate-500">{t.maxPerColor || 'máx.'} {MAX_CUBOS}</span>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              {CUBE_META.map((cube) => (
-                <div
-                  key={cube.key}
-                  className="flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-1 py-0.5"
-                  title={cube.label[language] || cube.label.es}
-                >
-                  <button
-                    type="button"
-                    onClick={() => apply(changeHeroActionCube(heroId, cube.key, -1))}
-                    disabled={(extras.cubos?.[cube.key] || 0) <= 0}
-                    aria-label={`${cube.label.es}: −1`}
-                    className="flex h-8 w-8 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
-                  >
-                    −
-                  </button>
-                  <span
-                    aria-hidden="true"
-                    className="flex h-8 w-8 items-center justify-center rounded text-sm font-bold text-slate-950"
-                    style={{ backgroundColor: cube.color }}
-                  >
-                    {extras.cubos?.[cube.key] ?? 0}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => apply(changeHeroActionCube(heroId, cube.key, 1))}
-                    disabled={(extras.cubos?.[cube.key] || 0) >= MAX_CUBOS}
-                    aria-label={`${cube.label.es}: +1`}
-                    className="flex h-8 w-8 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
-                  >
-                    +
-                  </button>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Estados: columnas compactas como en el enemigo */}
+        <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-3 py-3">
+          {/* Estados: igual que en los enemigos, sobre la vida */}
           <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
             <div className="mb-1.5 flex items-center justify-between">
               <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">{t.conditions || 'Estados'}</p>
@@ -374,18 +174,18 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                 {estadosConDatos.map((estado) => (
                   <div
                     key={estado.id}
-                    className="flex w-20 shrink-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
+                    className="flex w-11 shrink-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
                     title={`${getHeroEffectName(estado.id, language)} ×${estado.count}`}
                   >
                     <button
                       type="button"
                       onClick={() => apply(stepHeroEstado(heroId, estado.id, 1))}
                       aria-label={`${estado.id}: +1`}
-                      className="flex h-5 w-14 items-center justify-center rounded bg-emerald-700 text-xs font-bold text-white hover:bg-emerald-600"
+                      className="flex h-5 w-9 items-center justify-center rounded bg-emerald-700 text-xs font-bold text-white hover:bg-emerald-600"
                     >
                       +
                     </button>
-                    <span className="w-full truncate px-0.5 py-0.5 text-center text-[0.55rem] leading-tight text-slate-200">
+                    <span className="w-full truncate px-0.5 py-0.5 text-center text-[0.5rem] leading-tight text-slate-200">
                       {getHeroEffectName(estado.id, language)}
                     </span>
                     <span className="text-[0.65rem] font-bold leading-none text-white">{estado.count}</span>
@@ -393,7 +193,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                       type="button"
                       onClick={() => apply(stepHeroEstado(heroId, estado.id, -1))}
                       aria-label={`${estado.id}: −1`}
-                      className="mt-0.5 flex h-5 w-14 items-center justify-center rounded bg-red-700 text-xs font-bold text-white hover:bg-red-600"
+                      className="mt-0.5 flex h-5 w-9 items-center justify-center rounded bg-red-700 text-xs font-bold text-white hover:bg-red-600"
                     >
                       −
                     </button>
@@ -401,6 +201,175 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                 ))}
               </div>
             )}
+          </section>
+
+          {/* Vida: máximo a los lados de la barra, actual en botones ±5 */}
+          <section className="rounded-xl border border-red-900/60 bg-red-950/40 p-2" aria-label={t.lifeTitle || 'Vida'}>
+            <div className="mb-1 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-red-200">
+              <span>{t.lifeTitle || 'Vida'}</span>
+              <span className="tabular-nums text-base text-white">{extras.vida} / {vidaMaxTotal}</span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => apply(changeHeroVidaMax(heroId, -1))}
+                title={t.maxLife || 'Vida máxima'}
+                aria-label={`${t.maxLife || 'Vida máxima'}: −1`}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-sm font-bold text-white hover:bg-slate-600"
+              >
+                −
+              </button>
+
+              <div className="h-4 flex-1 overflow-hidden rounded-full bg-red-950">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-400 transition-[width] duration-300"
+                  style={{ width: `${Math.max(0, Math.min(100, (extras.vida / Math.max(vidaMaxTotal, 1)) * 100))}%` }}
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => apply(changeHeroVidaMax(heroId, 1))}
+                title={t.maxLife || 'Vida máxima'}
+                aria-label={`${t.maxLife || 'Vida máxima'}: +1`}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-sm font-bold text-white hover:bg-slate-600"
+              >
+                +
+              </button>
+            </div>
+
+            <div className="mt-1.5 grid grid-cols-4 gap-1.5">
+              {[-5, -1, 1, 5].map((delta) => (
+                <button
+                  key={delta}
+                  type="button"
+                  onClick={() => apply(changeHeroVida(heroId, delta))}
+                  className={`min-h-9 rounded-lg border text-sm font-bold transition ${
+                    delta < 0
+                      ? 'border-red-800 bg-red-900/70 text-red-100 hover:bg-red-800'
+                      : 'border-emerald-800 bg-emerald-900/70 text-emerald-100 hover:bg-emerald-800'
+                  }`}
+                >
+                  {delta > 0 ? `+${delta}` : delta}
+                </button>
+              ))}
+            </div>
+            {lifeBonus !== 0 && (
+              <p className="mt-1 text-[0.6rem] text-slate-400">
+                {t.base || 'Base'} {extras.vidaMax} {lifeBonus > 0 ? '+' : '−'} {Math.abs(lifeBonus)}
+              </p>
+            )}
+          </section>
+
+          {/* Cubos: trauma, maldición y acción en el mismo estilo */}
+          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+            <div className="mb-1.5 flex items-center justify-between">
+              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+                {t.cubes || 'Cubos'}
+              </p>
+              <span className="text-[0.6rem] text-slate-500">{t.actionCubesHint || 'acción · estados'}</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {CUBE_META.map((cube) => {
+                const isEstado = cube.key === 'trauma' || cube.key === 'maldicion';
+                const value = isEstado ? (extras[cube.key] || 0) : (extras.cubos?.[cube.key] || 0);
+                const max = isEstado ? cube.max : MAX_CUBOS;
+                return (
+                  <div
+                    key={cube.key}
+                    className="flex flex-col items-center gap-0.5 rounded-lg border border-slate-700 bg-slate-800/70 px-0.5 py-0.5"
+                    title={cube.label[language] || cube.label.es}
+                  >
+                    <div className="flex items-center gap-0.5">
+                      <button
+                        type="button"
+                        onClick={() => apply(
+                          isEstado
+                            ? changeHeroCubes(heroId, cube.key, -1)
+                            : changeHeroActionCube(heroId, cube.key, -1),
+                        )}
+                        disabled={value <= 0}
+                        aria-label={`${cube.label.es}: −1`}
+                        className="flex h-8 w-7 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
+                      >
+                        −
+                      </button>
+                      <span
+                        aria-hidden="true"
+                        className="flex h-8 w-8 items-center justify-center rounded text-sm font-bold"
+                        style={{
+                          backgroundColor: cube.color,
+                          color: cube.key === 'maldicion' || cube.key === 'azul' ? '#fff' : '#0f172a',
+                        }}
+                      >
+                        {value}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => apply(
+                          isEstado
+                            ? changeHeroCubes(heroId, cube.key, 1)
+                            : changeHeroActionCube(heroId, cube.key, 1),
+                        )}
+                        disabled={value >= max}
+                        aria-label={`${cube.label.es}: +1`}
+                        className="flex h-8 w-7 items-center justify-center rounded bg-slate-700 text-sm text-white hover:bg-slate-600 disabled:opacity-40"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <span className="max-w-[4.5rem] truncate text-[0.55rem] uppercase tracking-wide text-slate-400">
+                      {(cube.label[language] || cube.label.es).split(' · ')[0]}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Equipo: arma y amuleto llevan su modificador al lado */}
+          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+            <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">{t.equipment || 'Equipo'}</p>
+            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+              {EQUIPMENT.map(({ key, es, en, mod }) => (
+                <div key={key} className="text-[0.65rem] text-slate-400">
+                  <span className="mb-0.5 block truncate">{language === 'en' ? en : es}</span>
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="text"
+                      value={extras.equipo?.[key] || ''}
+                      onChange={(event) => apply(setHeroEquipment(heroId, key, event.target.value))}
+                      maxLength={40}
+                      className="min-h-9 min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-900 px-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+                    />
+                    {mod && (
+                      <>
+                        <input
+                          type="number"
+                          value={extras.equipoMods?.[key]?.value ?? 0}
+                          onChange={(event) => apply(setEquipmentMod(heroId, key, { value: Number(event.target.value) || 0 }))}
+                          aria-label={`${es}: ${t.modifier || 'modificador'}`}
+                          className="h-9 w-12 shrink-0 rounded-lg border border-slate-600 bg-slate-900 px-1 text-center text-xs text-white"
+                        />
+                        <select
+                          value={extras.equipoMods?.[key]?.stat || (key === 'arma' ? 'ataque' : 'movimiento')}
+                          onChange={(event) => apply(setEquipmentMod(heroId, key, { stat: event.target.value }))}
+                          aria-label={`${es}: ${t.modifierTarget || 'estadística'}`}
+                          className="h-9 shrink-0 rounded-lg border border-slate-600 bg-slate-900 px-1 text-[0.65rem] text-white"
+                        >
+                          {MOD_STATS.map((stat) => (
+                            <option key={stat} value={stat}>
+                              {(STAT_LABELS[stat][language] || STAT_LABELS[stat].es)}
+                            </option>
+                          ))}
+                        </select>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </section>
 
           {/* Auras y consecuencias */}
