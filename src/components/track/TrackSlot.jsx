@@ -12,7 +12,7 @@ import { cardDistance, compactSlotHeight } from '@/components/track/trackLayout'
  * Toda la información y las acciones llegan en `deps` para no acoplar el
  * componente al estado global del tracker.
  */
-export default function TrackSlot({ index, compact = false, deps }) {
+export default function TrackSlot({ index, compact = false, density = 'normal', deps }) {
   const {
     runesColorMap,
     getRuneColorFromIndex,
@@ -55,8 +55,10 @@ export default function TrackSlot({ index, compact = false, deps }) {
 
   const totalAbove = heroesAbove.length + (isRune ? enemiesAbove.length : 0) + (isRuneTextSlot ? runesAbove.length : 0);
   const totalBelow = heroesBelow.length + (isRune ? enemiesBelow.length : 0) + (isRuneTextSlot ? runesBelow.length : 0);
+  // Densidad compacta: cartas algo más pequeñas y pilas más juntas.
+  const densityFactor = density === 'compact' ? 0.85 : 1;
   // En la vista de lista el slot se dibuja solo: usa su altura real y no la del tablero.
-  const slotHeight = compact ? compactSlotHeight(totalAbove, totalBelow) : boardSlotHeight;
+  const slotHeight = (compact ? compactSlotHeight(totalAbove, totalBelow) : boardSlotHeight) * (compact ? 1 : densityFactor);
 
   const renderStack = (items, side, type = 'hero') => {
     const isTop = side === 'top';
@@ -65,7 +67,7 @@ export default function TrackSlot({ index, compact = false, deps }) {
     const ordered = isTop ? [...items].reverse() : items;
 
     return ordered.map((item, i) => {
-      const distance = cardDistance(count, i);
+      const distance = cardDistance(count, i) * densityFactor;
       const zIndex = count - i;
 
       const isCurrentTurn = currentTurnEntity && (
@@ -83,11 +85,12 @@ export default function TrackSlot({ index, compact = false, deps }) {
             ...(isTop
               ? { bottom: `calc(50% + ${distance}px)` }
               : { top: `calc(50% + ${distance}px)` }),
-            transform: 'translateX(-50%)',
+            transform: `translateX(-50%) scale(${densityFactor})`,
+            transformOrigin: 'center center',
             zIndex: isCurrentTurn ? 40 : zIndex,
           }}
         >
-          <div className="relative items-center">
+          <div className={`relative items-center ${isCurrentTurn ? 'track-card--active' : ''}`} data-current-turn={isCurrentTurn || undefined}>
             {isCurrentTurn && (
               <div className="absolute bottom-10 left-1/2 z-30 -translate-x-1/2 transform rounded-full border-2 border-white bg-purple-600">
                 <GiWingedSword className="animate-bounce text-white" size={40} />

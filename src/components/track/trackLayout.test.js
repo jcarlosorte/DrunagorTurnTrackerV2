@@ -3,6 +3,8 @@ import {
   BASE_GAP,
   CARD_HEIGHT,
   MAX_STACK_HEIGHT,
+  MIN_COMPACT_SLOT_HEIGHT,
+  MIN_SLOT_HEIGHT,
   boardSlotHeightFrom,
   cardDistance,
   compactSlotHeight,
@@ -36,14 +38,14 @@ describe('trackLayout', () => {
     const unaCarta = boardSlotHeightFrom([1]);
     const dosCartas = boardSlotHeightFrom([2]);
 
-    expect(unaCarta).toBe(448);
+    expect(unaCarta).toBe(MIN_SLOT_HEIGHT);
     expect(dosCartas).toBe(2 * stackHeight(2) + 16);
     expect(dosCartas).toBeLessThan(700);
   });
 
   it('la altura compacta se ajusta a la pila del slot', () => {
-    expect(compactSlotHeight(0, 0)).toBe(360);
-    expect(compactSlotHeight(4, 1)).toBeGreaterThanOrEqual(360);
+    expect(compactSlotHeight(0, 0)).toBe(MIN_COMPACT_SLOT_HEIGHT);
+    expect(compactSlotHeight(4, 1)).toBeGreaterThanOrEqual(MIN_COMPACT_SLOT_HEIGHT);
     expect(compactSlotHeight(4, 1)).toBeLessThanOrEqual(2 * stackHeight(4) + 16 + 1);
   });
 

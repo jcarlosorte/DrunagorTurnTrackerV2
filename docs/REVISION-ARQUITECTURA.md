@@ -501,6 +501,36 @@ E2E         10/10 · Unit 33/33 · Lint 0 errores
 
 Scripts: `npm run images:webp` (conversión + imports) y `npm run images:optimize` (compresión PNG).
 
+### 7.ª tanda — correcciones persistentes y nuevas vistas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Tablero más bajo** | `MIN_SLOT_HEIGHT` 448 → 340 y `compact` 360 → 300: el track sube ~55 px y desaparece el espacio muerto | `trackLayout.js` |
+| **Anillo en la carta** | El resaltado del turno pasa de la etiqueta a **la carta activa** (`.track-card--active`, radio 12 px + halo) | `TrackSlot.jsx`, `index.css` |
+| Config · héroes | Ilustraciones `object-contain` sobre fondo oscuro (sin recortes) | `Tracker.jsx` |
+| Config · enemigos | Selección rápida con `data-state`, tres tonos, check/contador y texto “Todos añadidos / 8/10 añadidos / Sin añadir” | `Tracker.jsx` |
+| Modales | Paleta de estados con `flex-wrap` y chips `w-8` en móvil: 320 px → fila 230/230 y 242/242 sin desbordar | ambos modales |
+| Móvil | La bolsa de runas arranca cerrada por debajo de 1024 px | `InitTracker.jsx` |
+| **D2 · Carrusel** | Franja anterior / actual / siguiente con icono por tipo y anillo en el turno actual | `TurnCarousel.jsx` |
+| **D7 · Densidad** | Botón en la barra: escala cartas y pilas 0,85× y se guarda en `trackDensity` | `TurnTrackBoard.jsx`, `TrackSlot.jsx` |
+| **D9 · Tokens (parcial)** | Paleta de eventos (`--event-*`) y clases `.history-kind-*` usadas por el historial | `index.css`, `HistoryPanel.jsx` |
+| **A4 · Contexto de héroe** | `HeroExtrasProvider` como fuente de verdad reactiva; `InitTracker` y el modal dejan de llevar contadores manuales | `HeroExtrasContext.jsx`, `InitTracker.jsx`, `AnimatedRoutes.jsx` |
+| **H8 (1/3)** | `useStatusEffects`: efectos de enemigo y héroe fuera de `InitTracker` | `useStatusEffects.js` |
+
+**Verificación**
+
+```text
+Carrusel    prev=Vorn · current=Arquero Esqueleto · next=Jaheen
+Densidad    slot 347 → 251 px · aria-pressed=true · trackDensity="compact"
+Anillo      box-shadow rgba(52,211,153,0.95) sobre la carta (radio 12 px)
+Móvil 320   paleta enemigo 230/230 · héroe 242/242
+Suite       Lint 0 errores · Unit 33 · E2E 12/12 · dist 8,88 MB
+```
+
 ### Pendiente / pospuesto
 
-H8 (resto de A1: `useTurnEngine`, paneles de escenario), D2, D7, D8, D9, A4, F2 (AVIF/`srcset`), F3, F4, P2.
+- **H8 (2/3 y 3/3)**: extraer `useTurnEngine` (~600 líneas) y los paneles de escenario/pilas (~350). Requiere una sesión dedicada con la suite E2E como red.
+- **D9 completo**: migrar facciones y estados a los tokens (hoy solo la paleta de eventos).
+- **F2**: `srcset`/AVIF (WebP ya aplicado).
+- **F4**: CSP al mover el hosting a Cloudflare Pages/Netlify.
+- **P2**: API de sincronización (pospuesta por decisión de producto).

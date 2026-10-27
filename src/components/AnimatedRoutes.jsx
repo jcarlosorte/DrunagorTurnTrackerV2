@@ -2,6 +2,7 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Routes, Route, useLocation } from "react-router-dom";
 import { useTracker } from "@/context/TrackerContext";
+import { HeroExtrasProvider } from "@/context/HeroExtrasContext";
 import { AnimatePresence } from "framer-motion";
 
 const HomeMenu = lazy(() => import("@/pages/HomeMenu"));
@@ -33,7 +34,11 @@ export default function AnimatedRoutes() {
           <Route path="/tracker" element={<Tracker />} />
           <Route path="/config" element={<Config />} />
           <Route path="/saves" element={<Saves />} />
-          <Route path="/init" element={<ProtectedTracker />} />
+          <Route path="/init" element={(
+            <HeroExtrasProvider>
+              <ProtectedTracker />
+            </HeroExtrasProvider>
+          )} />
         </Routes>
       </AnimatePresence>
     </Suspense>

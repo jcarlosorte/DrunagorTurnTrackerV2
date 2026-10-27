@@ -205,7 +205,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                 return (
                   <div
                     key={estadoConfig.id}
-                    className="flex w-9 shrink-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
+                    className="flex w-8 shrink-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5 sm:w-9"
                     title={`${nombre} ×${count}`}
                   >
                     <button

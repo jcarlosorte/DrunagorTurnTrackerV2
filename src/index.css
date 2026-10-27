@@ -484,21 +484,50 @@ textarea:focus-visible {
   min-width: 0;
 }
 
-/* Slot activo: haz vertical sobre la línea del track y anillo en la etiqueta.
-   No tapa las cartas y funciona igual en el tablero y en la vista de lista. */
+/* Slot activo: haz vertical tenue sobre la línea del track. El anillo real se
+   dibuja sobre la carta en turno (ver `.track-card--active`). */
+/* ------------------------------------------------------------------
+   Tokens de color (D9): una sola fuente para eventos y acentos.
+   Las clases de abajo los consumen; migrar el resto es incremental.
+   ------------------------------------------------------------------ */
+:root {
+  --accent: #34d399;
+  --event-turn-bg: #0c4a6e;
+  --event-turn-fg: #e0f2fe;
+  --event-turn-border: #0369a1;
+  --event-damage-bg: #450a0a;
+  --event-damage-fg: #fee2e2;
+  --event-damage-border: #b91c1c;
+  --event-rune-bg: #022c22;
+  --event-rune-fg: #d1fae5;
+  --event-rune-border: #047857;
+  --event-summon-bg: #3b0764;
+  --event-summon-fg: #f3e8ff;
+  --event-summon-border: #7e22ce;
+  --event-default-bg: #1e293b;
+  --event-default-fg: #e2e8f0;
+  --event-default-border: #334155;
+}
+
+.history-kind-turn { background: var(--event-turn-bg); color: var(--event-turn-fg); border-color: var(--event-turn-border); }
+.history-kind-damage { background: var(--event-damage-bg); color: var(--event-damage-fg); border-color: var(--event-damage-border); }
+.history-kind-rune { background: var(--event-rune-bg); color: var(--event-rune-fg); border-color: var(--event-rune-border); }
+.history-kind-summon { background: var(--event-summon-bg); color: var(--event-summon-fg); border-color: var(--event-summon-border); }
+.history-kind-event { background: var(--event-default-bg); color: var(--event-default-fg); border-color: var(--event-default-border); }
+
 .track-slot--active::before {
   content: '';
   position: absolute;
   left: 50%;
   top: 0;
   bottom: 0;
-  width: 3px;
+  width: 2px;
   transform: translateX(-50%);
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    rgb(52 211 153 / 0.55) 42%,
-    rgb(52 211 153 / 0.55) 58%,
+    rgb(52 211 153 / 0.45) 42%,
+    rgb(52 211 153 / 0.45) 58%,
     transparent 100%
   );
   pointer-events: none;
@@ -506,12 +535,15 @@ textarea:focus-visible {
   animation: slotBeam 2.2s ease-in-out infinite;
 }
 
-.track-slot--active .track-slot__label > div {
-  box-shadow: 0 0 0 2px rgb(52 211 153 / 0.85), 0 0 16px rgb(16 185 129 / 0.5);
+/* Carta del turno activo: anillo ajustado a la tarjeta. */
+.track-card--active {
+  border-radius: 0.75rem;
+  box-shadow: 0 0 0 2px rgb(52 211 153 / 0.95), 0 0 18px rgb(16 185 129 / 0.55);
+  animation: slotBeam 2.2s ease-in-out infinite;
 }
 
 @keyframes slotBeam {
-  0%, 100% { opacity: 0.35; }
+  0%, 100% { opacity: 0.45; }
   50% { opacity: 1; }
 }
 

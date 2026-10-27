@@ -389,10 +389,10 @@ const TrackerSelect = () => {
                             className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black ${
                               isSelected
                                 ? 'border-emerald-200 bg-emerald-500 text-slate-950'
-                                : 'border-slate-400 bg-slate-900/80 text-transparent'
+                                : 'border-slate-400 bg-slate-900/80 text-slate-500'
                             }`}
                           >
-                            <GiCheckMark />
+                            {isSelected ? '✓' : ''}
                           </span>
                         </span>
                         <span className="flex flex-1 flex-col justify-center gap-0.5 px-2 py-2 text-center">
@@ -584,33 +584,47 @@ const TrackerSelect = () => {
                     const seleccionados = ids.filter((id) => selectedEnemies.includes(id)).length;
                     const todos = ids.length > 0 && seleccionados === ids.length;
                     const alguno = seleccionados > 0 && !todos;
+                    const estado = todos ? 'todos' : alguno ? 'alguno' : 'ninguno';
                     return (
                       <button
                         key={exp}
                         type="button"
+                        data-state={estado}
                         aria-pressed={todos}
                         onClick={() => toggleExpansionEnemies(exp)}
                         title={todos
                           ? (t.quickSelectRemove || 'Quitar todos los enemigos de esta expansión')
                           : (t.quickSelectAdd || 'Añadir todos los enemigos de esta expansión')}
-                        className={`flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 ${
+                        className={`flex min-h-11 items-center gap-2 rounded-xl border-2 px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
                           todos
                             ? 'border-emerald-300 bg-emerald-600 text-white shadow-md shadow-emerald-950/40'
                             : alguno
-                              ? 'border-indigo-300 bg-indigo-800 text-white hover:bg-indigo-700'
-                              : 'border-slate-600 bg-slate-900 text-slate-300 hover:border-indigo-400 hover:text-white'
+                              ? 'border-amber-400 bg-amber-900/60 text-amber-50 hover:bg-amber-800/70'
+                              : 'border-slate-600 bg-slate-900 text-slate-300 hover:border-slate-400 hover:text-white'
                         }`}
                       >
                         <span
                           aria-hidden="true"
-                          className={`flex h-5 w-5 items-center justify-center rounded-full border text-[0.65rem] ${
-                            todos ? 'border-emerald-100 bg-emerald-500 text-slate-950' : 'border-slate-500 text-slate-400'
+                          className={`flex h-6 w-6 items-center justify-center rounded-full border-2 text-xs font-black ${
+                            todos
+                              ? 'border-emerald-100 bg-emerald-500 text-slate-950'
+                              : alguno
+                                ? 'border-amber-200 bg-amber-500 text-slate-950'
+                                : 'border-slate-500 text-slate-500'
                           }`}
                         >
-                          {todos ? <GiCheckMark /> : seleccionados || ''}
+                          {todos ? '✓' : (seleccionados || '–')}
                         </span>
-                        <span className="truncate">{getExpansionName(exp)}</span>
-                        <span className="text-[0.65rem] font-normal opacity-80">{seleccionados}/{ids.length}</span>
+                        <span className="min-w-0 flex flex-col text-left">
+                          <span className="truncate">{getExpansionName(exp)}</span>
+                          <span className={`text-[0.6rem] font-normal ${todos ? 'text-emerald-100' : alguno ? 'text-amber-200' : 'text-slate-500'}`}>
+                            {todos
+                              ? (t.quickSelectAll || 'Todos añadidos')
+                              : alguno
+                                ? `${seleccionados}/${ids.length} ${t.quickSelectPartial || 'añadidos'}`
+                                : (t.quickSelectNone || 'Sin añadir')}
+                          </span>
+                        </span>
                       </button>
                     );
                   })}
@@ -668,10 +682,10 @@ const TrackerSelect = () => {
                                   className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black ${
                                     isSelected
                                       ? 'border-emerald-200 bg-emerald-500 text-slate-950'
-                                      : 'border-slate-400 bg-slate-900/80 text-transparent'
+                                      : 'border-slate-400 bg-slate-900/80 text-slate-500'
                                   }`}
                                 >
-                                  <GiCheckMark />
+                                  {isSelected ? '✓' : ''}
                                 </span>
                               </span>
                               <span className="flex flex-1 flex-col justify-center gap-0.5 px-2 py-2 text-center">

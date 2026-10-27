@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GAME_LOG_EVENT, readGameLog } from '@/utils/gameLog';
 
-const KIND_STYLES = {
-  turn: 'bg-sky-900/60 text-sky-100 border-sky-700',
-  event: 'bg-slate-800 text-slate-200 border-slate-700',
-  damage: 'bg-red-950/60 text-red-100 border-red-800',
-  rune: 'bg-emerald-950/60 text-emerald-100 border-emerald-800',
-  summon: 'bg-purple-950/60 text-purple-100 border-purple-800',
+// Los colores viven en tokens CSS (`--event-*` en index.css).
+const KIND_CLASSES = {
+  turn: 'history-kind-turn',
+  event: 'history-kind-event',
+  damage: 'history-kind-damage',
+  rune: 'history-kind-rune',
+  summon: 'history-kind-summon',
 };
 
 const KIND_ICONS = {
@@ -176,7 +177,7 @@ export default function HistoryPanel({ limit = 60, labels = {}, refreshKey = 0 }
                     {group.items.map((entry) => (
                       <li
                         key={`${entry.at}-${entry.message}`}
-                        className={`flex items-start gap-1 rounded-md border px-1.5 py-1 text-[0.65rem] leading-snug ${KIND_STYLES[entry.kind] || KIND_STYLES.event}`}
+                        className={`flex items-start gap-1 rounded-md border px-1.5 py-1 text-[0.65rem] leading-snug ${KIND_CLASSES[entry.kind] || KIND_CLASSES.event}`}
                       >
                         <span aria-hidden="true" className="mt-px shrink-0">{KIND_ICONS[entry.kind] || '✦'}</span>
                         <span className="min-w-0 flex-1 break-words">{entry.message}</span>

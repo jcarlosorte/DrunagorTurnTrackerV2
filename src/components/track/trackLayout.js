@@ -9,8 +9,9 @@ export const CARD_HEIGHT = 128;
 export const BASE_GAP = 26;
 export const MAX_STACK_HEIGHT = 320;
 export const MIN_STEP = 30;
-export const MIN_SLOT_HEIGHT = 448;
-export const MIN_COMPACT_SLOT_HEIGHT = 360;
+/** Altura mínima del slot del tablero: la justa para una carta a cada lado. */
+export const MIN_SLOT_HEIGHT = 340;
+export const MIN_COMPACT_SLOT_HEIGHT = 300;
 
 /** Solape entre cartas consecutivas para que la pila quepa en MAX_STACK_HEIGHT. */
 export function overlapFor(count) {
@@ -33,6 +34,7 @@ export function stackHeight(count) {
 /**
  * Altura común para todos los slots del tablero (la etiqueta debe quedar
  * siempre en la misma línea aunque una posición acumule muchas cartas).
+ * Recibe NÚMEROS DE CARTAS, no alturas.
  */
 export function boardSlotHeightFrom(counts = []) {
   const tallest = counts.reduce((max, count) => Math.max(max, stackHeight(count)), 0);

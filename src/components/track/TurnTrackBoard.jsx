@@ -20,6 +20,9 @@ export default function TurnTrackBoard({
   onToggleHistory,
   diceOpen = false,
   onToggleDice,
+  density = 'normal',
+  onToggleDensity,
+  carousel = null,
   canUndo = false,
   labels = {},
 }) {
@@ -107,6 +110,21 @@ export default function TurnTrackBoard({
 
       {/* Acciones de turno, centradas */}
       <div className="order-3 flex w-full items-center justify-center gap-2 sm:order-none sm:w-auto sm:flex-1">
+        <button
+          type="button"
+          data-testid="density-toggle"
+          onClick={onToggleDensity}
+          aria-pressed={density === 'compact'}
+          title={density === 'compact' ? (labels.densityNormal || 'Densidad normal') : (labels.densityCompact || 'Densidad compacta')}
+          className={`flex min-h-10 items-center gap-1.5 rounded-xl border px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+            density === 'compact'
+              ? 'border-sky-300 bg-sky-800 text-white'
+              : 'border-slate-700 bg-slate-900 text-slate-300 hover:text-white'
+          }`}
+        >
+          <span aria-hidden="true" className="text-base leading-none">{density === 'compact' ? '▦' : '▤'}</span>
+          <span className="hidden md:inline">{labels.density || 'Densidad'}</span>
+        </button>
         <button
           type="button"
           data-testid="undo-turn"
@@ -241,7 +259,7 @@ export default function TurnTrackBoard({
         <div style={{ width: `${BASE_WIDTH}px`, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
           <div className="grid snap-x snap-mandatory grid-cols-11 auto-rows-auto items-start gap-0 bg-slate-800 p-2">
             {summaries.map(({ index }) => (
-              <div key={index} className="min-w-0">{renderSlot(index)}</div>
+              <div key={index} className="min-w-0">{renderSlot(index, { density })}</div>
             ))}
           </div>
         </div>

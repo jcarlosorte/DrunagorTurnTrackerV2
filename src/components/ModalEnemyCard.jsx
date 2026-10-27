@@ -523,7 +523,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                 return (
                   <div
                     key={estado.id}
-                    className="flex w-9 shrink-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
+                    className="flex w-8 shrink-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5 sm:w-9"
                   >
                     <button
                       type="button"

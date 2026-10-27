@@ -47,12 +47,15 @@ import { createId } from '@/utils/id';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { appendGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
-import { getHeroExtras, patchHeroExtras, stepHeroEstadoAlterado } from '@/utils/heroExtras';
+import { stepHeroEstadoAlterado } from '@/utils/heroExtras';
+import { useHeroExtras } from '@/context/HeroExtrasContext';
+import useStatusEffects from '@/hooks/useStatusEffects';
 import { aplicarEfectosEstadosHeroe } from '@/utils/heroStatus';
 import { applyStatusEffects } from '@/utils/statusEngine';
 import { classifyScenarioToast } from '@/utils/toastKind';
 import CharacterCard from '@/components/track/CharacterCard';
 import TrackSlot from '@/components/track/TrackSlot';
+import TurnCarousel from '@/components/track/TurnCarousel';
 import {
   boardSlotHeightFrom,
   cardDistance,
@@ -135,7 +138,7 @@ const InitTracker = () => {
   const [enemyEvolutions, setEnemyEvolutions] = useState(() => persistedSession.enemyEvolutions || []);
   const [selectedHeroId, setSelectedHeroId] = useState(null);
   const [diceOpen, setDiceOpen] = useState(false);
-  const [heroExtrasVersion, setHeroExtrasVersion] = useState(0);
+  const { version: heroExtrasVersion, getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
   const getHeroName = (id) => translations.heroes?.[id] || id;
   const getEnemyName = (id, color = null) => {
@@ -1261,78 +1264,24 @@ const InitTracker = () => {
   };
 
   
-  /**
-   * Estados alterados de un enemigo. Usa el mismo motor que los héroes
-   * (`applyStatusEffects`) para que ambas fichas se comporten igual.
-   */
-  const aplicarEfectosEstados = (enemy, faseTurno) => {
-    if (!enemy.estadosAlterados || enemy.estadosAlterados.length === 0) return { enemy, logs: [] };
-
-    const resultado = applyStatusEffects({
-      vida: enemy.vida,
-      estados: enemy.estadosAlterados,
-      fase: faseTurno,
-      labels: tea,
-      texts: {
-        consume: ti.consume,
-        shields: ti.escudos,
-        inflicts: ti.inflige,
-        damage: ti.daño_i,
-        ignoresShields: ti.ignoraEscudos,
-        reduce: ti.reduce,
-      },
-    });
-
-    if (resultado.logs.length === 0 && resultado.vida === enemy.vida) {
-      return { enemy, logs: [] };
-    }
-
-    return {
-      enemy: {
-        ...enemy,
-        vida: resultado.vida,
-        estadosAlterados: resultado.estados,
-      },
-      logs: resultado.logs,
-    };
-  };
-
-
-  /**
-   * Estados alterados de un héroe: misma lógica que en enemigos (inicio/fin de
-   * turno, daño, escudos y reducción de fichas). Se guarda con la partida.
-   */
-  const aplicarEfectosHeroe = (heroId, fase) => {
-    const extras = getHeroExtras(heroId);
-    if (!extras.estadosAlterados || extras.estadosAlterados.length === 0) return;
-
-    const { extras: siguiente, logs } = aplicarEfectosEstadosHeroe(extras, fase, {
-      labels: tea,
-      texts: {
-        consume: ti.consume,
-        shields: ti.escudos,
-        inflicts: ti.inflige,
-        damage: ti.daño_i,
-        ignoresShields: ti.ignoraEscudos,
-        reduce: ti.reduce,
-      },
-    });
-
-    if (logs.length === 0 && siguiente.vida === extras.vida) return;
-
-    patchHeroExtras(heroId, {
-      vida: siguiente.vida,
-      estadosAlterados: siguiente.estadosAlterados,
-    });
-    setHeroExtrasVersion((value) => value + 1);
-
-    const nombre = translations.heroes?.[heroId] || heroId;
-    logs.forEach((log) => showScenarioToast(`🌀 ${nombre}: ${log}`));
-    if (siguiente.vida <= 0) {
-      showScenarioToast(`☠ ${nombre} ${ti.muere_2 || 'cae'}`);
-    }
-  };
-
+  // Estados alterados de enemigos y héroes (motor común en useStatusEffects).
+  const { applyEnemyStatus: aplicarEfectosEstados, applyHeroStatus: aplicarEfectosHeroe } = useStatusEffects({
+    labels: tea,
+    texts: {
+      consume: ti.consume,
+      shields: ti.escudos,
+      inflicts: ti.inflige,
+      damage: ti.daño_i,
+      ignoresShields: ti.ignoraEscudos,
+      reduce: ti.reduce,
+      death: ti.muere_2,
+    },
+    getHeroExtras,
+    updateHeroExtras,
+    // Se llama en diferido: showScenarioToast se define más abajo.
+    showScenarioToast: (...args) => showScenarioToast(...args),
+    getHeroLabel: (heroId) => translations.heroes?.[heroId] || heroId,
+  });
   const aplicarCapacidadesActivadas = (enemy, placedEnemies) => {
     let vida = enemy.vida;
     let estados = [...(enemy.estadosAlterados || [])];
@@ -2066,10 +2015,27 @@ const InitTracker = () => {
   const [extraTurnIndex, setExtraTurnIndex] = useState(() => persistedSession.extraTurnIndex || 0);
   const [extraTurnTotal, setExtraTurnTotal] = useState(() => persistedSession.extraTurnTotal || 0);
   const [presentation, setPresentation] = useState(false);
-  const [bagOpen, setBagOpen] = useState(true);
+  // En móvil la bolsa arranca cerrada: libera altura para el tablero.
+  const [bagOpen, setBagOpen] = useState(() => (
+    typeof window === 'undefined' ? true : window.innerWidth >= 1024
+  ));
   const [historyOpen, setHistoryOpen] = useState(false);
   const [undoCount, setUndoCount] = useState(0);
   const turnHistoryRef = useRef([]);
+  // Rastro de los últimos turnos para el carrusel (anterior / actual / siguiente).
+  const turnTrailRef = useRef([]);
+  // Densidad del tablero, persistida entre sesiones.
+  const [density, setDensity] = useState(() => {
+    const stored = readJsonStorage('trackDensity', 'normal');
+    return stored === 'compact' ? 'compact' : 'normal';
+  });
+  const toggleDensity = () => {
+    setDensity((prev) => {
+      const next = prev === 'compact' ? 'normal' : 'compact';
+      writeJsonStorage('trackDensity', next);
+      return next;
+    });
+  };
 
   // Guarda los conjuntos de efectos ya procesados para no repetirlos al restaurar la partida.
   const persistProcessed = () => {
@@ -2821,6 +2787,14 @@ const InitTracker = () => {
       || translations.runas?.[currentTurnEntity.id]
       || currentTurnEntity.name
       || id;
+
+    // Rastro para el carrusel: solo cuando cambia la entidad.
+    const trail = turnTrailRef.current;
+    if (trail[trail.length - 1]?.id !== id) {
+      trail.push({ id, name: label, type: currentTurnEntity.type });
+      if (trail.length > 6) trail.shift();
+    }
+
     appendGameLog('turn', `Turno de ${label}`, {
       round: roundRef.current,
       turn: turnIndex,
@@ -3129,7 +3103,9 @@ const InitTracker = () => {
       (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'abajo').length : 0);
     return Math.max(above, below);
   });
-  const boardSlotHeight = boardSlotHeightFrom(countsPerSlot);
+  // La densidad compacta reduce cartas y separaciones un 15 %.
+  const densityFactor = density === 'compact' ? 0.85 : 1;
+  const boardSlotHeight = boardSlotHeightFrom(countsPerSlot) * densityFactor;
 
   const currentSlotIndex = (() => {
     if (!currentTurnEntity) return -1;
@@ -3168,7 +3144,12 @@ const InitTracker = () => {
   };
 
   const renderSlot = (index, options = {}) => (
-    <TrackSlot index={index} compact={Boolean(options.compact)} deps={slotDeps} />
+    <TrackSlot
+      index={index}
+      compact={Boolean(options.compact)}
+      density={options.density || density}
+      deps={slotDeps}
+    />
   );
 
   const currentEntityName = (() => {
@@ -3181,6 +3162,27 @@ const InitTracker = () => {
       || entity.name
       || id
       || '';
+  })();
+
+  // Carrusel: anterior (rastro), actual y siguiente (orden de iniciativa).
+  const carouselPrev = (() => {
+    const trail = turnTrailRef.current;
+    return trail.length >= 2 ? trail[trail.length - 2] : null;
+  })();
+  const carouselCurrent = currentTurnEntity
+    ? { name: currentEntityName, type: currentTurnEntity.type, turnNumber: turnIndex + 1 }
+    : null;
+  const carouselNext = (() => {
+    if (turnIndex < 0) return null;
+    const next = getNextActiveEntity((turnIndex + 1) % TURN_ORDER.length);
+    if (!next) return null;
+    const name = translations.enemies?.[next.id]
+      || translations.heroes?.[next.id]
+      || translations.runas?.[next.id]
+      || next.name
+      || next.id
+      || '';
+    return { name, type: next.type };
   })();
 
   const slotSummaries = Array.from({ length: 11 }, (_, index) => {
@@ -3606,6 +3608,18 @@ const InitTracker = () => {
             
             <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                <TurnCarousel
+                  prev={carouselPrev}
+                  current={carouselCurrent}
+                  next={carouselNext}
+                  labels={{
+                    title: ti.carousel || 'Turnos',
+                    prev: ti.previousTurn || 'Anterior',
+                    current: ti.currentTurn || 'Turno actual',
+                    next: ti.nextTurnShort || 'Siguiente',
+                    none: ti.noTurn || '—',
+                  }}
+                />
                 <TurnTrackBoard
                   renderSlot={renderSlot}
                   summaries={slotSummaries}
@@ -3615,6 +3629,8 @@ const InitTracker = () => {
                   onNextTurn={() => setTimeout(() => handleNextTurn(), 300)}
                   onUndoTurn={undoTurn}
                   canUndo={undoCount > 0}
+                  density={density}
+                  onToggleDensity={toggleDensity}
                   bagOpen={bagOpen}
                   onToggleBag={() => setBagOpen((prev) => !prev)}
                   historyOpen={historyOpen}
@@ -3825,7 +3841,7 @@ const InitTracker = () => {
             heroId={selectedHeroId}
             role={trackerData.roles?.[selectedHeroId]}
             onClose={() => setSelectedHeroId(null)}
-            onChanged={() => setHeroExtrasVersion((value) => value + 1)}
+            onChanged={refreshHeroExtras}
           />
         )}
         <DiceRoller
@@ -3847,7 +3863,7 @@ const InitTracker = () => {
           onApplyEstado={(estadoId, count) => {
             if (currentTurnEntity?.type === 'hero' && currentTurnEntity.id) {
               stepHeroEstadoAlterado(currentTurnEntity.id, estadoId, count);
-              setHeroExtrasVersion((value) => value + 1);
+              refreshHeroExtras();
             } else if (currentTurnEntity?.type === 'enemy' && currentTurnEntity.uuid) {
               setPlacedEnemies((prev) => prev.map((entry) => {
                 if (entry.enemy.uuid !== currentTurnEntity.uuid) return entry;
