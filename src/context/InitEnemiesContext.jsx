@@ -4,6 +4,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useGame } from '@/context/GameContext';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
+import { compactPlacedEnemies } from '@/utils/enemySanitize';
 import { appendGameLog } from '@/utils/gameLog';
 
 const InitEnemiesContext = createContext();
@@ -25,7 +26,8 @@ export const InitEnemiesProvider = ({ children }) => {
 
   useEffect(() => {
     writeJsonStorage('initEnemiesState', {
-      placedEnemies,
+      // Compactado: evita que un enemigo con datos anidados infle la cuota.
+      placedEnemies: compactPlacedEnemies(placedEnemies),
       huespedActivo,
       acechoActivo,
       invadidosActivo,

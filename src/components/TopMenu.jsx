@@ -155,7 +155,7 @@ const TopMenu = ({
                   aria-controls={`track-menu-${id}`}
                   aria-label={label}
                   title={label}
-                  className={`flex h-10 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                  className={`flex h-10 shrink-0 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
                     isActive
                       ? activeTone
                       : 'border-transparent text-slate-200 hover:border-slate-600 hover:bg-slate-800 hover:text-white'
@@ -169,7 +169,7 @@ const TopMenu = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1.5">
           <button
             type="button"
             onClick={() => openSaves?.()}

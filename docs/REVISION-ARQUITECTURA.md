@@ -646,6 +646,24 @@ Página      900 px = ventana (sin arrastre)
 Badge       track: ausente · portada: v1.0.0 · 1021a684
 Suite       Lint 0 · Unit 45 · E2E 18/18
 ```
+### 13.ª tanda — invocación de enemigos y cuota real
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Causa de la Plañidera** | `shadow_cultist_scenario` no declara `comportamiento` y no está en la lista configurable: el filtro exigía igualdad exacta y salía en silencio. Ahora se normaliza (`estandar`) y se aceptan las apariciones de escenario | `enemyVariant.js`, `InitTracker.jsx` |
+| **Un solo criterio** | La selección de variante sale de una función pura usada por invocación manual, cartas y mecánicas; si no hay coincidencia se avisa, nunca se falla en silencio | `enemyVariant.js` |
+| **Cuota acotada** | Al persistir se compacta cada enemigo (lista blanca de campos), se descartan estados a cero, se deduplica por `uuid` y se limita a 150 entradas | `enemySanitize.js`, `InitEnemiesContext.jsx` |
+| **Barra móvil** | Botones de menú y grupo derecho con `shrink-0`: dejan de solaparse y el icono de Escenario queda pulsable | `TopMenu.jsx` |
+
+**Medición**
+
+```text
+Datos de la Plañidera   categoría esbirro · color escenario · sin comportamiento · fuera de `enemies`
+Antes                    filtro exacto → `selected = undefined` → return silencioso
+Ahora                    findEnemyVariant la encuentra · toast si no hubiera coincidencia
+Cuota                    payload de 1000 elementos descartado por la lista blanca (test)
+Suite                    Lint 0 · Unit 59 · E2E 18/18
+```
 ### Pendiente / pospuesto
 
 - **H8**: cerrado en sus tres partes (cursor, orden/historial y paneles de escenario).

@@ -49,6 +49,7 @@ import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import { findNextActiveEntity, indexOfEntityInOrder } from '@/utils/turnOrder';
+import { findEnemyVariant } from '@/utils/enemyVariant';
 import { useHeroExtras } from '@/context/HeroExtrasContext';
 import useStatusEffects from '@/hooks/useStatusEffects';
 import useTurnCursor from '@/hooks/useTurnCursor';
@@ -618,16 +619,19 @@ const InitTracker = () => {
   
   const handleManualEnemyAdd = (enemyId, behaviorType, category, ver = 'show', forcedColorId = null, forcedUUID = null, forcedPcValue = null ) => {
     setManualSelector({ open: false, color: null });
-    const selected = ENEMIES.find(e => {
-      if (e.id !== enemyId) return false;
-      if (e.categoria !== category) return false;
-      if (!enemies.includes(e.id)) return false;
-      if (e.cara === 'B') return false;
-      if (category === 'comandante' || category === 'jefe') return true;          // ignoramos comportamiento
-      return e.comportamiento === behaviorType;            // para el resto sí exigimos match
+    // Reglas comunes en `findEnemyVariant`: tolera `comportamiento` ausente y
+    // permite las apariciones de escenario aunque no estén en la lista.
+    const selected = findEnemyVariant(ENEMIES, {
+      id: enemyId,
+      categoria: category,
+      comportamiento: behaviorType,
+      enemies,
     });
 
-    if (!selected) return;
+    if (!selected) {
+      showScenarioToast(`${ti.noSePudoColocar || 'No se pudo colocar'}: ${tee?.[enemyId] || enemyId}`);
+      return;
+    }
     const uuid = forcedUUID || createId();
     const isBig = selected.size === 'grande';
     const colorId = forcedColorId === 'noColor' ? undefined : assignColorToEnemy(uuid, isBig, forcedColorId);
