@@ -64,6 +64,10 @@ export function aplicarEfectosEstadosHeroe(extras, faseTurno, { labels = {}, tex
       if (reducidos > 0) mensaje += ` (${texts.reduce || 'reduce'} ${reducidos})`;
     }
 
+    // Límite de fichas por estado (igual que en enemigos: 4 por defecto).
+    const maxFichas = config.max || 4;
+    if (nuevoCount > maxFichas) nuevoCount = maxFichas;
+
     if (mensaje.trim()) {
       logs.push(`${labels[config.texto] || config.texto}${mensaje}`);
     }

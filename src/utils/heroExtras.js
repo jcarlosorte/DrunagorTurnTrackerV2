@@ -1,5 +1,6 @@
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { HEROES } from '@/data/heroes';
+import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 
 export const HERO_EXTRAS_KEY = 'heroExtras';
 /** Sube cuando cambian los cubos oficiales de los héroes para refrescar los guardados. */
@@ -171,13 +172,15 @@ export function stepHeroEstadoAlterado(heroId, estadoId, delta) {
   const current = getHeroExtras(heroId);
   const list = [...(current.estadosAlterados || [])];
   const index = list.findIndex((item) => item.id === estadoId);
+  // Límite de fichas por estado, igual que en los enemigos.
+  const maxFichas = ESTADOS_ALTERADOS.find((item) => item.id === estadoId)?.max || 4;
 
   if (index === -1) {
     // Si aún no tiene el estado, se añade con la cantidad completa indicada
     // (p. ej. el dado de trampa aplica veneno 2 de golpe).
-    if (delta > 0) list.push({ id: estadoId, count: delta });
+    if (delta > 0) list.push({ id: estadoId, count: Math.min(delta, maxFichas) });
   } else {
-    const nextCount = list[index].count + delta;
+    const nextCount = Math.min(list[index].count + delta, maxFichas);
     if (nextCount <= 0) list.splice(index, 1);
     else list[index] = { ...list[index], count: nextCount };
   }

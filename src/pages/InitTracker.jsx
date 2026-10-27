@@ -2118,6 +2118,7 @@ const InitTracker = () => {
   const processedStartEffectsRef = useRef(toSet(persistedSession?.processed?.start));
   const processedEndEffectsRef = useRef(toSet(persistedSession?.processed?.end));
   const processedHeroEffectsRef = useRef(new Set());
+  const lastHeroTurnRef = useRef(null);
   const processedCardsRef = useRef(toSet(persistedSession?.processed?.cards));
   const processedTiempoRef = useRef(toSet(persistedSession?.processed?.tiempo));
   const [extraTurnsQueue, setExtraTurnsQueue] = useState(() => persistedSession.extraTurnsQueue || []);
@@ -2645,10 +2646,11 @@ const InitTracker = () => {
     }
 
     // Efectos de fin de turno del héroe (estados alterados), igual que en enemigos.
+    // Se aplican al abandonar su turno, una sola vez por turno (firma ronda+índice).
     if (heroManagementEnabled && currentTurnEntity?.type === 'hero' && currentTurnEntity?.id) {
-      const heroKey = `fin-${currentTurnEntity.id}-${turnIndex}`;
-      if (!processedHeroEffectsRef.current.has(heroKey)) {
-        processedHeroEffectsRef.current.add(heroKey);
+      const heroEndKey = `fin-${roundNumber}-${turnIndex}-${currentTurnEntity.id}`;
+      if (!processedHeroEffectsRef.current.has(heroEndKey)) {
+        processedHeroEffectsRef.current.add(heroEndKey);
         aplicarEfectosHeroe(currentTurnEntity.id, 'fin');
       }
     }
@@ -2877,17 +2879,22 @@ const InitTracker = () => {
       turn: turnIndex,
       type: currentTurnEntity.type,
     });
-
-    // Efectos de inicio de turno del héroe (estados alterados), como en enemigos.
-    if (heroManagementEnabled && currentTurnEntity.type === 'hero' && currentTurnEntity.id) {
-      const heroKey = `inicio-${currentTurnEntity.id}-${turnIndex}`;
-      if (!processedHeroEffectsRef.current.has(heroKey)) {
-        processedHeroEffectsRef.current.add(heroKey);
-        aplicarEfectosHeroe(currentTurnEntity.id, 'inicio');
-      }
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTurnEntity?.uuid, currentTurnEntity?.id]);
+
+  // Firma única del turno (ronda + índice + entidad): permite aplicar los
+  // efectos de inicio aunque el mismo héroe repita turno en rondas distintas.
+  const turnSignature = `${roundNumber}-${turnIndex}-${currentTurnEntity?.type || ''}-${currentTurnEntity?.id || currentTurnEntity?.uuid || ''}`;
+
+  // Efectos de INICIO del turno del héroe (estados alterados), igual que en enemigos.
+  useEffect(() => {
+    if (!heroManagementEnabled) return;
+    if (currentTurnEntity?.type !== 'hero' || !currentTurnEntity.id) return;
+    if (lastHeroTurnRef.current === turnSignature) return;
+    lastHeroTurnRef.current = turnSignature;
+    aplicarEfectosHeroe(currentTurnEntity.id, 'inicio');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [turnSignature]);
 
   const showScenarioToast = (message, action = null, action2 = null, extra = null) => {
     const id = uuidv4();
