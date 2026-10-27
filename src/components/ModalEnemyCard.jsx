@@ -332,6 +332,18 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   };
 
   const handleEstadoChangeLocal = (estadoId, delta) => {
+    // Si el estado ya no está activo (se consumió en el turno) el botón + debe
+    // poder volver a añadirlo; antes solo se recorrían los estados existentes.
+    if (!estadosLocal.some((estado) => estado.id === estadoId)) {
+      if (delta <= 0) return;
+      const estadoConfig = ESTADOS_ALTERADOS.find((item) => item.id === estadoId);
+      if (!estadoConfig) return;
+      const updated = [...estadosLocal, { id: estadoId, count: 1, texto: estadoConfig.texto }];
+      setEstadosLocal(updated);
+      onEstadoChange?.(enemy.uuid, updated);
+      return;
+    }
+
     const updatedStates = estadosLocal.map((estado) => {
       if (estado.id === estadoId) {
         const estadoConfig = ESTADOS_ALTERADOS.find(e => e.id === estado.id);
@@ -495,19 +507,16 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
             </div>
           </div>
 
-          {/* Submenú Estados Alterados: columnas compactas en una sola fila */}
+          {/* Submenú Estados Alterados: paleta fija, siempre visible */}
           <div className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900/60 p-2">
             <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
             <div className="flex flex-nowrap items-start justify-start gap-1 overflow-hidden">
-            {estadosLocal
-              .filter((estado) => !todasInmunidades?.includes(estado.id) && !(todasInmunidades?.includes("GRANDE") && ["DERRIBO_I", "ATURDIMIENTO_I"].includes(estado.id)))
-              .filter((estado) => {
-                const estadoConfig = ESTADOS_ALTERADOS.find(e => e.id === estado.id);
-                return estadoConfig && estadoConfig.mostrar === "si";
-              })
-              .map((estado) => {
-                const estadoConfig = ESTADOS_ALTERADOS.find(e => e.id === estado.id);
-                if (!estadoConfig) return null;
+            {ESTADOS_ALTERADOS
+              .filter((config) => config.mostrar === 'si')
+              .filter((config) => !todasInmunidades?.includes(config.id) && !(todasInmunidades?.includes('GRANDE') && ['DERRIBO_I', 'ATURDIMIENTO_I'].includes(config.id)))
+              .map((estadoConfig) => {
+                const activo = estadosLocal.find((item) => item.id === estadoConfig.id);
+                const estado = activo || { id: estadoConfig.id, count: 0 };
                 const maxCount = estado.max || estadoConfig.max || 1;
                 const nombre = tea[estadoConfig.texto] || estadoConfig.texto;
             

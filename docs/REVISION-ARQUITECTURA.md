@@ -455,7 +455,26 @@ npm run test:e2e
 
 ### Pendiente / pospuesto
 
-H8, H11, D2, D7, D8, D9, A1, A4, F1-F5, P2.
+H8, H11, D2, D7, D8, D9, A4, F1-F5, P2.
+
+### Cuarta tanda aceptada e implementada
+
+| ID | Cambio | Archivos |
+|---|---|---|
+| — | **Bug**: al consumirse un estado alterado desaparecían todos los botones del panel. Ahora la paleta se genera desde el catálogo y siempre está visible; `+` puede volver a añadir un estado consumido | `ModalEnemyCard.jsx` |
+| A1 (1/2) | Geometría del tablero extraída a módulo propio (`overlapFor`, `stepFor`, `stackHeight`, `boardSlotHeightFrom`, `compactSlotHeight`, `cardDistance`) | `trackLayout.js` |
+| A1 (2/2) | `CharacterCard` y `TrackSlot` extraídos de `InitTracker` como componentes con dependencias explícitas | `CharacterCard.jsx`, `TrackSlot.jsx` |
+
+**Resultado**: `InitTracker.jsx` pasa de **4.199 → 3.829 líneas** (−370), sin cambios de comportamiento.
+
+**Verificación**
+
+```text
+Tablero   11 slots · 11 etiquetas · 9 imágenes · 0 errores de página
+Estados   Quemadura 2 → 1 → 0 tras los turnos del enemigo
+Paleta    11 botones siguen visibles con 0 estados activos
+Lista     slot expandido 360 px con su carta
+```
 
 ### Tercera tanda aceptada e implementada
 

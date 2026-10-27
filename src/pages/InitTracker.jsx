@@ -51,6 +51,14 @@ import { getHeroExtras, patchHeroExtras, stepHeroEstadoAlterado } from '@/utils/
 import { aplicarEfectosEstadosHeroe } from '@/utils/heroStatus';
 import { applyStatusEffects } from '@/utils/statusEngine';
 import { classifyScenarioToast } from '@/utils/toastKind';
+import CharacterCard from '@/components/track/CharacterCard';
+import TrackSlot from '@/components/track/TrackSlot';
+import {
+  boardSlotHeightFrom,
+  cardDistance,
+  compactSlotHeight,
+  stackHeight,
+} from '@/components/track/trackLayout';
 import { ESTADOS_HEROE } from '@/data/heroes/index';
 
 const rolesPositionMap = {
@@ -3103,295 +3111,64 @@ const InitTracker = () => {
   };
 
 
- const CharacterCard = ({ name, image, prof, position, heroId, onOpen, clickable, extras }) => (
-    <div className="flex flex-col items-center mx-1">
-      <div
-        className={`relative w-full max-w-[140px] hover:scale-105 ${clickable ? 'cursor-pointer' : ''}`}
-        onClick={clickable ? onOpen : undefined}
-        onKeyDown={clickable ? (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            onOpen?.();
-          }
-        } : undefined}
-        role={clickable ? 'button' : undefined}
-        tabIndex={clickable ? 0 : undefined}
-        aria-label={clickable ? `${name} · ${prof}` : undefined}
-      >
-        <img 
-          src={image}
-          alt={name}
-          className="w-full h-auto object-cover rounded-lg border-2 border-[#800020]/70" loading="lazy" decoding="async" />
-
-        {/* Estados alterados del héroe sobre la imagen (iconos, como en enemigos) */}
-        {clickable && (extras?.estadosAlterados?.length > 0 || extras?.estados?.length > 0) && (
-          <div className="absolute left-0.5 top-0.5 grid grid-rows-3 grid-flow-col gap-0.5">
-            {(extras.estadosAlterados || []).slice(0, 5).map((estado) => {
-              const meta = ESTADOS_ALTERADOS.find((item) => item.id === estado.id);
-              if (!meta) return null;
-              return (
-                <span key={estado.id} className="relative" title={`${tea[meta.texto] || meta.texto} ×${estado.count}`}>
-                  <img src={meta.imagen} alt="" className="h-4 w-4 rounded-full border border-white/80 bg-slate-950/60" loading="lazy" decoding="async" />
-                  {estado.count > 1 && (
-                    <span className="absolute -right-1 -top-1 rounded-full bg-red-600 px-0.5 text-[0.45rem] font-bold leading-none text-white">
-                      {estado.count}
-                    </span>
-                  )}
-                </span>
-              );
-            })}
-            {(extras.estados || []).slice(0, 4).map((estado) => {
-              const meta = ESTADOS_HEROE.find((item) => item.id === estado.id);
-              if (!meta) return null;
-              return (
-                <span
-                  key={`cond-${estado.id}`}
-                  title={`${meta.name?.es} ×${estado.count}`}
-                  className="flex h-4 w-4 items-center justify-center rounded-full border border-white/80 bg-amber-600/80 text-[0.45rem] font-bold leading-none text-white"
-                >
-                  {estado.count > 1 ? estado.count : '•'}
-                </span>
-              );
-            })}
-          </div>
-        )}
-
-        <div
-          className="absolute bottom-0 left-1/2 w-[94%] -translate-x-1/2 rounded-lg bg-[#800020] px-1 text-center text-white leading-tight"
-          style={{
-            textShadow: '0 0 4px #b87333aa',
-          }}
-        >
-          <FitText text={name} max={12} min={6.5} className="w-full text-center font-semibold" />
-          <span className="block text-[0.50rem] italic opacity-90 mb-1">{prof}</span>
-
-          {/* Vida del héroe, como en las cartas de enemigo */}
-          {clickable && extras && (
-            <span className="relative mb-0.5 mt-0.5 block h-1.5 w-full">
-              <span className="absolute inset-0 z-10 flex items-center justify-center text-[0.5rem] font-bold leading-none text-white">
-                {extras.vida}/{extras.vidaMax}
-              </span>
-              <span className="block h-full w-full rounded bg-red-900">
-                <span
-                  className={`block h-full rounded ${extras.vida > extras.vidaMax ? 'bg-amber-400' : 'bg-red-500'}`}
-                  style={{ width: `${Math.max(0, Math.min(100, (extras.vida / Math.max(extras.vidaMax, 1)) * 100))}%` }}
-                />
-              </span>
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-  
-  // Alturas de carta y separación desde la barra central.
-  // Las pilas crecen SIEMPRE alejándose del track: la primera carta queda a
-  // BASE_GAP de la barra y cada siguiente se aleja un paso más. El paso se
-  // reduce al acumular cartas para que el tablero no se estire en exceso.
-  const CARD_HEIGHT = 128;
-  const BASE_GAP = 26;
-  const MAX_STACK_HEIGHT = 320;
-  const overlapFor = (count) => {
-    if (count <= 1) return 0;
-    const maxStep = (MAX_STACK_HEIGHT - BASE_GAP - CARD_HEIGHT) / (count - 1);
-    const step = Math.max(30, Math.min(CARD_HEIGHT - 24, maxStep));
-    return CARD_HEIGHT - step;
-  };
-  const stepFor = (count) => CARD_HEIGHT - overlapFor(count);
-  const stackHeight = (count) => (count === 0 ? 0 : BASE_GAP + (count - 1) * stepFor(count) + CARD_HEIGHT);
+  // Alturas de carta y separación desde la barra central (ver trackLayout.js).
 
   // Altura única para TODO el tablero: así todas las etiquetas comparten la misma
   // línea central aunque una posición acumule muchas cartas.
-  const boardSlotHeight = (() => {
-    const tallest = Array.from({ length: 11 }, (_, i) => {
-      const isRuneSlot = Object.values(runesColorMap).includes(i);
-      const isRuneText = i === 10;
-      const above =
-        (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnTop.includes(h.role)).length +
-        (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'arriba').length : 0) +
-        (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'arriba').length : 0);
-      const below =
-        (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnBottom.includes(h.role)).length +
-        (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'abajo').length : 0) +
-        (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'abajo').length : 0);
-      return Math.max(stackHeight(above), stackHeight(below));
-    });
-    return Math.max(448, 2 * Math.max(...tallest) + 16);
-  })();
-
-  const renderSlot = (index, { compact = false } = {}) => {
-    const isRune = Object.values(runesColorMap).includes(index);
-    const isRuneTextSlot = index === 10;
-    const runeColor = getRuneColorFromIndex(index);
-    const heroesAbove = (trackerData.placedHeroes || []).filter(h => h.position === index && rolesOnTop.includes(h.role));
-    const heroesBelow = (trackerData.placedHeroes || []).filter(h => h.position === index && rolesOnBottom.includes(h.role));
-    const enemiesAbove = placedEnemies.filter(e => e.enemy.position === index && e.enemy.runePosition === 'arriba');
-    const enemiesBelow = placedEnemies.filter(e => e.enemy.position === index && e.enemy.runePosition === 'abajo');
-    const runesAbove = placedRunes.filter(r => r.rune.colorIndex === index && r.rune.posicion === 'arriba');
-    const runesBelow = placedRunes.filter(r => r.rune.colorIndex === index && r.rune.posicion === 'abajo');
-
-    const totalAbove = heroesAbove.length + (isRune ? enemiesAbove.length : 0) + (isRuneTextSlot ? runesAbove.length : 0);
-    const totalBelow = heroesBelow.length + (isRune ? enemiesBelow.length : 0) + (isRuneTextSlot ? runesBelow.length : 0);
-    // En la vista de lista el slot se dibuja solo: usa su altura real y no la del tablero.
-    const slotHeight = compact
-      ? Math.max(360, 2 * Math.max(stackHeight(totalAbove), stackHeight(totalBelow)) + 16)
-      : boardSlotHeight;
-
-    const renderStack = (items, side, type = 'hero') => {
-      const isTop = side === 'top';
-      const count = items.length;
-      if (count === 0) return null;
-      const step = stepFor(count);
-      const ordered = isTop ? [...items].reverse() : items;
-
-      return ordered.map((item, i) => {
-        const distance = BASE_GAP + i * step;
-        const zIndex = count - i;
-    
-        const isCurrentTurn = currentTurnEntity && (
-          (type === 'enemy' && item.enemy.uuid === currentTurnEntity.uuid) ||
-          (type === 'rune' && item.uuid === currentTurnEntity.uuid) ||
-          (type === 'hero' && item.id === currentTurnEntity.id)
-        );
-        const isEntityFlipping = type === 'enemy' && flippedCards.includes(item.enemy.uuid);
-
-        return (
-          <div
-            key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : `${type}-${item.id}`}
-            className="absolute left-1/2 w-[108px] max-w-full transition-transform duration-300"
-            style={{
-              ...(isTop
-                ? { bottom: `calc(50% + ${distance}px)` }
-                : { top: `calc(50% + ${distance}px)` }),
-              transform: 'translateX(-50%)',
-              zIndex: isCurrentTurn ? 40 : zIndex,
-            }}
-          >
-            <div className="relative items-center">
-              {isCurrentTurn && (
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 rounded-full border-2 border-white bg-purple-600">
-                  <GiWingedSword className="text-white animate-bounce" size={40} />
-                </div>
-              )}
-              {type === 'enemy' && (item.enemy.tipo === 'especial' || item.enemy.tipo === 'fallenHero') ? (
-                <CommanderCard carta={item.enemy} highlight={item.enemy.highlight} />
-              ) : type === 'enemy' ? (
-                <EnemyCard
-                  uuid={item.enemy.uuid}
-                  id={item.enemy.id}
-                  name={getEnemyName(item.enemy.id, item.enemy.color)}
-                  image={item.enemy.imagen}
-                  comportamiento={item.enemy.comportamiento}
-                  categoria={item.enemy.categoria}
-                  position={isTop ? "top" : "bottom"}
-                  color={item.enemy.color}
-                  onRemove={onRemove}
-                  vida={item.enemy.vida}
-                  vidaMax={item.enemy.vidaMax}
-                  movimiento={item.enemy.movimiento}
-                  ataque={item.enemy.ataque}
-                  openEnemyModal={openEnemyModal}
-                  inmunidad={item.enemy.inmunidad}
-                  tipo_ataque={item.enemy.tipo_ataque}
-                  capacidades={item.enemy.capacidades}
-                  ringColor={item.enemy.ringColor}
-                  isFlipping={isEntityFlipping}
-                  estadosAlterados={item.enemy.estadosAlterados}
-                />
-              ) : type === 'rune' ? (
-                <RuneCard rune={item} onRemove={removeRuneByUUID} flipped={flippedCards.includes(item.uuid)} />
-              ) : (
-                <CharacterCard
-                  name={getHeroName(item.id)}
-                  image={item.image}
-                  prof={getHeroProf(item.id)}
-                  position={isTop ? "top" : "bottom"}
-                  heroId={item.id}
-                  clickable={heroManagementEnabled}
-                  extras={heroManagementEnabled ? getHeroExtras(item.id) : null}
-                  onOpen={() => setSelectedHeroId(item.id)}
-                />
-              )}
-            </div>
-          </div>
-        );   
-      });
-    };
-    
-    return (
-      <div
-        key={index}
-        className={`track-slot relative w-full min-w-0 ${index === currentSlotIndex ? 'track-slot--active' : ''}`}
-        style={{ height: `${slotHeight}px` }}
-      >
-        {/* Pilas: se anclan al 50% del propio slot y crecen hacia fuera */}
-        {renderStack(heroesAbove, 'top', 'hero')}
-        {isRune && renderStack(enemiesAbove, 'top', 'enemy')}
-        {isRuneTextSlot && renderStack(runesAbove.map(r => r.rune), 'top', 'rune')}
-  
-        {/* Centro del slot: siempre en la misma línea */}
-        <div className="track-slot__label absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 items-center justify-center bg-slate-700 py-1">
-          <div className={classNames(
-            'flex min-w-0 items-center justify-center font-fantasy',
-            {
-              'h-10 w-10 shrink-0 rotate-45 border-[3px] gem-orange': index === 1,
-              'h-10 w-10 shrink-0 rotate-45 border-[3px] gem-green': index === 3,
-              'h-10 w-10 shrink-0 rotate-45 border-[3px] gem-blue': index === 5,
-              'h-10 w-10 shrink-0 rotate-45 border-[3px] gem-red': index === 7,
-              'h-10 w-10 shrink-0 rotate-45 border-[3px] gem-gray': index === 9,
-              'h-8 w-full min-w-0 bg-slate-800 text-center text-slate-100 shadow': index % 2 === 0
-            })}>
-            <span
-              className="block w-full truncate px-0.5 text-center text-[0.55rem] font-semibold uppercase tracking-wide leading-tight text-slate-200 sm:text-[0.65rem] md:text-xs"
-            >
-              {index === 0 && tr.defensor ||
-                index === 2 && tr.apoyo ||
-                index === 4 && tr.lider ||
-                index === 6 && tr.agresor ||
-                index === 8 && tr.controlador ||
-                index === 10 && ti.rune}
-            </span>
-            {/* Icono y contador si es runa */}
-            {isRune && (
-              <div className="absolute rotate-[-45deg] flex items-center gap-0 z-20">
-                {(() => {
-                  const runeData = COLOR_RUNAS.find(r => r.id === runeColor);
-                  return runeData ? (
-                    <img 
-                      src={runeData.imagenSin}
-                      alt={runeColor}
-                      className="w-12 h-12 object-contain" loading="lazy" decoding="async" />
-                  ) : (
-                    <GiAbstract065 className="text-white text-sm" />
-                  );
-                })()}
-               
-                <div className={classNames('text-white text-xs font-bold px-1 py-0.5 inline-flex items-center whitespace-nowrap border-l-0 border-2',
-                  {'gem-orange2': index === 1, 'gem-green2': index === 3, 'gem-blue2': index === 5, 'gem-red2': index === 7, 'gem-gray2': index === 9
-                  })}>
-                   x {runes[runeColor] || 0}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Pila inferior: se ancla al 50% del slot y crece hacia abajo */}
-        {renderStack(heroesBelow, 'bottom', 'hero')}
-        {isRune && renderStack(enemiesBelow, 'bottom', 'enemy')}
-        {isRuneTextSlot && renderStack(runesBelow.map(r => r.rune), 'bottom', 'rune')}
-  
-      </div>
-    );
-    
-
-  };
+  const countsPerSlot = Array.from({ length: 11 }, (_, i) => {
+    const isRuneSlot = Object.values(runesColorMap).includes(i);
+    const isRuneText = i === 10;
+    const above =
+      (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnTop.includes(h.role)).length +
+      (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'arriba').length : 0) +
+      (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'arriba').length : 0);
+    const below =
+      (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnBottom.includes(h.role)).length +
+      (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'abajo').length : 0) +
+      (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'abajo').length : 0);
+    return Math.max(stackHeight(above), stackHeight(below));
+  });
+  const boardSlotHeight = boardSlotHeightFrom(countsPerSlot);
 
   const currentSlotIndex = (() => {
     if (!currentTurnEntity) return -1;
     if (currentTurnEntity.type === 'rune') return currentTurnEntity.colorIndex ?? -1;
     return typeof currentTurnEntity.position === 'number' ? currentTurnEntity.position : -1;
   })();
+
+  // Cada posición del tablero se renderiza en su propio componente.
+  const slotDeps = {
+    runesColorMap,
+    getRuneColorFromIndex,
+    COLOR_RUNAS,
+    runes,
+    tr,
+    ti,
+    tea,
+    placedHeroes: trackerData.placedHeroes || [],
+    placedEnemies,
+    placedRunes,
+    rolesOnTop,
+    rolesOnBottom,
+    currentTurnEntity,
+    currentSlotIndex,
+    flippedCards,
+    boardSlotHeight,
+    getHeroName,
+    getHeroProf,
+    getHeroExtras,
+    getEnemyName,
+    heroManagementEnabled,
+    onRemove,
+    openEnemyModal,
+    removeRuneByUUID,
+    setSelectedHeroId,
+    RuneCard,
+  };
+
+  const renderSlot = (index, options = {}) => (
+    <TrackSlot index={index} compact={Boolean(options.compact)} deps={slotDeps} />
+  );
 
   const currentEntityName = (() => {
     const entity = currentTurnEntity;
