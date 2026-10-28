@@ -24,9 +24,24 @@ test.describe('Seguridad · CSP', () => {
     });
 
     expect(csp.content).toContain("default-src 'self'");
+    expect(csp.content).toContain("script-src 'self'");
+    expect(csp.content).toContain("script-src-attr 'none'");
+    expect(csp.content).toContain("worker-src 'none'");
+    expect(csp.content).toContain("frame-src 'none'");
     expect(csp.content).toContain("object-src 'none'");
     expect(csp.content).toContain("base-uri 'self'");
+    expect(csp.content).toContain("form-action 'none'");
+    expect(csp.content).toContain('upgrade-insecure-requests');
+    // GitHub Pages no permite cabeceras: frame-ancestors no puede aplicarse.
+    expect(csp.content).not.toContain('frame-ancestors');
     expect(csp.violations).toEqual([]);
+
+    const metas = await page.evaluate(() => ({
+      referrer: document.querySelector('meta[name="referrer"]')?.getAttribute('content'),
+      colorScheme: document.querySelector('meta[name="color-scheme"]')?.getAttribute('content'),
+    }));
+    expect(metas.referrer).toBe('no-referrer');
+    expect(metas.colorScheme).toBe('dark');
 
     // Abrir un modal tampoco genera violaciones.
     await page.locator('[role="button"][aria-label*="Vorn"]').first().click({ force: true });

@@ -33,21 +33,26 @@ const appVersion = (() => {
  * F4 · CSP en producción.
  *
  * GitHub Pages no permite cabeceras propias, así que se inyecta como `<meta>`.
- * `frame-ancestors` y `report-uri` solo funcionan por cabecera: quedan fuera y
- * se documentan como limitación conocida del hosting.
+ * `frame-ancestors`, `report-uri`/`report-to` y HSTS solo funcionan por
+ * cabecera: quedan fuera y se documentan en `docs/SEGURIDAD.md`.
  */
 const CSP_DIRECTIVES = [
   "default-src 'self'",
   "script-src 'self'",
+  // React no emite atributos onclick/onerror; se bloquean explícitamente.
+  "script-src-attr 'none'",
   // framer-motion y react-toastify aplican estilos en línea.
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob:",
   "connect-src 'self'",
   "manifest-src 'self'",
+  "worker-src 'none'",
+  "frame-src 'none'",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'none'",
+  "upgrade-insecure-requests",
 ];
 
 function cspMetaPlugin() {

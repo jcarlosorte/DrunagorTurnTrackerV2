@@ -770,6 +770,44 @@ Transfer   retrato de héroe 39 KB → 13 KB (−66 %) · tracker 269 KB → 196
 E2E        28/28 · Unit 72 · Lint 0
 ```
 
+### 19.ª tanda — F4: CSP reforzada dentro de lo que permite Pages
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **CSP endurecida** | `script-src-attr 'none'`, `worker-src 'none'`, `frame-src 'none'` y `upgrade-insecure-requests`; se mantiene `style-src 'unsafe-inline'` por los estilos de React/framer-motion | `vite.config.js` |
+| **Metas de privacidad** | `referrer=no-referrer`, `color-scheme=dark` y `format-detection=telephone=no` | `index.html` |
+| **Prueba de seguridad** | El E2E verifica las directivas nuevas, las metas y que `frame-ancestors` no se declara (se ignoraría en `<meta>`) | `seguridad.spec.js` |
+| **Límites documentados** | `docs/SEGURIDAD.md`: cabeceras reales de Pages, clickjacking residual y qué haría falta para cerrarlo | `docs/SEGURIDAD.md` |
+
+**Medición**
+
+```text
+CSP        14 directivas · 0 violaciones al cargar y al abrir un modal
+HSTS       max-age=31556952, servido por GitHub Pages (curl -I)
+Pages      sin frame-ancestors, report-to ni Permissions-Policy (documentado)
+E2E        28/28 · Unit 72 · Lint 0
+```
+
+### 20.ª tanda — ajustes finos de menús y submenú Nodos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | El botón «Manual» pasa a ser el 10.º de la rejilla, con el mismo icono de monstruo: dos filas de 5 | `TopMenu.jsx`, `es.json`, `en.json` |
+| **Cartas de runa** | Tres filas: Oscuridad · Asalto · (Rey Redivivo + Huésped + Invadidos) | `TopMenu.jsx` |
+| **Añadir y manifestar** | «Añadir Runas en Masa» y «Manifestar Runa» comparten fila en la tercera columna | `TopMenu.jsx` |
+| **Zona de riesgo** | La frase va junto al título y las tarjetas se centran | `TopMenu.jsx` |
+| **Submenú Nodos** | Sale de Runas: menú propio entre Runas y Escenario, icono `GiPositionMarker` y contador en la cabecera; desaparece el número suelto de la sección | `TopMenu.jsx`, i18n, specs |
+
+**Medición**
+
+```text
+Enemigos   10 botones · 2 filas (5+5)
+Runas      cartas y=164/214/264 · en masa y manifestar y=213
+Riesgo     cabecera de 20 px (título + frase en una línea)
+Nodos      menú entre Runas y Escenario · 1 sección · chip «Nodos 0»
+E2E        29/29
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
@@ -778,5 +816,5 @@ E2E        28/28 · Unit 72 · Lint 0
 - **H8**: cerrado en sus tres partes (cursor, orden/historial y paneles de escenario).
 - **D9**: cerrado (eventos, facciones, estados y botones de acción tokenizados; los badges y rojos oscuros conservan su matiz propio).
 - **F2**: cerrado (AVIF + `srcset` en miniaturas; los originales WebP/PNG se conservan como respaldo).
-- **F4**: CSP por `<meta>`; `frame-ancestors`/`report-uri` siguen requiriendo cabeceras (solo con otro hosting).
+- **F4**: cerrado hasta el límite de GitHub Pages; clickjacking residual y cabeceras imposibles documentados en `docs/SEGURIDAD.md`.
 - **P2**: API de sincronización (pospuesta por decisión de producto).

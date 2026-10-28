@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { useSavesUi } from '@/context/SavesUiContext';
-import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes } from 'react-icons/gi';
+import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker } from 'react-icons/gi';
 import { MdAddCircleOutline } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { ENEMIES } from '@/data/enemies';
@@ -49,11 +49,12 @@ const TopMenu = ({
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
   const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, controlPoints, runeKeys, rescue } = useGame();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
-  const [activeMenu, setActiveMenu] = useState(null); // 'runes' | 'enemies' | 'scenario' | null
+  const [activeMenu, setActiveMenu] = useState(null); // 'enemies' | 'runes' | 'nodes' | 'scenario' | null
   const containerRef = useRef(null);
   const menuRefEnemies = useRef(null);
   const menuRefRunes = useRef(null);
   const menuRefScenario = useRef(null);
+  const menuRefNodes = useRef(null);
   const { selectedExpansions } = useExpansions();
   
   const colorMap = {
@@ -225,6 +226,7 @@ const TopMenu = ({
             {[
               { id: 'enemies', icon: GiMinions, label: t.enemiesMenu || 'Enemigos', tone: 'sky' },
               { id: 'runes', icon: GiRuneStone, label: t.runesMenu || 'Runas', tone: 'emerald' },
+              { id: 'nodes', icon: GiPositionMarker, label: t.nodesMenu || 'Nodos', tone: 'cyan' },
               { id: 'scenario', icon: GiVillage, label: t.scenarioMenu || 'Escenario', tone: 'amber' },
             ].map(({ id, icon: Icon, label, tone }) => {
               const isActive = activeMenu === id;
@@ -232,7 +234,9 @@ const TopMenu = ({
                 ? 'border-sky-400/80 bg-sky-700 text-white shadow-inner shadow-sky-950/40'
                 : tone === 'emerald'
                   ? 'border-emerald-400/80 bg-emerald-700 text-white shadow-inner shadow-emerald-950/40'
-                  : 'border-amber-400/80 bg-amber-700 text-white shadow-inner shadow-amber-950/40';
+                  : tone === 'cyan'
+                    ? 'border-cyan-400/80 bg-cyan-700 text-white shadow-inner shadow-cyan-950/40'
+                    : 'border-amber-400/80 bg-amber-700 text-white shadow-inner shadow-amber-950/40';
               return (
                 <button
                   key={id}
@@ -299,7 +303,7 @@ const TopMenu = ({
           </button>
           <LanguageMenu label={savesT.language || 'Idioma'} />
 
-          {['enemies', 'runes', 'scenario'].includes(activeMenu) && (
+          {['enemies', 'runes', 'nodes', 'scenario'].includes(activeMenu) && (
             <button
               type="button"
               data-testid="close-menu"
@@ -381,13 +385,21 @@ const TopMenu = ({
                     { key: 'jefe', label: t.selectBosses, color: 'text-purple-400' },
                     { key: 'hero', label: t.selectHeroFall, color: 'text-orange-400' },
                     { key: 'escenario', label: t.selectScenario, color: 'text-cyan-600' },
-                  ].map(({ key, label, color }) => (
+                    { key: 'any', label: t.manualAnyShort || 'Manual', color: 'text-purple-300', title: t.manualAny || 'Añadir enemigo manual' },
+                  ].map(({ key, label, color, title }) => (
                     <button
                       key={key}
                       onClick={() => {
+                        if (key === 'any') {
+                          setManualSelect('');
+                          onAddManual();
+                          return;
+                        }
                         setManualSelect(key);
                         handleManualSelect({ target: { value: key } });
                       }}
+                      aria-label={title || label}
+                      title={title || label}
                       className={`state-chip flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg border px-1 py-1.5 text-[0.65rem] font-semibold leading-tight transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 ${
                         manualSelect === key
                           ? 'border-purple-400 bg-purple-700 text-white shadow-lg shadow-purple-950/50'
@@ -399,18 +411,6 @@ const TopMenu = ({
                     </button>
                   ))}
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setManualSelect('');
-                    onAddManual();
-                  }}
-                  className="mt-2 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-dashed border-purple-500/70 bg-purple-950/40 px-3 text-sm font-semibold text-purple-100 transition hover:border-purple-300 hover:bg-purple-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300"
-                >
-                  <MdAddCircleOutline className="text-lg" aria-hidden="true" />
-                  {t.manualAny || 'Añadir enemigo manual'}
-                </button>
               </div>
             </div>
 
@@ -452,9 +452,6 @@ const TopMenu = ({
                 </span>
                 <span className="hidden shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200 sm:inline">
                   {t.fichasChip || 'Fichas'} {availableTiles.length}/{availableTiles.length + usedTiles.length}
-                </span>
-                <span className="hidden shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200 lg:inline">
-                  {t.nodesChip || 'Nodos'} {activeNodes}
                 </span>
                 <button
                   type="button"
@@ -602,7 +599,9 @@ const TopMenu = ({
                     </div>
                   )}
 
-                  {/* --- Bloque 3: ACECHO --- */}
+                  <div className="grid gap-2 sm:grid-cols-3">
+
+                {/* --- Bloque 3: ACECHO --- */}
                   <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"> 
                     <div className="flex flex-col items-center gap-2">
                       <div className="flex flex-wrap gap-2 justify-center items-center">
@@ -730,6 +729,7 @@ const TopMenu = ({
                   </div>
                 </div>
                 </div>
+                </div>
               </section>
 
               {/* 📦 Estado de la bolsa */}
@@ -815,11 +815,12 @@ const TopMenu = ({
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-2">
                 {/* Añadir oscuridad en cascada */}
                 <div className="track-surface-raised flex-1 p-3 shadow-md">
                   <div className="flex items-center gap-2 mb-2 justify-center">
                     <GiRuneStone className="text-purple-400 text-xl" />
-                    <span className="font-semibold">{t.oscuridadCascada}</span>
+                    <span className="text-sm font-semibold text-center">{t.oscuridadCascada}</span>
                   </div>
                   <div className="flex flex-wrap gap-2 justify-center">
                     {[1,2,3,4].map(num => (
@@ -838,7 +839,7 @@ const TopMenu = ({
                 <div className="track-surface-raised p-3 shadow-md">
                   <div className="flex flex-row items-center gap-2 mb-2 justify-center">
                     <GiRuneStone className="text-blue-400 text-xl inline-block" />
-                    <span className="font-semibold whitespace-nowrap">{t.manifestarTitulo || 'Manifestar Runa'}</span>
+                    <span className="text-sm font-semibold text-center">{t.manifestarTitulo || 'Manifestar Runa'}</span>
                   </div>
                   <div className="flex flex-wrap gap-2 justify-center">
                     <button
@@ -852,24 +853,25 @@ const TopMenu = ({
                   </div>
                 </div>
                 </div>
+                </div>
               </div>
 
               {/* Zona de riesgo: acciones sin deshacer */}
               <section aria-labelledby="runas-riesgo" className="rounded-xl border border-red-900/70 bg-red-950/20 p-3">
-                <div className="mb-1 flex items-center gap-2">
+                <div className="mb-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
                   <GiTrashCan className="text-red-400 text-xl" />
-                  <h3 id="runas-riesgo" className="min-w-0 flex-1 text-sm font-semibold text-red-200">
+                  <h3 id="runas-riesgo" className="text-sm font-semibold text-red-200">
                     {t.riskZone || 'Zona de riesgo'}
                   </h3>
+                  <span className="text-xs text-red-200/80">{t.riskZoneHint || 'Estas acciones no se pueden deshacer.'}</span>
                 </div>
-                <p className="mb-2 text-xs text-red-200/80">{t.riskZoneHint || 'Estas acciones no se pueden deshacer.'}</p>
-                <div className="grid gap-2 sm:grid-cols-3">
-                  <div role="group" aria-label={t.removeTiles || 'Eliminar Runa del Medidor'} className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
-                    <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-200">
+                <div className="mx-auto grid max-w-4xl gap-2 sm:grid-cols-3">
+                  <div role="group" aria-label={t.removeTiles || 'Eliminar Runa del Medidor'} className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2 text-center">
+                    <div className="mb-2 flex items-center justify-center gap-1.5 text-xs font-semibold text-red-200">
                       <GiBrickWall className="text-base" />
                       <span>{t.removeTiles || 'Eliminar Runa del Medidor'}</span>
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap justify-center gap-1.5">
                       {['naranja', 'verde', 'azul', 'rojo', 'gris'].map(color => (
                         <button
                           key={color}
@@ -888,12 +890,12 @@ const TopMenu = ({
                     </div>
                   </div>
 
-                  <div role="group" aria-label={t.eliminarDirecto || 'Eliminar Runa de la Bolsa'} className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
-                    <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-200">
+                  <div role="group" aria-label={t.eliminarDirecto || 'Eliminar Runa de la Bolsa'} className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2 text-center">
+                    <div className="mb-2 flex items-center justify-center gap-1.5 text-xs font-semibold text-red-200">
                       <GiTrashCan className="text-base" />
                       <span>{t.eliminarDirecto}</span>
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap justify-center gap-1.5">
                       {['naranja', 'verde', 'azul', 'rojo', 'gris'].map(color => (
                         <button
                           key={color}
@@ -912,15 +914,15 @@ const TopMenu = ({
                     </div>
                   </div>
 
-                  <div role="group" aria-label={t.resetRunes || 'Resetear Runas'} className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
-                    <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-200">
+                  <div role="group" aria-label={t.resetRunes || 'Resetear Runas'} className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2 text-center">
+                    <div className="mb-2 flex items-center justify-center gap-1.5 text-xs font-semibold text-red-200">
                       <GiRuneStone className="text-base" />
                       <span>{t.resetRunes || 'Resetear Runas'}</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setPendingRuneAction({ type: 'reset' })}
-                      className="min-h-9 rounded-full bg-yellow-500 px-3 text-xs font-semibold text-slate-900 hover:bg-yellow-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
+                      className="mx-auto block min-h-9 rounded-full bg-yellow-500 px-3 text-xs font-semibold text-slate-900 hover:bg-yellow-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-200"
                     >
                       {t.resetRunes || 'Resetear Runas'}
                     </button>
@@ -928,24 +930,57 @@ const TopMenu = ({
                 </div>
               </section>
 
-              {/* Nodos y áreas (pilas, nieblas, barricadas, apariciones…) */}
-              <section aria-labelledby="runas-nodos" className="track-surface-raised p-2.5 shadow-md">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
-                    <GiRuneStone className="text-lg" />
-                  </span>
-                  <h3 id="runas-nodos" className="min-w-0 flex-1 text-sm font-semibold">{t.nodesSection || 'Nodos y áreas'}</h3>
-                  <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">{activeNodes}</span>
-                </div>
-                <ScenarioPanels />
-              </section>
-
-
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-      
+
+      <AnimatePresence>
+        {activeMenu === 'nodes' && (
+          <motion.div
+            ref={menuRefNodes}
+            id="track-menu-nodes"
+            role="region"
+            aria-label={t.nodesMenu || 'Nodos'}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-2 overflow-y-auto px-3 pb-3 pt-2 text-white sm:px-4"
+          >
+            <div className="flex flex-col gap-3">
+              <div data-testid="menu-header" className="sticky top-0 z-10 -mx-3 -mt-2 flex shrink-0 items-center gap-2 border-b border-slate-700 bg-slate-900/95 px-3 py-2 backdrop-blur sm:-mx-4 sm:px-4">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
+                  <GiPositionMarker className="text-lg" />
+                </span>
+                <h2 className="min-w-0 flex-1 truncate text-base font-bold">{t.nodesMenu || 'Nodos'}</h2>
+                <span className="shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200">
+                  {t.nodesChip || 'Nodos'} {activeNodes}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setActiveMenu(null)}
+                  aria-label={t.close || 'Cerrar menú'}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-sm font-bold text-white hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <section aria-labelledby="nodes-section" className="track-surface-raised p-2.5 shadow-md">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
+                    <GiRuneStone className="text-lg" />
+                  </span>
+                  <h3 id="nodes-section" className="min-w-0 flex-1 text-sm font-semibold">{t.nodesSection || 'Nodos y áreas'}</h3>
+                </div>
+                <ScenarioPanels />
+              </section>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {activeMenu === 'scenario' && (
           <motion.div

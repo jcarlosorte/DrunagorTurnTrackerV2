@@ -7,7 +7,7 @@ test.describe('Menús de runas y escenario', () => {
     await openTracker(page);
   });
 
-  test('runas: cabecera con contadores, nodos y zona de riesgo', async ({ page }) => {
+  test('runas: cabecera con contadores y zona de riesgo', async ({ page }) => {
     await page.getByRole('button', { name: 'Runas', exact: true }).first().click();
     const panel = page.locator('#track-menu-runes');
     await expect(panel).toBeVisible();
@@ -15,21 +15,30 @@ test.describe('Menús de runas y escenario', () => {
     await expect(panel.getByRole('heading', { name: 'Runas', level: 2 })).toBeVisible();
     await expect(panel.getByText(/^Runas \d+$/)).toBeVisible();
     await expect(panel.getByText(/^Fichas \d+\/\d+$/)).toBeVisible();
-    await expect(panel.getByText(/^Nodos \d+$/)).toBeVisible();
     await expect(panel.getByRole('heading', { name: 'Zona de riesgo' })).toBeVisible();
 
-    // Los nodos, pilas y áreas siguen viviendo en Runas.
-    await expect(panel.getByRole('heading', { name: 'Nodos y áreas' })).toBeVisible();
-    await expect(panel.getByRole('button', { name: 'Añadir Pila de Runas' })).toBeVisible();
-
-    const nodesBefore = Number((await panel.getByText(/^Nodos \d+$/).innerText()).split(' ')[1]);
-    await panel.getByRole('button', { name: 'Añadir Pila de Runas' }).click();
-    await expect(panel.getByText(new RegExp(`^Nodos ${nodesBefore + 1}$`))).toBeVisible();
+    // Los nodos ya no viven en Runas: tienen su propio menú.
+    await expect(panel.getByRole('heading', { name: 'Nodos y áreas' })).toHaveCount(0);
+    await expect(panel.getByRole('button', { name: 'Añadir Pila de Runas' })).toHaveCount(0);
 
     // D9: el botón de activación consume la paleta de estados.
     const addButton = panel.getByRole('button', { name: 'Activa Invadidos' });
     await expect(addButton).toHaveClass(/state-btn-add/);
     await expect(addButton).toHaveCSS('background-color', 'rgb(21, 128, 61)');
+  });
+
+  test('nodos: menú propio con contador y pilas', async ({ page }) => {
+    await page.getByRole('button', { name: 'Nodos', exact: true }).first().click();
+    const panel = page.locator('#track-menu-nodes');
+    await expect(panel).toBeVisible();
+
+    await expect(panel.getByRole('heading', { name: 'Nodos', level: 2 })).toBeVisible();
+    await expect(panel.getByText(/^Nodos \d+$/)).toBeVisible();
+    await expect(panel.getByRole('heading', { name: 'Nodos y áreas' })).toBeVisible();
+
+    const before = Number((await panel.getByText(/^Nodos \d+$/).innerText()).split(' ')[1]);
+    await panel.getByRole('button', { name: 'Añadir Pila de Runas' }).click();
+    await expect(panel.getByText(new RegExp(`^Nodos ${before + 1}$`))).toBeVisible();
   });
 
   test('runas: eliminar una ficha pide confirmación y respeta cancelar', async ({ page }) => {
@@ -88,7 +97,7 @@ test.describe('Menús de runas y escenario', () => {
     await expect(panel.getByText(/^Cartas 1\/2$/)).toBeVisible();
   });
 
-  test('runas: tres columnas arriba, luego riesgo y nodos', async ({ page }) => {
+  test('runas: tres columnas arriba y zona de riesgo debajo', async ({ page }) => {
     await page.getByRole('button', { name: 'Runas', exact: true }).first().click();
     const panel = page.locator('#track-menu-runes');
 
@@ -102,10 +111,10 @@ test.describe('Menús de runas y escenario', () => {
     expect(rowBoxes[1].x).toBeLessThan(rowBoxes[2].x);
 
     const tops = await panel.evaluate((el) => ({
+      row: el.querySelector('[data-testid="runes-row"]').getBoundingClientRect().bottom,
       risk: el.querySelector('section[aria-labelledby="runas-riesgo"]').getBoundingClientRect().y,
-      nodes: el.querySelector('section[aria-labelledby="runas-nodos"]').getBoundingClientRect().y,
     }));
-    expect(tops.risk).toBeLessThan(tops.nodes);
+    expect(tops.risk).toBeGreaterThan(tops.row - 4);
   });
 
   test('escenario: monstruo y cartas en la misma fila con retratos contenidos', async ({ page }) => {

@@ -33,10 +33,11 @@ test.describe('Selector manual de enemigos', () => {
       const r = el.getBoundingClientRect();
       return { x: Math.round(r.x), y: Math.round(r.y) };
     }));
-    expect(manualBoxes).toHaveLength(9);
+    expect(manualBoxes).toHaveLength(10);
     const rows = [...new Set(manualBoxes.map((box) => box.y))];
     expect(rows).toHaveLength(2);
     expect(manualBoxes.filter((box) => box.y === rows[0])).toHaveLength(5);
+    expect(manualBoxes.filter((box) => box.y === rows[1])).toHaveLength(5);
 
     const centered = await panel.evaluate((el) => {
       const button = el.querySelector('[data-testid="reset-enemies"]').getBoundingClientRect();
