@@ -1,6 +1,7 @@
 import { FaGithub, FaInstagram } from 'react-icons/fa';
 import { useLanguage } from '@/context/LanguageContext';
 import BuildBadge from '@/components/BuildBadge';
+import fido from '@/assets/assets_logo/darkfidodido.png';
 
 /**
  * Pie de la portada: autoría, enlaces y versión del build.
@@ -16,15 +17,13 @@ export default function SiteFooter() {
     <footer className="relative z-10 border-t border-slate-800 bg-slate-950/80 px-4 py-5">
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 text-slate-400 sm:flex-row sm:justify-between">
         <div className="flex items-center gap-3">
-          {/* Marca provisional: muro con la figura asomando */}
-          <span
-            className="relative flex h-10 w-12 items-end justify-center overflow-hidden rounded-lg border border-slate-700 bg-slate-900"
-            aria-hidden="true"
-          >
-            <span className="absolute bottom-2 h-4 w-4 rounded-full bg-emerald-300" />
-            <span className="absolute bottom-1 h-2 w-2 rounded-full bg-slate-950/80" />
-            <span className="absolute inset-x-0 bottom-0 h-2.5 border-t border-slate-600 bg-slate-700" />
-          </span>
+          <img
+            src={fido}
+            alt="DaRkFiDoDiDo"
+            className="h-11 w-12 shrink-0 object-contain"
+            loading="lazy"
+            decoding="async"
+          />
           <span>
             <span className="block text-sm font-black tracking-wide text-slate-100">DaRkFiDoDiDo</span>
             <span className="block text-xs">{home.footerTagline || 'Herramienta no oficial para Drunagor'}</span>

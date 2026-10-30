@@ -28,6 +28,18 @@ export const CUBE_META = [
   { key: 'azul', color: '#2563eb', max: MAX_CUBOS, label: { es: 'Azul · sabiduría/magia', en: 'Blue · wisdom/magic' } },
 ];
 
+/** Habilidades que añaden un cubo de acción por nivel elegido. */
+export const SKILLS = [
+  { key: 'melee', color: 'amarillo', label: { es: 'Cuerpo a cuerpo', en: 'Melee' } },
+  { key: 'agility', color: 'verde', label: { es: 'Agilidad', en: 'Agility' } },
+  { key: 'ranged', color: 'rojo', label: { es: 'A distancia', en: 'Ranged' } },
+  { key: 'wisdom', color: 'azul', label: { es: 'Sabiduría', en: 'Wisdom' } },
+];
+
+export const DUNGEON_SKILL_COLORS = ['amarillo', 'rojo', 'verde', 'azul'];
+export const MAX_SKILL_LEVEL = 2;
+export const MAX_ALMACEN_ITEMS = 20;
+
 export const emptyHeroExtras = (heroId) => {
   const hero = HEROES.find((item) => item.id === heroId);
   const baseLife = hero?.baseLife ?? 10;
@@ -47,6 +59,22 @@ export const emptyHeroExtras = (heroId) => {
     estados: [],
     /** Iconos de estado alterado (quemadura, veneno, escudo…) con contador. */
     estadosAlterados: [],
+    /** Habilidades por categoría: 0-2 niveles. La de mazmorra elige color. */
+    habilidades: {
+      melee: 0,
+      agility: 0,
+      ranged: 0,
+      wisdom: 0,
+      dungeon: { nivel: 0, color: 'amarillo' },
+    },
+    /** Tres capacidades de clase con nombre libre y dos niveles. */
+    capacidadesClase: [
+      { nombre: '', nivel: 0 },
+      { nombre: '', nivel: 0 },
+      { nombre: '', nivel: 0 },
+    ],
+    /** Objetos guardados en el campamento. */
+    almacen: [],
     equipo: Object.fromEntries(EQUIPMENT_SLOTS.map((slot) => [slot, ''])),
     equipoMods: Object.fromEntries(
       MOD_SLOTS.map((slot) => [slot, { value: 0, stat: DEFAULT_MOD_STAT[slot] }]),
@@ -60,6 +88,42 @@ export const emptyHeroExtras = (heroId) => {
 const normalizeEstado = (item) => (
   isPlainObject(item) ? { id: item.id, count: Number(item.count) || 1 } : { id: item, count: 1 }
 );
+
+const clampSkillLevel = (value) => Math.max(0, Math.min(MAX_SKILL_LEVEL, Number(value) || 0));
+
+function normalizeHabilidades(raw, base) {
+  const source = isPlainObject(raw) ? raw : {};
+  const dungeon = isPlainObject(source.dungeon) ? source.dungeon : {};
+  return {
+    melee: clampSkillLevel(source.melee),
+    agility: clampSkillLevel(source.agility),
+    ranged: clampSkillLevel(source.ranged),
+    wisdom: clampSkillLevel(source.wisdom),
+    dungeon: {
+      nivel: clampSkillLevel(dungeon.nivel),
+      color: DUNGEON_SKILL_COLORS.includes(dungeon.color) ? dungeon.color : base.dungeon.color,
+    },
+  };
+}
+
+function normalizeCapacidades(raw, base) {
+  return base.map((fallback, index) => {
+    const entry = Array.isArray(raw) ? raw[index] : null;
+    const nombre = isPlainObject(entry) && typeof entry.nombre === 'string'
+      ? entry.nombre.slice(0, 40)
+      : '';
+    const nivel = isPlainObject(entry) ? clampSkillLevel(entry.nivel) : 0;
+    return { nombre, nivel };
+  });
+}
+
+function normalizeAlmacen(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((item) => typeof item === 'string' && item.trim())
+    .slice(0, MAX_ALMACEN_ITEMS)
+    .map((item) => item.slice(0, 60));
+}
 
 const normalizeMods = (raw, base) => {
   const result = { ...base };
@@ -168,6 +232,9 @@ export function getHeroExtras(heroId) {
     equipoMods,
     cubos,
     cubosMax,
+    habilidades: normalizeHabilidades(entry.habilidades, base.habilidades),
+    capacidadesClase: normalizeCapacidades(entry.capacidadesClase, base.capacidadesClase),
+    almacen: normalizeAlmacen(entry.almacen),
     trauma: Number(entry.trauma) || 0,
     maldicion: Number(entry.maldicion) || 0,
     impactoMod: Number(entry.impactoMod) || 0,
@@ -316,6 +383,98 @@ export function resetHero(heroId) {
     cubos,
     trauma: 0,
     maldicion: 0,
+  });
+}
+
+/**
+ * Cambia el nivel (0-2) de una habilidad y ajusta los cubos de acción: cada
+ * nivel elegido añade un cubo del color de la categoría (o del elegido en la
+ * habilidad de mazmorra).
+ */
+export function setHeroSkill(heroId, key, level) {
+  const current = getHeroExtras(heroId);
+  const known = key === 'dungeon' || SKILLS.some((skill) => skill.key === key);
+  if (!known) return current;
+
+  const habilidades = {
+    ...current.habilidades,
+    dungeon: { ...current.habilidades.dungeon },
+  };
+  const nextLevel = Math.max(0, Math.min(MAX_SKILL_LEVEL, Number(level) || 0));
+  const color = key === 'dungeon' ? habilidades.dungeon.color : SKILLS.find((skill) => skill.key === key).color;
+  const prevLevel = key === 'dungeon' ? habilidades.dungeon.nivel : habilidades[key];
+  const delta = nextLevel - prevLevel;
+  if (delta === 0) return current;
+
+  if (key === 'dungeon') habilidades.dungeon.nivel = nextLevel;
+  else habilidades[key] = nextLevel;
+
+  const cubosMax = { ...current.cubosMax };
+  const cubos = { ...current.cubos };
+  cubosMax[color] = Math.max(0, (cubosMax[color] || 0) + delta);
+  cubos[color] = Math.max(0, Math.min((cubos[color] || 0) + delta, cubosMax[color]));
+
+  return patchHeroExtras(heroId, { habilidades, cubosMax, cubos });
+}
+
+/** Cambia el color de la habilidad de mazmorra y mueve sus cubos si ya había niveles. */
+export function setDungeonSkillColor(heroId, color) {
+  const current = getHeroExtras(heroId);
+  if (!DUNGEON_SKILL_COLORS.includes(color)) return current;
+
+  const dungeon = current.habilidades.dungeon;
+  if (dungeon.color === color) return current;
+
+  const cubosMax = { ...current.cubosMax };
+  const cubos = { ...current.cubos };
+  if (dungeon.nivel > 0) {
+    cubosMax[dungeon.color] = Math.max(0, (cubosMax[dungeon.color] || 0) - dungeon.nivel);
+    cubos[dungeon.color] = Math.min(cubos[dungeon.color] || 0, cubosMax[dungeon.color]);
+    cubosMax[color] = (cubosMax[color] || 0) + dungeon.nivel;
+    cubos[color] = Math.min((cubos[color] || 0) + dungeon.nivel, cubosMax[color]);
+  }
+
+  return patchHeroExtras(heroId, {
+    habilidades: { ...current.habilidades, dungeon: { ...dungeon, color } },
+    cubosMax,
+    cubos,
+  });
+}
+
+export function setCapacidadNombre(heroId, index, nombre) {
+  const current = getHeroExtras(heroId);
+  if (index < 0 || index > 2) return current;
+  const capacidadesClase = current.capacidadesClase.map((capacidad, i) => (
+    i === index ? { ...capacidad, nombre: String(nombre || '').slice(0, 40) } : capacidad
+  ));
+  return patchHeroExtras(heroId, { capacidadesClase });
+}
+
+/** Los niveles de capacidad son 0-2; el 2 solo se alcanza desde el 1. */
+export function setCapacidadNivel(heroId, index, nivel) {
+  const current = getHeroExtras(heroId);
+  if (index < 0 || index > 2) return current;
+  const next = Math.max(0, Math.min(MAX_SKILL_LEVEL, Number(nivel) || 0));
+  const capacidadesClase = current.capacidadesClase.map((capacidad, i) => {
+    if (i !== index) return capacidad;
+    if (next === 2 && capacidad.nivel === 0) return capacidad;
+    return { ...capacidad, nivel: next };
+  });
+  return patchHeroExtras(heroId, { capacidadesClase });
+}
+
+export function addAlmacenItem(heroId, text) {
+  const value = String(text || '').trim().slice(0, 60);
+  if (!value) return getHeroExtras(heroId);
+  const current = getHeroExtras(heroId);
+  if (current.almacen.length >= MAX_ALMACEN_ITEMS) return current;
+  return patchHeroExtras(heroId, { almacen: [...current.almacen, value] });
+}
+
+export function removeAlmacenItem(heroId, index) {
+  const current = getHeroExtras(heroId);
+  return patchHeroExtras(heroId, {
+    almacen: current.almacen.filter((_, i) => i !== index),
   });
 }
 

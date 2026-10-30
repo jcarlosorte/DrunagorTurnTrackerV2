@@ -850,6 +850,29 @@ Katarina   Furia · sin Ki
 Reinicio   estadosAlterados [] · trauma/maldición 0 · cubos = máximos · vida intacta
 ```
 
+### 23.ª tanda — Fase C: habilidades, capacidades, equipo y almacén
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Logo** | La marca definitiva de DaRkFiDoDiDo se integra en el pie con fondo transparente | `SiteFooter.jsx`, `assets_logo/darkfidodido.png` |
+| **Habilidades** | Cinco categorías con dos rombos de nivel; cada nivel añade un cubo del color de la categoría. El rol de mazmorra permite elegir entre los cuatro colores y mueve su cubo | `heroExtras.js`, `ModalHeroCard.jsx` |
+| **Capacidades de clase** | Tres capacidades con nombre manual y dos rombos de estrella; el nivel 2 exige el 1 | `heroExtras.js`, `ModalHeroCard.jsx` |
+| **Equipo** | Iconos de Game Icons en las seis ranuras (arma, mano torpe, armadura, amuleto, bolsas) | `ModalHeroCard.jsx` |
+| **Almacén** | Objetos manuales por héroe (hasta 20) con alta, borrado y persistencia | `heroExtras.js`, `heroSanitize.js` |
+| **Layout** | El modal pasa a `max-w-5xl` y las secciones se apilan en móvil | `ModalHeroCard.jsx` |
+| **Pruebas** | 5 unitarios nuevos y 2 E2E (cubos por nivel, capacidades y almacén persistente) | tests |
+
+**Medición**
+
+```text
+Unit       85 tests
+E2E        39/39
+Habilidad  nivel 1 → +1 cubo del color · nivel 2 exige el 1
+Mazmorra   cambiar de color mueve el cubo
+Almacén    persiste tras recargar
+Modal      1024×920 · 11 secciones
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

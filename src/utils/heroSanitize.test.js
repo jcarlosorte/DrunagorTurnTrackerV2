@@ -35,6 +35,24 @@ describe('sanitizeHeroEntry', () => {
     expect(result.estadosAlterados).toEqual([{ id: 'VENENO_I', count: 4 }]);
   });
 
+  it('normaliza habilidades, capacidades y almacén', () => {
+    const result = sanitizeHeroEntry({
+      habilidades: { melee: 9, agility: -1, ranged: 2, wisdom: 'x', dungeon: { nivel: 3, color: 'rosa' } },
+      capacidadesClase: [{ nombre: 'A', nivel: 5 }, { nombre: 123, nivel: 1 }],
+      almacen: ['Poción', '', 7, 'X'.repeat(80)],
+    });
+
+    expect(result.habilidades.melee).toBe(2);
+    expect(result.habilidades.agility).toBe(0);
+    expect(result.habilidades.ranged).toBe(2);
+    expect(result.habilidades.wisdom).toBe(0);
+    expect(result.habilidades.dungeon).toEqual({ nivel: 2, color: 'amarillo' });
+    expect(result.capacidadesClase).toHaveLength(3);
+    expect(result.capacidadesClase[0]).toEqual({ nombre: 'A', nivel: 2 });
+    expect(result.capacidadesClase[1]).toEqual({ nombre: '', nivel: 1 });
+    expect(result.almacen).toEqual(['Poción', 'X'.repeat(60)]);
+  });
+
   it('normaliza el equipo y fuerza el ataque del arma', () => {
     const result = sanitizeHeroEntry({
       equipo: { arma: 'Espada', amuleto: 'Amuleto' },

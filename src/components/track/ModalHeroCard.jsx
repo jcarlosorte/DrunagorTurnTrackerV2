@@ -10,18 +10,42 @@ import {
   getHeroEffectName,
   getHeroEffectDescription,
 } from '@/data/heroes/index';
-import { CUBE_META, MOD_STATS, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, resetHero, setEquipmentMod, setHeroEquipment, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
+import { CUBE_META, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, removeAlmacenItem, resetHero, setCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import {
+  GiCrossedSwords,
+  GiShield,
+  GiChestArmor,
+  GiRing,
+  GiSwapBag,
+  GiBackpack,
+  GiSwordWound,
+  GiRunningShoe,
+  GiBowArrow,
+  GiBrain,
+  GiDungeonGate,
+  GiWoodenCrate,
+} from 'react-icons/gi';
 
 const EQUIPMENT = [
-  { key: 'arma', es: 'Arma', en: 'Weapon', mod: true },
-  { key: 'manoTorpe', es: 'Mano torpe', en: 'Off hand' },
-  { key: 'armadura', es: 'Armadura', en: 'Armor' },
-  { key: 'amuleto', es: 'Amuleto', en: 'Amulet', mod: true },
-  { key: 'bolsa1', es: 'Objeto de bolsa 1', en: 'Bag item 1' },
-  { key: 'bolsa2', es: 'Objeto de bolsa 2', en: 'Bag item 2' },
+  { key: 'arma', es: 'Arma', en: 'Weapon', mod: true, icon: GiCrossedSwords },
+  { key: 'manoTorpe', es: 'Mano torpe', en: 'Off hand', icon: GiShield },
+  { key: 'armadura', es: 'Armadura', en: 'Armor', icon: GiChestArmor },
+  { key: 'amuleto', es: 'Amuleto', en: 'Amulet', mod: true, icon: GiRing },
+  { key: 'bolsa1', es: 'Objeto de bolsa 1', en: 'Bag item 1', icon: GiSwapBag },
+  { key: 'bolsa2', es: 'Objeto de bolsa 2', en: 'Bag item 2', icon: GiBackpack },
 ];
+
+const SKILL_ICONS = {
+  melee: GiSwordWound,
+  agility: GiRunningShoe,
+  ranged: GiBowArrow,
+  wisdom: GiBrain,
+  dungeon: GiDungeonGate,
+};
+
+const CUBE_COLOR_BY_KEY = Object.fromEntries(CUBE_META.map((cube) => [cube.key, cube.color]));
 
 const GROUPS = [
   { key: 'auras', label: { es: 'Auras', en: 'Auras' }, catalogue: AURAS },
@@ -56,6 +80,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
   const [picker, setPicker] = useState(null);
   const [recobrado, setRecobrado] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [almacenInput, setAlmacenInput] = useState('');
 
   useFocusTrap(dialogRef, true);
 
@@ -81,6 +106,12 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
     onChanged?.();
   };
 
+  const handleAddAlmacen = () => {
+    if (!almacenInput.trim()) return;
+    apply(addAlmacenItem(heroId, almacenInput));
+    setAlmacenInput('');
+  };
+
   const movement = (hero?.baseMove ?? 0) + getEquipmentBonus(extras, 'movimiento');
   const attack = getEquipmentBonus(extras, 'ataque');
   const lifeBonus = getEquipmentBonus(extras, 'vida');
@@ -101,7 +132,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
         ref={dialogRef}
         aria-modal="true"
         aria-labelledby={titleId}
-        className="modal-enter relative flex max-h-[92dvh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border-2 border-rose-900/70 bg-slate-900 text-slate-100 shadow-2xl"
+        className="modal-enter relative flex max-h-[92dvh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border-2 border-rose-900/70 bg-slate-900 text-slate-100 shadow-2xl"
       >
         <div className="h-1.5 w-full shrink-0 bg-gradient-to-r from-rose-700 via-rose-500 to-rose-800" aria-hidden="true" />
 
@@ -445,6 +476,139 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
             </div>
           </section>
 
+          {/* Habilidades: cada nivel añade un cubo del color de su categoría */}
+          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+            <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-2">
+              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+                {t.skills || 'Habilidades'}
+              </p>
+              <span className="text-[0.6rem] text-slate-400">
+                {t.skillCubesHint || 'Cada nivel añade un cubo de acción del color correspondiente.'}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-5">
+              {SKILLS.map((skill) => {
+                const current = extras.habilidades?.[skill.key] || 0;
+                const Icon = SKILL_ICONS[skill.key];
+                const color = CUBE_COLOR_BY_KEY[skill.color];
+                return (
+                  <div key={skill.key} className="rounded-lg border border-slate-700 bg-slate-800/60 p-1.5">
+                    <p className="flex items-center gap-1 text-[0.65rem] font-semibold text-slate-200">
+                      <Icon size={13} aria-hidden="true" className="shrink-0 text-rose-300" />
+                      <span className="truncate">{skill.label[language] || skill.label.es}</span>
+                    </p>
+                    <div className="mt-1.5 flex gap-2">
+                      {[1, 2].map((level) => {
+                        const active = current >= level;
+                        return (
+                          <button
+                            key={level}
+                            type="button"
+                            aria-pressed={active}
+                            aria-label={`${skill.label.es} · ${t.level || 'Nivel'} ${level}`}
+                            disabled={level === 2 && current === 0}
+                            onClick={() => apply(setHeroSkill(heroId, skill.key, current === level ? level - 1 : level))}
+                            className={`relative flex h-7 w-7 rotate-45 items-center justify-center rounded-sm border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 disabled:opacity-30 ${active ? 'border-white' : 'border-slate-500 bg-slate-900'}`}
+                            style={active ? { backgroundColor: color } : undefined}
+                          >
+                            <span className="absolute inset-0 flex -rotate-45 items-center justify-center text-[0.55rem] font-bold text-white">{level}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+
+              <div className="rounded-lg border border-slate-700 bg-slate-800/60 p-1.5">
+                <p className="flex items-center gap-1 text-[0.65rem] font-semibold text-slate-200">
+                  <GiDungeonGate size={13} aria-hidden="true" className="shrink-0 text-rose-300" />
+                  <span className="truncate">{t.dungeonRole || 'Rol de mazmorra'}</span>
+                </p>
+                <div className="mt-1.5 flex gap-2">
+                  {[1, 2].map((level) => {
+                    const current = extras.habilidades?.dungeon?.nivel || 0;
+                    const active = current >= level;
+                    const color = CUBE_COLOR_BY_KEY[extras.habilidades?.dungeon?.color || 'amarillo'];
+                    return (
+                      <button
+                        key={level}
+                        type="button"
+                        aria-pressed={active}
+                        aria-label={`${t.dungeonRole || 'Rol de mazmorra'} · ${t.level || 'Nivel'} ${level}`}
+                        disabled={level === 2 && current === 0}
+                        onClick={() => apply(setHeroSkill(heroId, 'dungeon', current === level ? level - 1 : level))}
+                        className={`relative flex h-7 w-7 rotate-45 items-center justify-center rounded-sm border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 disabled:opacity-30 ${active ? 'border-white' : 'border-slate-500 bg-slate-900'}`}
+                        style={active ? { backgroundColor: color } : undefined}
+                      >
+                        <span className="absolute inset-0 flex -rotate-45 items-center justify-center text-[0.55rem] font-bold text-white">{level}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-1.5 flex gap-1">
+                  {DUNGEON_SKILL_COLORS.map((color) => {
+                    const selected = (extras.habilidades?.dungeon?.color || 'amarillo') === color;
+                    return (
+                      <button
+                        key={color}
+                        type="button"
+                        aria-pressed={selected}
+                        aria-label={`${t.dungeonColor || 'Color del cubo'}: ${color}`}
+                        onClick={() => apply(setDungeonSkillColor(heroId, color))}
+                        className={`h-4 w-4 rounded-full border transition ${selected ? 'border-white ring-2 ring-white/70' : 'border-slate-500'}`}
+                        style={{ backgroundColor: CUBE_COLOR_BY_KEY[color] }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Capacidades de clase: nombre libre y dos niveles; el 2 exige el 1 */}
+          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+            <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+              {t.classAbilities || 'Capacidades de clase'}
+            </p>
+            <div className="space-y-1.5">
+              {[0, 1, 2].map((index) => {
+                const capacidad = extras.capacidadesClase?.[index] || { nombre: '', nivel: 0 };
+                return (
+                  <div key={index} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={capacidad.nombre}
+                      onChange={(event) => apply(setCapacidadNombre(heroId, index, event.target.value))}
+                      maxLength={40}
+                      placeholder={`${t.abilityName || 'Nombre de la capacidad'} ${index + 1}`}
+                      aria-label={`${t.abilityName || 'Nombre de la capacidad'} ${index + 1}`}
+                      className="min-h-9 min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-900 px-2 text-xs text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+                    />
+                    <div className="flex shrink-0 gap-1.5">
+                      {[1, 2].map((level) => {
+                        const active = capacidad.nivel >= level;
+                        return (
+                          <button
+                            key={level}
+                            type="button"
+                            aria-pressed={active}
+                            aria-label={`${t.ability || 'Capacidad'} ${index + 1} · ${t.level || 'Nivel'} ${level}`}
+                            disabled={level === 2 && capacidad.nivel === 0}
+                            onClick={() => apply(setCapacidadNivel(heroId, index, capacidad.nivel === level ? level - 1 : level))}
+                            className={`relative flex h-7 w-7 rotate-45 items-center justify-center rounded-sm border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 disabled:opacity-30 ${active ? 'border-amber-200 bg-amber-500' : 'border-slate-500 bg-slate-900'}`}
+                          >
+                            <span className="absolute inset-0 flex -rotate-45 items-center justify-center text-[0.7rem] leading-none text-slate-950">★</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
           {/* Equipo: arma y amuleto llevan su modificador al lado */}
           <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
             <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
@@ -460,9 +624,12 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
               </label>
             </div>
             <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-              {EQUIPMENT.map(({ key, es, en, mod }) => (
+              {EQUIPMENT.map(({ key, es, en, mod, icon: Icon }) => (
                 <div key={key} className="text-[0.65rem] text-slate-400">
-                  <span className="mb-0.5 block truncate">{language === 'en' ? en : es}</span>
+                  <span className="mb-0.5 flex items-center gap-1 truncate">
+                    <Icon size={12} aria-hidden="true" className="shrink-0 text-rose-300" />
+                    {language === 'en' ? en : es}
+                  </span>
                   <div className="flex items-center gap-1">
                     <input
                       type="text"
@@ -505,6 +672,60 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                 </div>
               ))}
             </div>
+          </section>
+
+          {/* Almacén del héroe: objetos manuales del campamento */}
+          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+            <p className="mb-1.5 flex items-center gap-1 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+              <GiWoodenCrate size={14} aria-hidden="true" />
+              {t.storage || 'Almacén'}
+            </p>
+            <div className="flex gap-1.5">
+              <input
+                type="text"
+                value={almacenInput}
+                onChange={(event) => setAlmacenInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    handleAddAlmacen();
+                  }
+                }}
+                maxLength={60}
+                placeholder={t.storagePlaceholder || 'Objeto del campamento'}
+                aria-label={t.storagePlaceholder || 'Objeto del campamento'}
+                className="min-h-9 min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-900 px-2 text-xs text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+              />
+              <button
+                type="button"
+                onClick={handleAddAlmacen}
+                className="min-h-9 shrink-0 rounded-lg bg-rose-800 px-3 text-xs font-semibold text-white hover:bg-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+              >
+                + {t.add || 'Añadir'}
+              </button>
+            </div>
+            {extras.almacen.length === 0 ? (
+              <p className="mt-1.5 text-[0.7rem] text-slate-400">{t.storageEmpty || 'Sin objetos guardados.'}</p>
+            ) : (
+              <ul className="mt-1.5 space-y-1">
+                {extras.almacen.map((item, index) => (
+                  <li
+                    key={`${item}-${index}`}
+                    className="flex items-center justify-between gap-2 rounded-lg border border-slate-700 bg-slate-800/70 px-2 py-1 text-xs text-slate-200"
+                  >
+                    <span className="truncate">{item}</span>
+                    <button
+                      type="button"
+                      onClick={() => apply(removeAlmacenItem(heroId, index))}
+                      aria-label={`${item}: ${t.remove || 'Quitar'}`}
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-slate-700 text-xs text-white hover:bg-red-700"
+                    >
+                      ✕
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
 
           {/* Auras y consecuencias */}

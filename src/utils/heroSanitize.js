@@ -5,6 +5,8 @@ export const MAX_TRAUMA_CUBES = 2;
 export const MAX_CURSE_CUBES = 5;
 export const MAX_ACTION_CUBES = 10;
 export const CUBE_COLORS = ['amarillo', 'rojo', 'verde', 'azul'];
+const SKILL_COLORS = CUBE_COLORS;
+const SKILL_KEYS = ['melee', 'agility', 'ranged', 'wisdom'];
 
 const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 
@@ -75,6 +77,31 @@ export function sanitizeHeroEntry(raw) {
     equipoMods[slot] = { value: clamp(entry?.value, -20, 20, 0), stat };
   });
 
+  const habilidades = {
+    ...Object.fromEntries(SKILL_KEYS.map((key) => [key, clamp(raw.habilidades?.[key], 0, 2, 0)])),
+    dungeon: {
+      nivel: clamp(raw.habilidades?.dungeon?.nivel, 0, 2, 0),
+      color: SKILL_COLORS.includes(raw.habilidades?.dungeon?.color)
+        ? raw.habilidades.dungeon.color
+        : 'amarillo',
+    },
+  };
+
+  const capacidadesClase = [0, 1, 2].map((index) => {
+    const entry = Array.isArray(raw.capacidadesClase) ? raw.capacidadesClase[index] : null;
+    return {
+      nombre: typeof entry?.nombre === 'string' ? entry.nombre.slice(0, 40) : '',
+      nivel: clamp(entry?.nivel, 0, 2, 0),
+    };
+  });
+
+  const almacen = Array.isArray(raw.almacen)
+    ? raw.almacen
+      .filter((item) => typeof item === 'string' && item.trim())
+      .slice(0, 20)
+      .map((item) => item.slice(0, 60))
+    : [];
+
   return {
     vida,
     vidaMax,
@@ -92,6 +119,9 @@ export function sanitizeHeroEntry(raw) {
         .map((entry) => ({ id: entry.id, count: clamp(entry.count, 1, 20, 1) }))
       : [],
     estadosAlterados: sanitizeEstadosAlterados(raw.estadosAlterados),
+    habilidades,
+    capacidadesClase,
+    almacen,
     equipo,
     equipoMods,
     cubos,
