@@ -5,7 +5,7 @@ import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { useSavesUi } from '@/context/SavesUiContext';
 import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker } from 'react-icons/gi';
-import { MdAddCircleOutline } from 'react-icons/md';
+import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { ENEMIES } from '@/data/enemies';
 import { INCURSION } from '@/data/incursion';
@@ -49,6 +49,8 @@ const TopMenu = ({
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
   const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, controlPoints, runeKeys, rescue } = useGame();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
+  const [gameMenuOpen, setGameMenuOpen] = useState(false);
+  const gameMenuRef = useRef(null);
   const [activeMenu, setActiveMenu] = useState(null); // 'enemies' | 'runes' | 'nodes' | 'scenario' | null
   const containerRef = useRef(null);
   const menuRefEnemies = useRef(null);
@@ -66,6 +68,7 @@ const TopMenu = ({
   };
 
   const toggleMenu = (name) => {
+    setGameMenuOpen(false);
     setActiveMenu(prev => (prev === name ? null : name));
   };
 
@@ -74,11 +77,17 @@ const TopMenu = ({
       // Los diálogos se montan en un portal fuera del contenedor: pulsar en
       // ellos no debe cerrar el menú que los abrió.
       if (e.target?.closest?.('[role="dialog"]')) return;
+      if (gameMenuRef.current && !gameMenuRef.current.contains(e.target)) setGameMenuOpen(false);
       if (containerRef.current && !containerRef.current.contains(e.target)) {
         setActiveMenu(null);
       }
     };
-    const handleKey = (event) => { if (event.key === 'Escape') setActiveMenu(null); };
+    const handleKey = (event) => {
+      if (event.key === 'Escape') {
+        setActiveMenu(null);
+        setGameMenuOpen(false);
+      }
+    };
     document.addEventListener('pointerdown', handleOutside);
     document.addEventListener('keydown', handleKey);
     return () => {
@@ -261,47 +270,69 @@ const TopMenu = ({
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => openSaves?.()}
-            className="flex min-h-11 items-center gap-2 rounded-full bg-emerald-700 px-3 text-sm font-bold text-white transition hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
-            aria-label={savesT.title || 'Partidas'}
-            title={savesT.title || 'Partidas'}
-          >
-            <GiArchiveRegister aria-hidden="true" size={20} />
-            <span className="hidden md:inline">{savesT.title || 'Partidas'}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => window.open('https://tabletopaudio.com/', '_blank', 'noopener,noreferrer')}
-            aria-label={t.music || 'Música'}
-            title={t.music || 'Música'}
-            className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-slate-800 px-2.5 text-sm font-semibold text-white transition hover:bg-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
-          >
-            <GiMusicalNotes size={20} aria-hidden="true" />
-            <span className="hidden lg:inline">{t.music || 'Música'}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            aria-label={t.goHome || 'Ir al inicio'}
-            title={t.goHome || 'Ir al inicio'}
-            className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-slate-800 px-2.5 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-          >
-            <AiOutlineMenu size={20} aria-hidden="true" />
-            <span className="hidden lg:inline">{t.goHome || 'Inicio'}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/tracker')}
-            aria-label={t.backToConfig || 'Volver a configuración'}
-            title={t.backToConfig || 'Volver a configuración'}
-            className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-slate-800 px-2.5 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-          >
-            <GiGearHammer size={20} aria-hidden="true" />
-            <span className="hidden lg:inline">{t.backToConfig || 'Configuración'}</span>
-          </button>
-          <LanguageMenu label={savesT.language || 'Idioma'} />
+          <div className="relative" ref={gameMenuRef}>
+            <button
+              type="button"
+              onClick={() => setGameMenuOpen((open) => !open)}
+              aria-expanded={gameMenuOpen}
+              aria-controls="track-game-menu"
+              aria-label={t.gameMenu || 'Menú de juego'}
+              title={t.gameMenu || 'Menú de juego'}
+              className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-slate-800 px-2.5 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            >
+              <MdMenu size={20} aria-hidden="true" />
+              <span className="hidden lg:inline">{t.gameMenu || 'Menú de juego'}</span>
+            </button>
+
+            {gameMenuOpen && (
+              <div
+                id="track-game-menu"
+                role="menu"
+                aria-label={t.gameMenu || 'Menú de juego'}
+                className="layer-menu absolute right-0 top-full mt-2 w-60 rounded-xl border border-slate-700 bg-slate-900 p-1.5 text-sm text-slate-100 shadow-2xl"
+              >
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { setGameMenuOpen(false); openSaves?.(); }}
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  <GiArchiveRegister size={18} aria-hidden="true" />
+                  {savesT.title || 'Partidas'}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { setGameMenuOpen(false); window.open('https://tabletopaudio.com/', '_blank', 'noopener,noreferrer'); }}
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  <GiMusicalNotes size={18} aria-hidden="true" />
+                  {t.music || 'Música'}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { setGameMenuOpen(false); navigate('/'); }}
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  <AiOutlineMenu size={18} aria-hidden="true" />
+                  {t.goHome || 'Inicio'}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { setGameMenuOpen(false); navigate('/tracker'); }}
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  <GiGearHammer size={18} aria-hidden="true" />
+                  {t.backToConfig || 'Volver a configuración'}
+                </button>
+                <div className="mt-1 border-t border-slate-700 px-2 py-2">
+                  <LanguageMenu label={savesT.language || 'Idioma'} />
+                </div>
+              </div>
+            )}
+          </div>
 
           {['enemies', 'runes', 'nodes', 'scenario'].includes(activeMenu) && (
             <button

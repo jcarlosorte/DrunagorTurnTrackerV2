@@ -808,6 +808,27 @@ Nodos      menú entre Runas y Escenario · 1 sección · chip «Nodos 0»
 E2E        29/29
 ```
 
+### 21.ª tanda — Fase A: navegación, reglas y tutorial
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Portada** | Barra sin Partidas/Gestionar; botón Configurar con el texto correcto; accesos a Partidas y Tutorial en el contenido | `HomeMenu.jsx`, `TopMenuLanguage.jsx` |
+| **Pie** | Marca DaRkFiDoDiDo (a la espera del logo definitivo), versión del build y enlaces a GitHub e Instagram | `SiteFooter.jsx` |
+| **Tutorial** | Página `/tutorial` bilingüe con ocho secciones, ampliable con cada mejora | `pages/Tutorial.jsx`, `AnimatedRoutes.jsx`, i18n |
+| **Versión de reglas** | `RulesProvider` con detección automática por Apocalipsis, forzado manual persistido y aviso de incoherencia | `utils/rulesVersion.js`, `context/RulesContext.jsx`, `Config.jsx` |
+| **Partidas en Configuración** | Panel plegable con `SavesPanel`; desaparece el botón «Ir a Partidas» | `Config.jsx` |
+| **Menú de juego** | Partidas, música, inicio, configuración e idioma bajo un desplegable en el track | `TopMenu.jsx` |
+| **Estilos de configuración** | Títulos de paso con acento lateral, sin iconos; título principal en blanco | `Tracker.jsx` |
+
+**Medición**
+
+```text
+E2E       34/34 (5 nuevos de Fase A)
+Reglas    1.5 sin Apocalipsis · 2.0 con apocalypse_adventures · override 1.5 avisa
+Menú      4 acciones + idioma · Escape cierra
+Pie       GitHub, Instagram y v1.0.0 · hash visibles
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

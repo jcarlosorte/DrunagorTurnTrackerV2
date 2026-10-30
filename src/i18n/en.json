@@ -5,11 +5,57 @@
     "start_tracker": "Start",
     "configure_environment": "Configure",
     "back_to_home": "Back",
-    "manageSaves": "Save, export or import games"
+    "manageSaves": "Save, export or import games",
+    "configure_hint": "Language, expansions and rules version",
+    "tutorial": "Tutorial",
+    "saves": "Games",
+    "saves_hint": "Save, export or import",
+    "tutorial_hint": "How to use the app",
+    "footerTagline": "Unofficial Drunagor tool"
+  },
+  "tutorial": {
+    "title": "Tutorial",
+    "subtitle": "A quick guide to everything the app can do. It is updated with every improvement.",
+    "back": "Back to home",
+    "sections": [
+      {
+        "title": "The board",
+        "body": "The top bar switches between Board and List. On the board, zoom with −/+ or pinch; List is handier on mobile. Next Turn advances the cursor, Undo returns to the previous state and the timer tracks the current turn (red from 5:00). The round and active turn are always visible."
+      },
+      {
+        "title": "Enemies",
+        "body": "In the Enemies menu you can add random enemies by colour or open the manual selector: search by name, filter by colour and category and add the variant you need. Bosses show their large card with immunities on the board."
+      },
+      {
+        "title": "Runes",
+        "body": "The Runes menu gathers rune cards (darkness, assault, undead king, host, invaders), the bag status, manifest, adding tiles to the track and bulk rune adds. The risk zone removes tiles with confirmation."
+      },
+      {
+        "title": "Nodes and areas",
+        "body": "The Nodes menu manages rune stacks, fog nodes, barricades, spawn points, rune keys and villager rescue. The header counters show how many elements are active."
+      },
+      {
+        "title": "Scenario",
+        "body": "Select the scenario monster to enable the incursion card. From the same menu you can add the incursion or the village defence, choosing the card face."
+      },
+      {
+        "title": "Heroes",
+        "body": "Each hero has a card on the track. Click it to open the expanded view: health, conditions, action cubes, equipment and dice. Changes are saved automatically on the device."
+      },
+      {
+        "title": "Games and backups",
+        "body": "The game autosaves in the browser and you can keep up to 10 named games. Export a JSON before changing devices or clearing browser data; when importing you can choose the full game, configuration only or track only."
+      },
+      {
+        "title": "Settings and shortcuts",
+        "body": "In Settings you choose language, expansions and rules version (1.5 or Apocalypse 2.0). Ctrl/⌘ + S opens the games panel from any tracker screen. Language can also be changed from the top bar."
+      }
+    ]
   },
   "tracker": "Tracker",
   "config": {
     "title": "Settings",
+    "subtitle": "Choose the language, expansions and rules version for your games.",
     "language_section_title": "App Language",
     "select_language": "Select language",
     "select_expansions": "Select expansions",
@@ -19,7 +65,17 @@
     "heroManagementTitle": "Hero management",
     "heroManagementHint": "Enable the expanded hero view features: auras, consequences and conditions.",
     "heroManagementOn": "Enabled",
-    "heroManagementOff": "Disabled"
+    "heroManagementOff": "Disabled",
+    "rulesVersionTitle": "Rules version",
+    "rulesVersionHint": "Choose the rulebook for this game. Apocalypse expansions enable 2.0 automatically; you can force it or return to automatic.",
+    "rulesVersion15": "Rules 1.5 · base game",
+    "rulesVersion15Hint": "Conditions, abilities and mechanics from the original rulebook.",
+    "rulesVersion20": "Rules 2.0 · Apocalypse",
+    "rulesVersion20Hint": "Ready for the Apocalypse changes; content will be added over time.",
+    "rulesVersionAuto": "Automatic",
+    "rulesVersionAutoOn": "Automatic: {version} based on active expansions.",
+    "rulesVersionManualOn": "Manually forced to {version}.",
+    "rulesVersionMismatch": "Apocalypse expansions are active with rules 1.5 forced."
   },
   "expansions": {
     "base": "Chronicles of Drunagor (Base Game)",
@@ -366,6 +422,7 @@
     "invadidosActivo": "💀 Ivaded Mechanic Active",
     "title": "Turn Tracker",
     "menu": "Menu",
+    "gameMenu": "Game menu",
     "language": "Language",
     "addEnemies": "Random Enemies",
     "addEnemy": "Add",

@@ -9,7 +9,7 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import { clearTrackState, isPlainObject, readJsonStorage } from "@/utils/storage";
 import logo from "@/assets/Corebox_Logo-1536x864.avif";
 import skeleton from "@/assets/enemies/skeleton_knight.avif";
-import BuildBadge from "@/components/BuildBadge";
+import SiteFooter from "@/components/SiteFooter";
 
 export default function HomeMenu() {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export default function HomeMenu() {
 
   return (
     <PageTransition>
-      <main className="relative flex min-h-[calc(100dvh-3.5rem)] items-center justify-center overflow-hidden bg-slate-950 px-4 py-10 text-white sm:px-6">
+      <main className="relative flex min-h-[calc(100dvh-3.5rem)] flex-col overflow-hidden bg-slate-950 text-white">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(16,185,129,0.18),transparent_42%),linear-gradient(180deg,#0f172a_0%,#020617_100%)]" />
 
         {/* Fondo: caballero esqueleto a la deriva, muy tenue */}
@@ -56,7 +56,8 @@ export default function HomeMenu() {
           decoding="async"
         />
 
-        <div className="relative z-10 grid w-full max-w-5xl gap-8 overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/80 p-5 shadow-2xl shadow-emerald-950/30 backdrop-blur sm:p-8 lg:grid-cols-[1.1fr_0.9fr] lg:p-10">
+        <div className="relative z-10 flex flex-1 items-center justify-center px-4 py-10 sm:px-6">
+        <div className="grid w-full max-w-5xl gap-8 overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/80 p-5 shadow-2xl shadow-emerald-950/30 backdrop-blur sm:p-8 lg:grid-cols-[1.1fr_0.9fr] lg:p-10">
           <section className="flex flex-col justify-center">
             <div className="mb-6 flex items-center gap-3">
               <span className="h-2 w-12 rounded-full bg-emerald-400" aria-hidden="true" />
@@ -93,7 +94,23 @@ export default function HomeMenu() {
                 className="min-h-12 rounded-xl border border-slate-600 bg-slate-800 px-5 py-3 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
               >
                 <span className="block">{home.configure_environment || 'Configurar entorno'}</span>
-                <span className="mt-1 block text-xs font-normal text-slate-400">{home.manageSaves || 'Guardar, exportar o importar partidas'}</span>
+                <span className="mt-1 block text-xs font-normal text-slate-400">{home.configure_hint || 'Idioma, expansiones y versión de reglas'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/saves")}
+                className="min-h-12 rounded-xl border border-slate-600 bg-slate-800 px-5 py-3 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              >
+                <span className="block">{home.saves || 'Partidas'}</span>
+                <span className="mt-1 block text-xs font-normal text-slate-400">{home.saves_hint || 'Guardar, exportar o importar'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/tutorial")}
+                className="min-h-12 rounded-xl border border-emerald-700/60 bg-emerald-950/30 px-5 py-3 text-left font-bold text-emerald-100 transition hover:border-emerald-400 hover:bg-emerald-900/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+              >
+                <span className="block">{home.tutorial || 'Tutorial'}</span>
+                <span className="mt-1 block text-xs font-normal text-emerald-200/80">{home.tutorial_hint || 'Cómo usar la aplicación'}</span>
               </button>
             </div>
           </section>
@@ -108,11 +125,9 @@ export default function HomeMenu() {
             />
           </aside>
         </div>
+        </div>
 
-        {/* Versión del build: solo en la portada para no ocupar el tablero. */}
-        <footer className="absolute inset-x-0 bottom-2 z-10 flex justify-center">
-          <BuildBadge />
-        </footer>
+        <SiteFooter />
       </main>
 
       <ConfirmDialog

@@ -2,15 +2,19 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useExpansions } from "@/context/ExpansionContext";
+import { useRules } from "@/context/RulesContext";
 import { languages as availableLanguages, languageNames } from "@/i18n/languageData";
 import { EXPANSIONS } from "@/data/expansions";
+import { RULES_VERSIONS } from "@/utils/rulesVersion";
 import PageTransition from "@/components/PageTransition";
+import SavesPanel from "@/components/saves/SavesPanel";
 import { isHeroManagementEnabled, setHeroManagementEnabled } from "@/utils/heroSettings";
 
 export default function Config() {
   const navigate = useNavigate();
   const { language, setLanguage, translations } = useLanguage();
   const { selectedExpansions, toggleExpansion } = useExpansions();
+  const { rulesVersion, detected, isAuto, setRulesVersion } = useRules();
   const [heroManagement, setHeroManagement] = useState(isHeroManagementEnabled);
   const config = translations.config || {};
   const saves = translations.saves || {};
@@ -137,14 +141,85 @@ export default function Config() {
           </p>
         </section>
 
+        <section aria-labelledby="rules-version-title" className="rounded-2xl border border-slate-700 bg-slate-900/80 p-4 sm:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 id="rules-version-title" className="text-xl font-bold">{config.rulesVersionTitle || 'Versión de reglas'}</h2>
+              <p className="mt-1 max-w-2xl text-sm text-slate-400">
+                {config.rulesVersionHint || 'Elige el reglamento de la partida. Las expansiones de Apocalipsis activan el 2.0 automáticamente.'}
+              </p>
+            </div>
+            <span className={`rounded-full border px-3 py-1 text-sm font-bold ${
+              rulesVersion === '2.0'
+                ? 'border-amber-400/80 bg-amber-950/60 text-amber-100'
+                : 'border-slate-500 bg-slate-800 text-slate-200'
+            }`}>
+              {rulesVersion}
+            </span>
+          </div>
+
+          <div role="radiogroup" aria-labelledby="rules-version-title" className="mt-4 flex flex-wrap gap-2">
+            {RULES_VERSIONS.map((version) => (
+              <button
+                key={version}
+                type="button"
+                role="radio"
+                aria-checked={rulesVersion === version}
+                onClick={() => setRulesVersion(version)}
+                className={`min-h-11 min-w-52 rounded-xl border px-4 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 ${
+                  rulesVersion === version
+                    ? 'border-emerald-400 bg-emerald-950/50 text-white'
+                    : 'border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-400'
+                }`}
+              >
+                <span className="block text-sm font-bold">
+                  {version === '2.0' ? (config.rulesVersion20 || 'Reglas 2.0 · Apocalipsis') : (config.rulesVersion15 || 'Reglas 1.5 · juego base')}
+                </span>
+                <span className="mt-0.5 block text-xs text-slate-400">
+                  {version === '2.0' ? (config.rulesVersion20Hint || 'Preparado para los cambios de Apocalipsis.') : (config.rulesVersion15Hint || 'Reglamento original.')}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-2">
+            <button
+              type="button"
+              aria-pressed={isAuto}
+              onClick={() => setRulesVersion('auto')}
+              className={`min-h-9 rounded-full border px-3 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 ${
+                isAuto
+                  ? 'border-emerald-400 bg-emerald-800 text-white'
+                  : 'border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-400'
+              }`}
+            >
+              {config.rulesVersionAuto || 'Automático'} ({detected})
+            </button>
+          </div>
+
+          <p className="mt-3 text-xs text-slate-400">
+            {isAuto
+              ? (config.rulesVersionAutoOn || 'Automático: {version} según las expansiones activas.').replace('{version}', detected)
+              : (config.rulesVersionManualOn || 'Forzado manualmente a {version}.').replace('{version}', rulesVersion)}
+          </p>
+
+          {detected === '2.0' && rulesVersion === '1.5' && (
+            <p role="status" className="mt-2 rounded-lg border border-amber-500/60 bg-amber-950/40 px-3 py-2 text-xs text-amber-100">
+              {config.rulesVersionMismatch || 'Hay expansiones de Apocalipsis activas con las reglas 1.5 forzadas.'}
+            </p>
+          )}
+        </section>
+
+        <details className="rounded-2xl border border-slate-700 bg-slate-900/80">
+          <summary className="cursor-pointer px-4 py-4 text-xl font-bold sm:px-6">
+            {saves.title || 'Partidas'}
+          </summary>
+          <div className="border-t border-slate-700 p-4 sm:p-6">
+            <SavesPanel mode="drawer" />
+          </div>
+        </details>
+
         <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => navigate('/saves')}
-            className="min-h-11 rounded-lg bg-emerald-700 px-4 py-2 font-bold text-white transition hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
-          >
-            {saves.goToSaves || 'Ir a Partidas'} →
-          </button>
           <button
             type="button"
             onClick={() => navigate("/", { replace: true })}

@@ -5,11 +5,57 @@
     "start_tracker": "Iniciar",
     "configure_environment": "Configurar",
     "back_to_home": "Volver",
-    "manageSaves": "Guardar, exportar o importar partidas"
+    "manageSaves": "Guardar, exportar o importar partidas",
+    "configure_hint": "Idioma, expansiones y versión de reglas",
+    "tutorial": "Tutorial",
+    "saves": "Partidas",
+    "saves_hint": "Guardar, exportar o importar",
+    "tutorial_hint": "Cómo usar la aplicación",
+    "footerTagline": "Herramienta no oficial para Drunagor"
+  },
+  "tutorial": {
+    "title": "Tutorial",
+    "subtitle": "Una guía rápida de todo lo que puede hacer la aplicación. Se actualiza con cada mejora.",
+    "back": "Volver al inicio",
+    "sections": [
+      {
+        "title": "El tablero",
+        "body": "La barra superior alterna entre Tablero y Lista. En Tablero puedes hacer zoom con −/+ o con pinza; Lista es más cómoda en móvil. Siguiente Turno avanza el cursor, Deshacer vuelve al estado anterior y el cronómetro mide el turno actual (rojo a partir de 5:00). La ronda y el turno activo se muestran siempre."
+      },
+      {
+        "title": "Enemigos",
+        "body": "En el menú Enemigos puedes añadir enemigos aleatorios por color o abrir el selector manual: busca por nombre, filtra por color y categoría y añade la variante que quieras. Los jefes muestran su ficha grande con inmunidades sobre el tablero."
+      },
+      {
+        "title": "Runas",
+        "body": "El menú Runas reúne las cartas de runa (oscuridad, asalto, rey redivivo, huésped, invadidos), el estado de la bolsa, manifestar, añadir fichas al medidor y añadir runas en masa. La zona de riesgo elimina fichas con confirmación."
+      },
+      {
+        "title": "Nodos y áreas",
+        "body": "El menú Nodos gestiona las pilas de runas, los nodos de niebla, las barricadas, los puntos de aparición, las llaves rúnicas y el rescate de aldeanos. Los contadores de la cabecera indican cuántos elementos hay activos."
+      },
+      {
+        "title": "Escenario",
+        "body": "Selecciona el monstruo de escenario para habilitar la carta de incursión. Desde el mismo menú puedes añadir la incursión o la defensa de la aldea, eligiendo la cara de la carta."
+      },
+      {
+        "title": "Héroes",
+        "body": "Cada héroe tiene su tarjeta en el medidor. Pulsa sobre él para abrir la vista ampliada: vida, estados alterados, cubos de acción, equipo y dados. Los cambios se guardan automáticamente en el dispositivo."
+      },
+      {
+        "title": "Partidas y copias",
+        "body": "La partida se guarda sola en el navegador y puedes conservar hasta 10 partidas con nombre. Exporta un JSON antes de cambiar de dispositivo o de limpiar los datos del navegador; al importarlo puedes elegir partida completa, solo configuración o solo track."
+      },
+      {
+        "title": "Ajustes y atajos",
+        "body": "En Configuración eliges idioma, expansiones y versión de reglas (1.5 o 2.0 de Apocalipsis). Ctrl/⌘ + S abre las partidas desde cualquier pantalla del tablero. El idioma también se cambia desde la barra superior."
+      }
+    ]
   },
   "tracker": "Control",
   "config": {
     "title": "Configuración",
+    "subtitle": "Elige el idioma, las expansiones y la versión de reglas de tus partidas.",
     "language_section_title": "Idioma de la Aplicación",
     "select_language": "Selecciona el idioma",
     "select_expansions": "Selecciona las expansiones",
@@ -19,7 +65,17 @@
     "heroManagementTitle": "Gestión de héroes",
     "heroManagementHint": "Activa las funcionalidades ampliadas de la vista de héroe: auras, consecuencias y estados.",
     "heroManagementOn": "Activado",
-    "heroManagementOff": "Desactivado"
+    "heroManagementOff": "Desactivado",
+    "rulesVersionTitle": "Versión de reglas",
+    "rulesVersionHint": "Elige el reglamento de la partida. Las expansiones de Apocalipsis activan el 2.0 automáticamente; puedes forzarlo o volver al automático.",
+    "rulesVersion15": "Reglas 1.5 · juego base",
+    "rulesVersion15Hint": "Estados, capacidades y mecánicas del reglamento original.",
+    "rulesVersion20": "Reglas 2.0 · Apocalipsis",
+    "rulesVersion20Hint": "Preparado para los cambios de Apocalipsis; el contenido se irá añadiendo.",
+    "rulesVersionAuto": "Automático",
+    "rulesVersionAutoOn": "Automático: {version} según las expansiones activas.",
+    "rulesVersionManualOn": "Forzado manualmente a {version}.",
+    "rulesVersionMismatch": "Hay expansiones de Apocalipsis activas con las reglas 1.5 forzadas."
   },
   "expansions": {
     "base": "Crónicas de Drunagor (Juego Base)",
@@ -367,6 +423,7 @@
     "invadidosActivo": "💀 Mecánica Invadidos Activa",
     "title": "Control de Turnos",
     "menu": "Menú",
+    "gameMenu": "Menú de juego",
     "language": "Idioma",
     "addEnemies": "Enemigos Aleatorios",
     "addEnemy": "Añadir",

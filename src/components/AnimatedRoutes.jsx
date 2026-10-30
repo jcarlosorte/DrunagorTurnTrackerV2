@@ -6,6 +6,7 @@ import { HeroExtrasProvider } from "@/context/HeroExtrasContext";
 import { AnimatePresence } from "framer-motion";
 
 const HomeMenu = lazy(() => import("@/pages/HomeMenu"));
+const Tutorial = lazy(() => import("@/pages/Tutorial"));
 const Tracker = lazy(() => import("@/pages/Tracker"));
 const Config = lazy(() => import("@/pages/Config"));
 const Saves = lazy(() => import("@/pages/Saves"));
@@ -31,6 +32,7 @@ export default function AnimatedRoutes() {
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<HomeMenu />} />
+          <Route path="/tutorial" element={<Tutorial />} />
           <Route path="/tracker" element={<Tracker />} />
           <Route path="/config" element={<Config />} />
           <Route path="/saves" element={<Saves />} />

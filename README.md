@@ -1,237 +1,206 @@
-# Drunagor Turn Tracker
+# Drunagor Turn Tracker V2
 
-SPA para gestionar turnos de **Chronicles of Drunagor**, construida con React 18, Vite 6 y Tailwind CSS.
+Aplicación web para dirigir las partidas de **Chronicles of Drunagor**: iniciativa,
+turnos, runas, estados alterados, enemigos y escenario en una sola pantalla.
 
-## Estado de la arquitectura
+> **En producción:** <https://jcarlosorte.github.io/DrunagorTurnTrackerV2/>
 
-- Aplicación estática: no existe backend, autenticación, base de datos ni endpoint `/api`.
-- Los catálogos y reglas están en `src/data/` y la configuración del usuario se conserva en `localStorage`.
-- `localStorage` es por navegador/dispositivo: no sincroniza partidas entre jugadores.
-- `VITE_API_BASE_URL` queda reservado para una futura API; no debe configurarse ni asumirse que existe.
+Es una SPA local-first: funciona sin cuenta y sin conexión una vez cargada. Las
+partidas se guardan en el navegador y se pueden exportar como JSON.
 
-## Requisitos y desarrollo local
+## Características
 
-Se recomienda Node.js 22 y npm 10 (`.nvmrc` y `package.json` lo fijan).
+- **Tablero de iniciativa** con vista de tablero o lista, zoom, ajuste al ancho,
+  modo presentación y densidad de cartas configurable.
+- **Turnos** de héroes, enemigos y runas: ronda, turnos extra, deshacer y cola de
+  iniciativa.
+- **Cronómetro** por turno (`mm:ss`, en rojo a partir de 5:00) y tiempo total por
+  héroe, consultable en el historial.
+- **Historial** de hasta 300 eventos con filtros por tipo y búsqueda.
+- **Enemigos**: alta aleatoria por color, alta manual con buscador y filtros de
+  color y categoría, bolsa de colores y jefes con inmunidades.
+- **Runas**: cartas de runa (oscuridad, asalto, rey redivivo, huésped, invadidos),
+  estado de la bolsa, manifestar, fichas y zona de riesgo con confirmaciones.
+- **Nodos y áreas**: pilas de runas, nodos de niebla, barricadas, puntos de
+  aparición, llaves rúnicas y rescate.
+- **Escenario**: monstruo de escenario y cartas de incursión y defensa.
+- **Héroes**: vista ampliada con vida, estados alterados, cubos de acción y equipo;
+  edición de estados, vida y dados.
+- **Guardados**: autoguardado, hasta 10 partidas con nombre, exportación e
+  importación JSON (partida completa, solo configuración o solo track).
+- **Bilingüe** español/inglés, con detección y selector de idioma.
+
+## Stack
+
+| Área | Tecnología |
+|---|---|
+| UI | React 18, Vite 6, Tailwind CSS 3 |
+| Rutas | React Router 7 (`basename` configurable) |
+| Animación | framer-motion |
+| Iconos y avisos | react-icons, react-toastify |
+| Pruebas | Vitest (unidad), Playwright (E2E) |
+| Calidad | ESLint flat config |
+| Imágenes | WebP/AVIF + `srcset` en miniaturas |
+
+Requiere **Node.js 22** y **npm 10** (véase `.nvmrc`).
+
+## Inicio rápido
 
 ```bash
 npm ci
 npm run dev
 ```
 
-Abrir la URL que muestre Vite. Para probar el artefacto final:
+Para probar el artefacto de producción:
 
 ```bash
 npm run build
 npm run preview
 ```
 
-El build también genera `dist/404.html` para que GitHub Pages pueda servir la SPA al recargar rutas profundas.
+El build genera `dist/404.html` para que GitHub Pages sirva la SPA al recargar
+rutas profundas.
 
-## Variables de entorno
+## Scripts
 
-Copiar `.env.example` a `.env.local` si se necesita personalizar el destino:
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Build de producción + fallback SPA |
+| `npm run preview` | Sirve `dist` en local |
+| `npm run lint` | ESLint (0 errores y 0 avisos como objetivo) |
+| `npm run test` | Tests unitarios (Vitest) |
+| `npm run test:e2e` | Tests E2E (Playwright; usa `vite preview` en el puerto 4173) |
+| `npm run visual:check` | Capturas y comprobaciones visuales |
+| `npm run images:webp` | PNG/JPG → WebP |
+| `npm run images:avif` | WebP/PNG → AVIF y actualización de imports |
+| `npm run images:variants` | Variantes 320/640 para miniaturas + manifiesto |
+
+## Estructura
+
+```text
+src/
+  pages/            Inicio, configuración, selección y tablero
+  components/       UI general, track, escenario y guardados
+  context/          Estado global (partida, enemigos, runas, idioma…)
+  hooks/            Cursor de turno, estados, foco
+  utils/            Lógica pura y persistencia
+  data/             Catálogos: héroes, enemigos, runas, cartas…
+  i18n/             Textos es/en
+  assets/           Ilustraciones y variantes optimizadas
+tests/e2e/          Pruebas Playwright
+docs/               Arquitectura y seguridad
+scripts/            Build, imágenes y verificación visual
+```
+
+## Rutas
+
+| Ruta | Pantalla |
+|---|---|
+| `/` | Inicio: continuar, nueva partida, contenido y partidas |
+| `/tracker` | Configuración de la partida: héroes, roles y enemigos |
+| `/init` | Partida activa (protegida: exige héroes) |
+| `/config` | Configuración: idioma, expansiones, versión de reglas y panel de partidas |
+| `/tutorial` | Guía de uso de la aplicación |
+| `/saves` | Partidas guardadas: guardar, cargar, exportar, importar |
+
+## Datos y contenido
+
+- Los catálogos viven en `src/data/` (héroes, enemigos, runas, incursión, defensa,
+  estados, roles, fichas, cubos por clase…).
+- Los textos y descripciones están en `src/i18n/es.json` y `src/i18n/en.json`.
+  Si se añaden estados o cartas, hay que actualizar ambos idiomas.
+- Las expansiones activas filtran el contenido disponible y la selección manual.
+
+## Partidas y persistencia
+
+- Autoguardado en `localStorage` (runas, fichas, pilas, enemigos, turno, ronda,
+  héroes y su estado).
+- Hasta **10 partidas** con nombre en el dispositivo, con carga y borrado.
+- **Exportación/importación JSON** con tres alcances: `configuration`, `track` y
+  `full`. Los datos importados se validan y sanean contra los catálogos actuales;
+  las entradas desconocidas se descartan.
+- `schemaVersion` actual: **3**, con migraciones desde versiones anteriores.
+- Indicador de cuota: avisa al superar el 80 % del espacio disponible y compacta
+  los datos antes de fallar.
+- La sincronización multi-dispositivo **no está implementada** (véase el roadmap).
+
+## Seguridad
+
+- Sin backend, sin cuentas y sin telemetría.
+- **CSP por `<meta>`** en el build (GitHub Pages no permite cabeceras propias):
+  `script-src 'self'`, `script-src-attr 'none'`, `frame-src 'none'`,
+  `object-src 'none'`, `base-uri 'self'`, `form-action 'none'` y
+  `upgrade-insecure-requests`.
+- `referrer=no-referrer`, `color-scheme=dark` y sin sourcemaps en producción.
+- Límites del hosting y riesgo residual de clickjacking documentados en
+  [docs/SEGURIDAD.md](docs/SEGURIDAD.md).
+
+## Calidad
+
+Suite esperada antes de cada entrega:
+
+```text
+lint      0 errores / 0 avisos
+unit      72 tests
+e2e       34 tests
+build     OK
+```
+
+Las pruebas E2E cubren tablero, estados, guardados, héroes, seguridad, menús de
+enemigos/runas/nodos/escenario, volteo de cartas y CSP.
+
+## Despliegue
+
+El workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) publica
+`main` en GitHub Pages.
+
+1. **Settings → Pages → Source: GitHub Actions**.
+2. Push a `main` y esperar los jobs de build y deploy.
+3. Comprobar que la barra de portada muestra el commit desplegado
+   (`v1.0.0 · <hash>`); si no cambia, el deploy no se aplicó.
+4. Verificar `/`, `/tracker`, `/init` y una recarga directa.
+
+`VITE_BASE_PATH` se normaliza en `vite.config.js` y se comparte con el router y el
+`index.html`, así que no hay que editar tres rutas al cambiar de subruta.
+
+### Variables de entorno
 
 ```dotenv
-# GitHub Pages del repositorio
 VITE_BASE_PATH=/DrunagorTurnTrackerV2/
-
-# Dominio propio o hosting en la raíz
-# VITE_BASE_PATH=/
-
-# Por defecto false en producción; los mapas exponen el código fuente
 VITE_SOURCEMAP=false
 ```
 
-Vite solo publica variables `VITE_*` en el bundle. No colocar secretos en ellas.
+Vite solo publica variables `VITE_*`; no colocar secretos en ellas.
 
-`vite.config.js` normaliza `VITE_BASE_PATH`, `App.jsx` usa el mismo valor como `basename` y `index.html` usa `%BASE_URL%` para iconos y manifest. Así no hay que editar tres rutas distintas al cambiar de subruta.
+## Limitaciones conocidas
 
-## API y puntos finales
+- `localStorage` es por navegador y dispositivo: no sincroniza partidas.
+- Sin cuentas ni permisos; cualquiera con acceso al navegador ve las partidas.
+- El borrado del almacenamiento del navegador elimina las partidas no exportadas.
+- GitHub Pages no permite `frame-ancestors` ni cabeceras de seguridad propias.
 
-Actualmente no hay puntos finales que modificar: el proyecto no usa `fetch`, Axios, WebSocket ni autenticación.
+## Documentación
 
-Si posteriormente se necesita sincronización, no se debe almacenar un token secreto en `localStorage` sin un diseño de autenticación. Antes de implementarla hay que definir:
+- [Arquitectura y decisiones](docs/REVISION-ARQUITECTURA.md)
+- [Seguridad y límites de Pages](docs/SEGURIDAD.md)
 
-- URL HTTPS de la API y versionado, por ejemplo `/api/v1`.
-- `POST /api/v1/sessions`, `GET /api/v1/sessions/:id`, `PUT /api/v1/sessions/:id` y `DELETE /api/v1/sessions/:id`.
-- Identidad, permisos por partida, expiración/renovación de sesión y protección CSRF si se usan cookies.
-- Validación de esquemas, límites de tamaño/frecuencia, CORS restringido al dominio real, logs sin tokens y persistencia transaccional.
+## Roadmap
 
-No se ha creado una API ficticia porque no hay contrato ni proveedor backend solicitado.
+- Panel de habilidades del héroe (rombos y cubos por habilidad).
+- Capacidades de clase y objetos de equipo con iconos.
+- Almacén del héroe y campamento del grupo.
+- Compañeros y mascotas con turno propio y vista de vida/estados.
+- Reinicio de partida por capas (turno, runas, héroes…).
+- Contenido de Apocalipsis para las reglas 2.0 (el selector 1.5/2.0 ya existe).
+- Sincronización multi-dispositivo opcional (requiere backend).
 
-## Estado de seguridad de dependencias
+## Autor
 
-- `npm audit --omit=dev`: **0 vulnerabilidades** en las dependencias que llegan al navegador.
-- La auditoría completa mantiene 3 avisos moderados en la cadena de build de Tailwind/PostCSS. La solución automática exige migrar Tailwind 3 a Tailwind 4, un cambio mayor que puede alterar estilos; se deja como tarea separada y no se ejecuta con `--force`.
+Proyecto personal de **jcarlosorte** (DaRkFiDoDiDo).
 
-## Publicación recomendada: GitHub Pages
+- GitHub: <https://github.com/jcarlosorte>
+- Instagram: <https://www.instagram.com/carl_el_mazmorrero/>
 
-El workflow `.github/workflows/deploy.yml` publica `main` automáticamente.
-
-1. En GitHub, abrir **Settings → Pages**.
-2. Seleccionar **GitHub Actions** como fuente.
-3. Comprobar que el repositorio se llama `DrunagorTurnTrackerV2` o cambiar `VITE_BASE_PATH` en el workflow a `/<nombre-del-repo>/`.
-4. Confirmar que el workflow tiene permisos `Pages: write` y `id-token: write`.
-5. Hacer commit y push a `main`.
-6. Esperar los jobs **Build and deploy / build** y **deploy**.
-7. Abrir `https://<usuario>.github.io/<repositorio>/` y comprobar `/`, `/tracker`, `/config` e `/init`.
-8. Probar una recarga directa en `/tracker`: `dist/404.html` evita el 404 típico de GitHub Pages.
-
-El pipeline ejecuta `npm ci`, `npm audit --omit=dev`, `npm run build` y despliega un artefacto inmutable. `node_modules` y `dist` ya no deben versionarse.
-
-## Dominio propio
-
-1. Registrar el dominio y decidir si la web vivirá en la raíz (`VITE_BASE_PATH=/`) o en una subruta.
-2. Para raíz, cambiar `VITE_BASE_PATH` en el workflow a `/` y regenerar el build.
-3. En GitHub Pages, añadir el dominio en **Settings → Pages → Custom domain**.
-4. Crear los registros DNS que indique GitHub: normalmente `A`/`AAAA` para el apex y `CNAME` para `www`.
-5. Esperar la propagación, activar **Enforce HTTPS** y verificar que el certificado está vigente.
-6. Si se usa un proveedor distinto, configurar un rewrite de todas las rutas desconocidas a `index.html`; mantener el fallback `404.html` solo como compatibilidad.
-
-## Servidor estático y caché
-
-Para Nginx, el bloque equivalente es:
-
-```nginx
-server {
-  listen 443 ssl http2;
-  server_name tracker.example.com;
-  root /srv/DrunagorTurnTrackerV2/dist;
-
-  location /assets/ {
-    try_files $uri =404;
-    add_header Cache-Control "public, max-age=31536000, immutable";
-  }
-
-  location / {
-    try_files $uri $uri/ /index.html;
-    add_header Cache-Control "no-cache";
-  }
-}
-```
-
-Usar HTTPS, compresión Brotli/Gzip, CDN delante de los assets y despliegues atómicos. No cachear `index.html` durante un año porque debe apuntar al último hash.
-
-## Ruta escalable
-
-1. **PR:** `npm ci`, `npm audit --omit=dev`, build y revisión de bundle.
-2. **Staging:** publicar el artefacto en una URL temporal, probar rutas, idioma, almacenamiento corrupto, selección y reinicio de partida.
-3. **Producción:** promover el artefacto probado, no recompilar manualmente en el servidor.
-4. **Rollback:** conservar el artefacto anterior y volver a apuntar el CDN/Pages al commit anterior.
-5. **Observabilidad:** monitorizar disponibilidad, errores JavaScript, 404, tamaño de assets y Web Vitals; no registrar datos de partidas salvo consentimiento.
-6. **Escala funcional:** para partidas compartidas, añadir una API versionada, autenticación, base de datos y control de concurrencia; localStorage no sustituye ese diseño.
-
-## Correcciones aplicadas en esta revisión
-
-- Parser seguro y tolerante a datos corruptos de `localStorage`, con fallback de idioma y validación de catálogos.
-- Eliminación de efectos secundarios dentro de actualizadores funcionales de React.
-- Operaciones atómicas para fichas, creación de pilas y reemplazo/devolución de puntos.
-- Reset completo de fichas, mazos, avisos, contadores y estado auxiliar.
-- Mazos inicializados una sola vez por partida.
-- Resultado seguro de efectos de estados cuando la vida llega a cero.
-- Base/basename, manifest, iconos, fallback SPA y sourcemaps parametrizados para publicación.
-- Dependencias directas de `react-router-dom` y `uuid` actualizadas a versiones sin vulnerabilidades de producción.
-- `.gitignore`, Node LTS, workflow CI/CD y carga diferida de imágenes de catálogo.
-
-## Persistencia y partidas guardadas
-
-- Autoguardado del estado de partida en `localStorage`: runas, fichas, pilas, enemigos, runas colocadas, turno y ronda.
-- La configuración inicial (expansiones, héroes, roles, enemigos y comportamientos) se conserva al empezar una partida nueva.
-- Hasta 10 partidas con nombre en el dispositivo, con carga y borrado individual.
-- Exportación e importación JSON en tres alcances: partida completa, solo configuración o solo track.
-- Compatibilidad con exportaciones antiguas (`schemaVersion: 1`).
-- Los datos importados se validan contra los catálogos actuales; las entradas desconocidas se descartan y se avisa antes de aplicar.
-- Indicador de cuota de almacenamiento con aviso al superar el 80 % del espacio disponible.
-- Los conjuntos de efectos ya procesados se persisten para no repetir invocaciones, daño o cartas al restaurar una partida.
-- Confirmaciones accesibles antes de restablecer, borrar runas, eliminar partidas guardadas o iniciar una partida nueva.
-
-## Navegación y arquitectura de pantallas
-
-- `/` Inicio: continuar partida, nueva partida y acceso a contenido y partidas.
-- `/tracker` Selección de héroes, roles y enemigos.
-- `/init` Partida activa.
-- `/config` **Contenido**: idioma y expansiones activas.
-- `/saves` **Partidas**: guardar, cargar, exportar, importar y cuota.
-
-- `SavesPanel` ([src/components/saves/SavesPanel.jsx](src/components/saves/SavesPanel.jsx)) es el único componente de gestión de partidas y se reutiliza en la página `/saves` y en el panel lateral del track.
-- El panel lateral se abre desde la barra superior (botón **Partidas**) o con `Ctrl/⌘ + S`, y se carga bajo demanda para no incluir los catálogos del juego en el bundle inicial.
-- Una sola barra superior global: logo, indicador de autoguardado, botón Partidas y selector de idioma. La barra del track queda debajo, sin duplicar el selector de idioma.
-- `ErrorBoundary` envuelve la aplicación y `StorageWarning` avisa si una escritura en `localStorage` falla.
-
-## Capas y superficies del track
-
-- Escala única de capas en [src/index.css](src/index.css): `layer-app-bar` (50), `layer-track-bar` (40), `layer-menu` (45), `layer-toast` (60), `layer-drawer` (70), `layer-modal` (80) y `layer-dialog` (100). Ningún elemento usa ya valores `z-index` arbitrarios.
-- Cada slot del track usa `track-slot`, que aplica `isolation: isolate`. Así las cartas apiladas nunca se dibujan por encima de la etiqueta del slot ni de los slots vecinos, aunque se escalen o destaquen en el turno actual.
-- Etiqueta del slot (`track-slot__label`), pilas (`track-slot__stack`) e insignias (`track-slot__badge`) tienen capas internas explícitas.
-- Superficies unificadas con `track-surface` y `track-surface-raised`: misma paleta slate, bordes y radios que el resto de la aplicación.
-- Los avisos de fichas se renderizan una sola vez, desde `InitTracker`, para evitar toasts duplicados.
-
-## Menús del track
-
-- Una sola barra contextual con tres secciones: **Enemigos**, **Runas** y **Escenario**, cada una con `aria-expanded` y `aria-controls`.
-- Un único botón de cierre en la barra, en lugar de un botón de cierre repetido en cada sección.
-- El botón de borrar runas vive solo en su sección correspondiente, no duplicado en la barra.
-- Los paneles son regiones desplazables con altura máxima para no tapar el tablero en móvil.
-
-## Experiencia de tablero
-
-- `TurnTrackBoard` ([src/components/track/TurnTrackBoard.jsx](src/components/track/TurnTrackBoard.jsx)) encapsula el tablero y ofrece dos vistas:
-  - **Tablero**: rejilla de 11 posiciones con zoom.
-  - **Lista**: vista vertical para móvil, con el turno actual destacado y el resto colapsado; se expande el slot que interese.
-- Zoom con botones `−`/`+`, porcentaje visible y botón **Ajustar** para encajar el ancho; también admite gesto de pinza en pantallas táctiles.
-- **Modo presentación**: oculta la barra de menús, oculta el selector de vista y muestra el tablero a mayor tamaño. Siempre hay un botón visible para salir.
-- **Deshacer turno**: guarda hasta 10 instantáneas del cursor de turno (turno, ronda, grupo, turnos extra y entidad activa). Restaura el estado anterior sin recalcular daño ya aplicado.
-- **Acciones de turno centradas** en la barra del tablero: Deshacer y Siguiente turno entre el selector Tablero/Lista y el zoom, visibles también en móvil.
-- `EnemyCard` ([src/components/track/EnemyCard.jsx](src/components/track/EnemyCard.jsx)) se extrajo de `InitTracker`. Además corrige un fallo latente: antes llamaba a `useState` dentro de un `map`, lo que rompe las reglas de hooks. Los iconos de estado e inmunidad son ahora subcomponentes propios.
-
-### Tamaños fijos del tablero
-
-- Cada slot tiene altura mínima de `26rem` y zonas superior e inferior fijas de `9rem`, de modo que la tarjeta nunca colapsa por falta de altura.
-- Las tarjetas se posicionan con ancho fijo de `92px` y traslación centrada, así la imagen siempre tiene anchura y altura calculable.
-- La etiqueta del slot usa `min-w-0` y `truncate`; ya no fuerza el ancho de la columna ni desborda el tablero (causa de que “Controlador” estirase la rejilla).
-- La rejilla usa `auto-rows-[26rem]` para que las once columnas compartan altura aunque alguna quede vacía.
-
-## Historial de la partida
-
-- [gameLog.js](src/utils/gameLog.js) registra hasta 300 eventos con fecha, tipo y mensaje.
-- Cada aviso de escenario, daño, invocación o runa se registra automáticamente con la ronda y el turno activos.
-- El historial viaja dentro del JSON de guardado (`gameLog`) y se limpia al empezar una partida nueva.
-- En **Partidas** se muestra el número de eventos y se puede exportar como `.txt`.
-
-
-
-## Consistencia visual y de terminología
-
-- Toda la paleta gris del track y de sus menús se migró a la escala `slate`, la misma que Inicio, Contenido, Partidas y Configuración. Solo quedan grises en los códigos de color de runas y enemigos, donde el gris es un valor semántico.
-- Los paneles del track usan `track-surface` / `track-surface-raised` en lugar de combinaciones sueltas de fondo, radio y borde.
-- Terminología unificada: **Partidas** para guardado, **Contenido** para expansiones, **Cerrar** para cerrar y **Cancelar** para descartar acciones.
-- Claves i18n añadidas para todo el cromo del track (`turno`, `track`, `evento`, `eliminarRuna`, `enemiesMenu`, `runesMenu`, `scenarioMenu`) y para la selección (`searchHeroes`, `searchEnemies`, `noResults`, `stepsLabel`, `next`, `cancel`, etc.) en `es.json` y `en.json`.
-- Extraídos `TrackTurnHeader` ([src/components/track/TrackTurnHeader.jsx](src/components/track/TrackTurnHeader.jsx)) y `BagStatusPanel` ([src/components/track/BagStatusPanel.jsx](src/components/track/BagStatusPanel.jsx)) como primera fase del refactor de `InitTracker`.
-
-
-
-## Barra única en el track
-
-- En `/init` no se monta la barra global (`TopMenuLanguage` devuelve `null`): la barra del track incluye logo, secciones, **Partidas**, navegación a inicio y configuración, idioma y cierre.
-- El botón **Partidas** abre el mismo panel lateral que en el resto de la aplicación.
-
-## Verificación visual automatizada
-
-- `npm run visual:check` levanta Playwright con Chromium, siembra una partida (5 héroes con roles) y captura escritorio y móvil.
-- Comprueba que las imágenes del tablero tengan tamaño real, evitando la regresión de tarjetas colapsadas.
-- Requiere el build servido en `http://localhost:4173/DrunagorTurnTrackerV2/` (`npx vite preview --port 4173`).
-
-### Causa raíz de las tarjetas invisibles
-
-- `.track-slot__stack` tenía `position: relative` en CSS, que sobrescribía la utilidad `absolute` del marcado. Al no aplicar `inset-x-0`, el ancho de la pila caía a unos pocos píxeles y las imágenes quedaban a 6×6 px.
-- Se eliminó ese `position` forzado; ahora el contenedor se coloca con las utilidades del marcado.
-- Además, `getHeroProf` y la construcción de `placedHeroes` ahora toleran identificadores de héroe desconocidos en lugar de romper el render.
-## Ajustes del tablero (iteración actual)
-
-- Las ayudas de iconos de estado e inmunidad usan `title` nativo: el tablero tiene scroll y los tooltips absolutos quedaban recortados o tapados.
-- Iconos de estado reducidos a 16 px (24 px en jefes) y tarjetas ampliadas a 104 px para que quepan varios estados sin solaparse.
-- Solape de cartas aumentado: 62/48/38/30 px según cantidad, con filas `minmax(21rem, auto)` que crecen cuando hay muchas cartas en una posición.
-- Fila central más discreta: etiquetas en mayúsculas de 0.55–0.75 rem, gemas de 40 px y barra de 2rem.
-- La barra del tablero agrupa vista, **Ronda/Turno**, acciones centradas, zoom compacto, **Bolsa** y **Presentación**.
-- El panel de la bolsa es opcional y se coloca a la derecha en escritorio, debajo en móvil.
-- El nombre de la entidad activa se muestra traducido (enemigos, héroes o runas) en lugar del identificador bruto.
+Chronicles of Drunagor es una marca de sus respectivos propietarios. Este proyecto
+es una herramienta no oficial para uso personal.

@@ -12,6 +12,8 @@ export default function TopMenuLanguage() {
   const location = useLocation();
   const t = translations?.saves || {};
   const onSavesPage = location.pathname === '/saves';
+  // La portada gestiona sus propios accesos (Partidas y Tutorial en el contenido).
+  const onHome = location.pathname === '/';
 
   // El track tiene su propia barra completa: evitamos dos cabeceras superpuestas.
   if (location.pathname === '/init') return null;
@@ -32,6 +34,7 @@ export default function TopMenuLanguage() {
         </div>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {!onHome && (
           <button
             type="button"
             onClick={openSaves}
@@ -42,8 +45,9 @@ export default function TopMenuLanguage() {
             <GiArchiveRegister aria-hidden="true" className="text-lg" />
             <span className="hidden sm:inline">{t.title || 'Partidas'}</span>
           </button>
+          )}
 
-          {!onSavesPage && (
+          {!onSavesPage && !onHome && (
             <Link
               to="/saves"
               className="hidden min-h-11 items-center rounded-lg border border-slate-600 px-3 text-sm font-semibold text-slate-200 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 lg:flex"

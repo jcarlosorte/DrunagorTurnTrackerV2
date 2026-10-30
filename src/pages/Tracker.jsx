@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { GiAttachedShield, GiBadGnome, GiShadowFollower, GiSharpedTeethSkull, GiCheckMark, GiMagnifyingGlass } from 'react-icons/gi';
+import { GiAttachedShield, GiShadowFollower, GiSharpedTeethSkull, GiCheckMark, GiMagnifyingGlass } from 'react-icons/gi';
 import { useNavigate } from "react-router-dom";
 import { EXPANSIONS } from '@/data/expansions';
 import { HEROES } from '@/data/heroes';
@@ -262,8 +262,8 @@ const TrackerSelect = () => {
       <main className="mx-auto min-h-[calc(100dvh-3.5rem)] max-w-7xl bg-slate-950 px-3 pb-40 pt-5 text-slate-100 sm:px-6 lg:px-8">
         <header className="mb-6">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-300">Drunagor</p>
-          <h1 className="mt-2 flex items-center gap-3 text-3xl font-black tracking-tight text-yellow-300 sm:text-4xl">
-            <GiBadGnome className="text-4xl text-yellow-400 sm:text-5xl" aria-hidden="true" />
+          <h1 className="mt-2 flex items-center gap-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
+            <span className="h-8 w-1.5 rounded-full bg-gradient-to-b from-emerald-300 to-emerald-600" aria-hidden="true" />
             <span>{t.title || 'Configurar partida'}</span>
           </h1>
         </header>
@@ -321,8 +321,7 @@ const TrackerSelect = () => {
         {step === 'heroes' && (
           <section aria-labelledby="heroes-heading" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-4 sm:p-6">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <h2 id="heroes-heading" className="flex items-center gap-2 text-xl font-bold">
-                <GiAttachedShield className="text-yellow-400" aria-hidden="true" />
+              <h2 id="heroes-heading" className="border-l-4 border-emerald-400 pl-3 text-xl font-bold">
                 {t.selectHeroes || 'Héroes'}
               </h2>
               <span className="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-emerald-200">
@@ -416,8 +415,7 @@ const TrackerSelect = () => {
         {step === 'roles' && (
           <section aria-labelledby="roles-heading" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-4 sm:p-6">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <h2 id="roles-heading" className="flex items-center gap-2 text-xl font-bold">
-                <GiShadowFollower className="text-emerald-400" aria-hidden="true" />
+              <h2 id="roles-heading" className="border-l-4 border-sky-400 pl-3 text-xl font-bold">
                 {t.assignRoles || 'Roles'}
               </h2>
               <span className="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-emerald-200">
@@ -480,8 +478,7 @@ const TrackerSelect = () => {
         {step === 'enemies' && (
           <section aria-labelledby="enemies-heading" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-4 sm:p-6">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <h2 id="enemies-heading" className="flex items-center gap-2 text-xl font-bold">
-                <GiSharpedTeethSkull className="text-red-400" aria-hidden="true" />
+              <h2 id="enemies-heading" className="border-l-4 border-rose-400 pl-3 text-xl font-bold">
                 {t.selectEnemies || 'Enemigos'}
               </h2>
               <span className="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-red-200">
