@@ -356,6 +356,9 @@
       "hero": "Héroes caídos"
     },
     "searchHeroes": "Buscar héroe…",
+    "orderBy": "Ordenar por",
+    "orderName": "Nombre",
+    "orderClass": "Clase",
     "searchEnemies": "Buscar enemigo…",
     "noResults": "No hay resultados con los filtros actuales.",
     "selected": "seleccionados",

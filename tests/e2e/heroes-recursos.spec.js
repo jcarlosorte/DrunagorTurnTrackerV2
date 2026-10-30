@@ -88,6 +88,6 @@ test.describe('Recursos de héroe', () => {
     expect(stored.trauma).toBe(0);
     expect(stored.maldicion).toBe(0);
     expect(stored.cubos).toEqual(stored.cubosMax);
-    expect(stored.vida).toBe(7);
+    expect(stored.vida).toBe(10);
   });
 });

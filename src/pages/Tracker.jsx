@@ -6,6 +6,7 @@ import { HEROES } from '@/data/heroes';
 import { ENEMIES } from '@/data/enemies';
 import { ROLES } from '@/data/roles';
 import { COLORS } from '@/data/color';
+import { HERO_CLASSES, getHeroClassId } from '@/data/heroClasses';
 import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import { useTracker } from '@/context/TrackerContext';
@@ -34,6 +35,7 @@ const TrackerSelect = () => {
   const [selectedBehaviors, setSelectedBehaviors] = useState(["estandar", "alternativo", "complejo"]);
   const [step, setStep] = useState('heroes');
   const [heroQuery, setHeroQuery] = useState('');
+  const [heroSort, setHeroSort] = useState('name');
   const [enemyQuery, setEnemyQuery] = useState('');
   const [enemyExpansion, setEnemyExpansion] = useState('all');
   const [enemyColor, setEnemyColor] = useState('all');
@@ -41,7 +43,7 @@ const TrackerSelect = () => {
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
 
   const { selectedExpansions } = useExpansions();
-  const { translations } = useLanguage();
+  const { language, translations } = useLanguage();
   const { trackerData, setTrackerData } = useTracker();
   const t = translations?.trackerSelect || {};
   const navigate = useNavigate();
@@ -198,10 +200,22 @@ const TrackerSelect = () => {
 
   const filteredHeroes = useMemo(() => {
     const q = normalize(heroQuery.trim());
-    return heroesInSelectedExpansions.filter((hero) => (
+    const filtered = heroesInSelectedExpansions.filter((hero) => (
       !q || normalize(getHeroName(hero.id)).includes(q) || normalize(hero.id).includes(q)
     ));
-  }, [heroQuery, heroesInSelectedExpansions, getHeroName]);
+    const byName = (a, b) => normalize(getHeroName(a.id)).localeCompare(normalize(getHeroName(b.id)), 'es');
+
+    if (heroSort !== 'class') return [...filtered].sort(byName);
+
+    const classLabel = (hero) => {
+      const classId = getHeroClassId(hero.id);
+      return classId ? (HERO_CLASSES[classId]?.[language] || HERO_CLASSES[classId]?.es || classId) : '~';
+    };
+    return [...filtered].sort((a, b) => {
+      const byClass = classLabel(a).localeCompare(classLabel(b), 'es');
+      return byClass !== 0 ? byClass : byName(a, b);
+    });
+  }, [heroQuery, heroesInSelectedExpansions, getHeroName, heroSort, language]);
 
   const enemiesOfExpansion = useMemo(() => (
     enemyExpansion === 'all'
@@ -324,9 +338,23 @@ const TrackerSelect = () => {
               <h2 id="heroes-heading" className="border-l-4 border-emerald-400 pl-3 text-xl font-bold">
                 {t.selectHeroes || 'Héroes'}
               </h2>
-              <span className="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-emerald-200">
-                {selectedHeroes.length}/{MAX_HEROES}
-              </span>
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-1 text-xs text-slate-400">
+                  <span className="hidden sm:inline">{t.orderBy || 'Ordenar por'}</span>
+                  <select
+                    value={heroSort}
+                    onChange={(event) => setHeroSort(event.target.value)}
+                    aria-label={t.orderBy || 'Ordenar héroes'}
+                    className="min-h-9 rounded-lg border border-slate-600 bg-slate-800 px-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                  >
+                    <option value="name">{t.orderName || 'Nombre'}</option>
+                    <option value="class">{t.orderClass || 'Clase'}</option>
+                  </select>
+                </label>
+                <span className="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-emerald-200">
+                  {selectedHeroes.length}/{MAX_HEROES}
+                </span>
+              </div>
             </div>
 
             <div className="relative mb-4">

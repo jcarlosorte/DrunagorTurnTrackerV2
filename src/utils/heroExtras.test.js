@@ -6,7 +6,7 @@ import {
   removeAlmacenItem,
   resetHero,
   resetHeroForNewGame,
-  setCapacidadNivel,
+  toggleCapacidadNivel,
   setDungeonSkillColor,
   setHeroSkill,
 } from '@/utils/heroExtras';
@@ -28,7 +28,7 @@ describe('resetHero', () => {
 
     const after = resetHero('sun');
 
-    expect(after.vida).toBe(4);
+    expect(after.vida).toBe(10);
     expect(after.estados).toEqual([]);
     expect(after.estadosAlterados).toEqual([]);
     expect(after.trauma).toBe(0);
@@ -62,10 +62,12 @@ describe('habilidades y capacidades', () => {
     expect(moved.habilidades.dungeon).toEqual({ nivel: 1, color: 'rojo' });
   });
 
-  it('una capacidad no salta al nivel 2 sin el 1', () => {
-    expect(setCapacidadNivel('katarina', 0, 2).capacidadesClase[0].nivel).toBe(0);
-    expect(setCapacidadNivel('katarina', 0, 1).capacidadesClase[0].nivel).toBe(1);
-    expect(setCapacidadNivel('katarina', 0, 2).capacidadesClase[0].nivel).toBe(2);
+  it('los rombos 2 y 3 de una capacidad exigen el 1', () => {
+    expect(toggleCapacidadNivel('savran', 0, 2).capacidadesClase[0].niveles).toEqual([false, false, false]);
+    expect(toggleCapacidadNivel('savran', 0, 1).capacidadesClase[0].niveles).toEqual([true, false, false]);
+    expect(toggleCapacidadNivel('savran', 0, 3).capacidadesClase[0].niveles).toEqual([true, false, true]);
+    expect(toggleCapacidadNivel('savran', 0, 2).capacidadesClase[0].niveles).toEqual([true, true, true]);
+    expect(toggleCapacidadNivel('savran', 0, 1).capacidadesClase[0].niveles).toEqual([false, false, false]);
   });
 
   it('el almacén añade y elimina objetos', () => {

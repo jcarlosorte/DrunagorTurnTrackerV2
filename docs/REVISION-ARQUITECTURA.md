@@ -891,6 +891,28 @@ Campamento persiste tras recargar
 Reinicio   gameLog 0 · enemigos 0 · pilas/fichas 0 · vida al máximo · cubos al máximo
 ```
 
+### 25.ª tanda — Ajustes de la ficha y orden por clase
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Habilidades** | Los dos rombos de cada habilidad viven dentro de su cubo de acción; el rol de mazmorra va debajo de los cuatro | `ModalHeroCard.jsx` |
+| **Color de mazmorra** | Se elige al marcar el primer rombo y se puede cambiar después con el círculo de color; el cubo se mueve de color | `ModalHeroCard.jsx` |
+| **Capacidades** | Tres rombos por capacidad; el 2 y el 3 exigen el 1 y son independientes entre sí | `heroExtras.js`, `heroSanitize.js` |
+| **Reinicio** | El botón de reiniciar héroe deja también la vida al máximo | `heroExtras.js` |
+| **Orden** | Selector Nombre/Clase en la selección de héroes, con orden alfabético dentro de cada clase | `Tracker.jsx` |
+| **Compatibilidad** | Guardados con `nivel` 0-2 se migran a tres booleanos | `heroSanitize.js` |
+| **Pruebas** | Un unitario nuevo y dos E2E (color de mazmorra y orden por clase) | tests |
+
+**Medición**
+
+```text
+Unit       86 tests
+E2E        43/43
+Mazmorra   color elegido al marcar · cambio de color mueve el cubo
+Capacidad  tres rombos · 2 y 3 bloqueados sin el 1
+Orden      Clase: Maya, Elros, Jaheen, Vorn, Lorelai · Nombre: Elros, Jaheen, Lorelai, Maya, Vorn
+```
+
 ### Fase D — compañeros y mascotas (pendiente de datos)
 
 Reglas confirmadas para cuando lleguen el listado y las imágenes:

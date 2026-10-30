@@ -355,6 +355,9 @@
       "hero": "Fallen Heroes"
     },
     "searchHeroes": "Search hero…",
+    "orderBy": "Sort by",
+    "orderName": "Name",
+    "orderClass": "Class",
     "searchEnemies": "Search enemy…",
     "noResults": "No results match the current filters.",
     "selected": "selected",

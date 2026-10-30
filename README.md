@@ -25,12 +25,13 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
   aparición, llaves rúnicas y rescate.
 - **Escenario**: monstruo de escenario y cartas de incursión y defensa.
 - **Héroes**: vista ampliada con vida, estados alterados, cubos de acción y equipo;
-  edición de estados, vida y dados, y reinicio de la ficha (estados, recursos y cubos).
+  edición de estados, vida y dados, y reinicio de la ficha (vida, estados, recursos y cubos).
+- **Selección de héroes**: búsqueda y orden por nombre o por clase.
 - **Recursos por clase**: Concentración para todos, Ki del monje, Furia del bárbaro y
   Fruto de vida del druida, con un máximo de 4 fichas cada uno.
-- **Habilidades y capacidades**: rombos de habilidad por nivel que añaden cubos del
-  color correspondiente (incluido el rol de mazmorra), tres capacidades de clase con
-  nombre libre y almacén de objetos del campamento.
+- **Habilidades y capacidades**: los rombos de cada habilidad viven dentro de su cubo de
+  acción y el rol de mazmorra debajo de los cuatro, con color elegido al marcarlo; tres
+  capacidades de clase de tres rombos cada una, con nombre libre, y almacén de objetos.
 - **Campamento del grupo**: objetos compartidos (hasta 30) que se guardan con la partida.
 - **Reinicio de partida por capas**: turno, historial y enemigos, con opción de
   reiniciar runas y de restablecer héroes (vida, estados y cubos).
@@ -151,7 +152,7 @@ Suite esperada antes de cada entrega:
 ```text
 lint      0 errores / 0 avisos
 unit      86 tests
-e2e       41 tests
+e2e       43 tests
 build     OK
 ```
 

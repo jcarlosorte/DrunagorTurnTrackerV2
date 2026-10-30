@@ -89,9 +89,18 @@ export function sanitizeHeroEntry(raw) {
 
   const capacidadesClase = [0, 1, 2].map((index) => {
     const entry = Array.isArray(raw.capacidadesClase) ? raw.capacidadesClase[index] : null;
+    const legacyNivel = clamp(entry?.nivel, 0, 2, 0);
+    const niveles = Array.isArray(entry?.niveles)
+      ? [0, 1, 2].map((level) => Boolean(entry.niveles[level]))
+      : [legacyNivel >= 1, legacyNivel >= 2, false];
+    if (!niveles[0]) {
+      niveles[0] = false;
+      niveles[1] = false;
+      niveles[2] = false;
+    }
     return {
       nombre: typeof entry?.nombre === 'string' ? entry.nombre.slice(0, 40) : '',
-      nivel: clamp(entry?.nivel, 0, 2, 0),
+      niveles,
     };
   });
 

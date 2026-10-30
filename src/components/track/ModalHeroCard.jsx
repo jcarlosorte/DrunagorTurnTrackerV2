@@ -10,7 +10,7 @@ import {
   getHeroEffectName,
   getHeroEffectDescription,
 } from '@/data/heroes/index';
-import { CUBE_META, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, removeAlmacenItem, resetHero, setCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
+import { CUBE_META, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, removeAlmacenItem, resetHero, toggleCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import {
@@ -20,10 +20,6 @@ import {
   GiRing,
   GiSwapBag,
   GiBackpack,
-  GiSwordWound,
-  GiRunningShoe,
-  GiBowArrow,
-  GiBrain,
   GiDungeonGate,
   GiWoodenCrate,
 } from 'react-icons/gi';
@@ -37,15 +33,15 @@ const EQUIPMENT = [
   { key: 'bolsa2', es: 'Objeto de bolsa 2', en: 'Bag item 2', icon: GiBackpack },
 ];
 
-const SKILL_ICONS = {
-  melee: GiSwordWound,
-  agility: GiRunningShoe,
-  ranged: GiBowArrow,
-  wisdom: GiBrain,
-  dungeon: GiDungeonGate,
-};
-
 const CUBE_COLOR_BY_KEY = Object.fromEntries(CUBE_META.map((cube) => [cube.key, cube.color]));
+
+/** Habilidad que vive dentro de cada cubo de acción. */
+const SKILL_BY_CUBE = {
+  amarillo: SKILLS.find((skill) => skill.key === 'melee'),
+  rojo: SKILLS.find((skill) => skill.key === 'ranged'),
+  verde: SKILLS.find((skill) => skill.key === 'agility'),
+  azul: SKILLS.find((skill) => skill.key === 'wisdom'),
+};
 
 const GROUPS = [
   { key: 'auras', label: { es: 'Auras', en: 'Auras' }, catalogue: AURAS },
@@ -81,6 +77,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
   const [recobrado, setRecobrado] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [almacenInput, setAlmacenInput] = useState('');
+  const [dungeonPicker, setDungeonPicker] = useState(false);
 
   useFocusTrap(dialogRef, true);
 
@@ -110,6 +107,14 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
     if (!almacenInput.trim()) return;
     apply(addAlmacenItem(heroId, almacenInput));
     setAlmacenInput('');
+  };
+
+  const chooseDungeonColor = (color) => {
+    const withColor = setDungeonSkillColor(heroId, color);
+    const nivel = withColor.habilidades?.dungeon?.nivel || 0;
+    const next = nivel > 0 ? withColor : setHeroSkill(heroId, 'dungeon', 1);
+    apply(next);
+    setDungeonPicker(false);
   };
 
   const movement = (hero?.baseMove ?? 0) + getEquipmentBonus(extras, 'movimiento');
@@ -354,7 +359,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                   return (
                     <div
                       key={cube.key}
-                      className="flex flex-col items-center gap-0.5 rounded-lg border border-slate-700 bg-slate-800/70 px-0.5 py-0.5"
+                      className="flex flex-col items-center gap-0.5 rounded-lg border border-slate-700 bg-slate-800/70 px-1 py-1"
                       title={cube.label[language] || cube.label.es}
                     >
                       <div className="flex items-center gap-0.5">
@@ -399,7 +404,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                         >
                           −
                         </button>
-                        <span className="min-w-3 text-center tabular-nums">{max}</span>
+                        <span data-testid="cube-max" className="min-w-3 text-center tabular-nums">{max}</span>
                         <button
                           type="button"
                           onClick={() => apply(changeHeroActionCubeMax(heroId, cube.key, 1))}
@@ -413,9 +418,104 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                       <span className="max-w-[4.5rem] truncate text-[0.55rem] uppercase tracking-wide text-slate-400">
                         {(cube.label[language] || cube.label.es).split(' · ')[0]}
                       </span>
+
+                      {SKILL_BY_CUBE[cube.key] && (() => {
+                        const skill = SKILL_BY_CUBE[cube.key];
+                        const current = extras.habilidades?.[skill.key] || 0;
+                        return (
+                          <div className="mt-1 flex w-full justify-center gap-2 border-t border-slate-700/70 pt-1">
+                            {[1, 2].map((level) => {
+                              const active = current >= level;
+                              return (
+                                <button
+                                  key={level}
+                                  type="button"
+                                  aria-pressed={active}
+                                  aria-label={`${skill.label.es} · ${t.level || 'Nivel'} ${level}`}
+                                  disabled={level === 2 && current === 0}
+                                  onClick={() => apply(setHeroSkill(heroId, skill.key, current === level ? level - 1 : level))}
+                                  className={`relative flex h-6 w-6 rotate-45 items-center justify-center rounded-sm border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 disabled:opacity-30 ${active ? 'border-white' : 'border-slate-500 bg-slate-900'}`}
+                                  style={active ? { backgroundColor: CUBE_COLOR_BY_KEY[skill.color] } : undefined}
+                                >
+                                  <span className="absolute inset-0 flex -rotate-45 items-center justify-center text-[0.5rem] font-bold text-white">{level}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        );
+                      })()}
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Rol de mazmorra: su cubo se elige al marcar el primer rombo */}
+              <div className="mt-1.5 rounded-lg border border-slate-700 bg-slate-800/70 p-1.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="flex items-center gap-1 text-[0.65rem] font-semibold text-slate-200">
+                    <GiDungeonGate size={13} aria-hidden="true" className="text-rose-300" />
+                    {t.dungeonRole || 'Rol de mazmorra'}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    {[1, 2].map((level) => {
+                      const current = extras.habilidades?.dungeon?.nivel || 0;
+                      const active = current >= level;
+                      const color = CUBE_COLOR_BY_KEY[extras.habilidades?.dungeon?.color || 'amarillo'];
+                      return (
+                        <button
+                          key={level}
+                          type="button"
+                          aria-pressed={active}
+                          aria-label={`${t.dungeonRole || 'Rol de mazmorra'} · ${t.level || 'Nivel'} ${level}`}
+                          disabled={level === 2 && current === 0}
+                          onClick={() => {
+                            if (level === 1 && current === 0) {
+                              setDungeonPicker(true);
+                              return;
+                            }
+                            apply(setHeroSkill(heroId, 'dungeon', current === level ? level - 1 : level));
+                          }}
+                          className={`relative flex h-6 w-6 rotate-45 items-center justify-center rounded-sm border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 disabled:opacity-30 ${active ? 'border-white' : 'border-slate-500 bg-slate-900'}`}
+                          style={active ? { backgroundColor: color } : undefined}
+                        >
+                          <span className="absolute inset-0 flex -rotate-45 items-center justify-center text-[0.5rem] font-bold text-white">{level}</span>
+                        </button>
+                      );
+                    })}
+                    <button
+                      type="button"
+                      onClick={() => setDungeonPicker((open) => !open)}
+                      aria-label={t.dungeonColor || 'Color del cubo'}
+                      title={t.dungeonColor || 'Color del cubo'}
+                      className="h-5 w-5 rounded-full border border-white/70"
+                      style={{ backgroundColor: CUBE_COLOR_BY_KEY[extras.habilidades?.dungeon?.color || 'amarillo'] }}
+                    />
+                  </div>
+                </div>
+
+                {dungeonPicker && (
+                  <div className="mt-1.5 flex flex-wrap items-center gap-1.5 rounded-lg border border-slate-600 bg-slate-900 p-1.5">
+                    <span className="text-[0.6rem] text-slate-400">{t.dungeonColor || 'Color del cubo'}:</span>
+                    {DUNGEON_SKILL_COLORS.map((color) => (
+                      <button
+                        key={color}
+                        type="button"
+                        aria-label={`${t.dungeonColor || 'Color del cubo'}: ${color}`}
+                        onClick={() => chooseDungeonColor(color)}
+                        className="h-5 w-5 rounded-full border border-slate-500 hover:scale-110"
+                        style={{ backgroundColor: CUBE_COLOR_BY_KEY[color] }}
+                      />
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setDungeonPicker(false)}
+                      aria-label={t.close || 'Cerrar'}
+                      className="ml-auto rounded px-1 text-xs text-slate-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
               </div>
 
               {recobrado && (
@@ -476,104 +576,14 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
             </div>
           </section>
 
-          {/* Habilidades: cada nivel añade un cubo del color de su categoría */}
-          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
-            <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-2">
-              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-                {t.skills || 'Habilidades'}
-              </p>
-              <span className="text-[0.6rem] text-slate-400">
-                {t.skillCubesHint || 'Cada nivel añade un cubo de acción del color correspondiente.'}
-              </span>
-            </div>
-            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-5">
-              {SKILLS.map((skill) => {
-                const current = extras.habilidades?.[skill.key] || 0;
-                const Icon = SKILL_ICONS[skill.key];
-                const color = CUBE_COLOR_BY_KEY[skill.color];
-                return (
-                  <div key={skill.key} className="rounded-lg border border-slate-700 bg-slate-800/60 p-1.5">
-                    <p className="flex items-center gap-1 text-[0.65rem] font-semibold text-slate-200">
-                      <Icon size={13} aria-hidden="true" className="shrink-0 text-rose-300" />
-                      <span className="truncate">{skill.label[language] || skill.label.es}</span>
-                    </p>
-                    <div className="mt-1.5 flex gap-2">
-                      {[1, 2].map((level) => {
-                        const active = current >= level;
-                        return (
-                          <button
-                            key={level}
-                            type="button"
-                            aria-pressed={active}
-                            aria-label={`${skill.label.es} · ${t.level || 'Nivel'} ${level}`}
-                            disabled={level === 2 && current === 0}
-                            onClick={() => apply(setHeroSkill(heroId, skill.key, current === level ? level - 1 : level))}
-                            className={`relative flex h-7 w-7 rotate-45 items-center justify-center rounded-sm border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 disabled:opacity-30 ${active ? 'border-white' : 'border-slate-500 bg-slate-900'}`}
-                            style={active ? { backgroundColor: color } : undefined}
-                          >
-                            <span className="absolute inset-0 flex -rotate-45 items-center justify-center text-[0.55rem] font-bold text-white">{level}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-
-              <div className="rounded-lg border border-slate-700 bg-slate-800/60 p-1.5">
-                <p className="flex items-center gap-1 text-[0.65rem] font-semibold text-slate-200">
-                  <GiDungeonGate size={13} aria-hidden="true" className="shrink-0 text-rose-300" />
-                  <span className="truncate">{t.dungeonRole || 'Rol de mazmorra'}</span>
-                </p>
-                <div className="mt-1.5 flex gap-2">
-                  {[1, 2].map((level) => {
-                    const current = extras.habilidades?.dungeon?.nivel || 0;
-                    const active = current >= level;
-                    const color = CUBE_COLOR_BY_KEY[extras.habilidades?.dungeon?.color || 'amarillo'];
-                    return (
-                      <button
-                        key={level}
-                        type="button"
-                        aria-pressed={active}
-                        aria-label={`${t.dungeonRole || 'Rol de mazmorra'} · ${t.level || 'Nivel'} ${level}`}
-                        disabled={level === 2 && current === 0}
-                        onClick={() => apply(setHeroSkill(heroId, 'dungeon', current === level ? level - 1 : level))}
-                        className={`relative flex h-7 w-7 rotate-45 items-center justify-center rounded-sm border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 disabled:opacity-30 ${active ? 'border-white' : 'border-slate-500 bg-slate-900'}`}
-                        style={active ? { backgroundColor: color } : undefined}
-                      >
-                        <span className="absolute inset-0 flex -rotate-45 items-center justify-center text-[0.55rem] font-bold text-white">{level}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="mt-1.5 flex gap-1">
-                  {DUNGEON_SKILL_COLORS.map((color) => {
-                    const selected = (extras.habilidades?.dungeon?.color || 'amarillo') === color;
-                    return (
-                      <button
-                        key={color}
-                        type="button"
-                        aria-pressed={selected}
-                        aria-label={`${t.dungeonColor || 'Color del cubo'}: ${color}`}
-                        onClick={() => apply(setDungeonSkillColor(heroId, color))}
-                        className={`h-4 w-4 rounded-full border transition ${selected ? 'border-white ring-2 ring-white/70' : 'border-slate-500'}`}
-                        style={{ backgroundColor: CUBE_COLOR_BY_KEY[color] }}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Capacidades de clase: nombre libre y dos niveles; el 2 exige el 1 */}
+          {/* Capacidades de clase: nombre libre y tres rombos; el 2 y el 3 exigen el 1 */}
           <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
             <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
               {t.classAbilities || 'Capacidades de clase'}
             </p>
             <div className="space-y-1.5">
               {[0, 1, 2].map((index) => {
-                const capacidad = extras.capacidadesClase?.[index] || { nombre: '', nivel: 0 };
+                const capacidad = extras.capacidadesClase?.[index] || { nombre: '', niveles: [false, false, false] };
                 return (
                   <div key={index} className="flex items-center gap-2">
                     <input
@@ -586,19 +596,20 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                       className="min-h-9 min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-900 px-2 text-xs text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
                     />
                     <div className="flex shrink-0 gap-1.5">
-                      {[1, 2].map((level) => {
-                        const active = capacidad.nivel >= level;
+                      {[1, 2, 3].map((level) => {
+                        const active = Boolean(capacidad.niveles?.[level - 1]);
+                        const locked = level > 1 && !capacidad.niveles?.[0];
                         return (
                           <button
                             key={level}
                             type="button"
                             aria-pressed={active}
                             aria-label={`${t.ability || 'Capacidad'} ${index + 1} · ${t.level || 'Nivel'} ${level}`}
-                            disabled={level === 2 && capacidad.nivel === 0}
-                            onClick={() => apply(setCapacidadNivel(heroId, index, capacidad.nivel === level ? level - 1 : level))}
-                            className={`relative flex h-7 w-7 rotate-45 items-center justify-center rounded-sm border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 disabled:opacity-30 ${active ? 'border-amber-200 bg-amber-500' : 'border-slate-500 bg-slate-900'}`}
+                            disabled={locked}
+                            onClick={() => apply(toggleCapacidadNivel(heroId, index, level))}
+                            className={`relative flex h-6 w-6 rotate-45 items-center justify-center rounded-sm border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 disabled:opacity-30 ${active ? 'border-amber-200 bg-amber-500' : 'border-slate-500 bg-slate-900'}`}
                           >
-                            <span className="absolute inset-0 flex -rotate-45 items-center justify-center text-[0.7rem] leading-none text-slate-950">★</span>
+                            <span className="absolute inset-0 flex -rotate-45 items-center justify-center text-[0.65rem] leading-none text-slate-950">★</span>
                           </button>
                         );
                       })}

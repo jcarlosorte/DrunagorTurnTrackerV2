@@ -67,11 +67,11 @@ export const emptyHeroExtras = (heroId) => {
       wisdom: 0,
       dungeon: { nivel: 0, color: 'amarillo' },
     },
-    /** Tres capacidades de clase con nombre libre y dos niveles. */
+    /** Tres capacidades de clase con nombre libre y tres niveles. */
     capacidadesClase: [
-      { nombre: '', nivel: 0 },
-      { nombre: '', nivel: 0 },
-      { nombre: '', nivel: 0 },
+      { nombre: '', niveles: [false, false, false] },
+      { nombre: '', niveles: [false, false, false] },
+      { nombre: '', niveles: [false, false, false] },
     ],
     /** Objetos guardados en el campamento. */
     almacen: [],
@@ -112,8 +112,13 @@ function normalizeCapacidades(raw, base) {
     const nombre = isPlainObject(entry) && typeof entry.nombre === 'string'
       ? entry.nombre.slice(0, 40)
       : '';
-    const nivel = isPlainObject(entry) ? clampSkillLevel(entry.nivel) : 0;
-    return { nombre, nivel };
+    const legacyNivel = isPlainObject(entry) ? Math.max(0, Math.min(2, Number(entry.nivel) || 0)) : 0;
+    const niveles = Array.isArray(entry?.niveles)
+      ? [0, 1, 2].map((level) => Boolean(entry.niveles[level]))
+      : [legacyNivel >= 1, legacyNivel >= 2, false];
+    // Los rombos 2 y 3 exigen el 1.
+    if (!niveles[0]) return { nombre, niveles: [false, false, false] };
+    return { nombre, niveles };
   });
 }
 
@@ -369,28 +374,10 @@ export function recobrarCubos(heroId) {
 }
 
 /**
- * Reinicio de ficha: quita estados, estados alterados y trauma/maldición, y
- * recobra todos los cubos de acción. La vida y el equipo se conservan.
+ * Reinicio de ficha: vida al máximo, sin estados ni estados alterados y cubos
+ * recobrados. No toca habilidades, capacidades, almacén ni equipo.
  */
 export function resetHero(heroId) {
-  const current = getHeroExtras(heroId);
-  const cubos = Object.fromEntries(
-    CUBE_KEYS.map((key) => [key, current.cubosMax?.[key] ?? 0]),
-  );
-  return patchHeroExtras(heroId, {
-    estados: [],
-    estadosAlterados: [],
-    cubos,
-    trauma: 0,
-    maldicion: 0,
-  });
-}
-
-/**
- * Reinicio de partida: como `resetHero`, pero además deja la vida al máximo.
- * No toca habilidades, capacidades, almacén ni equipo.
- */
-export function resetHeroForNewGame(heroId) {
   const current = getHeroExtras(heroId);
   const cubos = Object.fromEntries(
     CUBE_KEYS.map((key) => [key, current.cubosMax?.[key] ?? 0]),
@@ -403,6 +390,11 @@ export function resetHeroForNewGame(heroId) {
     trauma: 0,
     maldicion: 0,
   });
+}
+
+/** Reinicio de partida: mismo comportamiento que `resetHero`. */
+export function resetHeroForNewGame(heroId) {
+  return resetHero(heroId);
 }
 
 /**
@@ -469,15 +461,18 @@ export function setCapacidadNombre(heroId, index, nombre) {
   return patchHeroExtras(heroId, { capacidadesClase });
 }
 
-/** Los niveles de capacidad son 0-2; el 2 solo se alcanza desde el 1. */
-export function setCapacidadNivel(heroId, index, nivel) {
+/** Alterna un rombo (1-3) de una capacidad; el 2 y el 3 exigen el 1. */
+export function toggleCapacidadNivel(heroId, index, level) {
   const current = getHeroExtras(heroId);
-  if (index < 0 || index > 2) return current;
-  const next = Math.max(0, Math.min(MAX_SKILL_LEVEL, Number(nivel) || 0));
+  const target = Number(level) - 1;
+  if (index < 0 || index > 2 || target < 0 || target > 2) return current;
   const capacidadesClase = current.capacidadesClase.map((capacidad, i) => {
     if (i !== index) return capacidad;
-    if (next === 2 && capacidad.nivel === 0) return capacidad;
-    return { ...capacidad, nivel: next };
+    const niveles = [...capacidad.niveles];
+    if (target > 0 && !niveles[0]) return capacidad;
+    niveles[target] = !niveles[target];
+    if (!niveles[0]) return { ...capacidad, niveles: [false, false, false] };
+    return { ...capacidad, niveles };
   });
   return patchHeroExtras(heroId, { capacidadesClase });
 }
