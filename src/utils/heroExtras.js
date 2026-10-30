@@ -301,6 +301,24 @@ export function recobrarCubos(heroId) {
   return patchHeroExtras(heroId, { cubos });
 }
 
+/**
+ * Reinicio de ficha: quita estados, estados alterados y trauma/maldición, y
+ * recobra todos los cubos de acción. La vida y el equipo se conservan.
+ */
+export function resetHero(heroId) {
+  const current = getHeroExtras(heroId);
+  const cubos = Object.fromEntries(
+    CUBE_KEYS.map((key) => [key, current.cubosMax?.[key] ?? 0]),
+  );
+  return patchHeroExtras(heroId, {
+    estados: [],
+    estadosAlterados: [],
+    cubos,
+    trauma: 0,
+    maldicion: 0,
+  });
+}
+
 export function setHeroEquipment(heroId, slot, value) {
   const current = getHeroExtras(heroId);
   return patchHeroExtras(heroId, { equipo: { ...current.equipo, [slot]: value } });

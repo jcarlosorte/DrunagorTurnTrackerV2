@@ -2,7 +2,7 @@ import React, { useState, useEffect, useId, useRef } from 'react';
 import { FiInfo } from "react-icons/fi";
 import { useLanguage } from '@/context/LanguageContext';
 import useFocusTrap from '@/hooks/useFocusTrap';
-import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
+import { ESTADOS_ALTERADOS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRunes';
 import { useGame } from '@/context/GameContext';
 import { GiHealthPotion, GiRunningNinja, GiSwordClash, GiShieldReflect, GiSteeltoeBoots, GiBloodySword, GiArcheryTarget, GiMoebiusTrefoil } from "react-icons/gi";
@@ -492,7 +492,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
           <div className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900/60 p-2">
             <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
             <div className="flex flex-wrap items-stretch justify-center gap-1">
-            {ESTADOS_ALTERADOS
+            {getEnemyStatusCatalog()
               .filter((config) => config.mostrar === 'si')
               .filter((config) => !todasInmunidades?.includes(config.id) && !(todasInmunidades?.includes('GRANDE') && ['DERRIBO_I', 'ATURDIMIENTO_I'].includes(config.id)))
               .map((estadoConfig) => {

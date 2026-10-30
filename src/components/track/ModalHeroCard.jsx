@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import useFocusTrap from '@/hooks/useFocusTrap';
 import { useLanguage } from '@/context/LanguageContext';
 import { HEROES } from '@/data/heroes';
-import { ESTADOS_ALTERADOS, INMUNIDADES } from '@/data/estadosAlterados';
+import { ESTADOS_ALTERADOS, INMUNIDADES, getHeroStatusCatalog } from '@/data/estadosAlterados';
 import {
   AURAS,
   CONSECUENCIAS,
@@ -10,8 +10,9 @@ import {
   getHeroEffectName,
   getHeroEffectDescription,
 } from '@/data/heroes/index';
-import { CUBE_META, MOD_STATS, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, setEquipmentMod, setHeroEquipment, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
+import { CUBE_META, MOD_STATS, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, resetHero, setEquipmentMod, setHeroEquipment, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 const EQUIPMENT = [
   { key: 'arma', es: 'Arma', en: 'Weapon', mod: true },
@@ -54,6 +55,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
   const [extras, setExtras] = useState(() => getHeroExtras(heroId));
   const [picker, setPicker] = useState(null);
   const [recobrado, setRecobrado] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useFocusTrap(dialogRef, true);
 
@@ -86,12 +88,13 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
 
   // Iconos de estado alterado (quemadura, veneno, escudo…), igual que en enemigos.
   const estadosActivos = (extras.estadosAlterados || []).filter((estado) => estado.count > 0);
-  const estadosAlteradosDisponibles = ESTADOS_ALTERADOS.filter((item) => item.mostrar === 'si');
+  const estadosAlteradosDisponibles = getHeroStatusCatalog(heroId);
   const countAlterado = (id) => (extras.estadosAlterados || []).find((item) => item.id === id)?.count || 0;
   // Inmunidades: solo si los datos del héroe las definen.
   const inmunidades = Array.isArray(hero?.inmunidad) ? hero.inmunidad : [];
 
   return (
+    <>
     <div className="layer-modal fixed inset-0 flex items-center justify-center bg-black/70 p-4" role="presentation">
       <div
         role="dialog"
@@ -606,8 +609,15 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
           </section>
         </div>
 
-        <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-slate-700 bg-slate-950/70 px-3 py-2">
-          <span className="truncate text-[0.7rem] text-slate-400">{t.managementHint || 'Se guarda con la partida'}</span>
+        <footer className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-slate-700 bg-slate-950/70 px-3 py-2">
+          <button
+            type="button"
+            onClick={() => setConfirmReset(true)}
+            className="min-h-9 rounded-lg border border-rose-800/70 bg-rose-950/50 px-3 text-xs font-semibold text-rose-100 hover:bg-rose-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+          >
+            ↺ {t.resetHero || 'Reiniciar héroe'}
+          </button>
+          <span className="hidden truncate text-[0.7rem] text-slate-400 sm:inline">{t.managementHint || 'Se guarda con la partida'}</span>
           <button
             ref={closeRef}
             type="button"
@@ -619,5 +629,19 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
         </footer>
       </div>
     </div>
+
+    <ConfirmDialog
+      open={confirmReset}
+      title={t.resetHero || 'Reiniciar héroe'}
+      description={t.resetHeroConfirm || 'Se quitarán los estados, los estados alterados y el trauma/maldición, y se recobrarán los cubos de acción.'}
+      confirmLabel={t.resetHero || 'Reiniciar'}
+      cancelLabel={translations.trackerSelect?.cancel || 'Cancelar'}
+      onCancel={() => setConfirmReset(false)}
+      onConfirm={() => {
+        apply(resetHero(heroId));
+        setConfirmReset(false);
+      }}
+    />
+    </>
   );
 }

@@ -829,6 +829,27 @@ Menú      4 acciones + idioma · Escape cierra
 Pie       GitHub, Instagram y v1.0.0 · hash visibles
 ```
 
+### 22.ª tanda — Fase B: clases, recursos y reinicio de héroe
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Clases** | Mapa normalizado profesión → clase (Maga/Mago, Bárbara/Bárbaro, Paladina/Paladín…) con etiquetas bilingües | `data/heroClasses.js` |
+| **Recursos** | Concentración (todos), Ki (monje), Furia (bárbaro) y Fruto de vida (druida), máximo 4, ligados a la clase y con icono propio | `data/estadosAlterados.js`, assets |
+| **Enemigos** | Su paleta y su estado inicial excluyen los recursos de héroe | `ModalEnemyCard.jsx`, `InitTracker.jsx` |
+| **Reinicio de héroe** | Botón con confirmación: quita estados y estados alterados, trauma/maldición a 0 y cubos al máximo; la vida no cambia | `ModalHeroCard.jsx`, `heroExtras.js` |
+| **Guardado** | Los recursos entran en `heroExtras` y en el saneado de importación existente | `heroSanitize.js` |
+| **Pruebas** | 8 unitarios nuevos (clases, catálogos, reinicio) y 3 E2E (Sun/Katarina, iconos en carta, reinicio) | tests |
+
+**Medición**
+
+```text
+Unit       80 tests
+E2E        37/37
+Sun        Concentración + Ki · sin Furia ni Fruto
+Katarina   Furia · sin Ki
+Reinicio   estadosAlterados [] · trauma/maldición 0 · cubos = máximos · vida intacta
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

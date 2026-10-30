@@ -25,7 +25,9 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
   aparición, llaves rúnicas y rescate.
 - **Escenario**: monstruo de escenario y cartas de incursión y defensa.
 - **Héroes**: vista ampliada con vida, estados alterados, cubos de acción y equipo;
-  edición de estados, vida y dados.
+  edición de estados, vida y dados, y reinicio de la ficha (estados, recursos y cubos).
+- **Recursos por clase**: Concentración para todos, Ki del monje, Furia del bárbaro y
+  Fruto de vida del druida, con un máximo de 4 fichas cada uno.
 - **Guardados**: autoguardado, hasta 10 partidas con nombre, exportación e
   importación JSON (partida completa, solo configuración o solo track).
 - **Bilingüe** español/inglés, con detección y selector de idioma.
@@ -142,8 +144,8 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      72 tests
-e2e       34 tests
+unit      80 tests
+e2e       37 tests
 build     OK
 ```
 

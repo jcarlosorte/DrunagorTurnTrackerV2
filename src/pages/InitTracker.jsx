@@ -11,7 +11,7 @@ import { ENEMIES } from '@/data/enemies';
 import { RUNAS, ASALTO } from '@/data/runas';
 import { INCURSION } from '@/data/incursion';
 import { DEFENSA } from '@/data/defensa';
-import { ESTADOS_ALTERADOS, OTROS } from '@/data/estadosAlterados';
+import { ESTADOS_ALTERADOS, OTROS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { CARTAS_COMANDANTE, CARTAS_OVERLORD, CARTAS_JEFE, CARTAS_HEROE_CAIDO, ASALTO_GUSANO, ACECHO, IRA } from '@/data/cartasEspeciales';
 import { TURN_ORDER } from '@/data/turnOrder';
 import { ENEMY_RING_COLORS } from '@/data/enemyRings';
@@ -637,7 +637,7 @@ const InitTracker = () => {
     const uuid = createId();
     const isBig = selected.size === 'grande';
     const colorId = assignColorToEnemy(uuid, isBig);
-    const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
+    const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     showToast(selected);
     placeEnemy({
       enemy: {
@@ -685,7 +685,7 @@ const InitTracker = () => {
     const uuid = forcedUUID || createId();
     const isBig = selected.size === 'grande';
     const colorId = forcedColorId === 'noColor' ? undefined : assignColorToEnemy(uuid, isBig, forcedColorId);
-    const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
+    const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     if (selected.categoria === 'comandante') {
       const createAndPlaceCommander = (pcValue = null) => {
         const totalVida = commanderNoPc.includes(selected.id)
@@ -962,7 +962,7 @@ const InitTracker = () => {
     const uuid = createId();
     const isBig = selected.size === 'grande';
     const colorId = assignColorToEnemy(uuid, isBig);
-    const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
+    const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     openCommanderPCModal((pcValue) => {
       const totalVida = selected.vida * (pcValue + numHeroes);
       const runeIndex = runesColorMap[selected.rune];
@@ -1003,7 +1003,7 @@ const InitTracker = () => {
     const enemyColor = enemy.color;
     const enemyCat = enemy.categoria;
     const shuffled = [...CARTAS_COMANDANTE].sort(() => 0.5 - Math.random());
-    const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
+    const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     const selected = shuffled.slice(0, numHeroes);
     const nombreCommander = getEnemyName(enemyId, enemyColor);
     const nuevas = selected.map(carta => ({
@@ -1040,7 +1040,7 @@ const InitTracker = () => {
     const enemyColor = enemy.color;
     const enemyCat = enemy.categoria;
     const shuffled = [...CARTAS_OVERLORD].sort(() => 0.5 - Math.random());
-    const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
+    const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     const selected = shuffled.slice(0, numHeroes);
     const nombreOverlord = getEnemyName(enemyId, enemyColor);
     const nuevas = selected.map(carta => ({
@@ -1081,7 +1081,7 @@ const InitTracker = () => {
     const enemyColor = enemy.color;
     const enemyCat = enemy.categoria;
     const nombreHeroe = getEnemyName(enemyId, enemyColor);
-    const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
+    const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     const nuevasCartas = [];
   
     CARTAS_HEROE_CAIDO.forEach(carta => {
@@ -1134,7 +1134,7 @@ const InitTracker = () => {
     const cartasJefe = CARTAS_JEFE.filter(c => c.idJefe === enemyId);
   
     // Estados iniciales
-    const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
+    const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
   
     const nombreBoss = getEnemyName(enemyId, enemyColor);
   
@@ -1177,7 +1177,7 @@ const InitTracker = () => {
 
 
   const handleAddRuneCard = (runeCard, timeToken) => {
-    const initialStates = ESTADOS_ALTERADOS.map(estado => ({ id: estado.id, count: 0 }));
+    const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     if (timeToken) {
       const idxTiempo = initialStates.findIndex(e => e.id === "TIEMPO");
       initialStates[idxTiempo].count = 2;
