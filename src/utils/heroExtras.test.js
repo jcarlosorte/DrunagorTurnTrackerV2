@@ -5,6 +5,7 @@ import {
   patchHeroExtras,
   removeAlmacenItem,
   resetHero,
+  resetHeroForNewGame,
   setCapacidadNivel,
   setDungeonSkillColor,
   setHeroSkill,
@@ -73,5 +74,28 @@ describe('habilidades y capacidades', () => {
 
     const removed = removeAlmacenItem('tork', added.almacen.indexOf('Poción'));
     expect(removed.almacen).not.toContain('Poción');
+  });
+});
+
+describe('resetHeroForNewGame', () => {
+  it('deja la vida al máximo y limpia estados y cubos', () => {
+    patchHeroExtras('willow', {
+      vida: 3,
+      vidaMax: 12,
+      estados: [{ id: 'AURA_X', count: 1 }],
+      estadosAlterados: [{ id: 'FRUTO_DE_VIDA', count: 2 }],
+      cubos: { amarillo: 0, rojo: 0, verde: 0, azul: 0 },
+      trauma: 2,
+      maldicion: 1,
+    });
+
+    const after = resetHeroForNewGame('willow');
+
+    expect(after.vida).toBe(12);
+    expect(after.estados).toEqual([]);
+    expect(after.estadosAlterados).toEqual([]);
+    expect(after.trauma).toBe(0);
+    expect(after.maldicion).toBe(0);
+    expect(after.cubos).toEqual(after.cubosMax);
   });
 });

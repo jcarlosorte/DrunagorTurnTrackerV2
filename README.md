@@ -31,6 +31,9 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Habilidades y capacidades**: rombos de habilidad por nivel que añaden cubos del
   color correspondiente (incluido el rol de mazmorra), tres capacidades de clase con
   nombre libre y almacén de objetos del campamento.
+- **Campamento del grupo**: objetos compartidos (hasta 30) que se guardan con la partida.
+- **Reinicio de partida por capas**: turno, historial y enemigos, con opción de
+  reiniciar runas y de restablecer héroes (vida, estados y cubos).
 - **Guardados**: autoguardado, hasta 10 partidas con nombre, exportación e
   importación JSON (partida completa, solo configuración o solo track).
 - **Bilingüe** español/inglés, con detección y selector de idioma.
@@ -147,8 +150,8 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      85 tests
-e2e       39 tests
+unit      86 tests
+e2e       41 tests
 build     OK
 ```
 
@@ -192,9 +195,8 @@ Vite solo publica variables `VITE_*`; no colocar secretos en ellas.
 
 ## Roadmap
 
-- **Compañeros y mascotas** con turno propio y vista de vida/estados.
-- **Reinicio de partida por capas** (turno, runas, héroes…).
-- **Campamento del grupo** (objetos compartidos aparte del almacén por héroe).
+- **Compañeros y mascotas** (pendiente de datos): compañero y mascota a la vez, tras
+  el héroe en orden de aparición y una sola vez por criatura.
 - **Contenido de Apocalipsis** para las reglas 2.0 (el selector 1.5/2.0 ya existe).
 - **Sincronización multi-dispositivo** opcional (requiere backend).
 

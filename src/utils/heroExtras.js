@@ -387,6 +387,25 @@ export function resetHero(heroId) {
 }
 
 /**
+ * Reinicio de partida: como `resetHero`, pero además deja la vida al máximo.
+ * No toca habilidades, capacidades, almacén ni equipo.
+ */
+export function resetHeroForNewGame(heroId) {
+  const current = getHeroExtras(heroId);
+  const cubos = Object.fromEntries(
+    CUBE_KEYS.map((key) => [key, current.cubosMax?.[key] ?? 0]),
+  );
+  return patchHeroExtras(heroId, {
+    vida: current.vidaMax,
+    estados: [],
+    estadosAlterados: [],
+    cubos,
+    trauma: 0,
+    maldicion: 0,
+  });
+}
+
+/**
  * Cambia el nivel (0-2) de una habilidad y ajusta los cubos de acción: cada
  * nivel elegido añade un cubo del color de la categoría (o del elegido en la
  * habilidad de mazmorra).

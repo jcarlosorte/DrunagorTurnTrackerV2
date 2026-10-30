@@ -11,6 +11,13 @@ const GameContext = createContext();
 const defaultRunes = { rojo: 0, azul: 0, verde: 0, naranja: 0, gris: 0 };
 const defaultDiscardedTiles = { rojo: [], azul: [], verde: [], naranja: [], gris: [] };
 const createInitialTiles = () => FICHAS.map((f) => ({ ...f, uuid: createId() }));
+const CAMP_LIMIT = 30;
+
+const normalizeCamp = (raw) => (
+  Array.isArray(raw)
+    ? raw.filter((item) => typeof item === 'string' && item.trim()).slice(0, CAMP_LIMIT).map((item) => item.slice(0, 60))
+    : []
+);
 
 export const GameProvider = ({ children }) => {
   const persisted = readJsonStorage('gameState', {}, isPlainObject);
@@ -31,6 +38,7 @@ export const GameProvider = ({ children }) => {
   const [aldeanoDeck, setAldeanoDeck] = useState(() => persisted.aldeanoDeck || []);
   const [errantesDeck, setErrantesDeck] = useState(() => persisted.errantesDeck || []);
   const [codigosPilas, setCodigosPilas] = useState(() => persisted.codigosPilas || {});
+  const [campamento, setCampamento] = useState(() => normalizeCamp(persisted.campamento));
   const [tileWarning, setTileWarning] = useState(null);
   const [tileToasts, setTileToasts] = useState([]);
 
@@ -60,12 +68,13 @@ export const GameProvider = ({ children }) => {
       aldeanoDeck,
       errantesDeck,
       codigosPilas,
+      campamento,
     });
   }, [
     runes, discardedTiles, pilaDeRunas, pilas, pilasConcentrada,
     contadorPilas, contadorPilasConcentradas, availableTiles, usedTiles,
     scenarioMonster, spawnPoints, controlPoints, runeKeys, rescue,
-    aldeanoDeck, errantesDeck, codigosPilas,
+    aldeanoDeck, errantesDeck, codigosPilas, campamento,
   ]);
 
   const handleCodigoChange = (pilaId, nuevoCodigo) => {
@@ -787,6 +796,18 @@ export const GameProvider = ({ children }) => {
     return fullCardData;
   };
 
+  const addCampItem = (text) => {
+    const value = String(text || '').trim().slice(0, 60);
+    if (!value) return;
+    setCampamento((prev) => (prev.length >= CAMP_LIMIT ? prev : [...prev, value]));
+  };
+
+  const removeCampItem = (index) => {
+    setCampamento((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const clearCamp = () => setCampamento([]);
+
   const handleTileDraw = (tile) => {
     if (!tile) return;
     showTileToast(tile, 'add');
@@ -836,7 +857,11 @@ export const GameProvider = ({ children }) => {
         setRuneKeys, runeKeys, initializeRuneKeys, removeRuneKey,
         setRescue, rescue, initializeRescue, removeRescue,
         initializeDecks,
-        drawCardFromDeck
+        drawCardFromDeck,
+        campamento,
+        addCampItem,
+        removeCampItem,
+        clearCamp,
       }}
     >
       {children}

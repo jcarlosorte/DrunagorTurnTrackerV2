@@ -873,6 +873,33 @@ Almacén    persiste tras recargar
 Modal      1024×920 · 11 secciones
 ```
 
+### 24.ª tanda — Fase E: campamento del grupo y reinicio de partida
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Campamento** | Objetos compartidos del grupo (hasta 30) en un modal del menú de juego; viven en `gameState` y viajan en los guardados | `GameContext.jsx`, `CampDialog.jsx` |
+| **Reinicio por capas** | Siempre reinicia turno, historial y enemigos; dos casillas opcionales para runas (cartas, fichas, pilas, mecánicas) y héroes (vida, estados, recursos, cubos) | `InitTracker.jsx`, `RestartGameDialog.jsx` |
+| **Menú de juego** | Nuevas entradas «Campamento» y «Reiniciar partida» separadas de la navegación | `TopMenu.jsx` |
+| **Pruebas** | Un unitario (`resetHeroForNewGame`) y dos E2E: persistencia del campamento y reinicio completo | tests |
+
+**Medición**
+
+```text
+Unit       86 tests
+E2E        41/41
+Campamento persiste tras recargar
+Reinicio   gameLog 0 · enemigos 0 · pilas/fichas 0 · vida al máximo · cubos al máximo
+```
+
+### Fase D — compañeros y mascotas (pendiente de datos)
+
+Reglas confirmadas para cuando lleguen el listado y las imágenes:
+
+- Un héroe puede llevar **compañero y mascota a la vez**, sin límite de ninguno.
+- Actúan **después del héroe**, en el **orden de aparición**, y **solo una vez** por compañero/mascota.
+- Cada uno tendrá vida y estados alterados propios; el resto de campos (movimiento, ataque, capacidades, tipo, expansión) saldrá del catálogo.
+- Falta: listado completo (`id`, nombre, estado, vida, movimiento, ataque, tipo_ataque, capacidades, tipo y expansión), imágenes y confirmar si el turno del compañero entra en el historial.
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

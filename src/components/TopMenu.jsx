@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { useSavesUi } from '@/context/SavesUiContext';
-import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker } from 'react-icons/gi';
+import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker, GiWoodenCrate } from 'react-icons/gi';
 import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { ENEMIES } from '@/data/enemies';
@@ -29,7 +29,9 @@ const TopMenu = ({
   onAddManual,
   behaviors,
   onSelectRuneCard,
-  onTileDraw
+  onTileDraw,
+  onOpenRestart,
+  onOpenCamp,
 }) => {
 
   const { translations } = useLanguage();
@@ -326,6 +328,25 @@ const TopMenu = ({
                 >
                   <GiGearHammer size={18} aria-hidden="true" />
                   {t.backToConfig || 'Volver a configuración'}
+                </button>
+                <div className="my-1 border-t border-slate-700" role="separator" />
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { setGameMenuOpen(false); onOpenCamp?.(); }}
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  <GiWoodenCrate size={18} aria-hidden="true" />
+                  {t.campMenu || 'Campamento'}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { setGameMenuOpen(false); onOpenRestart?.(); }}
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-red-200 hover:bg-red-950/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
+                >
+                  <GiTrashCan size={18} aria-hidden="true" />
+                  {t.restartMenu || 'Reiniciar partida'}
                 </button>
                 <div className="mt-1 border-t border-slate-700 px-2 py-2">
                   <LanguageMenu label={savesT.language || 'Idioma'} />

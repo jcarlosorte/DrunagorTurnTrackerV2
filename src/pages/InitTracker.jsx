@@ -43,9 +43,9 @@ import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 
 import { createId } from '@/utils/id';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
-import { appendGameLog } from '@/utils/gameLog';
+import { appendGameLog, clearGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
-import { addHeroTurnTime, stepHeroEstadoAlterado } from '@/utils/heroExtras';
+import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import { findNextActiveEntity, indexOfEntityInOrder } from '@/utils/turnOrder';
 import { findEnemyVariant } from '@/utils/enemyVariant';
@@ -61,6 +61,8 @@ import { classifyScenarioToast } from '@/utils/toastKind';
 import TrackSlot from '@/components/track/TrackSlot';
 import TurnCarousel from '@/components/track/TurnCarousel';
 import BossBanner from '@/components/track/BossBanner';
+import CampDialog from '@/components/track/CampDialog';
+import RestartGameDialog from '@/components/track/RestartGameDialog';
 import { boardSlotHeightFrom } from '@/components/track/trackLayout';
 
 
@@ -89,7 +91,7 @@ const toSet = (value) => new Set(Array.isArray(value) ? value : []);
 
 const InitTracker = () => {
   const { trackerData, setTrackerData } = useTracker();
-  const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, acechoActivo, invadidosActivo } = useInitEnemies();
+  const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetEnemySession, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, acechoActivo, invadidosActivo, desactivaAcecho, desactivaHuesped, desactivaOscuridad, desactivaAsalto, desactivaInvadidos } = useInitEnemies();
   const { translations } = useLanguage();
   const { selectedExpansions } = useExpansions();
   const ti = translations.trackerInit || {};
@@ -118,8 +120,10 @@ const InitTracker = () => {
 
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
+  const [isRestartOpen, setIsRestartOpen] = useState(false);
+  const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, removeSpawnPoint, controlPoints, removeControlPoint, runeKeys, removeRuneKey, rescue, removeRescue, pilas, pilasConcentrada, activarPilaConcentrada, activarPila, codigosPilas, handleCodigoChange, addTileToPila, addTileToPilaConcentrada, initializeDecks, drawCardFromDeck, removeTileFromPila, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, removeSpawnPoint, controlPoints, removeControlPoint, runeKeys, removeRuneKey, rescue, removeRescue, pilas, pilasConcentrada, activarPilaConcentrada, activarPila, codigosPilas, handleCodigoChange, addTileToPila, addTileToPilaConcentrada, initializeDecks, drawCardFromDeck, removeTileFromPila, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack, resetGameState } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -3269,6 +3273,31 @@ const InitTracker = () => {
 
     return { index, label, count: names.length, names: names.join(' · ') };
   });
+
+  const handleRestartGame = ({ runas = false, heroes = false } = {}) => {
+    resetCursor();
+    clearGameLog();
+    resetEnemySession();
+
+    if (runas) {
+      resetPlacedRunes();
+      resetGameState();
+      desactivaAcecho();
+      desactivaHuesped();
+      desactivaOscuridad();
+      desactivaAsalto();
+      desactivaInvadidos();
+    }
+
+    if (heroes) {
+      (trackerData.heroes || []).forEach((heroId) => resetHeroForNewGame(heroId));
+      refreshHeroExtras();
+    }
+
+    setIsRestartOpen(false);
+    toast.success(ti.restartDone || 'Partida reiniciada.');
+  };
+
   return ( 
       <PageTransition>
        
@@ -3283,6 +3312,8 @@ const InitTracker = () => {
                 behaviors={behaviors}
                 onSelectRuneCard={handleAddRuneCard}
                 onTileDraw={handleTileDraw}
+                onOpenRestart={() => setIsRestartOpen(true)}
+                onOpenCamp={() => setIsCampOpen(true)}
               />
             )}
 
@@ -4024,6 +4055,12 @@ const InitTracker = () => {
             onChanged={refreshHeroExtras}
           />
         )}
+        <RestartGameDialog
+          open={isRestartOpen}
+          onClose={() => setIsRestartOpen(false)}
+          onConfirm={handleRestartGame}
+        />
+        <CampDialog open={isCampOpen} onClose={() => setIsCampOpen(false)} />
         <DiceRoller
           open={diceOpen}
           onClose={() => setDiceOpen(false)}
