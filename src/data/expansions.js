@@ -23,8 +23,13 @@ export const EXPANSIONS = [
       "undead_king_boss", "skeleton_archer", "dark_vampire", "rotten_flesh",
       "shadow_cultist", "executioner", "shadow_knight", "abomination"
     ],
-    companions: ["alyra", "koragg"],
-    pets: ["bliss", "gloomy"],
+    companions: [
+      "capitan_conner", "conner_desarmado", "lorelai_companion", "elros_companion",
+      "jaheen_companion", "janina", "janina_desarmada", "maya_companion",
+      "neil_mesick", "oliver_twist", "ronald_keinz", "simon_kiblisch",
+      "tharmagar_leal", "tharmagar_resentido", "heroe_renacido", "vorn_companion"
+    ],
+    pets: ["drumm", "bronx", "dewey_guss", "jokull", "luma", "monroe", "jinx"],
     roles: ['tank', 'support', 'dps', 'healer', 'control'],
     // Campos vacíos para otras expansiones o datos adicionales
     dungeonRoles: [],

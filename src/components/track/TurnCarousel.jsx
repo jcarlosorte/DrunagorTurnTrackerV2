@@ -1,5 +1,6 @@
 const TIPO_META = {
   hero: { icon: '🛡', label: 'Héroe', tone: 'border-sky-500/60 bg-sky-950/50' },
+  companion: { icon: '🐾', label: 'Compañero', tone: 'border-amber-500/60 bg-amber-950/50' },
   enemy: { icon: '👹', label: 'Enemigo', tone: 'border-red-500/60 bg-red-950/50' },
   rune: { icon: '🔮', label: 'Runa', tone: 'border-indigo-500/60 bg-indigo-950/50' },
 };

@@ -33,6 +33,9 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
   acción y el rol de mazmorra debajo de los cuatro, con color elegido al marcarlo; tres
   capacidades de clase de tres rombos cada una, con nombre libre, y almacén de objetos.
 - **Campamento del grupo**: objetos compartidos (hasta 30) que se guardan con la partida.
+- **Compañeros y mascotas**: 23 criaturas con ficha propia de vida y estados, sin límite
+  por héroe, con turno después de su héroe, en orden de aparición, e ilustración de su
+  carta. Solo aparecen las criaturas de las expansiones activas.
 - **Reinicio de partida por capas**: turno, historial y enemigos, con opción de
   reiniciar runas y de restablecer héroes (vida, estados y cubos).
 - **Guardados**: autoguardado, hasta 10 partidas con nombre, exportación e
@@ -97,6 +100,7 @@ src/
   data/             Catálogos: héroes, enemigos, runas, cartas…
   i18n/             Textos es/en
   assets/           Ilustraciones y variantes optimizadas
+    companions/     Cartas de compañeros y mascotas (WebP)
 tests/e2e/          Pruebas Playwright
 docs/               Arquitectura y seguridad
 scripts/            Build, imágenes y verificación visual
@@ -151,8 +155,8 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      86 tests
-e2e       43 tests
+unit      92 tests
+e2e       45 tests
 build     OK
 ```
 
@@ -196,8 +200,6 @@ Vite solo publica variables `VITE_*`; no colocar secretos en ellas.
 
 ## Roadmap
 
-- **Compañeros y mascotas** (pendiente de datos): compañero y mascota a la vez, tras
-  el héroe en orden de aparición y una sola vez por criatura.
 - **Contenido de Apocalipsis** para las reglas 2.0 (el selector 1.5/2.0 ya existe).
 - **Sincronización multi-dispositivo** opcional (requiere backend).
 

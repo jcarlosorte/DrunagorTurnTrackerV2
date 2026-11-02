@@ -913,14 +913,67 @@ Capacidad  tres rombos · 2 y 3 bloqueados sin el 1
 Orden      Clase: Maya, Elros, Jaheen, Vorn, Lorelai · Nombre: Elros, Jaheen, Lorelai, Maya, Vorn
 ```
 
-### Fase D — compañeros y mascotas (pendiente de datos)
+### 26.ª tanda — Fase D: compañeros y mascotas
 
-Reglas confirmadas para cuando lleguen el listado y las imágenes:
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Catálogo** | 23 criaturas (7 mascotas y 16 compañeros) con alias, subtipo, ataque, movimiento, vida y capacidades | `data/companions.js` |
+| **Asignación** | En la ficha del héroe, con selector por tipo y sin límite de compañeros ni mascotas | `ModalHeroCard.jsx` |
+| **Ficha** | Modal con ataque, movimiento, vida editable y estados alterados propios | `ModalCompanionCard.jsx` |
+| **Turno** | Se insertan tras su héroe en orden de aparición y actúan una vez por vuelta; el carrusel los muestra con icono propio | `utils/turnOrder.js`, `InitTracker.jsx` |
+| **Persistencia** | `trackerData.companions` guarda asignación, vida y estados; el reinicio de partida los restaura | `TrackerContext.jsx` |
+| **Pruebas** | 3 unitarios de orden y 2 E2E (asignación/persistencia y turno) | tests |
 
-- Un héroe puede llevar **compañero y mascota a la vez**, sin límite de ninguno.
-- Actúan **después del héroe**, en el **orden de aparición**, y **solo una vez** por compañero/mascota.
-- Cada uno tendrá vida y estados alterados propios; el resto de campos (movimiento, ataque, capacidades, tipo, expansión) saldrá del catálogo.
-- Falta: listado completo (`id`, nombre, estado, vida, movimiento, ataque, tipo_ataque, capacidades, tipo y expansión), imágenes y confirmar si el turno del compañero entra en el historial.
+**Medición**
+
+```text
+Unit       89 tests
+E2E        45/45
+Catálogo   23 criaturas
+Turno      Vorn → Drumm → Bronx (orden de aparición, una vez cada uno)
+Persistencia vida 0/1 y 1 estado tras recargar
+```
+
+> El stub anterior de `companions.js` (Alyra, Koragg, Sir Thorend, Jorgen, Nereida y Renz, sin datos) se retiró; la tabla nueva es la fuente.
+
+### 27.ª tanda — Assets de los PDF de compañeros y mascotas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Extracción** | 23 cartas recortadas de las fotos (16 compañeros en dos hojas y 7 mascotas), con coordenadas medidas sobre una rejilla | temporal |
+| **Assets** | WebP de 480 px de alto, esquinas redondeadas y transparencia; 0,41 MB en total | `src/assets/companions/` |
+| **Integración** | Imagen en la cabecera de la ficha y miniatura en la lista del héroe | `ModalCompanionCard.jsx`, `ModalHeroCard.jsx` |
+| **Pruebas** | 89 unitarios y 45 E2E sin cambios | |
+
+**Medición**
+
+```text
+Assets     23 WebP · 0,41 MB
+Tamaño     480 px de alto · alfa
+Build      24 WebP emitidos (23 + Apocalipsis)
+```
+
+> El recorte se hizo por coordenadas medidas (las fotos tienen perspectiva y sombras). `rembg` se probó para aislar la figura, pero dejaba restos del marco; se conserva la carta completa recortada, que es la que se usa en la app.
+
+### 28.ª tanda — Compañeros ligados a expansiones
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Catálogo** | Las 23 criaturas declaran `expansionId: 'base'` | `data/companions.js` |
+| **Expansiones** | `base` lista sus 16 compañeros y 7 mascotas; el resto queda vacío | `data/expansions.js` |
+| **Selector** | `getCompanionsForExpansions` filtra por las expansiones activas y avisa si no hay criaturas | `ModalHeroCard.jsx` |
+| **Futuro** | Una expansión nueva solo añade entradas con su `expansionId`; la UI no cambia | — |
+| **Pruebas** | 3 unitarios del filtro | tests |
+
+**Medición**
+
+```text
+Unit       92 tests
+E2E        45/45
+base       → 23 criaturas
+luccanor   → 0
+base+luccanor → 23
+```
 
 ### Pendiente / pospuesto
 

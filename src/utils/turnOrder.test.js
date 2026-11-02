@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findNextActiveEntity, indexOfEntityInOrder } from '@/utils/turnOrder';
+import { buildTurnOrder, findNextActiveEntity, indexOfEntityInOrder } from '@/utils/turnOrder';
 
 const ORDER = [
   { type: 'hero', role: 'defensor', index: 0 },
@@ -49,5 +49,33 @@ describe('findNextActiveEntity', () => {
   it('devuelve null sin entidades activas', () => {
     expect(findNextActiveEntity({ order: ORDER, startIndex: 0 })).toBeNull();
     expect(findNextActiveEntity({ order: [], startIndex: 0 })).toBeNull();
+  });
+});
+
+describe('compañeros y mascotas', () => {
+  const companions = [
+    { uid: 'c1', id: 'drumm', heroId: 'vorn', order: 1, vida: 1, vidaMax: 1 },
+    { uid: 'c2', id: 'bronx', heroId: 'vorn', order: 0, vida: 1, vidaMax: 1 },
+  ];
+
+  it('inserta cada criatura tras su héroe en orden de aparición', () => {
+    const order = buildTurnOrder(ORDER, companions, [hero]);
+
+    expect(order.map((step) => step.type)).toEqual([
+      'hero', 'companion', 'companion', 'enemy', 'hero', 'rune',
+    ]);
+    expect(order.slice(1, 3).map((step) => step.uid)).toEqual(['c2', 'c1']);
+  });
+
+  it('sin compañeros conserva el orden original', () => {
+    expect(buildTurnOrder(ORDER, [], [hero])).toBe(ORDER);
+  });
+
+  it('los encuentra y los indexa por uid', () => {
+    const order = buildTurnOrder(ORDER, companions, [hero]);
+    const entity = findNextActiveEntity({ order, startIndex: 1, companions });
+
+    expect(entity).toMatchObject({ uid: 'c2', type: 'companion', name: 'Bronx' });
+    expect(indexOfEntityInOrder(order, { uid: 'c1', type: 'companion' })).toBe(2);
   });
 });

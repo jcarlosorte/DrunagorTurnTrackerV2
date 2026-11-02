@@ -1,7 +1,7 @@
 // src/pages/InitTracker.jsx
 
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 
 import { RiArrowTurnBackLine, RiArrowTurnForwardLine } from "react-icons/ri";
 import { ToastContainer, toast } from 'react-toastify';
@@ -38,6 +38,7 @@ import BagStatusPanel from '@/components/track/BagStatusPanel';
 
 import HistoryPanel from '@/components/track/HistoryPanel';
 import ModalHeroCard from '@/components/track/ModalHeroCard';
+import ModalCompanionCard from '@/components/track/ModalCompanionCard';
 import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 
@@ -47,7 +48,8 @@ import { appendGameLog, clearGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
-import { findNextActiveEntity, indexOfEntityInOrder } from '@/utils/turnOrder';
+import { findNextActiveEntity, buildTurnOrder, indexOfEntityInOrder } from '@/utils/turnOrder';
+import { getCompanionName } from '@/data/companions';
 import { findEnemyVariant } from '@/utils/enemyVariant';
 import { resolveEntityLabel } from '@/utils/entityLabel';
 import { collectManualFacets, filterManualEnemies } from '@/utils/manualEnemyFilter';
@@ -91,6 +93,10 @@ const toSet = (value) => new Set(Array.isArray(value) ? value : []);
 
 const InitTracker = () => {
   const { trackerData, setTrackerData } = useTracker();
+  const effectiveTurnOrder = useMemo(
+    () => buildTurnOrder(TURN_ORDER, trackerData.companions || [], trackerData.placedHeroes || []),
+    [trackerData.companions, trackerData.placedHeroes],
+  );
   const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetEnemySession, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, acechoActivo, invadidosActivo, desactivaAcecho, desactivaHuesped, desactivaOscuridad, desactivaAsalto, desactivaInvadidos } = useInitEnemies();
   const { translations } = useLanguage();
   const { selectedExpansions } = useExpansions();
@@ -136,6 +142,7 @@ const InitTracker = () => {
   const [onPCConfirm, setOnPCConfirm] = useState(null);
   const [enemyEvolutions, setEnemyEvolutions] = useState(() => persistedSession.enemyEvolutions || []);
   const [selectedHeroId, setSelectedHeroId] = useState(null);
+  const [selectedCompanionUid, setSelectedCompanionUid] = useState(null);
   const [diceOpen, setDiceOpen] = useState(false);
   const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
@@ -2140,8 +2147,8 @@ const InitTracker = () => {
   
   useEffect(() => {
 
-    if (turnIndex < 0 || turnIndex >= TURN_ORDER.length) return;
-    const step = TURN_ORDER[turnIndex];
+    if (turnIndex < 0 || turnIndex >= effectiveTurnOrder.length) return;
+    const step = effectiveTurnOrder[turnIndex];
 
     // ✅ Mostrar toast inicial solo una vez
     if (previousTurnIndexRef.current === null && roundRef.current === 0) {
@@ -2192,6 +2199,8 @@ const InitTracker = () => {
       hasEntities = trackerData.placedHeroes?.some(
         h => h.role === step.role && h.position === step.index
       );
+    } else if (step.type === "companion") {
+      hasEntities = (trackerData.companions || []).some((companion) => companion.uid === step.uid);
     }
     
     if (!hasEntities) {
@@ -2199,6 +2208,15 @@ const InitTracker = () => {
       setTimeout(() => {
         handleNextTurn();
       }, 800); 
+      return;
+    }
+
+    if (step.type === 'companion') {
+      const companion = (trackerData.companions || []).find((entry) => entry.uid === step.uid);
+      if (companion) {
+        setCurrentTurnEntity({ ...companion, type: 'companion', name: getCompanionName(companion.id) });
+        setGroupTurnTracker({ group: [], index: 0 });
+      }
       return;
     }
     
@@ -2514,7 +2532,7 @@ const InitTracker = () => {
     setGroupTurnTracker({ group: [], index: 0 });
     // Efecto de turno: depende del cursor y de las pilas, no de cada callback.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [turnIndex, placedEnemies, placedRunes]);
+  }, [turnIndex, placedEnemies, placedRunes, effectiveTurnOrder, trackerData.companions]);
 
   // Se declara después del efecto de turno para leer los conjuntos ya actualizados.
   useEffect(() => {
@@ -2531,11 +2549,12 @@ const InitTracker = () => {
   
   /** Siguiente entidad activa en el orden de iniciativa (utilidad pura). */
   const getNextActiveEntity = (startIndex) => findNextActiveEntity({
-    order: TURN_ORDER,
+    order: effectiveTurnOrder,
     startIndex,
     heroes: trackerData.placedHeroes || [],
     enemies: placedEnemies,
     runes: placedRunes,
+    companions: trackerData.companions || [],
   });
   const handleNextTurn = () => {
     // Guardamos el cursor de turno para poder deshacer el último avance.
@@ -2573,7 +2592,7 @@ const InitTracker = () => {
     if (turnIndex === -1) {
       const next = getNextActiveEntity(0);
       if (next) {
-        const idx = indexOfEntityInOrder(TURN_ORDER, next);
+        const idx = indexOfEntityInOrder(effectiveTurnOrder, next);
         if (idx !== -1) {
           setTurnIndex(idx);
           setLastRealTurnIndex(idx);
@@ -2746,11 +2765,20 @@ const InitTracker = () => {
     }
   
     // 🔁 Buscar siguiente entidad
-    for (let i = 1; i <= TURN_ORDER.length; i++) {
-      const idx = (turnIndex + i) % TURN_ORDER.length;
-      const step = TURN_ORDER[idx];
+    for (let i = 1; i <= effectiveTurnOrder.length; i++) {
+      const idx = (turnIndex + i) % effectiveTurnOrder.length;
+      const step = effectiveTurnOrder[idx];
   
-      if (step.type === 'hero') {
+      if (step.type === 'companion') {
+        const companion = (trackerData.companions || []).find((entry) => entry.uid === step.uid);
+        if (companion) {
+          setTurnIndex(idx);
+          setLastRealTurnIndex(idx);
+          setCurrentTurnEntity({ ...companion, type: 'companion', name: getCompanionName(companion.id) });
+          setGroupTurnTracker({ group: [], index: 0 });
+          return;
+        }
+      } else if (step.type === 'hero') {
         const hero = trackerData.placedHeroes?.find(h =>
           h.role === step.role && h.position === step.index);
         if (hero) {
@@ -3243,7 +3271,7 @@ const InitTracker = () => {
     : null;
   const carouselNext = (() => {
     if (turnIndex < 0) return null;
-    const next = getNextActiveEntity((turnIndex + 1) % TURN_ORDER.length);
+    const next = getNextActiveEntity((turnIndex + 1) % effectiveTurnOrder.length);
     if (!next) return null;
     const name = resolveEntityLabel({ id: next.id, name: next.name, translations });
     return { name, type: next.type };
@@ -3291,6 +3319,14 @@ const InitTracker = () => {
 
     if (heroes) {
       (trackerData.heroes || []).forEach((heroId) => resetHeroForNewGame(heroId));
+      setTrackerData((prev) => ({
+        ...prev,
+        companions: (prev.companions || []).map((companion) => ({
+          ...companion,
+          vida: companion.vidaMax ?? companion.vida,
+          estadosAlterados: [],
+        })),
+      }));
       refreshHeroExtras();
     }
 
@@ -4053,6 +4089,16 @@ const InitTracker = () => {
             role={trackerData.roles?.[selectedHeroId]}
             onClose={() => setSelectedHeroId(null)}
             onChanged={refreshHeroExtras}
+            onOpenCompanion={(uid) => {
+              setSelectedHeroId(null);
+              setSelectedCompanionUid(uid);
+            }}
+          />
+        )}
+        {selectedCompanionUid && (
+          <ModalCompanionCard
+            uid={selectedCompanionUid}
+            onClose={() => setSelectedCompanionUid(null)}
           />
         )}
         <RestartGameDialog

@@ -1,7 +1,10 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import useFocusTrap from '@/hooks/useFocusTrap';
 import { useLanguage } from '@/context/LanguageContext';
+import { useExpansions } from '@/context/ExpansionContext';
+import { useTracker } from '@/context/TrackerContext';
 import { HEROES } from '@/data/heroes';
+import { createCompanionEntry, getCompanion, getCompanionImage, getCompanionsForExpansions } from '@/data/companions';
 import { ESTADOS_ALTERADOS, INMUNIDADES, getHeroStatusCatalog } from '@/data/estadosAlterados';
 import {
   AURAS,
@@ -67,8 +70,10 @@ const STAT_LABELS = {
   vida: { es: 'Vida', en: 'Life' },
 };
 
-export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
+export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpenCompanion }) {
   const { language, translations } = useLanguage();
+  const { selectedExpansions } = useExpansions();
+  const { trackerData, setTrackerData } = useTracker();
   const dialogRef = useRef(null);
   const closeRef = useRef(null);
   const titleId = useId();
@@ -78,8 +83,38 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
   const [confirmReset, setConfirmReset] = useState(false);
   const [almacenInput, setAlmacenInput] = useState('');
   const [dungeonPicker, setDungeonPicker] = useState(false);
+  const [companionToAdd, setCompanionToAdd] = useState('');
 
   useFocusTrap(dialogRef, true);
+
+  const heroCompanions = useMemo(() => (
+    (trackerData.companions || [])
+      .filter((entry) => entry.heroId === heroId)
+      .sort((a, b) => (a.order || 0) - (b.order || 0))
+  ), [trackerData.companions, heroId]);
+
+  const availableCompanions = useMemo(
+    () => getCompanionsForExpansions(selectedExpansions),
+    [selectedExpansions],
+  );
+
+  const addCompanion = () => {
+    const companion = getCompanion(companionToAdd);
+    if (!companion) return;
+    const order = heroCompanions.length
+      ? Math.max(...heroCompanions.map((entry) => entry.order || 0)) + 1
+      : 0;
+    const entry = createCompanionEntry(companion, heroId, order);
+    setTrackerData((prev) => ({ ...prev, companions: [...(prev.companions || []), entry] }));
+    setCompanionToAdd('');
+  };
+
+  const removeCompanion = (uid) => {
+    setTrackerData((prev) => ({
+      ...prev,
+      companions: (prev.companions || []).filter((entry) => entry.uid !== uid),
+    }));
+  };
 
   const hero = useMemo(() => HEROES.find((item) => item.id === heroId), [heroId]);
   const heroName = translations.heroes?.[heroId] || heroId;
@@ -618,6 +653,95 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged }) {
                 );
               })}
             </div>
+          </section>
+
+          {/* Compañeros y mascotas del héroe, sin límite de ninguno */}
+          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+            <p className="mb-1.5 flex items-center gap-1 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+              {t.companionsTitle || 'Compañeros y mascotas'}
+            </p>
+            {availableCompanions.length === 0 ? (
+              <p className="text-[0.7rem] text-slate-400">
+                {t.noCompanionsInExpansions || 'No hay compañeros ni mascotas en las expansiones activas.'}
+              </p>
+            ) : (
+              <div className="flex gap-1.5">
+                <select
+                  value={companionToAdd}
+                  onChange={(event) => setCompanionToAdd(event.target.value)}
+                  aria-label={t.chooseCompanion || 'Elegir criatura'}
+                  className="min-h-9 min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-900 px-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+                >
+                  <option value="">{t.chooseCompanion || 'Elegir criatura'}…</option>
+                  <optgroup label={t.pets || 'Mascotas'}>
+                    {availableCompanions.filter((companion) => companion.type === 'mascota').map((companion) => (
+                      <option key={companion.id} value={companion.id}>{companion.name} · {companion.alias}</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label={t.companions || 'Compañeros'}>
+                    {availableCompanions.filter((companion) => companion.type === 'companero').map((companion) => (
+                      <option key={companion.id} value={companion.id}>{companion.name} · {companion.alias}</option>
+                    ))}
+                  </optgroup>
+                </select>
+                <button
+                  type="button"
+                  onClick={addCompanion}
+                  className="min-h-9 shrink-0 rounded-lg bg-rose-800 px-3 text-xs font-semibold text-white hover:bg-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+                >
+                  + {t.addCompanion || 'Añadir'}
+                </button>
+              </div>
+            )}
+            {heroCompanions.length === 0 ? (
+              <p className="mt-1.5 text-[0.7rem] text-slate-400">{t.companionsEmpty || 'Sin compañeros ni mascotas.'}</p>
+            ) : (
+              <ul className="mt-1.5 space-y-1">
+                {heroCompanions.map((entry) => {
+                  const data = getCompanion(entry.id);
+                  const image = getCompanionImage(entry.id);
+                  const typeLabel = data?.type === 'mascota' ? (t.pet || 'Mascota') : (t.companion || 'Compañero');
+                  const stateCount = (entry.estadosAlterados || []).reduce((sum, item) => sum + item.count, 0);
+                  return (
+                    <li
+                      key={entry.uid}
+                      className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/70 px-2 py-1"
+                    >
+                      {image && (
+                        <img
+                          src={image}
+                          alt=""
+                          className="h-10 w-7 shrink-0 rounded object-cover"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      )}
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-xs font-semibold text-slate-100">{data?.name || entry.id}</span>
+                        <span className="block text-[0.6rem] text-slate-400">
+                          {typeLabel} · {entry.vida}/{entry.vidaMax} · {stateCount} {t.alteredStatesShort || 'estados'}
+                        </span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => onOpenCompanion?.(entry.uid)}
+                        className="min-h-7 shrink-0 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-semibold text-white hover:bg-slate-600"
+                      >
+                        {t.open || 'Abrir'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeCompanion(entry.uid)}
+                        aria-label={`${data?.name || entry.id}: ${t.remove || 'Quitar'}`}
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-xs text-white hover:bg-red-700"
+                      >
+                        ✕
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </section>
 
           {/* Equipo: arma y amuleto llevan su modificador al lado */}
