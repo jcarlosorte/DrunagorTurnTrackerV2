@@ -75,7 +75,8 @@ export const ESTADOS_ALTERADOS = [
   {
     id: "SEMILLA_DEL_CAOS", texto: "semilla del caos", accion: "semilla_del_caos",
     reduce: "no", numReduce: 0, turno: "", daño: 0, max: 4,
-    imagen: semillaDelCaos, mostrar: "si", prevenible: "no", version: "2.0",
+    imagen: semillaDelCaos, mostrar: "si", prevenible: "no",
+    soloHeroes: true, aliados: true, version: "2.0",
   },
   {
     id: "ENTROPIA", texto: "entropía", accion: "entropia",
@@ -149,8 +150,17 @@ export function getHeroStatusCatalog(heroId, rulesVersion = '1.5') {
   ));
 }
 
-/** Estados de enemigo: excluye los recursos que solo existen en héroes. */
+/** Estados de enemigo: excluye los recursos que solo existen en héroes y aliados. */
 export function getEnemyStatusCatalog(rulesVersion = '1.5') {
   return ESTADOS_ALTERADOS.filter((estado) => matchesVersion(estado, rulesVersion) && !estado.soloHeroes);
+}
+
+/** Estados de aliados (compañeros y mascotas): generales y los marcados como aliados. */
+export function getAllyStatusCatalog(rulesVersion = '1.5') {
+  return ESTADOS_ALTERADOS.filter((estado) => (
+    matchesVersion(estado, rulesVersion)
+    && estado.mostrar === 'si'
+    && (!estado.soloHeroes || estado.aliados)
+  ));
 }
 

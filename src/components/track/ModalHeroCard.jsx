@@ -274,7 +274,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                   >
                     <button
                       type="button"
-                      onClick={() => apply(stepHeroEstadoAlterado(heroId, estadoConfig.id, +1))}
+                      onClick={() => apply(stepHeroEstadoAlterado(heroId, estadoConfig.id, +1, rulesVersion))}
                       disabled={maxCount === 1 && count >= maxCount}
                       aria-label={`${nombre}: +1`}
                       className="flex h-5 w-8 items-center justify-center rounded bg-emerald-700 text-xs font-bold leading-none text-white hover:bg-emerald-600 disabled:opacity-40"
@@ -285,7 +285,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                     <span className="text-[0.6rem] font-bold leading-none text-white">{count}</span>
                     <button
                       type="button"
-                      onClick={() => apply(stepHeroEstadoAlterado(heroId, estadoConfig.id, -1))}
+                      onClick={() => apply(stepHeroEstadoAlterado(heroId, estadoConfig.id, -1, rulesVersion))}
                       disabled={count <= 0}
                       aria-label={`${nombre}: −1`}
                       className="mt-0.5 flex h-5 w-8 items-center justify-center rounded state-btn-remove text-xs font-bold leading-none text-white disabled:opacity-40"

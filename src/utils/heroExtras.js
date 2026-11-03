@@ -1,6 +1,7 @@
 import { FLUSH_EVENT, isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { HEROES } from '@/data/heroes';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
+import { CHAOS_SEED_DAMAGE, isChaosSeedBurst } from '@/utils/chaosSeed';
 
 export const HERO_EXTRAS_KEY = 'heroExtras';
 /** Sube cuando cambian los cubos oficiales de los héroes para refrescar los guardados. */
@@ -305,21 +306,38 @@ export function stepHeroEstado(heroId, estadoId, delta) {
 }
 
 /** Iconos de estado alterado (quemadura, veneno, escudo…): contador +/−. */
-export function stepHeroEstadoAlterado(heroId, estadoId, delta) {
+export function stepHeroEstadoAlterado(heroId, estadoId, delta, rulesVersion = '1.5') {
   const current = getHeroExtras(heroId);
   const list = [...(current.estadosAlterados || [])];
   const index = list.findIndex((item) => item.id === estadoId);
   // Límite de fichas por estado, igual que en los enemigos.
   const maxFichas = ESTADOS_ALTERADOS.find((item) => item.id === estadoId)?.max || 4;
+  let burst = false;
 
   if (index === -1) {
     // Si aún no tiene el estado, se añade con la cantidad completa indicada
     // (p. ej. el dado de trampa aplica veneno 2 de golpe).
-    if (delta > 0) list.push({ id: estadoId, count: Math.min(delta, maxFichas) });
+    if (delta > 0) {
+      const count = Math.min(delta, maxFichas);
+      if (isChaosSeedBurst(estadoId, count, rulesVersion)) burst = true;
+      else list.push({ id: estadoId, count });
+    }
   } else {
     const nextCount = Math.min(list[index].count + delta, maxFichas);
-    if (nextCount <= 0) list.splice(index, 1);
-    else list[index] = { ...list[index], count: nextCount };
+    if (isChaosSeedBurst(estadoId, nextCount, rulesVersion)) {
+      burst = true;
+    } else if (nextCount <= 0) {
+      list.splice(index, 1);
+    } else {
+      list[index] = { ...list[index], count: nextCount };
+    }
+  }
+
+  if (burst) {
+    return patchHeroExtras(heroId, {
+      estadosAlterados: list.filter((item) => item.id !== estadoId),
+      vida: Math.max(0, current.vida - CHAOS_SEED_DAMAGE),
+    });
   }
 
   return patchHeroExtras(heroId, { estadosAlterados: list });

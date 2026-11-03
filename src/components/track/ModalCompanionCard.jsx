@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { GiNightSleep, GiRun, GiSwordWound, GiHearts } from 'react-icons/gi';
 import { useTracker } from '@/context/TrackerContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { getEnemyStatusCatalog } from '@/data/estadosAlterados';
+import { getAllyStatusCatalog } from '@/data/estadosAlterados';
 import { getCompanion, getCompanionBackground, getCompanionImage } from '@/data/companions';
 import { parseCompanionAbilities } from '@/utils/companionAbilities';
 import { FiInfo } from 'react-icons/fi';
@@ -11,6 +11,7 @@ import useFocusTrap from '@/hooks/useFocusTrap';
 import useGlossary from '@/hooks/useGlossary';
 import { useRules } from '@/context/RulesContext';
 import { getEstadoLogo2 } from '@/data/estados2';
+import { CHAOS_SEED_DAMAGE, isChaosSeedBurst } from '@/utils/chaosSeed';
 
 /**
  * Ficha de un compañero o mascota: datos de la criatura, vida y estados
@@ -44,7 +45,7 @@ export default function ModalCompanionCard({ uid, onClose }) {
   const image = getCompanionImage(companion.id);
   const background = getCompanionBackground(companion.id);
   const abilities = parseCompanionAbilities(companion.abilities, { labels, descriptions });
-  const catalogue = getEnemyStatusCatalog(rulesVersion);
+  const catalogue = getAllyStatusCatalog(rulesVersion);
   const estados = entry.estadosAlterados || [];
   const countOf = (id) => estados.find((estado) => estado.id === id)?.count || 0;
 
@@ -75,6 +76,13 @@ export default function ModalCompanionCard({ uid, onClose }) {
     const current = countOf(estado.id);
     const next = Math.max(0, Math.min(estado.max || 1, current + delta));
     const rest = estados.filter((item) => item.id !== estado.id);
+    if (isChaosSeedBurst(estado.id, next, rulesVersion)) {
+      update({
+        estadosAlterados: rest,
+        vida: Math.max(0, entry.vida - CHAOS_SEED_DAMAGE),
+      });
+      return;
+    }
     update({ estadosAlterados: next > 0 ? [...rest, { id: estado.id, count: next }] : rest });
   };
 

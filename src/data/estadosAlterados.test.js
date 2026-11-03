@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ESTADOS_ALTERADOS,
+  getAllyStatusCatalog,
   getEnemyStatusCatalog,
   getHeroStatusCatalog,
 } from '@/data/estadosAlterados';
@@ -49,11 +50,16 @@ describe('estados de la versión 2.0', () => {
 
     expect(enemigos15).not.toContain('FRAGIL');
     expect(enemigos20).toEqual(expect.arrayContaining(['FRAGIL', 'POLIMORFISMO', 'RESTRICCION']));
-    expect(enemigos20).toContain('SEMILLA_DEL_CAOS');
+    expect(enemigos20).not.toContain('SEMILLA_DEL_CAOS');
 
     const heroe20 = ids(getHeroStatusCatalog('sun', '2.0'));
     expect(heroe20).toContain('FRAGIL');
     expect(heroe20).toContain('SEMILLA_DEL_CAOS');
+
+    const aliados20 = ids(getAllyStatusCatalog('2.0'));
+    expect(aliados20).toContain('SEMILLA_DEL_CAOS');
+    expect(aliados20).not.toContain('KI');
+    expect(aliados20).not.toContain('ENTROPIA');
 
     const diana = ids(getHeroStatusCatalog('diana', '2.0'));
     expect(diana).toContain('ENTROPIA');

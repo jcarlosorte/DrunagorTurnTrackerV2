@@ -8,6 +8,7 @@ import {
   removeAlmacenItem,
   resetHero,
   resetHeroForNewGame,
+  stepHeroEstadoAlterado,
   toggleCapacidadNivel,
   setDungeonSkillColor,
   setHeroSkill,
@@ -111,5 +112,19 @@ describe('límite de vida', () => {
 
     changeHeroVida('vorn', 100, 17);
     expect(getHeroExtras('vorn').vida).toBe(17);
+  });
+});
+
+describe('Semilla del Caos', () => {
+  it('al recibir la cuarta se descartan todas y sufre 4 de daño', () => {
+    patchHeroExtras('vorn', {
+      vida: 10,
+      vidaMax: 10,
+      estadosAlterados: [{ id: 'SEMILLA_DEL_CAOS', count: 3 }],
+    });
+
+    const after = stepHeroEstadoAlterado('vorn', 'SEMILLA_DEL_CAOS', 1, '2.0');
+    expect(after.estadosAlterados.some((estado) => estado.id === 'SEMILLA_DEL_CAOS')).toBe(false);
+    expect(after.vida).toBe(6);
   });
 });

@@ -1407,6 +1407,51 @@ Unit       128 tests
 E2E        57/57
 ```
 
+### 55.ª tanda — Explosión de la cuarta Semilla del Caos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Mecánica** | Al recibir la cuarta semilla se descartan todas y sufre 4 de daño no prevenible | `chaosSeed.js`, `heroExtras.js`, `Modal*` |
+| **Alcance** | Héroes, enemigos y compañeros; solo con reglas 2.0 | varios |
+| **Pruebas** | 2 unitarios: regla de explosión y efecto en héroe (130 en total) | tests |
+
+**Medición**
+
+```text
+Unit       130 tests
+E2E        57/57
+```
+
+### 56.ª tanda — Semilla del Caos en enemigos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | La explosión se aplica al persistir los estados del enemigo, cubriendo cualquier vía y no solo la ficha | `InitTracker.jsx` |
+| **Pruebas** | 1 E2E: enemigo de 12 a 8 y sin semilla (58 en total) | tests |
+
+**Medición**
+
+```text
+Unit       130 tests
+E2E        58/58
+```
+
+### 57.ª tanda — Semilla del Caos solo para héroes y aliados
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Alcance** | Excluida de los enemigos; disponible en héroes y en compañeros/mascotas | `estadosAlterados.js` |
+| **Catálogo** | `getAllyStatusCatalog` para las fichas de aliados | `estadosAlterados.js`, `ModalCompanionCard` |
+| **Enemigos** | Retirada la lógica de explosión de la ficha de enemigo | `ModalEnemyCard`, `InitTracker` |
+| **Pruebas** | E2E de la explosión en un héroe (130 unit · 58 E2E) | tests |
+
+**Medición**
+
+```text
+Unit       130 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
