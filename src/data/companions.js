@@ -64,7 +64,7 @@ export const COMPANIONS = [
     attack: 2,
     movement: 3,
     life: 1,
-    abilities: 'PERSONAL, ESCUDO 2',
+    abilities: 'PERSONAL, ESCUDO_2',
     expansionId: 'base',
   },
   {
@@ -311,7 +311,7 @@ export const COMPANIONS = [
     attack: 2,
     movement: 4,
     life: 5,
-    abilities: 'PERSONAL: ESCUDO 2',
+    abilities: 'PERSONAL, ESCUDO_2',
     expansionId: 'base',
   },
   {
@@ -337,7 +337,7 @@ export const COMPANIONS = [
     attack: 3,
     movement: 5,
     life: 5,
-    abilities: 'PERSONAL, ESCUDO 2',
+    abilities: 'PERSONAL, ESCUDO_2',
     expansionId: 'base',
   },
 ];

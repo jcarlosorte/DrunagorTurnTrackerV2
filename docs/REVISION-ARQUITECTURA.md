@@ -1217,14 +1217,14 @@ Retratos   40 PNG sin fondo
 
 | Cambio | Detalle | Archivos |
 |---|---|---|
-| **Capacidades** | «PERSONAL» se une a la capacidad siguiente; usa el número y la descripción de `ESCUDO_X` («PERSONAL: ESCUDO 2») | `companionAbilities.js` |
+| **Capacidades** | Las capacidades usan la clave de enemigo `ESCUDO_2`; el parser acepta `ESCUDO_2` y `ESCUDO 2` y recupera número y descripción | `companionAbilities.js`, `companions.js` |
 | **Panel** | El marco del track se ajusta al grid (374 px con una carta) en lugar de estirarse al alto de la columna | `TurnTrackBoard.jsx` |
 | **Pruebas** | 2 unitarios de capacidades actualizados | tests |
 
 **Medición**
 
 ```text
-Unit       114 tests
+Unit       115 tests
 E2E        56/56
 ```
 
@@ -1240,7 +1240,7 @@ E2E        56/56
 **Medición**
 
 ```text
-Unit       114 tests
+Unit       115 tests
 E2E        56/56
 Símbolos   14 para 16 expansiones
 ```
