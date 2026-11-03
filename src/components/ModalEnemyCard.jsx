@@ -7,6 +7,7 @@ import { useRules } from '@/context/RulesContext';
 import { getEstadoLogo2 } from '@/data/estados2';
 import { ESTADOS_ALTERADOS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRunes';
+import { getAbilityColor } from '@/components/track/enemyVisuals';
 import { useGame } from '@/context/GameContext';
 import { GiHealthPotion, GiRunningNinja, GiSwordClash, GiShieldReflect, GiSteeltoeBoots, GiBloodySword, GiArcheryTarget, GiMoebiusTrefoil } from "react-icons/gi";
 import { MdLooksOne,  MdLooksTwo,  MdLooks3,  MdLooks4,  MdLooks5,  MdLooks6,} from 'react-icons/md';
@@ -247,9 +248,6 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
     return { claveGeneral: clave, texto: base[clave] || clave, detalle: detalles[clave] || '' };
   };
 
-  const clavesRosa = ['ESCUDO_X', 'REGENERACION_X', 'MANDO', 'EVOLUCION', 'SANAR_X', 'VORAGINE', 'HASTA 2 MOSTRUOS MAS DEBILES'];
-  const clavesAzul = ['SANGUINARIO', 'IMPLACABLE', 'DESAFIO', 'SALTO', 'VENGATIVO', 'CODICIA', 'BRUTAL'];
-
   const mostrarAccionesCapacidad = (capacidadesAjustadas, tt, tte, ti) => {
     if (!Array.isArray(capacidadesAjustadas) || capacidadesAjustadas.length === 0) return null;
   
@@ -282,11 +280,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               <div className="flex flex-wrap gap-2">
                 {accion.map((clave, idx) => {
                   const { claveGeneral, texto, detalle } = traducirClaveConNumero(clave, tt, tte);
-                  const classColor = clavesRosa.includes(claveGeneral)
-                    ? 'text-pink-500 font-semibold'
-                    : clavesAzul.includes(claveGeneral)
-                      ? 'text-blue-500 font-semibold'
-                      : '';
+                  const classColor = getAbilityColor(claveGeneral, rulesVersion);
   
                   return (
                     <span key={clave + idx} className={`inline-flex items-center gap-1 mr-2 ${classColor}`}>

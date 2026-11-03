@@ -31,3 +31,25 @@ export const textBgColorMap = {
   overlord: 'bg-purple-800',
   jefe: 'bg-purple-700',
 };
+
+const PINK_ABILITIES = ['ESCUDO_X', 'REGENERACION_X', 'MANDO', 'EVOLUCION', 'SANAR_X', 'VORAGINE', 'HASTA 2 MOSTRUOS MAS DEBILES'];
+const BLUE_ABILITIES = ['SANGUINARIO', 'IMPLACABLE', 'DESAFIO', 'SALTO', 'VENGATIVO', 'CODICIA', 'BRUTAL'];
+const GREEN_2_ABILITIES = ['EMBATE_X', 'ANDANADA_X'];
+const VIOLET_2_ABILITIES = ['SOBREPRESION'];
+
+/** Color de una capacidad según la versión de reglas. */
+export function getAbilityColor(claveGeneral, rulesVersion) {
+  if (rulesVersion === '2.0' && GREEN_2_ABILITIES.includes(claveGeneral)) {
+    return 'text-emerald-500 font-semibold';
+  }
+  if (rulesVersion === '2.0' && VIOLET_2_ABILITIES.includes(claveGeneral)) {
+    return 'text-violet-500 font-semibold';
+  }
+  if (PINK_ABILITIES.includes(claveGeneral)) {
+    return 'text-pink-500 font-semibold';
+  }
+  if (BLUE_ABILITIES.includes(claveGeneral)) {
+    return 'text-blue-500 font-semibold';
+  }
+  return '';
+}

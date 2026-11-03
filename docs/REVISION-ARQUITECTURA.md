@@ -1452,6 +1452,21 @@ Unit       130 tests
 E2E        58/58
 ```
 
+### 58.ª tanda — Nigromante y colores de capacidades 2.0
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Clase** | «Necromante» pasa a «Nigromante» en la clase y la profesión | `heroClasses.js`, i18n |
+| **Colores** | Verde para EMBATE/ANDANADA y morado para SOBREPRESIÓN, solo con reglas 2.0; azul y rosa se mantienen | `enemyVisuals.js` |
+| **Pruebas** | 2 unitarios de colores (132 en total) | tests |
+
+**Medición**
+
+```text
+Unit       132 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
