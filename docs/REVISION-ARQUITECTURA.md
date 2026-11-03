@@ -1359,6 +1359,22 @@ Unit       125 tests
 E2E        57/57
 ```
 
+### 52.ª tanda — Estados alterados de la versión 2.0
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Estados** | Frágil, Polimorfismo y Restricción (máximo 1) solo con reglas 2.0 | `estadosAlterados.js` |
+| **Semilla** | Semilla del caos (máximo 4) reservada para el héroe que la use; aún sin clase asignada | `estadosAlterados.js` |
+| **Fichas** | Los catálogos de héroe, enemigo y compañero respetan la versión de reglas | `Modal*` |
+| **Pruebas** | 2 unitarios de versión y límites (127 en total) | tests |
+
+**Medición**
+
+```text
+Unit       127 tests
+E2E        57/57
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

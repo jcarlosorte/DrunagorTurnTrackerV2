@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import useFocusTrap from '@/hooks/useFocusTrap';
 import useGlossary from '@/hooks/useGlossary';
+import { useRules } from '@/context/RulesContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { HEROES } from '@/data/heroes';
@@ -114,6 +115,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
     : '';
   const t = translations.heroes || {};
   const glossary = useGlossary();
+  const { rulesVersion } = useRules();
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -150,7 +152,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
 
   // Iconos de estado alterado (quemadura, veneno, escudo…), igual que en enemigos.
   const estadosActivos = (extras.estadosAlterados || []).filter((estado) => estado.count > 0);
-  const estadosAlteradosDisponibles = getHeroStatusCatalog(heroId);
+  const estadosAlteradosDisponibles = getHeroStatusCatalog(heroId, rulesVersion);
   const countAlterado = (id) => (extras.estadosAlterados || []).find((item) => item.id === id)?.count || 0;
   // Inmunidades: solo si los datos del héroe las definen.
   const inmunidades = Array.isArray(hero?.inmunidad) ? hero.inmunidad : [];

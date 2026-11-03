@@ -496,7 +496,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
           <div className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900/60 p-2">
             <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
             <div className="flex flex-wrap items-stretch justify-center gap-1">
-            {getEnemyStatusCatalog()
+            {getEnemyStatusCatalog(rulesVersion)
               .filter((config) => config.mostrar === 'si')
               .filter((config) => !todasInmunidades?.includes(config.id) && !(todasInmunidades?.includes('GRANDE') && ['DERRIBO_I', 'ATURDIMIENTO_I'].includes(config.id)))
               .map((estadoConfig) => {

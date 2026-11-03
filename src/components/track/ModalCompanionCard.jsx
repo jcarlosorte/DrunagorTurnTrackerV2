@@ -44,7 +44,7 @@ export default function ModalCompanionCard({ uid, onClose }) {
   const image = getCompanionImage(companion.id);
   const background = getCompanionBackground(companion.id);
   const abilities = parseCompanionAbilities(companion.abilities, { labels, descriptions });
-  const catalogue = getEnemyStatusCatalog();
+  const catalogue = getEnemyStatusCatalog(rulesVersion);
   const estados = entry.estadosAlterados || [];
   const countOf = (id) => estados.find((estado) => estado.id === id)?.count || 0;
 

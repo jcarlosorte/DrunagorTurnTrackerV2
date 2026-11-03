@@ -41,3 +41,24 @@ describe('recursos de héroe', () => {
     });
   });
 });
+
+describe('estados de la versión 2.0', () => {
+  it('solo aparecen con el reglamento nuevo', () => {
+    const enemigos15 = ids(getEnemyStatusCatalog());
+    const enemigos20 = ids(getEnemyStatusCatalog('2.0'));
+
+    expect(enemigos15).not.toContain('FRAGIL');
+    expect(enemigos20).toEqual(expect.arrayContaining(['FRAGIL', 'POLIMORFISMO', 'RESTRICCION']));
+
+    const heroe20 = ids(getHeroStatusCatalog('sun', '2.0'));
+    expect(heroe20).toContain('FRAGIL');
+    expect(heroe20).not.toContain('SEMILLA_DEL_CAOS');
+  });
+
+  it('Frágil, Polimorfismo y Restricción se limitan a 1; Semilla del caos a 4', () => {
+    ['FRAGIL', 'POLIMORFISMO', 'RESTRICCION'].forEach((id) => {
+      expect(ESTADOS_ALTERADOS.find((estado) => estado.id === id)?.max).toBe(1);
+    });
+    expect(ESTADOS_ALTERADOS.find((estado) => estado.id === 'SEMILLA_DEL_CAOS')?.max).toBe(4);
+  });
+});

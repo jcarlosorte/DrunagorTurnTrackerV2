@@ -16,6 +16,10 @@ import concentracion from "@/assets/assets_logo/concentracion.png";
 import furia from "@/assets/assets_logo/furia.png";
 import fruto from "@/assets/assets_logo/fruto.png";
 import ki from "@/assets/assets_logo/ki.png";
+import fragil from "@/assets/assets_logo/fragil.png";
+import polimorfismo from "@/assets/assets_logo/polimorfismo.png";
+import restriccion from "@/assets/assets_logo/restriccion.png";
+import semillaDelCaos from "@/assets/assets_logo/semilla_del_caos.png";
 import { getHeroClassId } from "@/data/heroClasses";
 
 export const ESTADOS_ALTERADOS = [
@@ -57,7 +61,18 @@ export const ESTADOS_ALTERADOS = [
     clases: ["druida"],
   },
   { id: "ESCUDO", texto: "escudo", accion: "escudo", reduce: "no", numReduce: 0, turno: "principio", daño: 0, max: 4, imagen: escudo, mostrar: "si", prevenible: "si" },
-  { id: "TIEMPO", texto: "tiempo", accion: "tiempo", reduce: "si", numReduce: 1, turno: "principio", daño: 0, max: 4, imagen: tiempo, mostrar: "no", prevenible: "si" }
+  { id: "TIEMPO", texto: "tiempo", accion: "tiempo", reduce: "si", numReduce: 1, turno: "principio", daño: 0, max: 4, imagen: tiempo, mostrar: "no", prevenible: "si" },
+
+  // estados de la versión 2.0
+  { id: "FRAGIL", texto: "fragil", accion: "fragil", reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1, imagen: fragil, mostrar: "si", prevenible: "si", version: "2.0" },
+  { id: "POLIMORFISMO", texto: "polimorfismo", accion: "polimorfismo", reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1, imagen: polimorfismo, mostrar: "si", prevenible: "si", version: "2.0" },
+  { id: "RESTRICCION", texto: "restriccion", accion: "restriccion", reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1, imagen: restriccion, mostrar: "si", prevenible: "si", version: "2.0" },
+  {
+    id: "SEMILLA_DEL_CAOS", texto: "semilla del caos", accion: "semilla_del_caos",
+    reduce: "no", numReduce: 0, turno: "", daño: 0, max: 4,
+    imagen: semillaDelCaos, mostrar: "si", prevenible: "no",
+    soloHeroes: true, clases: [], version: "2.0",
+  },
 ];
 
 export const INMUNIDADES = [
@@ -85,20 +100,23 @@ export const OTROS = [
   { id: "evento", max: 0, imagen: evento }
 ];
 
+const matchesVersion = (estado, rulesVersion) => !estado.version || estado.version === rulesVersion;
+
 /**
  * Estados que puede tener un héroe: los generales más los recursos propios de
  * su clase (Ki de Sun, Furia de Katarina/Tork, Fruto de Savran/Willow).
  */
-export function getHeroStatusCatalog(heroId) {
+export function getHeroStatusCatalog(heroId, rulesVersion = '1.5') {
   const classId = getHeroClassId(heroId);
   return ESTADOS_ALTERADOS.filter((estado) => (
-    estado.mostrar === 'si'
+    matchesVersion(estado, rulesVersion)
+    && estado.mostrar === 'si'
     && (!estado.soloHeroes || !estado.clases || estado.clases.includes(classId))
   ));
 }
 
 /** Estados de enemigo: excluye los recursos que solo existen en héroes. */
-export function getEnemyStatusCatalog() {
-  return ESTADOS_ALTERADOS.filter((estado) => !estado.soloHeroes);
+export function getEnemyStatusCatalog(rulesVersion = '1.5') {
+  return ESTADOS_ALTERADOS.filter((estado) => matchesVersion(estado, rulesVersion) && !estado.soloHeroes);
 }
 
