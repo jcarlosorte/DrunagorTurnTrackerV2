@@ -1,10 +1,9 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import useFocusTrap from '@/hooks/useFocusTrap';
 import { useLanguage } from '@/context/LanguageContext';
-import { useExpansions } from '@/context/ExpansionContext';
 import { useTracker } from '@/context/TrackerContext';
 import { HEROES } from '@/data/heroes';
-import { createCompanionEntry, getCompanion, getCompanionImage, getCompanionsForExpansions } from '@/data/companions';
+import { getCompanion, getCompanionImage } from '@/data/companions';
 import { ESTADOS_ALTERADOS, INMUNIDADES, getHeroStatusCatalog } from '@/data/estadosAlterados';
 import {
   AURAS,
@@ -72,7 +71,6 @@ const STAT_LABELS = {
 
 export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpenCompanion }) {
   const { language, translations } = useLanguage();
-  const { selectedExpansions } = useExpansions();
   const { trackerData, setTrackerData } = useTracker();
   const dialogRef = useRef(null);
   const closeRef = useRef(null);
@@ -83,7 +81,6 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
   const [confirmReset, setConfirmReset] = useState(false);
   const [almacenInput, setAlmacenInput] = useState('');
   const [dungeonPicker, setDungeonPicker] = useState(false);
-  const [companionToAdd, setCompanionToAdd] = useState('');
 
   useFocusTrap(dialogRef, true);
 
@@ -92,22 +89,6 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
       .filter((entry) => entry.heroId === heroId)
       .sort((a, b) => (a.order || 0) - (b.order || 0))
   ), [trackerData.companions, heroId]);
-
-  const availableCompanions = useMemo(
-    () => getCompanionsForExpansions(selectedExpansions),
-    [selectedExpansions],
-  );
-
-  const addCompanion = () => {
-    const companion = getCompanion(companionToAdd);
-    if (!companion) return;
-    const order = heroCompanions.length
-      ? Math.max(...heroCompanions.map((entry) => entry.order || 0)) + 1
-      : 0;
-    const entry = createCompanionEntry(companion, heroId, order);
-    setTrackerData((prev) => ({ ...prev, companions: [...(prev.companions || []), entry] }));
-    setCompanionToAdd('');
-  };
 
   const removeCompanion = (uid) => {
     setTrackerData((prev) => ({
@@ -660,39 +641,9 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
             <p className="mb-1.5 flex items-center gap-1 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
               {t.companionsTitle || 'Compañeros y mascotas'}
             </p>
-            {availableCompanions.length === 0 ? (
-              <p className="text-[0.7rem] text-slate-400">
-                {t.noCompanionsInExpansions || 'No hay compañeros ni mascotas en las expansiones activas.'}
-              </p>
-            ) : (
-              <div className="flex gap-1.5">
-                <select
-                  value={companionToAdd}
-                  onChange={(event) => setCompanionToAdd(event.target.value)}
-                  aria-label={t.chooseCompanion || 'Elegir criatura'}
-                  className="min-h-9 min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-900 px-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
-                >
-                  <option value="">{t.chooseCompanion || 'Elegir criatura'}…</option>
-                  <optgroup label={t.pets || 'Mascotas'}>
-                    {availableCompanions.filter((companion) => companion.type === 'mascota').map((companion) => (
-                      <option key={companion.id} value={companion.id}>{companion.name} · {companion.alias}</option>
-                    ))}
-                  </optgroup>
-                  <optgroup label={t.companions || 'Compañeros'}>
-                    {availableCompanions.filter((companion) => companion.type === 'companero').map((companion) => (
-                      <option key={companion.id} value={companion.id}>{companion.name} · {companion.alias}</option>
-                    ))}
-                  </optgroup>
-                </select>
-                <button
-                  type="button"
-                  onClick={addCompanion}
-                  className="min-h-9 shrink-0 rounded-lg bg-rose-800 px-3 text-xs font-semibold text-white hover:bg-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
-                >
-                  + {t.addCompanion || 'Añadir'}
-                </button>
-              </div>
-            )}
+            <p className="mb-1.5 text-[0.65rem] text-slate-400">
+              {t.companionsFromMenu || 'Se añaden desde el menú Compañeros de la barra superior.'}
+            </p>
             {heroCompanions.length === 0 ? (
               <p className="mt-1.5 text-[0.7rem] text-slate-400">{t.companionsEmpty || 'Sin compañeros ni mascotas.'}</p>
             ) : (

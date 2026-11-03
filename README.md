@@ -33,9 +33,9 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
   acción y el rol de mazmorra debajo de los cuatro, con color elegido al marcarlo; tres
   capacidades de clase de tres rombos cada una, con nombre libre, y almacén de objetos.
 - **Campamento del grupo**: objetos compartidos (hasta 30) que se guardan con la partida.
-- **Compañeros y mascotas**: 23 criaturas con ficha propia de vida y estados, sin límite
-  por héroe, con turno después de su héroe, en orden de aparición, e ilustración de su
-  carta. Solo aparecen las criaturas de las expansiones activas.
+- **Compañeros y mascotas**: 23 criaturas que se añaden desde el menú **Compañeros** de
+  la barra superior, sin límite por héroe, con tarjeta propia tras su héroe en el track
+  (vida y estados), turno en orden de aparición y ficha ampliada con capacidades.
 - **Reinicio de partida por capas**: turno, historial y enemigos, con opción de
   reiniciar runas y de restablecer héroes (vida, estados y cubos).
 - **Guardados**: autoguardado, hasta 10 partidas con nombre, exportación e
@@ -155,7 +155,7 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      92 tests
+unit      97 tests
 e2e       45 tests
 build     OK
 ```

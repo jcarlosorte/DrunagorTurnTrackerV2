@@ -4,6 +4,8 @@ import { useTracker } from '@/context/TrackerContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { getCompanion, getCompanionImage } from '@/data/companions';
+import { parseCompanionAbilities } from '@/utils/companionAbilities';
+import { FiInfo } from 'react-icons/fi';
 import useFocusTrap from '@/hooks/useFocusTrap';
 
 /**
@@ -32,6 +34,10 @@ export default function ModalCompanionCard({ uid, onClose }) {
   if (!entry || !companion) return null;
 
   const image = getCompanionImage(companion.id);
+  const abilities = parseCompanionAbilities(companion.abilities, {
+    labels: translations.condiciones_t || {},
+    descriptions: translations.condiciones_d || {},
+  });
   const catalogue = getEnemyStatusCatalog();
   const estados = entry.estadosAlterados || [];
   const countOf = (id) => estados.find((estado) => estado.id === id)?.count || 0;
@@ -71,7 +77,7 @@ export default function ModalCompanionCard({ uid, onClose }) {
             <img
               src={image}
               alt={companion.name}
-              className="h-32 w-auto shrink-0 rounded-lg border border-slate-700 object-contain"
+              className="h-40 w-auto shrink-0 rounded-lg border border-slate-700 bg-slate-950/60 object-contain p-1"
               loading="lazy"
               decoding="async"
             />
@@ -179,10 +185,28 @@ export default function ModalCompanionCard({ uid, onClose }) {
           </section>
 
           <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
-            <p className="mb-1 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-              {t.abilities || 'Capacidades'}
+            <p className="mb-1 flex items-center gap-1 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+              <GiSwordWound size={13} aria-hidden="true" /> {t.abilities || 'Capacidades'}
             </p>
-            <p className="text-xs leading-snug text-slate-300">{companion.abilities}</p>
+            {abilities.length === 0 ? (
+              <p className="text-xs text-slate-400">—</p>
+            ) : (
+              <ul className="space-y-1">
+                {abilities.map((ability, index) => (
+                  <li key={`${ability.token}-${index}`} className="flex items-start gap-1.5 text-xs leading-snug text-slate-300">
+                    <span className="mt-0.5 w-3 shrink-0 text-right text-[0.65rem] text-slate-500">{index + 1}.</span>
+                    <span className="min-w-0 flex-1">{ability.label}</span>
+                    {ability.description && (
+                      <FiInfo
+                        title={ability.description}
+                        aria-label={ability.description}
+                        className="mt-0.5 shrink-0 cursor-help text-slate-500 hover:text-amber-300"
+                      />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         </div>
 

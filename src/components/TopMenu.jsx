@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { useSavesUi } from '@/context/SavesUiContext';
-import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker, GiWoodenCrate } from 'react-icons/gi';
+import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker, GiWoodenCrate, GiPawPrint } from 'react-icons/gi';
 import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { ENEMIES } from '@/data/enemies';
@@ -32,6 +32,7 @@ const TopMenu = ({
   onTileDraw,
   onOpenRestart,
   onOpenCamp,
+  onOpenCompanions,
 }) => {
 
   const { translations } = useLanguage();
@@ -268,6 +269,16 @@ const TopMenu = ({
                 </button>
               );
             })}
+            <button
+              type="button"
+              onClick={() => onOpenCompanions?.()}
+              aria-label={t.companionsMenu || 'Compañeros'}
+              title={t.companionsMenu || 'Compañeros'}
+              className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg border border-transparent px-2 text-xs font-semibold text-slate-200 transition hover:border-slate-600 hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+            >
+              <GiPawPrint size={20} aria-hidden="true" />
+              <span className="hidden md:inline">{t.companionsMenu || 'Compañeros'}</span>
+            </button>
           </div>
         </div>
 

@@ -975,6 +975,27 @@ luccanor   → 0
 base+luccanor → 23
 ```
 
+### 29.ª tanda — Compañeros: menú superior, track y capacidades
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Menú** | Botón «Compañeros» en la barra superior; selector con catálogo por expansión, asignación a héroes en juego y lista de asignados | `TopMenu.jsx`, `CompanionPicker.jsx` |
+| **Track** | Tarjeta del compañero detrás de su héroe, con borde ámbar, vida, estados y resaltado de turno; al pulsarla abre su ficha | `TrackSlot.jsx`, `CompanionTrackCard.jsx` |
+| **Ficha** | Capacidades separadas por `;`, `,` y `:`, con textos y descripciones del diccionario de condiciones | `companionAbilities.js`, `ModalCompanionCard.jsx` |
+| **Imágenes** | PNG con alfa normalizados a WebP 480×640 y centrados | `assets/companions/` |
+| **Héroe** | La ficha del héroe solo lista sus criaturas y remite al menú para añadir | `ModalHeroCard.jsx` |
+| **Pruebas** | 5 unitarios del parser y 2 E2E del flujo completo | tests |
+
+**Medición**
+
+```text
+Unit       97 tests
+E2E        45/45
+Criaturas  23 (16 compañeros + 7 mascotas)
+```
+
+> Las variantes «Conner (desarmado)», «Janina (desarmada)» y «Tharmagar (resentido)» comparten imagen con su versión normal porque los PNG recibidos son idénticos.
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

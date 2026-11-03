@@ -65,6 +65,7 @@ import TurnCarousel from '@/components/track/TurnCarousel';
 import BossBanner from '@/components/track/BossBanner';
 import CampDialog from '@/components/track/CampDialog';
 import RestartGameDialog from '@/components/track/RestartGameDialog';
+import CompanionPicker from '@/components/track/CompanionPicker';
 import { boardSlotHeightFrom } from '@/components/track/trackLayout';
 
 
@@ -143,6 +144,7 @@ const InitTracker = () => {
   const [enemyEvolutions, setEnemyEvolutions] = useState(() => persistedSession.enemyEvolutions || []);
   const [selectedHeroId, setSelectedHeroId] = useState(null);
   const [selectedCompanionUid, setSelectedCompanionUid] = useState(null);
+  const [isCompanionPickerOpen, setIsCompanionPickerOpen] = useState(false);
   const [diceOpen, setDiceOpen] = useState(false);
   const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
@@ -3193,12 +3195,16 @@ const InitTracker = () => {
   const countsPerSlot = Array.from({ length: 11 }, (_, i) => {
     const isRuneSlot = Object.values(runesColorMap).includes(i);
     const isRuneText = i === 10;
+    const heroesAbove = (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnTop.includes(h.role));
+    const heroesBelow = (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnBottom.includes(h.role));
+    const companionsAbove = (trackerData.companions || []).filter((c) => heroesAbove.some((h) => h.id === c.heroId)).length;
+    const companionsBelow = (trackerData.companions || []).filter((c) => heroesBelow.some((h) => h.id === c.heroId)).length;
     const above =
-      (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnTop.includes(h.role)).length +
+      heroesAbove.length + companionsAbove +
       (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'arriba').length : 0) +
       (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'arriba').length : 0);
     const below =
-      (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnBottom.includes(h.role)).length +
+      heroesBelow.length + companionsBelow +
       (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'abajo').length : 0) +
       (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'abajo').length : 0);
     return Math.max(above, below);
@@ -3212,6 +3218,10 @@ const InitTracker = () => {
   const currentSlotIndex = (() => {
     if (!currentTurnEntity) return -1;
     if (currentTurnEntity.type === 'rune') return currentTurnEntity.colorIndex ?? -1;
+    if (currentTurnEntity.type === 'companion') {
+      const hero = (trackerData.placedHeroes || []).find((entry) => entry.id === currentTurnEntity.heroId);
+      return hero?.position ?? -1;
+    }
     return typeof currentTurnEntity.position === 'number' ? currentTurnEntity.position : -1;
   })();
 
@@ -3242,6 +3252,8 @@ const InitTracker = () => {
     openEnemyModal,
     removeRuneByUUID,
     setSelectedHeroId,
+    companions: trackerData.companions || [],
+    onOpenCompanion: setSelectedCompanionUid,
     RuneCard,
   };
 
@@ -3350,6 +3362,7 @@ const InitTracker = () => {
                 onTileDraw={handleTileDraw}
                 onOpenRestart={() => setIsRestartOpen(true)}
                 onOpenCamp={() => setIsCampOpen(true)}
+                onOpenCompanions={() => setIsCompanionPickerOpen(true)}
               />
             )}
 
@@ -4107,6 +4120,14 @@ const InitTracker = () => {
           onConfirm={handleRestartGame}
         />
         <CampDialog open={isCampOpen} onClose={() => setIsCampOpen(false)} />
+        <CompanionPicker
+          open={isCompanionPickerOpen}
+          onClose={() => setIsCompanionPickerOpen(false)}
+          onOpenCompanion={(uid) => {
+            setIsCompanionPickerOpen(false);
+            setSelectedCompanionUid(uid);
+          }}
+        />
         <DiceRoller
           open={diceOpen}
           onClose={() => setDiceOpen(false)}

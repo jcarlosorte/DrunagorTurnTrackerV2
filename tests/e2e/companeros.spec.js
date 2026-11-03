@@ -15,23 +15,28 @@ const companions = [
 ];
 
 test.describe('Compañeros y mascotas', () => {
-  test('se asignan sin límite y guardan vida y estados', async ({ page }) => {
+  test('se asignan desde el menú superior, aparecen en el track y guardan vida y estados', async ({ page }) => {
     await seedStorage(page, { ...buildSeed(), trackerData: JSON.stringify({ ...baseTracker, companions: [] }) });
     await openTracker(page);
 
-    await page.locator('[role="button"][aria-label*="Vorn"]').first().click({ force: true });
+    await page.getByRole('button', { name: 'Compañeros' }).click();
+    const picker = page.getByRole('dialog', { name: 'Compañeros y mascotas' });
+    await picker.getByRole('button', { name: /Drumm/ }).click();
+    await picker.getByLabel('Héroe').selectOption('vorn');
+    await picker.getByRole('button', { name: '+ Añadir' }).click();
+    await picker.getByRole('button', { name: /Bronx/ }).click();
+    await picker.getByRole('button', { name: '+ Añadir' }).click();
+    const inPlay = picker.locator('section').filter({ hasText: 'En juego' });
+    await expect(inPlay.getByText('Drumm')).toBeVisible();
+    await expect(inPlay.getByText('Bronx')).toBeVisible();
+    await picker.getByRole('button', { name: 'Cerrar' }).last().click();
+
+    const drummCard = page.locator('[data-companion-id="drumm"]');
+    await expect(drummCard).toBeVisible();
+    await expect(drummCard).toContainText('1/1');
+
+    await drummCard.click();
     let dialog = page.getByRole('dialog');
-    const section = dialog.locator('section').filter({ hasText: 'Compañeros y mascotas' });
-    await dialog.getByLabel('Elegir criatura').selectOption('drumm');
-    await section.getByRole('button', { name: '+ Añadir' }).click();
-    await dialog.getByLabel('Elegir criatura').selectOption('bronx');
-    await section.getByRole('button', { name: '+ Añadir' }).click();
-
-    await expect(section.getByRole('listitem').filter({ hasText: 'Drumm' })).toBeVisible();
-    await expect(section.getByRole('listitem').filter({ hasText: 'Bronx' })).toBeVisible();
-
-    await section.getByRole('button', { name: 'Abrir' }).first().click();
-    dialog = page.getByRole('dialog');
     await expect(dialog).toContainText('la cría de dragón');
     await expect(dialog.getByTestId('companion-life')).toHaveText('1 / 1');
 
@@ -46,9 +51,12 @@ test.describe('Compañeros y mascotas', () => {
     }).toBe(2);
 
     await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.track-slot');
+    await expect(page.locator('[data-companion-id="drumm"]')).toContainText('0/1');
+
     await page.locator('[role="button"][aria-label*="Vorn"]').first().click({ force: true });
-    const reopened = page.getByRole('dialog');
-    await expect(reopened.getByText(/Mascota · 0\/1 · 1 estados/)).toBeVisible();
+    dialog = page.getByRole('dialog');
+    await expect(dialog.getByText(/Mascota · 0\/1 · 1 estados/)).toBeVisible();
   });
 
   test('cada criatura actúa una vez después de su héroe, en orden de aparición', async ({ page }) => {

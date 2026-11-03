@@ -3,6 +3,7 @@ import { GiWingedSword, GiAbstract065 } from 'react-icons/gi';
 import CommanderCard from '@/components/CommanderCard';
 import EnemyCard from '@/components/track/EnemyCard';
 import CharacterCard from '@/components/track/CharacterCard';
+import CompanionTrackCard from '@/components/track/CompanionTrackCard';
 import { cardDistance, compactSlotHeight } from '@/components/track/trackLayout';
 
 /**
@@ -39,6 +40,8 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     openEnemyModal,
     removeRuneByUUID,
     setSelectedHeroId,
+    companions = [],
+    onOpenCompanion,
     RuneCard,
   } = deps;
 
@@ -48,13 +51,23 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
 
   const heroesAbove = placedHeroes.filter((h) => h.position === index && rolesOnTop.includes(h.role));
   const heroesBelow = placedHeroes.filter((h) => h.position === index && rolesOnBottom.includes(h.role));
+  // Cada héroe arrastra a sus compañeros: se apilan detrás, en orden de aparición.
+  const withCompanions = (heroes) => heroes.flatMap((hero) => [
+    hero,
+    ...companions
+      .filter((entry) => entry.heroId === hero.id)
+      .sort((a, b) => (a.order || 0) - (b.order || 0))
+      .map((entry) => ({ ...entry, kind: 'companion' })),
+  ]);
+  const stackAbove = withCompanions(heroesAbove);
+  const stackBelow = withCompanions(heroesBelow);
   const enemiesAbove = placedEnemies.filter((e) => e.enemy.position === index && e.enemy.runePosition === 'arriba');
   const enemiesBelow = placedEnemies.filter((e) => e.enemy.position === index && e.enemy.runePosition === 'abajo');
   const runesAbove = placedRunes.filter((r) => r.rune.colorIndex === index && r.rune.posicion === 'arriba');
   const runesBelow = placedRunes.filter((r) => r.rune.colorIndex === index && r.rune.posicion === 'abajo');
 
-  const totalAbove = heroesAbove.length + (isRune ? enemiesAbove.length : 0) + (isRuneTextSlot ? runesAbove.length : 0);
-  const totalBelow = heroesBelow.length + (isRune ? enemiesBelow.length : 0) + (isRuneTextSlot ? runesBelow.length : 0);
+  const totalAbove = stackAbove.length + (isRune ? enemiesAbove.length : 0) + (isRuneTextSlot ? runesAbove.length : 0);
+  const totalBelow = stackBelow.length + (isRune ? enemiesBelow.length : 0) + (isRuneTextSlot ? runesBelow.length : 0);
   // Densidad compacta: cartas algo más pequeñas y pilas más juntas.
   const densityFactor = density === 'compact' ? 0.85 : 1;
   // Solape compacto: las cartas se acercan entre sí (sin tocar la separación al track).
@@ -73,16 +86,18 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       const distance = (i === 0 ? cardDistance(count, 0) : cardDistance(count, i) * overlapFactor) * densityFactor;
       const zIndex = count - i;
 
+      const isCompanion = type === 'hero' && item.kind === 'companion';
       const isCurrentTurn = currentTurnEntity && (
         (type === 'enemy' && item.enemy.uuid === currentTurnEntity.uuid) ||
         (type === 'rune' && item.uuid === currentTurnEntity.uuid) ||
-        (type === 'hero' && item.id === currentTurnEntity.id)
+        (type === 'hero' && isCompanion && currentTurnEntity.type === 'companion' && item.uid === currentTurnEntity.uid) ||
+        (type === 'hero' && !isCompanion && currentTurnEntity.type === 'hero' && item.id === currentTurnEntity.id)
       );
       const isEntityFlipping = type === 'enemy' && flippedCards.includes(item.enemy.uuid);
 
       return (
         <div
-          key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : `${type}-${item.id}`}
+          key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : isCompanion ? item.uid : `${type}-${item.id}`}
           className="absolute left-1/2 w-[108px] max-w-full transition-transform duration-300"
           style={{
             ...(isTop
@@ -99,7 +114,13 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
                 <GiWingedSword className="animate-bounce text-white" size={40} />
               </div>
             )}
-            {type === 'enemy' && (item.enemy.tipo === 'especial' || item.enemy.tipo === 'fallenHero') ? (
+            {isCompanion ? (
+              <CompanionTrackCard
+                entry={item}
+                onOpen={() => onOpenCompanion?.(item.uid)}
+                estadosLabels={tea}
+              />
+            ) : type === 'enemy' && (item.enemy.tipo === 'especial' || item.enemy.tipo === 'fallenHero') ? (
               <CommanderCard carta={item.enemy} highlight={item.enemy.highlight} />
             ) : type === 'enemy' ? (
               <EnemyCard
@@ -150,7 +171,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       style={{ height: `${slotHeight}px` }}
     >
       {/* Pilas: se anclan al 50% del propio slot y crecen hacia fuera */}
-      {renderStack(heroesAbove, 'top', 'hero')}
+      {renderStack(stackAbove, 'top', 'hero')}
       {isRune && renderStack(enemiesAbove, 'top', 'enemy')}
       {isRuneTextSlot && renderStack(runesAbove.map((r) => r.rune), 'top', 'rune')}
 
@@ -214,7 +235,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       </div>
 
       {/* Pila inferior: se ancla al 50% del slot y crece hacia abajo */}
-      {renderStack(heroesBelow, 'bottom', 'hero')}
+      {renderStack(stackBelow, 'bottom', 'hero')}
       {isRune && renderStack(enemiesBelow, 'bottom', 'enemy')}
       {isRuneTextSlot && renderStack(runesBelow.map((r) => r.rune), 'bottom', 'rune')}
     </div>
