@@ -6,9 +6,9 @@ test.describe('Orden de héroes', () => {
     await seedStorage(page, buildSeed());
     await page.goto('./tracker', { waitUntil: 'networkidle' });
 
-    const grid = page.locator('section[aria-labelledby="heroes-heading"] ul.grid');
-    await expect(grid.locator('li')).toHaveCount(5);
-    const names = async () => grid.getByRole('checkbox').evaluateAll((boxes) => boxes.map((box) => box.getAttribute('aria-label')));
+    const section = page.locator('section[aria-labelledby="heroes-heading"]');
+    await expect(section.getByRole('checkbox')).toHaveCount(5);
+    const names = async () => section.getByRole('checkbox').evaluateAll((boxes) => boxes.map((box) => box.getAttribute('aria-label')));
 
     await page.getByLabel('Ordenar por').selectOption('class');
     expect(await names()).toEqual(['Maya', 'Elros', 'Jaheen', 'Vorn', 'Lorelai']);

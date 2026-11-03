@@ -1049,6 +1049,25 @@ E2E        50/50
 Clases     16 con icono y color
 ```
 
+### 33.ª tanda — Selección compacta y compañeros con vida/escudo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Selección** | Los grupos de clase se empaquetan en una rejilla de 6 columnas; varios grupos comparten fila | `Tracker.jsx`, `index.css` |
+| **Compañeros** | Tarjeta circular con fondo claro, barra de vida y sin el icono de patitas | `CompanionTrackCard.jsx` |
+| **Ficha** | Barra de vida y solo botones −1/+1 | `ModalCompanionCard.jsx` |
+| **Capacidades** | `capacidades` normalizadas en la entry y ESCUDO X aplicado al inicio del turno, como los enemigos | `companionAbilities.js`, `InitTracker.jsx` |
+| **Datos** | Excel de mascotas revisado; coincide con el catálogo actual | — |
+| **Pruebas** | 4 unitarios de claves/escudo y E2E ampliado | tests |
+
+**Medición**
+
+```text
+Unit       109 tests
+E2E        50/50
+Escudo     Bronx gana 2 al inicio de su turno (máx. 4)
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

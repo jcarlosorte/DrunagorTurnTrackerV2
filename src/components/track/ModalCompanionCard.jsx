@@ -123,8 +123,14 @@ export default function ModalCompanionCard({ uid, onClose }) {
             <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
               {t.life || 'Vida'}
             </p>
-            <div className="flex flex-wrap items-center gap-1.5">
-              {[-5, -1, 1, 5].map((delta) => (
+            <div className="mb-1.5 h-2 w-full overflow-hidden rounded bg-red-950">
+              <div
+                className="h-full rounded bg-red-500"
+                style={{ width: `${Math.max(0, Math.min(100, (entry.vida / Math.max(entry.vidaMax ?? companion.life, 1)) * 100))}%` }}
+              />
+            </div>
+            <div className="flex items-center gap-1.5">
+              {[-1, 1].map((delta) => (
                 <button
                   key={delta}
                   type="button"

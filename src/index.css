@@ -760,3 +760,29 @@ textarea:focus-visible {
   .boss-banner { animation: none; }
   .boss-banner__portrait { transition: none; }
 }
+/* Selección de héroes: varios grupos de clase por fila, hasta 6 columnas. */
+.hero-class-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  align-items: start;
+}
+.hero-class-group {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.hero-class-cards {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 640px) {
+  .hero-class-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hero-class-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .hero-class-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .hero-class-group { grid-column: span var(--span); }
+  .hero-class-cards { grid-template-columns: repeat(var(--span, 1), minmax(0, 1fr)); }
+}

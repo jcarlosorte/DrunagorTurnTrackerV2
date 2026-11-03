@@ -49,7 +49,8 @@ import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import { findNextActiveEntity, buildTurnOrder, indexOfEntityInOrder } from '@/utils/turnOrder';
-import { getCompanionName } from '@/data/companions';
+import { getCompanion, getCompanionName } from '@/data/companions';
+import { applyCompanionTurnEffects } from '@/utils/companionAbilities';
 import { findEnemyVariant } from '@/utils/enemyVariant';
 import { resolveEntityLabel } from '@/utils/entityLabel';
 import { collectManualFacets, filterManualEnemies } from '@/utils/manualEnemyFilter';
@@ -2067,6 +2068,7 @@ const InitTracker = () => {
   const processedStartEffectsRef = useRef(toSet(persistedSession?.processed?.start));
   const processedEndEffectsRef = useRef(toSet(persistedSession?.processed?.end));
   const processedHeroEffectsRef = useRef(toSet(persistedSession?.processed?.hero));
+  const processedCompanionEffectsRef = useRef(toSet(persistedSession?.processed?.companion));
   const lastHeroTurnRef = useRef(persistedSession?.processed?.lastHeroTurn || null);
   const processedCardsRef = useRef(toSet(persistedSession?.processed?.cards));
   const processedTiempoRef = useRef(toSet(persistedSession?.processed?.tiempo));
@@ -2126,6 +2128,7 @@ const InitTracker = () => {
         cards: [...processedCardsRef.current],
         tiempo: [...processedTiempoRef.current],
         hero: [...processedHeroEffectsRef.current],
+        companion: [...processedCompanionEffectsRef.current],
         lastHeroTurn: lastHeroTurnRef.current || null,
       },
     });
@@ -2175,6 +2178,7 @@ const InitTracker = () => {
       processedCardsRef.current.clear();
       processedTiempoRef.current = new Set();
       processedHeroEffectsRef.current = new Set();
+      processedCompanionEffectsRef.current = new Set();
       lastHeroTurnRef.current = null;
       setExecutedRunes([]);
       roundRef.current += 1;
@@ -2218,7 +2222,23 @@ const InitTracker = () => {
     if (step.type === 'companion') {
       const companion = (trackerData.companions || []).find((entry) => entry.uid === step.uid);
       if (companion) {
-        setCurrentTurnEntity({ ...companion, type: 'companion', name: getCompanionName(companion.id) });
+        const effectKey = `${roundNumber}-${turnIndex}-${companion.uid}`;
+        let effective = companion;
+        if (!processedCompanionEffectsRef.current.has(effectKey)) {
+          processedCompanionEffectsRef.current.add(effectKey);
+          const { entry, shields } = applyCompanionTurnEffects(companion, getCompanion(companion.id));
+          if (shields > 0) {
+            setTrackerData((prev) => ({
+              ...prev,
+              companions: (prev.companions || []).map((item) => (
+                item.uid === companion.uid ? entry : item
+              )),
+            }));
+            showScenarioToast(`🐾 ${getCompanionName(companion.id)}: ${ti.gana || 'gana'} ${shields} ${ti.escudos || 'escudos'}`);
+            effective = entry;
+          }
+        }
+        setCurrentTurnEntity({ ...effective, type: 'companion', name: getCompanionName(companion.id) });
         setGroupTurnTracker({ group: [], index: 0 });
       }
       return;

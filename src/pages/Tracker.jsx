@@ -445,34 +445,42 @@ const TrackerSelect = () => {
                 {t.noResults || 'No hay resultados con los filtros actuales.'}
               </p>
             ) : heroSort === 'class' ? (
-              <div className="space-y-5">
-                {groupedHeroes.map((group) => (
-                  <section key={group.id} aria-labelledby={`class-${group.id}`}>
-                    <header
-                      className="mb-2 flex items-center gap-2 rounded-lg px-3 py-2 text-white shadow"
-                      style={{ backgroundColor: group.color }}
+              <div className="hero-class-grid">
+                {groupedHeroes.map((group) => {
+                  const span = Math.min(group.heroes.length, 6);
+                  return (
+                    <section
+                      key={group.id}
+                      aria-labelledby={`class-${group.id}`}
+                      className="hero-class-group"
+                      style={{ '--span': span }}
                     >
-                      {group.icon && (
-                        <img
-                          src={group.icon}
-                          alt=""
-                          className="h-7 w-7 shrink-0 object-contain"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      )}
-                      <h3 id={`class-${group.id}`} className="min-w-0 flex-1 truncate text-sm font-bold uppercase tracking-wide">
-                        {group.label[language] || group.label.es}
-                      </h3>
-                      <span className="shrink-0 rounded-full bg-black/30 px-2 py-0.5 text-xs font-semibold tabular-nums">
-                        {group.heroes.length}
-                      </span>
-                    </header>
-                    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                      {group.heroes.map(renderHeroCard)}
-                    </ul>
-                  </section>
-                ))}
+                      <header
+                        className="mb-1.5 flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-white shadow"
+                        style={{ backgroundColor: group.color }}
+                      >
+                        {group.icon && (
+                          <img
+                            src={group.icon}
+                            alt=""
+                            className="h-6 w-6 shrink-0 object-contain"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        )}
+                        <h3 id={`class-${group.id}`} className="min-w-0 flex-1 truncate text-xs font-bold uppercase tracking-wide">
+                          {group.label[language] || group.label.es}
+                        </h3>
+                        <span className="shrink-0 rounded-full bg-black/30 px-1.5 py-0.5 text-[0.65rem] font-semibold tabular-nums">
+                          {group.heroes.length}
+                        </span>
+                      </header>
+                      <ul className="hero-class-cards" style={{ '--span': span }}>
+                        {group.heroes.map(renderHeroCard)}
+                      </ul>
+                    </section>
+                  );
+                })}
               </div>
             ) : (
               <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

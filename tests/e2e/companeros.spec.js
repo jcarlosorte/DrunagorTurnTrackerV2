@@ -76,5 +76,12 @@ test.describe('Compañeros y mascotas', () => {
 
     await page.getByTestId('next-turn').click();
     await expect(current).toContainText('Bronx');
+
+    await expect.poll(async () => {
+      const data = await readStorage(page, 'trackerData', {});
+      return (data.companions || [])
+        .find((entry) => entry.id === 'bronx')
+        ?.estadosAlterados?.find((estado) => estado.id === 'ESCUDO')?.count;
+    }).toBe(2);
   });
 });

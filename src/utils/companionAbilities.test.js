@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { parseCompanionAbilities } from '@/utils/companionAbilities';
+import {
+  applyCompanionTurnEffects,
+  parseCompanionAbilities,
+  parseCompanionAbilityKeys,
+} from '@/utils/companionAbilities';
 
 const labels = {
   SALTO: 'SALTO',
@@ -47,5 +51,41 @@ describe('parseCompanionAbilities', () => {
 
   it('devuelve vacío para «-»', () => {
     expect(parseCompanionAbilities('-', { labels, descriptions })).toEqual([]);
+  });
+});
+
+describe('capacidades de turno', () => {
+  it('normaliza las claves como las de los enemigos', () => {
+    expect(parseCompanionAbilityKeys('PERSONAL, ESCUDO 2')).toEqual(['PERSONAL', 'ESCUDO_2']);
+    expect(parseCompanionAbilityKeys('SALTO; QUEMADURA 1')).toEqual(['SALTO', 'QUEMADURA_1']);
+    expect(parseCompanionAbilityKeys('-')).toEqual([]);
+  });
+
+  it('el oso gana 2 escudos al inicio de su turno', () => {
+    const { entry, shields } = applyCompanionTurnEffects(
+      { uid: 'bronx', estadosAlterados: [] },
+      { abilities: 'PERSONAL, ESCUDO 2' },
+    );
+
+    expect(shields).toBe(2);
+    expect(entry.estadosAlterados).toEqual([{ id: 'ESCUDO', count: 2 }]);
+  });
+
+  it('acumula escudos sin pasar del máximo', () => {
+    const { entry, shields } = applyCompanionTurnEffects(
+      { uid: 'bronx', estadosAlterados: [{ id: 'ESCUDO', count: 3 }] },
+      { abilities: 'ESCUDO 2' },
+    );
+
+    expect(shields).toBe(1);
+    expect(entry.estadosAlterados[0]).toEqual({ id: 'ESCUDO', count: 4 });
+  });
+
+  it('no cambia nada si no tiene escudo', () => {
+    const original = { uid: 'drumm', estadosAlterados: [] };
+    const { entry, shields } = applyCompanionTurnEffects(original, { abilities: 'SALTO; QUEMADURA 1' });
+
+    expect(shields).toBe(0);
+    expect(entry).toBe(original);
   });
 });

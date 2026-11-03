@@ -6,6 +6,7 @@
  * de cada criatura (vida actual y estados alterados) vive en `trackerData`.
  */
 import { createId } from '@/utils/id';
+import { parseCompanionAbilityKeys } from '@/utils/companionAbilities';
 
 const COMPANION_IMAGES = import.meta.glob('../assets/companions/*.webp', {
   eager: true,
@@ -348,5 +349,6 @@ export function createCompanionEntry(companion, heroId, order) {
     vida: companion.life,
     vidaMax: companion.life,
     estadosAlterados: [],
+    capacidades: parseCompanionAbilityKeys(companion.abilities),
   };
 }
