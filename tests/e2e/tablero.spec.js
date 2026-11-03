@@ -37,10 +37,11 @@ test.describe('Tablero de iniciativa', () => {
   test('la vista de lista usa una altura compacta', async ({ page }) => {
     await openTracker(page);
     await page.getByRole('button', { name: 'Lista' }).first().click();
-    await page.locator('ul button[aria-expanded]').first().click();
+    const firstRow = page.locator('[data-slot-index="1"]');
+    await firstRow.locator('button[aria-expanded]').click();
     await page.waitForTimeout(300);
 
-    const height = await page.locator('ul .track-slot').first().evaluate((element) => element.getBoundingClientRect().height);
+    const height = await firstRow.locator('.track-slot').evaluate((element) => element.getBoundingClientRect().height);
     expect(height).toBeLessThanOrEqual(500);
   });
 

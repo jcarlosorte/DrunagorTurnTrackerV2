@@ -187,7 +187,7 @@ export const EXPANSIONS = [
     roles: [],
     dungeonRoles: [],
     language: { en: '', es: '' },
-    active: "off"
+    active: "on"
   },
   {
     id: "apocalypse_lorien",
@@ -199,7 +199,7 @@ export const EXPANSIONS = [
     roles: [],
     dungeonRoles: [],
     language: { en: '', es: '' },
-    active: "off"
+    active: "on"
   },
   {
     id: "apocalypse_awakenings",

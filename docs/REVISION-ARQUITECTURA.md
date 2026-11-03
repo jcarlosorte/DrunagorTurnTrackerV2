@@ -1263,6 +1263,23 @@ Retratos   35/36 (falta Garamond)
 Liberado   2,16 MB
 ```
 
+### 46.ª tanda — Iconos fuera del track, toolbar fijo y expansiones de Apocalipsis
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Iconos** | Se retiran de la carta del track y de las fichas de héroe y enemigo; se mantienen en selección y Config | `CharacterCard`, `ModalHeroCard`, `ModalEnemyCard` |
+| **Toolbar** | El panel de turnos y opciones queda fijo bajo el menú superior al hacer scroll | `TurnTrackBoard.jsx` |
+| **Expansiones** | Lorien y Pack de Héroes #1 pasan a activas; datos, imágenes y traducciones completos | `expansions.js` |
+| **Faltante** | Retrato sin fondo de Garamond (no bloquea: usa la carta como respaldo) | assets |
+| **Pruebas** | 2 unitarios de expansiones (118 en total) | tests |
+
+**Medición**
+
+```text
+Unit       118 tests
+E2E        56/56
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -7,7 +7,6 @@ test.describe('Color de clase del héroe', () => {
     await openTracker(page);
 
     const card = page.locator('[data-hero-id="vorn"]');
-    await expect(card.locator('[data-expansion-icon="base"]')).toBeVisible();
     await expect(card.locator('[data-hero-portrait]')).toHaveCSS('border-color', 'rgb(94, 31, 42)');
     await expect(card.locator('[data-hero-band]')).toHaveCSS('background-color', 'rgb(94, 31, 42)');
 
