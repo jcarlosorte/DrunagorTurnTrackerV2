@@ -8,6 +8,7 @@ export const HERO_CUBES_VERSION = 2;
 export const MAX_TRAUMA = 2;
 export const MAX_MALDICION = 5;
 export const MAX_CUBOS = 6;
+export const MAX_HERO_VIDA = 17;
 /** Retardo del volcado a localStorage (agrupa pulsaciones rápidas de +/-). */
 const WRITE_DELAY = 250;
 
@@ -244,8 +245,8 @@ export function getHeroExtras(heroId) {
     maldicion: Number(entry.maldicion) || 0,
     impactoMod: Number(entry.impactoMod) || 0,
     tiempoTotal: Math.max(0, Number(entry.tiempoTotal) || 0),
-    vida: Number.isFinite(entry.vida) ? entry.vida : base.vida,
-    vidaMax: Number(entry.vidaMax) || base.vidaMax,
+    vida: Math.min(MAX_HERO_VIDA, Number.isFinite(entry.vida) ? entry.vida : base.vida),
+    vidaMax: Math.min(MAX_HERO_VIDA, Number(entry.vidaMax) || base.vidaMax),
   };
 
   cache.set(heroId, value);
@@ -325,17 +326,18 @@ export function stepHeroEstadoAlterado(heroId, estadoId, delta) {
 }
 
 /** Vida actual: curar nunca supera el máximo; el daño no baja de 0. */
-export function changeHeroVida(heroId, delta) {
+export function changeHeroVida(heroId, delta, maxTotal = null) {
   const current = getHeroExtras(heroId);
-  const next = Math.max(0, Math.min(current.vida + delta, current.vidaMax));
+  const cap = Math.min(MAX_HERO_VIDA, maxTotal ?? current.vidaMax);
+  const next = Math.max(0, Math.min(current.vida + delta, cap));
   return patchHeroExtras(heroId, { vida: next });
 }
 
-/** Vida máxima: editable y puede superar la base del héroe. */
+/** Vida máxima: editable, con el límite global de 17. */
 export function changeHeroVidaMax(heroId, delta) {
   const current = getHeroExtras(heroId);
-  const next = Math.max(1, current.vidaMax + delta);
-  const vida = Math.min(current.vida, next);
+  const next = Math.min(MAX_HERO_VIDA, Math.max(1, current.vidaMax + delta));
+  const vida = Math.min(current.vida, next, MAX_HERO_VIDA);
   return patchHeroExtras(heroId, { vidaMax: next, vida });
 }
 

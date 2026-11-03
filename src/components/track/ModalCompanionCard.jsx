@@ -174,6 +174,7 @@ export default function ModalCompanionCard({ uid, onClose }) {
                 return (
                   <div
                     key={estado.id}
+                    title={descriptions[estado.id] || estado.texto}
                     className={`flex items-center gap-1 rounded-lg border px-1 py-0.5 ${
                       count > 0 ? 'border-amber-700/70 bg-amber-950/40' : 'border-slate-700 bg-slate-800/60'
                     }`}

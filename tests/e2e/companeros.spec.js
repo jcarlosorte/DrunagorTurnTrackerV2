@@ -14,6 +14,16 @@ const companions = [
   { uid: 'c-bronx', id: 'bronx', heroId: 'vorn', order: 1, vida: 1, vidaMax: 1, estadosAlterados: [] },
 ];
 
+const necromancerTracker = {
+  ...baseTracker,
+  heroes: ['vorn', 'mordred'],
+  roles: { ...baseTracker.roles, mordred: 'defensor' },
+  placedHeroes: [
+    ...baseTracker.placedHeroes,
+    { id: 'mordred', role: 'defensor', position: 1, image: '' },
+  ],
+};
+
 test.describe('Compañeros y mascotas', () => {
   test('se asignan desde el menú superior, aparecen en el track y guardan vida y estados', async ({ page }) => {
     await seedStorage(page, { ...buildSeed(), trackerData: JSON.stringify({ ...baseTracker, companions: [] }) });
@@ -173,11 +183,11 @@ test.describe('Compañeros y mascotas', () => {
     await expect(picker.getByRole('button', { name: /Capitán Conner/ })).toBeVisible();
   });
 
-  test('Hakkon (Draugr) se puede añadir más de una vez', async ({ page }) => {
+  test('Hakkon (Draugr) solo se asigna a un Nigromante activo y admite copias', async ({ page }) => {
     await seedStorage(page, {
       ...buildSeed(),
       expansions: JSON.stringify(['base', 'apocalypse_heroes_1']),
-      trackerData: JSON.stringify({ ...baseTracker, companions: [] }),
+      trackerData: JSON.stringify({ ...necromancerTracker, companions: [] }),
     });
     await openTracker(page);
 
@@ -185,11 +195,15 @@ test.describe('Compañeros y mascotas', () => {
     const picker = page.getByRole('dialog', { name: 'Compañeros y mascotas' });
     const catalogue = picker.locator('section').filter({ hasText: 'Disponibles' });
 
-    for (let i = 0; i < 2; i += 1) {
-      await catalogue.getByRole('button', { name: /Hakkon/ }).click();
-      await picker.getByLabel('Héroe').selectOption('vorn');
-      await picker.getByRole('button', { name: '+ Añadir' }).click();
-    }
+    await catalogue.getByRole('button', { name: /Hakkon/ }).click();
+    await expect(picker.getByRole('option', { name: /Vorn/ })).toHaveCount(0);
+    await expect(picker.getByRole('option', { name: /Mordred/ })).toHaveCount(1);
+    await picker.getByLabel('Héroe').selectOption('mordred');
+    await picker.getByRole('button', { name: '+ Añadir' }).click();
+
+    await catalogue.getByRole('button', { name: /Hakkon/ }).click();
+    await picker.getByLabel('Héroe').selectOption('mordred');
+    await picker.getByRole('button', { name: '+ Añadir' }).click();
 
     await expect.poll(async () => {
       const data = await readStorage(page, 'trackerData', {});

@@ -12,6 +12,7 @@ import {
   getCompanionsForExpansions,
 } from '@/data/companions';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import { getHeroClassId } from '@/data/heroClasses';
 import useFocusTrap from '@/hooks/useFocusTrap';
 
 /**
@@ -75,15 +76,20 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
   const heroes = trackerData.placedHeroes?.length
     ? trackerData.placedHeroes
     : (trackerData.heroes || []).map((id) => ({ id }));
+  const placedHeroes = trackerData.placedHeroes || [];
+  const draugrHeroes = placedHeroes.filter((hero) => getHeroClassId(hero.id) === 'necromante');
   const heroName = (id) => heroesT[id] || id;
   const heroRole = (id) => {
     const role = trackerData.roles?.[id];
     return role ? (rolesT[role] || role) : '';
   };
   const selected = selectedId ? getCompanion(selectedId) : null;
+  const isDraugr = selected?.subtype === 'Draugr';
+  const selectableHeroes = isDraugr ? draugrHeroes : heroes;
 
   const add = () => {
     if (!selected || !selectedHeroId) return;
+    if (selected.subtype === 'Draugr' && !draugrHeroes.some((hero) => hero.id === selectedHeroId)) return;
     const orderBase = companions.filter((entry) => entry.heroId === selectedHeroId);
     const order = orderBase.length ? Math.max(...orderBase.map((entry) => entry.order || 0)) + 1 : 0;
     const entry = createCompanionEntry(selected, selectedHeroId, order);
@@ -126,7 +132,14 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
         <button
           type="button"
           aria-pressed={isSelected}
-          onClick={() => setSelectedId(isSelected ? null : companion.id)}
+          onClick={() => {
+            if (isSelected) {
+              setSelectedId(null);
+              return;
+            }
+            setSelectedId(companion.id);
+            if (companion.subtype === 'Draugr') setSelectedHeroId('');
+          }}
           className="flex w-full items-center gap-2 p-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
         >
           <span
@@ -163,7 +176,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
                 className="min-h-8 min-w-0 flex-1 rounded border border-slate-600 bg-slate-900 px-1 text-[0.65rem] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
               >
                 <option value="">{t.companionsChooseHero || 'Elegir héroe'}…</option>
-                {heroes.map((hero) => (
+                {selectableHeroes.map((hero) => (
                   <option key={hero.id} value={hero.id}>
                     {heroName(hero.id)}{heroRole(hero.id) ? ` · ${heroRole(hero.id)}` : ''}
                   </option>
@@ -178,6 +191,11 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
                 + {t.companionsAdd || 'Añadir'}
               </button>
             </div>
+            {isDraugr && selectableHeroes.length === 0 && (
+              <p className="mt-1 text-[0.6rem] text-amber-200">
+                {t.draugrNeedsNecromancer || 'Solo un Nigromante activo en el track puede invocar Draugr.'}
+              </p>
+            )}
           </div>
         )}
       </div>

@@ -17,7 +17,7 @@ import {
   getHeroEffectName,
   getHeroEffectDescription,
 } from '@/data/heroes/index';
-import { CUBE_META, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, removeAlmacenItem, resetHero, toggleCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
+import { CUBE_META, MAX_HERO_VIDA, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, removeAlmacenItem, resetHero, toggleCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import {
@@ -148,7 +148,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
   const movement = (hero?.baseMove ?? 0) + getEquipmentBonus(extras, 'movimiento');
   const attack = getEquipmentBonus(extras, 'ataque');
   const lifeBonus = getEquipmentBonus(extras, 'vida');
-  const vidaMaxTotal = extras.vidaMax + lifeBonus;
+  const vidaMaxTotal = Math.min(MAX_HERO_VIDA, extras.vidaMax + lifeBonus);
 
   // Iconos de estado alterado (quemadura, veneno, escudo…), igual que en enemigos.
   const estadosActivos = (extras.estadosAlterados || []).filter((estado) => estado.count > 0);
@@ -270,7 +270,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                   <div
                     key={estadoConfig.id}
                     className="flex min-w-[2.1rem] max-w-[3.5rem] flex-1 basis-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
-                    title={`${nombre} ×${count}`}
+                    title={`${nombre} ×${count}${glossary.descriptions?.[estadoConfig.id] ? `\n${glossary.descriptions[estadoConfig.id]}` : ''}`}
                   >
                     <button
                       type="button"
@@ -363,7 +363,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                 <button
                   key={delta}
                   type="button"
-                  onClick={() => apply(changeHeroVida(heroId, delta))}
+                  onClick={() => apply(changeHeroVida(heroId, delta, vidaMaxTotal))}
                   className={`min-h-9 rounded-lg border text-sm font-bold transition ${
                     delta < 0
                       ? 'border-red-800 bg-red-900/70 text-red-100 hover:bg-red-800'

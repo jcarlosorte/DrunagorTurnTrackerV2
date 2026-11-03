@@ -180,5 +180,6 @@
   "VENGATIVO": "Monstruo que elige como objetivo principal al Héroe más corrupto.",
   "VERSATIL": "Equipo de doble cara que se puede voltear como acción menor si sus ranuras están vacías.",
   "VORAGINE": "Capacidad de Señor Supremo: al activarse baraja sus cartas y roba una mano nueva de ataques.",
-  "VUDU": "Al inicio de su turno, el Monstruo redirige sus condiciones acumulables al enemigo más fuerte a alcance 1."
+  "VUDU": "Al inicio de su turno, el Monstruo redirige sus condiciones acumulables al enemigo más fuerte a alcance 1.",
+  "SEMILLA_DEL_CAOS": "Las Semillas del Caos no hacen nada mientras se apilan, pero se vuelven extremadamente peligrosas si un personaje llega a tener 4. En tal caso, en el momento que reciba la cuarta Semilla, el personaje descarta las Semillas del Caos que tenga y sufre 4 de DAÑO no prevenible. Es una condición acumulable que, excepto por cómo se ha indicado, no se puede Purificar de ninguna forma."
 }

@@ -20,6 +20,11 @@ import fragil from "@/assets/assets_logo/fragil.png";
 import polimorfismo from "@/assets/assets_logo/polimorfismo.png";
 import restriccion from "@/assets/assets_logo/restriccion.png";
 import semillaDelCaos from "@/assets/assets_logo/semilla_del_caos.png";
+import entropia from "@/assets/assets_logo/entropia.png";
+import idoloDeFuria from "@/assets/assets_logo/idolo_de_furia.webp";
+import idoloDeResistencia from "@/assets/assets_logo/idolo_de_resistencia.webp";
+import idoloDeTormenta from "@/assets/assets_logo/idolo_de_tormenta.webp";
+import idoloDeTranquilidad from "@/assets/assets_logo/idolo_de_tranquilidad.webp";
 import { getHeroClassId } from "@/data/heroClasses";
 
 export const ESTADOS_ALTERADOS = [
@@ -70,8 +75,37 @@ export const ESTADOS_ALTERADOS = [
   {
     id: "SEMILLA_DEL_CAOS", texto: "semilla del caos", accion: "semilla_del_caos",
     reduce: "no", numReduce: 0, turno: "", daño: 0, max: 4,
-    imagen: semillaDelCaos, mostrar: "si", prevenible: "no",
-    soloHeroes: true, clases: [], version: "2.0",
+    imagen: semillaDelCaos, mostrar: "si", prevenible: "no", version: "2.0",
+  },
+  {
+    id: "ENTROPIA", texto: "entropía", accion: "entropia",
+    reduce: "no", numReduce: 0, turno: "", daño: 0, max: 4,
+    imagen: entropia, mostrar: "si", prevenible: "no",
+    soloHeroes: true, clases: ["mago_espadachin"], version: "2.0",
+  },
+  {
+    id: "IDOLO_DE_FURIA", texto: "ídolo de furia", accion: "idolo_de_furia",
+    reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1,
+    imagen: idoloDeFuria, mostrar: "si", prevenible: "no",
+    soloHeroes: true, clases: ["chaman"], version: "2.0",
+  },
+  {
+    id: "IDOLO_DE_RESISTENCIA", texto: "ídolo de resistencia", accion: "idolo_de_resistencia",
+    reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1,
+    imagen: idoloDeResistencia, mostrar: "si", prevenible: "no",
+    soloHeroes: true, clases: ["chaman"], version: "2.0",
+  },
+  {
+    id: "IDOLO_DE_TORMENTA", texto: "ídolo de tormenta", accion: "idolo_de_tormenta",
+    reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1,
+    imagen: idoloDeTormenta, mostrar: "si", prevenible: "no",
+    soloHeroes: true, clases: ["chaman"], version: "2.0",
+  },
+  {
+    id: "IDOLO_DE_TRANQUILIDAD", texto: "ídolo de tranquilidad", accion: "idolo_de_tranquilidad",
+    reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1,
+    imagen: idoloDeTranquilidad, mostrar: "si", prevenible: "no",
+    soloHeroes: true, clases: ["chaman"], version: "2.0",
   },
 ];
 

@@ -56,7 +56,7 @@ export const HERO_CLASSES = {
   // Apocalipsis
   necromante: classEntry('necromante', 'Necromante', 'Necromancer'),
   chaman: classEntry('chaman', 'Chamán', 'Shaman'),
-  mago_espadachin: classEntry('mago_espadachin', 'Mago Espadachín', 'Spellblade'),
+  mago_espadachin: classEntry('mago_espadachin', 'Mago de la Espada', 'Swordmage'),
   adalid: classEntry('adalid', 'Adalid', 'Champion'),
 };
 

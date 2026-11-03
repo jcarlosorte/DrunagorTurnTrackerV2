@@ -520,7 +520,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                       +
                     </button>
 
-                    <div className="relative flex flex-col items-center py-0.5" title={`${nombre} ×${estado.count || 0}`}>
+                    <div className="relative flex flex-col items-center py-0.5" title={`${nombre} ×${estado.count || 0}${tte[estadoConfig.id] ? `\n${tte[estadoConfig.id]}` : ''}`}>
                       <img src={estadoConfig.imagen} alt={nombre} className="h-6 w-6 flex-shrink" loading="lazy" decoding="async" />
                       <span className="text-[0.6rem] font-bold leading-none text-white">{estado.count || 0}</span>
                     </div>

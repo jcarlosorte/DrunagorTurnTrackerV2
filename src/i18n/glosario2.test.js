@@ -4,7 +4,7 @@ import glosarioEn from '@/i18n/glosario2.en.json';
 
 describe('glosario 2.0', () => {
   it('incluye las descripciones nuevas en ambos idiomas', () => {
-    for (const clave of ['NO_MUERTO', 'DRAUGR', 'ATURDIMIENTO', 'CEGUERA', 'TRAMPA_VENENOSA']) {
+    for (const clave of ['NO_MUERTO', 'DRAUGR', 'ATURDIMIENTO', 'CEGUERA', 'TRAMPA_VENENOSA', 'SEMILLA_DEL_CAOS']) {
       expect(glosarioEs[clave], clave).toBeTruthy();
       expect(glosarioEn[clave], clave).toBeTruthy();
     }

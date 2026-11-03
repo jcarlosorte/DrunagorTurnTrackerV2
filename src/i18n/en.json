@@ -476,6 +476,7 @@
     "companionsHero": "Hero",
     "companionsChooseHero": "Choose hero",
     "companionsAdd": "Add",
+    "draugrNeedsNecromancer": "Only an active Necromancer on the track can summon a Draugr.",
     "companionsAllAssigned": "All creatures are assigned.",
     "companionsRemove": "Remove companion",
     "companionsRemoveConfirm": "It will be removed from the game and unassigned. This cannot be undone.",

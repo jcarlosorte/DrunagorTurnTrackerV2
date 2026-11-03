@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   addAlmacenItem,
+  changeHeroVida,
+  changeHeroVidaMax,
   getHeroExtras,
   patchHeroExtras,
   removeAlmacenItem,
@@ -99,5 +101,15 @@ describe('resetHeroForNewGame', () => {
     expect(after.trauma).toBe(0);
     expect(after.maldicion).toBe(0);
     expect(after.cubos).toEqual(after.cubosMax);
+  });
+});
+
+describe('límite de vida', () => {
+  it('la vida y la vida máxima nunca superan 17', () => {
+    changeHeroVidaMax('vorn', 20);
+    expect(getHeroExtras('vorn').vidaMax).toBe(17);
+
+    changeHeroVida('vorn', 100, 17);
+    expect(getHeroExtras('vorn').vida).toBe(17);
   });
 });

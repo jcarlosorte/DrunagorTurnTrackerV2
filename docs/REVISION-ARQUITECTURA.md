@@ -1375,6 +1375,38 @@ Unit       127 tests
 E2E        57/57
 ```
 
+### 53.ª tanda — Recursos por clase, Draugr y tope de vida
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Recursos** | Entropía para Mago de la Espada, cuatro ídolos para Chamán y Semilla del caos general | `estadosAlterados.js` |
+| **Clase** | «Mago de la Espada» en lugar de «Mago Espadachín» | `heroClasses.js`, i18n |
+| **Draugr** | Solo se asigna a un Nigromante activo en el track; admite copias | `CompanionPicker.jsx` |
+| **Vida** | Tope global de 17 en vida y vida máxima | `heroExtras.js`, `ModalHeroCard` |
+| **Pruebas** | 1 unitario de vida y E2E de Draugr (128 en total) | tests |
+
+**Medición**
+
+```text
+Unit       128 tests
+E2E        57/57
+```
+
+### 54.ª tanda — Descripción de Semilla del Caos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Glosario** | Descripción en español e inglés de la condición acumulable | `glosario2.*.json` |
+| **Fichas** | El estado muestra la descripción al pasar por encima | `ModalCompanionCard`, `ModalHeroCard`, `ModalEnemyCard` |
+| **Pruebas** | Clave incluida en el test del glosario (128 en total) | tests |
+
+**Medición**
+
+```text
+Unit       128 tests
+E2E        57/57
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

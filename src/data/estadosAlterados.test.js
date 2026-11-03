@@ -49,10 +49,19 @@ describe('estados de la versión 2.0', () => {
 
     expect(enemigos15).not.toContain('FRAGIL');
     expect(enemigos20).toEqual(expect.arrayContaining(['FRAGIL', 'POLIMORFISMO', 'RESTRICCION']));
+    expect(enemigos20).toContain('SEMILLA_DEL_CAOS');
 
     const heroe20 = ids(getHeroStatusCatalog('sun', '2.0'));
     expect(heroe20).toContain('FRAGIL');
-    expect(heroe20).not.toContain('SEMILLA_DEL_CAOS');
+    expect(heroe20).toContain('SEMILLA_DEL_CAOS');
+
+    const diana = ids(getHeroStatusCatalog('diana', '2.0'));
+    expect(diana).toContain('ENTROPIA');
+    expect(ids(getHeroStatusCatalog('vorn', '2.0'))).not.toContain('ENTROPIA');
+
+    const gramosh = ids(getHeroStatusCatalog('gramosh', '2.0'));
+    expect(gramosh).toEqual(expect.arrayContaining(['IDOLO_DE_FURIA', 'IDOLO_DE_RESISTENCIA', 'IDOLO_DE_TORMENTA', 'IDOLO_DE_TRANQUILIDAD']));
+    expect(ids(getHeroStatusCatalog('sun', '2.0'))).not.toContain('IDOLO_DE_FURIA');
   });
 
   it('Frágil, Polimorfismo y Restricción se limitan a 1; Semilla del caos a 4', () => {

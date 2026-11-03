@@ -180,5 +180,6 @@
   "VENGATIVO": "Monster targeting the Most Corrupted Hero as Primary Target.",
   "VERSATIL": "Double-sided equipment card that can be flipped over as a Minor Action when unblocked.",
   "VORAGINE": "Overlord ability: reshuffles attack deck and draws a new hand upon activation.",
-  "VUDU": "Monster redirects incoming stackable conditions to the strongest enemy within Range 1 at turn start."
+  "VUDU": "Monster redirects incoming stackable conditions to the strongest enemy within Range 1 at turn start.",
+  "SEMILLA_DEL_CAOS": "Chaos Seeds don't do anything at all while they are stacking, but they become extremely dangerous when a Character holds 4 of them. When this is the case, the moment the fourth seed is received, that Character discards all four Chaos Seeds they have and suffer 4 non-preventable DMG. Chaos Seeds is a stackable Condition which, aside being burst as described above, cannot be Cleansed at all."
 }
