@@ -3,7 +3,7 @@ import { GiNightSleep, GiRun, GiSwordWound, GiHearts } from 'react-icons/gi';
 import { useTracker } from '@/context/TrackerContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { getEnemyStatusCatalog } from '@/data/estadosAlterados';
-import { getCompanion, getCompanionImage } from '@/data/companions';
+import { getCompanion, getCompanionBackground, getCompanionImage } from '@/data/companions';
 import { parseCompanionAbilities } from '@/utils/companionAbilities';
 import { FiInfo } from 'react-icons/fi';
 import ConfirmDialog from '@/components/ConfirmDialog';
@@ -37,6 +37,7 @@ export default function ModalCompanionCard({ uid, onClose }) {
   if (!entry || !companion) return null;
 
   const image = getCompanionImage(companion.id);
+  const background = getCompanionBackground(companion.id);
   const abilities = parseCompanionAbilities(companion.abilities, {
     labels: translations.condiciones_t || {},
     descriptions: translations.condiciones_d || {},
@@ -84,12 +85,19 @@ export default function ModalCompanionCard({ uid, onClose }) {
         aria-labelledby="companion-title"
         className="flex max-h-[92dvh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border-2 border-amber-900/60 bg-slate-900 text-slate-100 shadow-2xl"
       >
-        <header className="flex items-start gap-3 border-b border-slate-700 px-4 py-3">
+        <header
+          className="relative flex items-start gap-3 border-b border-slate-700 px-4 py-3"
+          style={background ? {
+            backgroundImage: `linear-gradient(90deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.55)), url(${background})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          } : undefined}
+        >
           {image && (
             <img
               src={image}
               alt={companion.name}
-              className="h-40 w-auto shrink-0 rounded-lg border border-slate-700 bg-slate-950/60 object-contain p-1"
+              className="h-40 w-auto shrink-0 rounded-lg border border-slate-700 bg-slate-950/40 object-contain p-1"
               loading="lazy"
               decoding="async"
             />

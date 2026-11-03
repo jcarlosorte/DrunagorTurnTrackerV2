@@ -6,6 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import {
   createCompanionEntry,
   getCompanion,
+  getCompanionBackground,
   getCompanionGroup,
   getCompanionImage,
   getCompanionsForExpansions,
@@ -104,6 +105,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
 
   const renderAvailableCard = (companion) => {
     const image = getCompanionImage(companion.id);
+    const background = getCompanionBackground(companion.id);
     const isSelected = selectedId === companion.id;
     return (
       <button
@@ -117,9 +119,17 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
             : 'border-slate-700 bg-slate-800/60 hover:border-slate-500'
         }`}
       >
-        <span className="flex h-14 w-11 shrink-0 items-center justify-center rounded bg-slate-950/60">
+        <span
+          className="relative flex h-14 w-11 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-950/60"
+          style={background ? {
+            backgroundImage: `url(${background})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          } : undefined}
+        >
+          <span className="absolute inset-0 bg-slate-950/35" aria-hidden="true" />
           {image && (
-            <img src={image} alt="" className="h-full w-full object-contain" loading="lazy" decoding="async" />
+            <img src={image} alt="" className="relative h-full w-full object-contain" loading="lazy" decoding="async" />
           )}
         </span>
         <span className="min-w-0">
@@ -135,6 +145,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
   const renderAssignedRow = (entry) => {
     const companion = getCompanion(entry.id);
     const image = getCompanionImage(entry.id);
+    const background = getCompanionBackground(entry.id);
     const stateCount = (entry.estadosAlterados || []).reduce((sum, item) => sum + item.count, 0);
     return (
       <li
@@ -142,7 +153,17 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
         className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/70 px-2 py-1"
       >
         {image && (
-          <img src={image} alt="" className="h-10 w-8 shrink-0 rounded object-contain" loading="lazy" />
+          <img
+            src={image}
+            alt=""
+            className="h-10 w-8 shrink-0 rounded object-contain"
+            style={background ? {
+              backgroundImage: `url(${background})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            } : undefined}
+            loading="lazy"
+          />
         )}
         <span className="min-w-0 flex-1">
           <span className="block truncate text-xs font-semibold text-slate-100">

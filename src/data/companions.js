@@ -7,6 +7,21 @@
  */
 import { createId } from '@/utils/id';
 import { parseCompanionAbilityKeys } from '@/utils/companionAbilities';
+import runicBackground from '@/assets/interactions/runic.avif';
+import seedBackground from '@/assets/interactions/seed.avif';
+import barricadeBackground from '@/assets/interactions/barricade.avif';
+import beerFactoryBackground from '@/assets/interactions/beer-factory.avif';
+import draconianAltarBackground from '@/assets/interactions/draconian-altar.avif';
+import forgeBackground from '@/assets/interactions/forge.avif';
+
+const INTERACTION_BACKGROUNDS = [
+  runicBackground,
+  seedBackground,
+  barricadeBackground,
+  beerFactoryBackground,
+  draconianAltarBackground,
+  forgeBackground,
+];
 
 const COMPANION_IMAGES = import.meta.glob('../assets/companions/*.webp', {
   eager: true,
@@ -342,6 +357,12 @@ export function getCompanionGroup(companion) {
   if (!companion) return 'companero';
   if (companion.type === 'mascota') return 'mascota';
   return normalizeAlias(companion.alias).includes('heroe de daren') ? 'daren_hero' : 'companero';
+}
+
+/** Fondo de interacción asignado de forma estable por posición en el catálogo. */
+export function getCompanionBackground(id) {
+  const index = COMPANIONS.findIndex((companion) => companion.id === id);
+  return INTERACTION_BACKGROUNDS[(index >= 0 ? index : 0) % INTERACTION_BACKGROUNDS.length];
 }
 
 /** Criaturas disponibles según las expansiones activas. */

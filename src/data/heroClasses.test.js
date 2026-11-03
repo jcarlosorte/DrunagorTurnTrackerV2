@@ -38,6 +38,11 @@ describe('clases de héroe', () => {
     expect(monje.icon).toBeTruthy();
   });
 
+  it('el Caballero Sombrío usa un marrón rojizo distinto del Guerrero', () => {
+    expect(getHeroClass('devron').color).toBe('#4a2a22');
+    expect(getHeroClass('devron').color).not.toBe(getHeroClass('vorn').color);
+  });
+
   it('todas las clases tienen icono', () => {
     Object.values(HERO_CLASSES).forEach((entry) => {
       expect(entry.icon).toBeTruthy();

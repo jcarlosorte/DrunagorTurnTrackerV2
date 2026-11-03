@@ -23,7 +23,7 @@ const CLASS_META = {
   monje: { color: '#8a5a1f', file: 'Monk.png' },
   paladin: { color: '#4a4a5a', file: 'Paladin.png' },
   arquero: { color: '#1f4a6b', file: 'Ranger.png' },
-  caballero_sombrio: { color: '#5e1f2a', file: 'Shadow Knight.png' },
+  caballero_sombrio: { color: '#4a2a22', file: 'Shadow Knight.png' },
   hechicero: { color: '#1f5a4a', file: 'Sorcerer.png' },
   guerrero: { color: '#5e1f2a', file: 'Warrior.png' },
   // Apocalipsis
