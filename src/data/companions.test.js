@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { COMPANIONS, getCompanionGroup, getCompanionsForExpansions } from '@/data/companions';
+import {
+  COMPANIONS,
+  getCompanionBackground,
+  getCompanionGroup,
+  getCompanionsForExpansions,
+} from '@/data/companions';
 
 describe('getCompanionsForExpansions', () => {
   it('devuelve las 23 criaturas del juego base', () => {
@@ -30,5 +35,13 @@ describe('getCompanionGroup', () => {
     expect(getCompanionGroup(conner)).toBe('companero');
     expect(getCompanionGroup(lorelai)).toBe('daren_hero');
     expect(getCompanionGroup(reborn)).toBe('daren_hero');
+  });
+});
+
+describe('getCompanionBackground', () => {
+  it('asigna un fondo de interacción a cada criatura', () => {
+    expect(getCompanionBackground('drumm')).toBeTruthy();
+    expect(getCompanionBackground('vorn_companion')).toBeTruthy();
+    expect(getCompanionBackground('no-existe')).toBeTruthy();
   });
 });

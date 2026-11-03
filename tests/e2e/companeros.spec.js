@@ -34,6 +34,9 @@ test.describe('Compañeros y mascotas', () => {
     const drummCard = page.locator('[data-companion-id="drumm"]');
     await expect(drummCard).toBeVisible();
     await expect(drummCard).toContainText('1/1');
+    await expect(drummCard.locator('[data-companion-name]')).toContainText('Drumm');
+    const background = await drummCard.locator('[data-companion-avatar]').evaluate((el) => getComputedStyle(el).backgroundImage);
+    expect(background).toContain('url(');
 
     await drummCard.click();
     let dialog = page.getByRole('dialog');

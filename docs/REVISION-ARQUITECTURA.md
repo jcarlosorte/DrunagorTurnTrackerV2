@@ -1129,6 +1129,24 @@ Unit       110 tests
 E2E        55/55
 ```
 
+### 38.ª tanda — Fondos de interacción y tarjeta circular
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Fondos** | 6 imágenes de interacción convertidas a AVIF y asignadas de forma estable por posición en el catálogo | `assets/interactions/`, `companions.js` |
+| **Track** | Círculo centrado, nombre superpuesto abajo, barra de vida debajo y fondo de interacción | `CompanionTrackCard.jsx` |
+| **Ficha** | Cabecera con el fondo de la criatura y retrato sobre él | `ModalCompanionCard.jsx` |
+| **Menú** | Miniaturas y filas con el mismo fondo | `CompanionPicker.jsx` |
+| **Pruebas** | 1 unitario del fondo y E2E ampliado (fondo y nombre dentro del círculo) | tests |
+
+**Medición**
+
+```text
+Unit       112 tests
+E2E        55/55
+Fondos     6 (runic, seed, barricade, beer factory, altar, forge)
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
