@@ -692,7 +692,9 @@ const InitTracker = () => {
       id: enemyId,
       categoria: category,
       comportamiento: behaviorType,
-      enemies,
+      // Permite colocar también los enemigos de las expansiones activas aunque
+      // todavía no estuvieran en la lista configurada al iniciar la partida.
+      enemies: [...(enemies || []), ...enemiesInSelectedExpansions.map((entry) => entry.id)],
     });
 
     if (!selected) {

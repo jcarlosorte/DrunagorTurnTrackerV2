@@ -72,6 +72,17 @@ describe('findEnemyVariant', () => {
     expect(found?.id).toBe('dark_vampire_com');
   });
 
+  it('los señores supremos ignoran el comportamiento', () => {
+    const catalog = [{ id: 'fallen_sisters', categoria: 'overlord' }];
+    const found = findEnemyVariant(catalog, {
+      id: 'fallen_sisters',
+      categoria: 'overlord',
+      comportamiento: 'complejo',
+      enemies: ['fallen_sisters'],
+    });
+    expect(found?.id).toBe('fallen_sisters');
+  });
+
   it('devuelve null sin coincidencias o con datos inválidos', () => {
     expect(findEnemyVariant(CATALOG, { id: 'no_existe', categoria: 'soldado' })).toBeNull();
     expect(findEnemyVariant(null, { id: 'x', categoria: 'soldado' })).toBeNull();

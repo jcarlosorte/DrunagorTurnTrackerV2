@@ -1514,6 +1514,21 @@ Unit       135 tests
 E2E        58/58
 ```
 
+### 62.ª tanda — Correcciones de las Hermanas Fatídicas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nombre** | «Hermanas Caídas» pasa a «Hermanas Fatídicas» | i18n |
+| **Colocación** | Los señores supremos ignoran el comportamiento y pueden colocarse desde las expansiones activas | `enemyVariant`, `InitTracker` |
+| **Pruebas** | 1 unitaria: los señores supremos ignoran el comportamiento (136 en total) | tests |
+
+**Medición**
+
+```text
+Unit       136 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

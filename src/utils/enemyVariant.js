@@ -36,7 +36,7 @@ export function findEnemyVariant(catalog, { id, categoria, comportamiento, enemi
     if (entry.cara === 'B') return false;
     // Las apariciones de escenario no están en la lista configurable.
     if (!configurados.includes(entry.id) && !esEnemigoDeEscenario(entry)) return false;
-    if (categoria === 'comandante' || categoria === 'jefe') return true;
+    if (categoria === 'comandante' || categoria === 'jefe' || categoria === 'overlord') return true;
     return normalizarComportamiento(entry.comportamiento) === normalizarComportamiento(comportamiento);
   }) || null;
 }
