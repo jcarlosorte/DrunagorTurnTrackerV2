@@ -87,6 +87,7 @@
     "lord_of_wrath": "LordWrath",
     "monsters_pack_1": "Monster Pack No. 1",
     "war_loot": "Spoils of War",
+    "gencon": "GenCon Exclusive",
     "apocalypse_adventures": "Apocalypse Adventures",
     "apocalypse_heroes_1": "Apocalypse - Hero Pack",
     "apocalypse_lorien": "Apocalypse - Lorien",
@@ -335,7 +336,8 @@
     "defensor": "Defender",
     "lider": "Leader",
     "agresor": "Striker",
-    "apoyo": "Support"
+    "apoyo": "Support",
+    "asistente": "Attendant"
   },
   "trackerSelect": {
     "title": "Tracker setup",

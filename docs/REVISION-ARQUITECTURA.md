@@ -996,6 +996,24 @@ Criaturas  23 (16 compañeros + 7 mascotas)
 
 > Las variantes «Conner (desarmado)», «Janina (desarmada)» y «Tharmagar (resentido)» comparten imagen con su versión normal porque los PNG recibidos son idénticos.
 
+### 30.ª tanda — GenCon Exclusive y rol Asistente
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Expansión** | Nueva expansión «GenCon Exclusive» antes de las de Apocalipsis; solo aporta el rol Asistente | `expansions.js`, `gencon.avif` |
+| **Rol** | Asistente/Attendant ligado a `gencon`; ocupa la posición de Apoyo (índice 2 abajo) | `roles.js`, `turnOrder.js` |
+| **Exclusión** | Al asignar Asistente se libera Apoyo y viceversa; el track usa el mismo hueco | `Tracker.jsx` |
+| **Disponibilidad** | Solo con la expansión activa; si se desactiva, el rol se descarta | `getRolesForExpansions` |
+| **Pruebas** | 3 unitarios de roles y 2 E2E (exclusión y visibilidad) | tests |
+
+**Medición**
+
+```text
+Unit       100 tests
+E2E        47/47
+Roles      base 5 · con GenCon 6
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

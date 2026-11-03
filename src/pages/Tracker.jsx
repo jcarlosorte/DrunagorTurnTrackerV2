@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { EXPANSIONS } from '@/data/expansions';
 import { HEROES } from '@/data/heroes';
 import { ENEMIES } from '@/data/enemies';
-import { ROLES } from '@/data/roles';
+import { OPPOSITE_ROLES, getRolesForExpansions } from '@/data/roles';
 import { COLORS } from '@/data/color';
 import { HERO_CLASSES, getHeroClassId } from '@/data/heroClasses';
 import { useLanguage } from '@/context/LanguageContext';
@@ -59,11 +59,16 @@ const TrackerSelect = () => {
     () => ENEMIES.filter((e) => expansionKey.split(',').includes(e.expansionId)),
     [expansionKey]
   );
+  // El rol Asistente solo existe con GenCon Exclusive activado.
+  const availableRoles = useMemo(
+    () => getRolesForExpansions(expansionKey.split(',')),
+    [expansionKey]
+  );
 
   useEffect(() => {
     const validHeroIds = new Set(heroesInSelectedExpansions.map((hero) => hero.id));
     const validEnemyIds = new Set(enemiesInSelectedExpansions.map((enemy) => enemy.id));
-    const validRoleIds = new Set(ROLES.map((role) => role.id));
+    const validRoleIds = new Set(availableRoles.map((role) => role.id));
 
     const heroes = (Array.isArray(trackerData.heroes) ? trackerData.heroes : [])
       .filter((id) => validHeroIds.has(id));
@@ -80,7 +85,7 @@ const TrackerSelect = () => {
     setHeroRoles(roles);
     setSelectedEnemies(enemies);
     setSelectedBehaviors(behaviors.length > 0 ? behaviors : BEHAVIORS);
-  }, [expansionKey, trackerData, heroesInSelectedExpansions, enemiesInSelectedExpansions]);
+  }, [expansionKey, trackerData, heroesInSelectedExpansions, enemiesInSelectedExpansions, availableRoles]);
 
   const getHeroName = useCallback((heroId) => translations.heroes?.[heroId] || heroId, [translations]);
   const getEnemyName = useCallback((enemyId) => translations.enemies?.[enemyId] || enemyId, [translations]);
@@ -94,6 +99,13 @@ const TrackerSelect = () => {
       const next = { ...prev };
       if (roleId) next[heroId] = roleId;
       else delete next[heroId];
+      // Asistente y Apoyo comparten posición: al elegir uno se libera el otro.
+      const opposite = OPPOSITE_ROLES[roleId];
+      if (opposite) {
+        Object.keys(next).forEach((id) => {
+          if (next[id] === opposite) delete next[id];
+        });
+      }
       return next;
     });
   };
@@ -151,7 +163,7 @@ const TrackerSelect = () => {
 
     const validHeroIds = new Set(heroesInSelectedExpansions.map((hero) => hero.id));
     const validEnemyIds = new Set(enemiesInSelectedExpansions.map((enemy) => enemy.id));
-    const validRoleIds = new Set(ROLES.map((role) => role.id));
+    const validRoleIds = new Set(availableRoles.map((role) => role.id));
     const heroes = selectedHeroes.filter((id) => validHeroIds.has(id));
     const roles = Object.fromEntries(
       Object.entries(heroRoles)
@@ -487,7 +499,7 @@ const TrackerSelect = () => {
                           }`}
                         >
                           <option value="">{t.chooseRole || 'Elegir rol'}</option>
-                          {ROLES
+                          {availableRoles
                             .filter((role) => !usedRoles.includes(role.id) || role.id === heroRoles[hero.id])
                             .map((role) => (
                               <option key={role.id} value={role.id}>{getRoleName(role.id)}</option>

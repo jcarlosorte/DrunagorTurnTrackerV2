@@ -13,6 +13,7 @@ import heroPackImg from '@/assets/expansions/hero-pack.avif';
 import lorienImg from '@/assets/expansions/lorien.avif';
 import awakeningsImg from '@/assets/expansions/awakenings.avif';
 import sistersImg from '@/assets/expansions/sisters.avif';
+import genconImg from '@/assets/expansions/gencon.avif';
 
 export const EXPANSIONS = [
   {
@@ -131,6 +132,18 @@ export const EXPANSIONS = [
     companions: [],
     pets: ["wog"],
     roles: [],
+    dungeonRoles: [],
+    language: { en: '', es: '' },
+    active: "on"
+  },
+  {
+    id: "gencon",
+    imagen: genconImg,
+    heroes: [],
+    enemies: [],
+    companions: [],
+    pets: [],
+    roles: ['asistente'],
     dungeonRoles: [],
     language: { en: '', es: '' },
     active: "on"

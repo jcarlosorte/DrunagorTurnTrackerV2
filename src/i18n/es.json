@@ -87,6 +87,7 @@
     "lord_of_wrath": "Señor de la Ira",
     "monsters_pack_1": "Pack de Monstruos Nº1",
     "war_loot": "Botines de Guerra",
+    "gencon": "GenCon Exclusive",
     "apocalypse_adventures": "Apocalipsis - Aventuras",
     "apocalypse_heroes_1": "Apocalipsis - Pack de Héroe #1",
     "apocalypse_lorien": "Apocalipsis - Lorien",
@@ -335,7 +336,8 @@
     "defensor": "Defensor",
     "lider": "Líder",
     "agresor": "Agresor",
-    "apoyo": "Apoyo"
+    "apoyo": "Apoyo",
+    "asistente": "Asistente"
   },
   "trackerSelect": {
     "title": "Configuración",

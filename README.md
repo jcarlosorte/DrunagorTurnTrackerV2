@@ -36,6 +36,8 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Compañeros y mascotas**: 23 criaturas que se añaden desde el menú **Compañeros** de
   la barra superior, sin límite por héroe, con tarjeta propia tras su héroe en el track
   (vida y estados), turno en orden de aparición y ficha ampliada con capacidades.
+- **GenCon Exclusive**: expansión con el rol **Asistente**, alternativa a Apoyo en el
+  mismo hueco del track (no pueden convivir).
 - **Reinicio de partida por capas**: turno, historial y enemigos, con opción de
   reiniciar runas y de restablecer héroes (vida, estados y cubos).
 - **Guardados**: autoguardado, hasta 10 partidas con nombre, exportación e
@@ -155,8 +157,8 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      97 tests
-e2e       45 tests
+unit      100 tests
+e2e       47 tests
 build     OK
 ```
 

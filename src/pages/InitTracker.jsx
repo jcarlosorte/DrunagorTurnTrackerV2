@@ -2969,7 +2969,7 @@ const InitTracker = () => {
   };
 
   const rolesOnTop = ['defensor', 'lider', 'controlador'];
-  const rolesOnBottom = ['apoyo', 'agresor'];
+  const rolesOnBottom = ['apoyo', 'asistente', 'agresor'];
 
   const RuneCard = ({ rune, onRemove, flipped }) => {
     const tipo = rune.tipo;
