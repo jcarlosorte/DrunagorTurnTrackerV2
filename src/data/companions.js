@@ -340,6 +340,32 @@ export const COMPANIONS = [
     abilities: 'PERSONAL, ESCUDO_2',
     expansionId: 'base',
   },
+  {
+    id: 'neva',
+    name: 'Neva',
+    alias: 'la pantera nubosa',
+    type: 'mascota',
+    subtype: 'Pantera',
+    attackType: 'Cuerpo a cuerpo',
+    attack: 2,
+    movement: 3,
+    life: 1,
+    abilities: 'ÚNICA; CADA VEZ QUE NEVA INFLIJA UN GOLPE DE GRACIA: ALCANCE 1, PURIFICACIÓN 1',
+    expansionId: 'apocalypse_heroes_1',
+  },
+  {
+    id: 'hakkon',
+    name: 'Hakkon',
+    alias: 'Guerrero no muerto',
+    type: 'mascota',
+    subtype: 'Draugr',
+    attackType: 'Cuerpo a cuerpo',
+    attack: 2,
+    movement: 4,
+    life: 1,
+    abilities: 'NO MUERTO; LOS DRAUGR NO RECIBEN DAÑO POR OSCURIDAD',
+    expansionId: 'apocalypse_heroes_1',
+  },
 ];
 
 export const COMPANION_TYPES = {

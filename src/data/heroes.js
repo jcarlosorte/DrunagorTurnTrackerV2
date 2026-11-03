@@ -63,7 +63,7 @@ export const HEROES = [
   { id: "mordred", expansionId: "apocalypse_heroes_1", baseLife: 10, baseMove: 2, type: "hero", profession: "Necromante", image: mordred },
   { id: "siff", expansionId: "apocalypse_heroes_1", baseLife: 10, baseMove: 2, type: "hero", profession: "Necromante", image: siff },
   { id: "sahara", expansionId: "apocalypse_heroes_1", baseLife: 10, baseMove: 2, type: "hero", profession: "Chamana", image: sahara },
-  { id: "garamond", expansionId: "apocalypse_heroes_1", baseLife: 10, baseMove: 2, type: "hero", profession: "Chamán", image: garamond },
+  { id: "gramosh", expansionId: "apocalypse_heroes_1", baseLife: 10, baseMove: 2, type: "hero", profession: "Chamán", image: garamond },
   { id: "diana", expansionId: "apocalypse_heroes_1", baseLife: 10, baseMove: 2, type: "hero", profession: "Maga_Espadachina", image: diana },
   { id: "azriel", expansionId: "apocalypse_heroes_1", baseLife: 10, baseMove: 2, type: "hero", profession: "Mago_Espadachin", image: azriel },
   { id: "brigitte", expansionId: "apocalypse_heroes_1", baseLife: 10, baseMove: 2, type: "hero", profession: "Adalid", image: brigitte },

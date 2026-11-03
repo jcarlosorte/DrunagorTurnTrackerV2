@@ -71,6 +71,12 @@ const HERO_CUBES = {
   shadow: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
   sun: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
   'lord-of-wrath': { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  diana: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  brigitte: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  azriel: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  drixx: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  sahara: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  siff: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
 
   // 1 Melee · 2 Ranged · 1 Agility · 1 Wisdom
   maya: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
@@ -86,6 +92,8 @@ const HERO_CUBES = {
   kellam: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
   sskar: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
   willow: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  mordred: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  gramosh: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
 };
 
 /**

@@ -1280,6 +1280,40 @@ Unit       118 tests
 E2E        56/56
 ```
 
+### 47.ª tanda — Cubos y clases de Lorien y el Pack de Héroes
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cubos** | Los 9 héroes usan sus valores oficiales: 1/2/1/1 o 2/1/1/1 según la carta | `heroCubes.js` |
+| **Gramosh** | Garamond pasa a Gramosh, que coincide con su retrato; actualizados pack y traducciones | `heroes.js`, `expansions.js`, i18n |
+| **Clases** | Necromante, Espadachín, Adalid, Chamán y Mago verificadas | datos |
+| **Pruebas** | Cubos oficiales y cobertura completa de retratos | tests |
+
+**Medición**
+
+```text
+Unit       119 tests
+E2E        56/56
+```
+
+### 48.ª tanda — Neva, Hakkon y las claves NO MUERTO/DRAUGR
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Mascotas** | Neva y Hakkon añadidas al Pack de Héroes | `companions.js`, `expansions.js` |
+| **Draugr** | Se permiten varias copias; Hakkon no desaparece de Disponibles | `CompanionPicker.jsx` |
+| **Claves** | `NO_MUERTO` y `DRAUGR` con descripción en español e inglés; el parser asocia DRAUGR a la frase | i18n, `companionAbilities.js` |
+| **Reglas** | Las expansiones de Apocalipsis ya activan el reglamento 2.0 | `rulesVersion.js` |
+| **Faltante** | Imágenes de Neva y Hakkon | assets |
+| **Pruebas** | 1 unitario de mascotas, 1 de claves y 1 E2E de duplicado | tests |
+
+**Medición**
+
+```text
+Unit       121 tests
+E2E        57/57
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

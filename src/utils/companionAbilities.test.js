@@ -13,6 +13,8 @@ const labels = {
   UNICA: 'ÚNICA',
   PERMUTAR: 'PERMUTA',
   SANAR_X: 'SANAR {x}',
+  NO_MUERTO: 'NO MUERTO',
+  DRAUGR: 'DRAUGR',
 };
 const descriptions = {
   SALTO: 'Salta.',
@@ -22,6 +24,8 @@ const descriptions = {
   UNICA: 'Solo una vez.',
   PERMUTAR: 'Permuta con el héroe.',
   SANAR_X: 'Sana {x}.',
+  NO_MUERTO: 'Descripción de no muerto.',
+  DRAUGR: 'Descripción de draugr.',
 };
 
 describe('parseCompanionAbilities', () => {
@@ -55,6 +59,14 @@ describe('parseCompanionAbilities', () => {
     expect(result[0].label).toBe('UN HÉROE A CUALQUIER ALCANCE GANA SANAR 2');
     expect(result[0].description).toBe('Sana 2.');
     expect(result[0].pending).toBe(false);
+  });
+
+  it('reconoce NO MUERTO y DRAUGR', () => {
+    const result = parseCompanionAbilities('NO MUERTO; LOS DRAUGR NO RECIBEN DAÑO POR OSCURIDAD', { labels, descriptions });
+    expect(result[0].key).toBe('NO_MUERTO');
+    expect(result[0].description).toBe('Descripción de no muerto.');
+    expect(result[1].key).toBe('DRAUGR');
+    expect(result[1].description).toBe('Descripción de draugr.');
   });
 
   it('devuelve vacío para «-»', () => {

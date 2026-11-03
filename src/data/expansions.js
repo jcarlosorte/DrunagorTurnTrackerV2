@@ -180,10 +180,10 @@ export const EXPANSIONS = [
   {
     id: "apocalypse_heroes_1",
     imagen: heroPackImg,
-    heroes: ["mordred", "siff", "sahara", "garamond", "diana", "azriel", "brigitte", "drixx"],
+    heroes: ["mordred", "siff", "sahara", "gramosh", "diana", "azriel", "brigitte", "drixx"],
     enemies: [],
     companions: [],
-    pets: [],
+    pets: ["neva", "hakkon"],
     roles: [],
     dungeonRoles: [],
     language: { en: '', es: '' },

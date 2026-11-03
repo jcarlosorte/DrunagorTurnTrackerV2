@@ -22,6 +22,12 @@ describe('getCompanionsForExpansions', () => {
   it('todas las criaturas declaran su expansión', () => {
     expect(COMPANIONS.every((companion) => typeof companion.expansionId === 'string' && companion.expansionId)).toBe(true);
   });
+
+  it('el Pack de Héroes añade a Neva y Hakkon', () => {
+    const pack = getCompanionsForExpansions(['apocalypse_heroes_1']);
+    expect(pack.map((companion) => companion.id).sort()).toEqual(['hakkon', 'neva']);
+    expect(pack.find((companion) => companion.id === 'hakkon').subtype).toBe('Draugr');
+  });
 });
 
 describe('getCompanionGroup', () => {

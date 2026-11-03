@@ -172,4 +172,28 @@ test.describe('Compañeros y mascotas', () => {
     await expect(picker.getByRole('button', { name: /Lorelai/ })).toBeVisible();
     await expect(picker.getByRole('button', { name: /Capitán Conner/ })).toBeVisible();
   });
+
+  test('Hakkon (Draugr) se puede añadir más de una vez', async ({ page }) => {
+    await seedStorage(page, {
+      ...buildSeed(),
+      expansions: JSON.stringify(['base', 'apocalypse_heroes_1']),
+      trackerData: JSON.stringify({ ...baseTracker, companions: [] }),
+    });
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Compañeros' }).click();
+    const picker = page.getByRole('dialog', { name: 'Compañeros y mascotas' });
+    const catalogue = picker.locator('section').filter({ hasText: 'Disponibles' });
+
+    for (let i = 0; i < 2; i += 1) {
+      await catalogue.getByRole('button', { name: /Hakkon/ }).click();
+      await picker.getByLabel('Héroe').selectOption('vorn');
+      await picker.getByRole('button', { name: '+ Añadir' }).click();
+    }
+
+    await expect.poll(async () => {
+      const data = await readStorage(page, 'trackerData', {});
+      return (data.companions || []).filter((entry) => entry.id === 'hakkon').length;
+    }).toBe(2);
+  });
 });

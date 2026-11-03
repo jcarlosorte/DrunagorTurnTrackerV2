@@ -53,9 +53,16 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
   if (!open) return null;
 
   const companions = trackerData.companions || [];
-  const assignedIds = new Set(companions.map((entry) => entry.id));
+  // Los Draugr pueden tener varias copias: no se retiran de Disponibles.
+  const assignedIds = new Set(
+    companions
+      .filter((entry) => getCompanion(entry.id)?.subtype !== 'Draugr')
+      .map((entry) => entry.id)
+  );
   const allCompanions = getCompanionsForExpansions(selectedExpansions);
-  const available = allCompanions.filter((companion) => !assignedIds.has(companion.id));
+  const available = allCompanions.filter(
+    (companion) => companion.subtype === 'Draugr' || !assignedIds.has(companion.id)
+  );
   const groups = [
     { id: 'mascota', label: t.pets || 'Mascotas' },
     { id: 'companero', label: t.companions || 'Compañeros' },

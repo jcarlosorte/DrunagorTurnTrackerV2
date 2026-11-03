@@ -18,6 +18,7 @@ const KEYWORD_KEYS = [
   ['SANAR', 'SANAR_X'],
   ['RECOBRAR', 'RECOBRAR_X'],
   ['PERMUT', 'PERMUTAR'],
+  ['DRAUGR', 'DRAUGR'],
 ];
 
 export function parseCompanionAbilities(text, { labels = {}, descriptions = {} } = {}) {
