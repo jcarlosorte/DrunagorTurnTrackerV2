@@ -161,6 +161,86 @@ export const CARTAS_OVERLORD = [
     runePosition: 'abajo',
     capacidades: 'over_10',
     lista_capacidad: ["DAÑO_2_X", ",", "HEMORRAGIA_<>_QUEMADURA"]
+  },
+  {
+    id: 'over_11',
+    nombre: 'over_11',
+    rune: 'rojo',
+    runePosition: 'arriba',
+    capacidades: 'over_11',
+    lista_capacidad: ["SANA_X", ";", "HEMORRAGIA_2", ",", "HEMORRAGIA_2_ALCANCE_1", ";", "SANA_X_SI_NO_HEMORRAGIA"]
+  },
+  {
+    id: 'over_12',
+    nombre: 'over_12',
+    rune: 'rojo',
+    runePosition: 'abajo',
+    capacidades: 'over_12',
+    lista_capacidad: ["ACTIVA", ",", "DANO_BASICO_X"]
+  },
+  {
+    id: 'over_13',
+    nombre: 'over_13',
+    rune: 'gris',
+    runePosition: 'arriba',
+    capacidades: 'over_13',
+    lista_capacidad: ["SANA_X", ";", "EVOLUCIONA"]
+  },
+  {
+    id: 'over_14',
+    nombre: 'over_14',
+    rune: 'gris',
+    runePosition: 'abajo',
+    capacidades: 'over_14',
+    lista_capacidad: ["ESCUDO_X", ";", "DESEQUIPA"]
+  },
+  {
+    id: 'over_15',
+    nombre: 'over_15',
+    rune: 'azul',
+    runePosition: 'abajo',
+    capacidades: 'over_15',
+    lista_capacidad: ["SILENCIO", ";", "DANO_MITAD_CUBOS_SABIDURIA_X"]
+  },
+  {
+    id: 'over_16',
+    nombre: 'over_16',
+    rune: 'azul',
+    runePosition: 'arriba',
+    capacidades: 'over_16',
+    lista_capacidad: ["ESCUDO_POR_CARTA", ";", "DANO_MITAD_ESCUDO"]
+  },
+  {
+    id: 'over_17',
+    nombre: 'over_17',
+    rune: 'verde',
+    runePosition: 'abajo',
+    capacidades: 'over_17',
+    lista_capacidad: ["SANA_X", ";", "VENENO_2", ",", "VENENO_X_ALCANCE_1"]
+  },
+  {
+    id: 'over_18',
+    nombre: 'over_18',
+    rune: 'verde',
+    runePosition: 'arriba',
+    capacidades: 'over_18',
+    lista_capacidad: ["VENENO_X", ";", "VENENO_X_SEGUNDO_4_RUNAS"]
+  },
+  {
+    id: 'over_19',
+    nombre: 'over_19',
+    rune: 'naranja',
+    runePosition: 'abajo',
+    capacidades: 'over_19',
+    lista_capacidad: ["SANA_X", ";", "SALTA", ";", "DANO_X"]
+  },
+  {
+    id: 'over_20',
+    nombre: 'over_20',
+    rune: 'naranja',
+    runePosition: 'arriba',
+    capacidades: 'over_20',
+    lista_capacidad: ["ESCUDO_X", ";", "QUEMADURA_2", ",", "QUEMADURA_X_ALCANCE_1"]
   }
 ];
 

@@ -226,7 +226,7 @@ export const EXPANSIONS = [
     roles: [],
     dungeonRoles: [],
     language: { en: '', es: '' },
-    active: "off"
+    active: "on"
   }
 ];
 

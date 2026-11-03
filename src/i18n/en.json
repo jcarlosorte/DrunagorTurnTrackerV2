@@ -550,7 +550,6 @@
     "runeBasedValue": "Rune Based Value",
     "behavior": "Behavior",
     "category": "Category",
-    "remove": "Remove",
     "enemyNotFound": "Enemy Not Found",
     "PC": "Insert CP",
     "inmunidad": "Immunities",
@@ -1081,7 +1080,17 @@
       "boss_19": "ARAL´HEZEC (STATUS)",
       "boss_20": "OVERWHELM",
       "fallen_1": "GUARDIAN'S MISSION",
-      "fallen_2": "MURDER"
+      "fallen_2": "MURDER",
+      "over_11": "BLOODY FURY",
+      "over_12": "HYSTERIA",
+      "over_13": "GRUESOME EVOLUTION",
+      "over_14": "MAGNETIC PULL",
+      "over_15": "PAINFUL SILENCE",
+      "over_16": "VORAGINOUS FRAME",
+      "over_17": "NOXIOUS RECOVERY",
+      "over_18": "BAD BREATH",
+      "over_19": "PHOENIX REBIRTH",
+      "over_20": "MOLTEN SHIELD"
     },
     "capacidad": {
       "cmd_1": "THE COMMANDER GAINS {ESCUDO} {X}. SHIELD TOKENS GAINED THIS WAY CAN EXCEED THE MAXIMUM OF 4. THEN, IF A HERO IS ADJACENT TO THE COMMANDER, THIS {ATAQUE} DEALS {X} {DAÑO} TO THE STRONGEST OF THEM.",
@@ -1125,7 +1134,17 @@
       "boss_14": "Wermunggdir causes a collapse in the Area of the farthest Hero and Swallows them. (The swallowed character is moved into Wermunggdir’s guts, suffers {FATIGA 2}; {DAÑO} {X} and {VENENO} {X}).",
       "boss_15": "Wermunggdir targets {X} hero(es) at any range (always starting with the strongest) and deals {2*X} damage to each enemy and {DERRIBO}. If any hero prevents the damage, they also avoid knockdown.",
       "fallen_1": "MANIFEST 1 RUNE: PLACE 1 TIME TOKEN ON EACH ATTACK CARD THAT MATCHES THAT RUNE'S COLOR (DO NOT PLACE IT ON THE MONSTER CARD OR THIS CARD). THE NEXT TIME THE INITIATIVE MARKER REACHES THIS CARD, REMOVE THE TIME TOKEN INSTEAD OF RESOLVING THAT CARD'S EFFECTS.",
-      "fallen_2": "THE FALLEN HERO AMBUSHS THE WEAKER HERO. THEN, DEAL {X} {DAÑO}. IF THAT HERO IS KNOCKED OUT BY THIS ATTACK, THE FALLEN HERO ALSO HEALS {2*X}."
+      "fallen_2": "THE FALLEN HERO AMBUSHS THE WEAKER HERO. THEN, DEAL {X} {DAÑO}. IF THAT HERO IS KNOCKED OUT BY THIS ATTACK, THE FALLEN HERO ALSO HEALS {2*X}.",
+      "over_11": "First, the Overlord {SANA} {X}. (This may exceed its starting maximum Health). Then, the Overlord suffers {HEMORRAGIA} 2 and inflicts {HEMORRAGIA} 2 on each enemy at {ALCANCE} 1. (If the Overlord does not suffer this Hemorrhage, it heals {X}).",
+      "over_12": "The Overlord {ACTIVA}. It gains a {DAÑO_BASICO} +{X} bonus during this special activation. (If the Overlord has already activated, it suffers the effects of the conditions it has when it performs an attack/movement action as an attack action. The damage bonus applies only during this turn and it attacks in this special activation).",
+      "over_13": "First, the Overlord {SANA} {X}. (This may exceed its starting maximum Health). Then, the Overlord {EVOLUCIONA} (Each time a monster evolves, it gains 1 Movement +1 token and 2 Damage +1 tokens. This bonus remains until the Overlord is defeated. It is stackable and has no limit on the number of tokens).",
+      "over_14": "First, the Overlord gains {ESCUDO} {X}. (These may exceed the limit of 4). Then, each Hero at {ALCANCE} 1 from the Overlord must unequip their equipped weapons and off-hand objects. Objects unequipped this way do not count toward the backpack limit. (These objects do not count toward the backpack limit; however, to equip them, 1 Minor Action must be spent per object and Heroes cannot re-equip both objects in the same turn. Additionally, a Hero without a weapon cannot perform {ATAQUE}).",
+      "over_15": "First, the Overlord inflicts {SILENCIO} on the most vigorous Hero at {ALCANCE} 1. Then, the most tired Hero at {ALCANCE} 1 from the Overlord suffers damage equal to half the Wisdom cubes they have spent and/or consumed (rounded up) multiplied by {X}. (Example: If a Hero has 3 Wisdom cubes spent/consumed on their Hero sheet and there are X blue runes on the initiative track, they take 8 damage).",
+      "over_16": "First, the Overlord gains 1 {ESCUDO} for each attack card on the initiative track (these cannot exceed the limit of 4 tokens). Then, the Overlord inflicts damage equal to half the Shield tokens it has on the weakest Hero at range 1.",
+      "over_17": "First, the Overlord {SANA} {X}. (This may exceed its starting maximum Health). Then, the Overlord suffers {VENENO} 2 and inflicts {VENENO} {X} on each enemy at {ALCANCE} 1 (The Overlord does not suffer this poison if it is immune).",
+      "over_18": "First, the Overlord inflicts {VENENO} {X} on each enemy in the area where the strongest Hero is. Then, if there are 4 or more green runes on the initiative track, the Overlord does the same in the area where the second strongest Hero is.",
+      "over_19": "First, the Overlord {SANA} {X}. (This may exceed its starting maximum Health). Then, the Overlord {SALTA} to the area where the strongest Hero is and pushes aside the characters there. Finally, the Overlord inflicts {DAÑO} {X} on each of the enemies it pushed aside.",
+      "over_20": "First, the Overlord gains {ESCUDO} {X}. (These may exceed the limit of 4). Then, the Overlord suffers {QUEMADURA} 2 and inflicts {QUEMADURA} {X} on each enemy at {ALCANCE} 1. (The Overlord does not suffer this burn if it is immune)."
     }
   },
   "defensaCard": {

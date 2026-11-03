@@ -1467,6 +1467,22 @@ Unit       132 tests
 E2E        58/58
 ```
 
+### 59.ª tanda — Hermanas Fatídicas (Señor Supremo)
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cartas** | 10 cartas `over_11`…`over_20` con nombre, descripción ES/EN, runa y posición | `cartasEspeciales.js`, i18n |
+| **Carta principal** | `fallen_sisters`: vida 8 (× jugadores), runa roja, inmunidades y capacidades | `enemies.js` |
+| **Expansión** | `apocalypse_sisters` disponible para activar | `expansions.js` |
+| **Pruebas** | 3 unitarios: cartas, runas y expansión (135 en total) | tests |
+
+**Medición**
+
+```text
+Unit       135 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
