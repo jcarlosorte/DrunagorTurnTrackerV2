@@ -1213,6 +1213,38 @@ E2E        56/56
 Retratos   40 PNG sin fondo
 ```
 
+### 43.ª tanda — Capacidades personales y ajuste del panel
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Capacidades** | «PERSONAL» se une a la capacidad siguiente; usa el número y la descripción de `ESCUDO_X` («PERSONAL: ESCUDO 2») | `companionAbilities.js` |
+| **Panel** | El marco del track se ajusta al grid (374 px con una carta) en lugar de estirarse al alto de la columna | `TurnTrackBoard.jsx` |
+| **Pruebas** | 2 unitarios de capacidades actualizados | tests |
+
+**Medición**
+
+```text
+Unit       114 tests
+E2E        56/56
+```
+
+### 44.ª tanda — Iconos de expansión
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Datos** | 14 símbolos de caja mapeados a las 16 expansiones, cada una con su color | `data/expansionIcons.js` |
+| **Componente** | `ExpansionIcon` con `title`/`aria-label` del nombre y fondo del color de la expansión | `components/ExpansionIcon.jsx` |
+| **Vistas** | Config, selección de héroes y enemigos, carta del track y fichas de héroe y enemigo | varios |
+| **Pruebas** | 1 unitario de cobertura y E2E del icono en la tarjeta | tests |
+
+**Medición**
+
+```text
+Unit       114 tests
+E2E        56/56
+Símbolos   14 para 16 expansiones
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

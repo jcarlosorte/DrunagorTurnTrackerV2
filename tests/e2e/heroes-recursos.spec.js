@@ -64,7 +64,7 @@ test.describe('Recursos de héroe', () => {
   test('los recursos activos se muestran sobre la carta', async ({ page }) => {
     await openTracker(page);
     const sunCard = page.locator('[role="button"][aria-label*="Sun"]').first();
-    await expect(sunCard.locator('span[title] img')).toHaveCount(2);
+    await expect(sunCard.locator('span[title]:not([data-expansion-icon]) img')).toHaveCount(2);
   });
 
   test('reiniciar el héroe limpia estados y recobra cubos sin tocar la vida', async ({ page }) => {

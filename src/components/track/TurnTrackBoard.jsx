@@ -295,7 +295,7 @@ export default function TurnTrackBoard({
   const boardView = (
     <div
       ref={viewportRef}
-      className="h-full min-h-0 flex-1 overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
+      className="min-h-0 overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       role="region"

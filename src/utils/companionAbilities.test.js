@@ -30,6 +30,14 @@ describe('parseCompanionAbilities', () => {
     expect(parseCompanionAbilities('PERSONAL, ESCUDO 2', { labels, descriptions })).toHaveLength(2);
   });
 
+  it('reconoce las claves con guion bajo', () => {
+    const result = parseCompanionAbilities('ESCUDO_2', { labels, descriptions });
+    expect(result).toHaveLength(1);
+    expect(result[0].key).toBe('ESCUDO_X');
+    expect(result[0].label).toBe('ESCUDO 2');
+    expect(result[0].description).toBe('Gana 2 fichas de escudo.');
+  });
+
   it('separa las dos partes de «PERSONAL: ESCUDO 2»', () => {
     const result = parseCompanionAbilities('PERSONAL: ESCUDO 2', { labels, descriptions });
     expect(result.map((ability) => ability.key)).toEqual(['PERSONAL', 'ESCUDO_X']);

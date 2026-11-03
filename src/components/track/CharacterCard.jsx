@@ -1,8 +1,11 @@
 import FitText from '@/components/track/FitText';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { ESTADOS_HEROE } from '@/data/heroes/index';
+import { HEROES } from '@/data/heroes';
 import { getHeroClass } from '@/data/heroClasses';
+import { useLanguage } from '@/context/LanguageContext';
 import HeroPortrait from '@/components/HeroPortrait';
+import ExpansionIcon from '@/components/ExpansionIcon';
 
 /**
  * Carta de héroe dentro del track.
@@ -24,6 +27,8 @@ export default function CharacterCard({
   const condiciones = extras?.estados || [];
   const tieneEstados = estadosAlterados.length > 0 || condiciones.length > 0;
   const classColor = getHeroClass(heroId)?.color || '#800020';
+  const { translations } = useLanguage();
+  const expansionId = HEROES.find((hero) => hero.id === heroId)?.expansionId;
 
   return (
     <div className="flex flex-col items-center mx-1">
@@ -48,6 +53,13 @@ export default function CharacterCard({
           className="aspect-[3/4] w-full rounded-lg border-2"
           style={{ borderColor: classColor }}
         />
+        <span className="absolute left-1 top-1 z-10">
+          <ExpansionIcon
+            expansionId={expansionId}
+            label={translations.expansions?.[expansionId]}
+            size="h-5 w-5"
+          />
+        </span>
 
         {/* Estados alterados del héroe sobre la imagen (iconos, como en enemigos) */}
         {clickable && tieneEstados && (

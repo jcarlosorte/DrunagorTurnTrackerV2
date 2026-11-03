@@ -5,6 +5,7 @@ import { useTracker } from '@/context/TrackerContext';
 import { HEROES } from '@/data/heroes';
 import { getHeroClass } from '@/data/heroClasses';
 import HeroPortrait from '@/components/HeroPortrait';
+import ExpansionIcon from '@/components/ExpansionIcon';
 import heroBackground from '@/assets/interactions/draconian-altar.avif';
 import { getCompanion, getCompanionImage } from '@/data/companions';
 import { ESTADOS_ALTERADOS, INMUNIDADES, getHeroStatusCatalog } from '@/data/estadosAlterados';
@@ -189,7 +190,14 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
               />
             )}
             <div className="min-w-0 flex-1">
-              <h2 id={titleId} className="truncate text-xl font-bold text-white">{heroName}</h2>
+              <div className="flex min-w-0 items-center gap-2">
+                <h2 id={titleId} className="min-w-0 truncate text-xl font-bold text-white">{heroName}</h2>
+                <ExpansionIcon
+                  expansionId={hero?.expansionId}
+                  label={translations.expansions?.[hero?.expansionId]}
+                  size="h-5 w-5"
+                />
+              </div>
               <p className="truncate text-xs text-slate-200">{roleName || profession || 'Héroe'}</p>
               <div className="mt-1 flex flex-wrap items-center gap-1 text-[0.65rem]">
                 {profession && (

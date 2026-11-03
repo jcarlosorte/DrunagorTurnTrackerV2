@@ -2,6 +2,7 @@ import React, { useState, useEffect, useId, useRef } from 'react';
 import { FiInfo } from "react-icons/fi";
 import { useLanguage } from '@/context/LanguageContext';
 import useFocusTrap from '@/hooks/useFocusTrap';
+import ExpansionIcon from '@/components/ExpansionIcon';
 import { ESTADOS_ALTERADOS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRunes';
 import { useGame } from '@/context/GameContext';
@@ -380,9 +381,16 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
 
           {/* Cabecera: nombre, categoría y comportamiento */}
           <header className="sticky top-0 z-10 mb-1 w-full rounded-lg bg-slate-950/80 px-2 py-1.5 backdrop-blur-sm">
-            <h2 id={titleId} className={`text-center text-2xl font-bold text-white ${categoryTextGlowMap[categoria] || ''}`}>
-              {getEnemyName()}
-            </h2>
+            <div className="flex items-center justify-center gap-2">
+              <h2 id={titleId} className={`text-center text-2xl font-bold text-white ${categoryTextGlowMap[categoria] || ''}`}>
+                {getEnemyName()}
+              </h2>
+              <ExpansionIcon
+                expansionId={enemy.expansionId}
+                label={translations.expansions?.[enemy.expansionId]}
+                size="h-6 w-6"
+              />
+            </div>
 
             <div className="mt-1 flex flex-wrap items-center justify-center gap-1 text-xs">
               {categoria && categoria !== 'jefe' && (

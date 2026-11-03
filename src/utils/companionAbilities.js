@@ -5,7 +5,8 @@ import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
  *
  * Se interpretan con los mismos separadores que las cartas de enemigo (`;`,
  * `,` y `:`), y se buscan sus textos y descripciones en el diccionario de
- * condiciones (`condiciones_t` / `condiciones_d`).
+ * condiciones (`condiciones_t` / `condiciones_d`). Se aceptan tanto `ESCUDO 2`
+ * como la clave de enemigo `ESCUDO_2`.
  */
 const normalize = (value) => String(value)
   .normalize('NFD')
@@ -29,11 +30,13 @@ export function parseCompanionAbilities(text, { labels = {}, descriptions = {} }
     .map((part) => part.trim())
     .filter(Boolean)
     .map((token) => {
-      const numberMatch = token.match(/^(.+?)\s+(\d+)$/);
+      const numberMatch = token.match(/^(.+?)[_\s](\d+)$/);
       const base = numberMatch ? numberMatch[1] : token;
       const number = numberMatch ? numberMatch[2] : '';
       const normalized = normalize(base).replace(/\s+/g, '_');
-      const candidates = [normalized, `${normalized}_X`];
+      const candidates = number
+        ? [`${normalized}_X`, `${normalized}_${number}`, normalized]
+        : [normalized, `${normalized}_X`];
 
       let key = candidates.find((candidate) => labels[candidate] || descriptions[candidate]) || null;
       let keywordKey = null;
@@ -46,12 +49,15 @@ export function parseCompanionAbilities(text, { labels = {}, descriptions = {} }
       }
 
       const value = number || (key?.endsWith('_X') ? '2' : '');
-      const label = keywordKey
+      let label = keywordKey
         ? token
         : (key ? (labels[key] || token).replaceAll('{x}', value) : token);
+      if (number && key && !String(labels[key] || '').includes('{x}') && !label.includes(number)) {
+        label = `${label} ${number}`;
+      }
       const description = key ? (descriptions[key] || '').replaceAll('{x}', value) : '';
 
-      return { token, key, label, description, pending: !description };
+      return { token, key, label, description, pending: !(key && descriptions[key]) };
     });
 }
 

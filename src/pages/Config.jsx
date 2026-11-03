@@ -7,6 +7,7 @@ import { languages as availableLanguages, languageNames } from "@/i18n/languageD
 import { EXPANSIONS } from "@/data/expansions";
 import { RULES_VERSIONS } from "@/utils/rulesVersion";
 import PageTransition from "@/components/PageTransition";
+import ExpansionIcon from "@/components/ExpansionIcon";
 import SavesPanel from "@/components/saves/SavesPanel";
 import { isHeroManagementEnabled, setHeroManagementEnabled } from "@/utils/heroSettings";
 
@@ -121,7 +122,10 @@ export default function Config() {
                     )}
                   </div>
                   <div className="flex min-h-12 items-center justify-between gap-3 px-2">
-                    <span className="font-semibold text-slate-100">{label}</span>
+                    <span className="flex min-w-0 items-center gap-2">
+                      <ExpansionIcon expansionId={exp.id} label={label} size="h-6 w-6" />
+                      <span className="truncate font-semibold text-slate-100">{label}</span>
+                    </span>
                     <span
                       aria-hidden="true"
                       className={`flex h-6 w-6 items-center justify-center rounded-full border-2 text-sm ${

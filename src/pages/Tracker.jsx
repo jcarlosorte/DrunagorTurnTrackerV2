@@ -12,6 +12,7 @@ import { useExpansions } from '@/context/ExpansionContext';
 import { useTracker } from '@/context/TrackerContext';
 import PageTransition from "@/components/PageTransition";
 import HeroPortrait from "@/components/HeroPortrait";
+import ExpansionIcon from "@/components/ExpansionIcon";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 const MAX_HEROES = 5;
@@ -257,6 +258,13 @@ const TrackerSelect = () => {
               fallback={hero.image}
               className="h-32 w-full sm:h-40"
             />
+            <span className="absolute left-2 top-2 z-10">
+              <ExpansionIcon
+                expansionId={hero.expansionId}
+                label={getExpansionName(hero.expansionId)}
+                size="h-6 w-6"
+              />
+            </span>
             <span
               aria-hidden="true"
               className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black ${
@@ -745,6 +753,13 @@ const TrackerSelect = () => {
                                 ) : (
                                   <span className="flex h-28 w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
                                 )}
+                                <span className="absolute left-2 top-2 z-10">
+                                  <ExpansionIcon
+                                    expansionId={enemy.expansionId}
+                                    label={getExpansionName(enemy.expansionId)}
+                                    size="h-6 w-6"
+                                  />
+                                </span>
                                 <span
                                   aria-hidden="true"
                                   className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black ${
