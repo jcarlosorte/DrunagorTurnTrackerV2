@@ -2,6 +2,9 @@ import React, { useState, useEffect, useId, useRef } from 'react';
 import { FiInfo } from "react-icons/fi";
 import { useLanguage } from '@/context/LanguageContext';
 import useFocusTrap from '@/hooks/useFocusTrap';
+import useGlossary from '@/hooks/useGlossary';
+import { useRules } from '@/context/RulesContext';
+import { getEstadoLogo2 } from '@/data/estados2';
 import { ESTADOS_ALTERADOS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRunes';
 import { useGame } from '@/context/GameContext';
@@ -19,8 +22,8 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   const ti = translations.trackerInit || {};
   const tc = translations.enemies?.categoria || {};
   const tb = translations.trackerSelect?.comportamientos || {};
-  const tt = translations.condiciones_t || {};
-  const tte = translations.condiciones_d || {};
+  const { labels: tt, descriptions: tte } = useGlossary();
+  const { rulesVersion } = useRules();
   const tea = translations.estadosAlterados || {};
   const tca = translations.cartas_ataque || {};
   const ttr = translations.defensaCard.cartas_trad || {};
@@ -412,10 +415,11 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                   .map((estado) => {
                     const estadoConfig = ESTADOS_ALTERADOS.find(e => e.id === estado.id);
                     if (!estadoConfig) return null;
+                    const logo = rulesVersion === '2.0' ? getEstadoLogo2(estado.id) : null;
                     return (
                       <div key={estado.id} className="relative">
                         <img 
-                          src={estadoConfig.imagen}
+                          src={logo || estadoConfig.imagen}
                           alt={estadoConfig.texto}
                           className="w-6 h-6 border border-white rounded-full shadow-md" loading="lazy" decoding="async" />
                         {estado.count > 1 && (

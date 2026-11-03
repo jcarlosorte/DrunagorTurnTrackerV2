@@ -1314,6 +1314,23 @@ Unit       122 tests
 E2E        57/57
 ```
 
+### 49.ª tanda — Glosario 2.0, logos de estado y barra de turnos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Glosario** | 182 descripciones 2.0 en español e inglés, superpuestas solo con reglas 2.0 | `glosario2.*.json`, `useGlossary` |
+| **Logos** | 12 logos de estado 2.0 en las fichas, solo con reglas 2.0 | `estados2.js` |
+| **Barra** | El panel de turnos sale del track y queda fijo bajo el menú superior; el contenido reserva su altura | `TurnTrackBoard`, `InitTracker` |
+| **Pruebas** | 2 unitarios del glosario (124 en total) | tests |
+
+**Medición**
+
+```text
+Unit       124 tests
+E2E        57/57
+Glosario   182 claves ES/EN
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

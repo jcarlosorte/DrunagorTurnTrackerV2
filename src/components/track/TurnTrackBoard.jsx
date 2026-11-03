@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import HeroPortrait from '@/components/HeroPortrait';
 import trackBackground from '@/assets/backgrounds/track.avif';
 
@@ -86,7 +87,7 @@ export default function TurnTrackBoard({
   };
 
   const toolbar = (
-    <div className="sticky top-16 z-30 mb-2 flex shrink-0 flex-wrap items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/95 px-2 py-2 shadow-lg backdrop-blur-xl lg:flex-nowrap lg:overflow-x-auto">
+    <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap lg:overflow-x-auto" data-testid="track-toolbar">
       {/* Izquierda: vista del tablero y estado de la ronda */}
       <div className="flex items-center gap-2">
         <div role="group" aria-label={labels.viewMode || 'Vista del tablero'} className="flex rounded-xl border border-slate-700 bg-slate-900 p-1">
@@ -431,7 +432,20 @@ export default function TurnTrackBoard({
             {labels.exitPresentation || 'Salir de presentación'}
           </button>
         </div>
-      ) : toolbar}
+      ) : (
+        <>
+          {typeof document !== 'undefined' && createPortal(
+            <div
+              role="toolbar"
+              aria-label={labels.toolbar || 'Controles de turno'}
+              className="fixed inset-x-0 top-16 z-40 border-b border-slate-700/70 bg-slate-900/95 px-2 py-2 shadow-lg backdrop-blur-xl"
+            >
+              <div className="mx-auto max-w-[1600px]">{toolbar}</div>
+            </div>,
+            document.body
+          )}
+        </>
+      )}
       {bossBanner}
       {content}
       {carouselOpen && carousel && (

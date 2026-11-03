@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import useFocusTrap from '@/hooks/useFocusTrap';
+import useGlossary from '@/hooks/useGlossary';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { HEROES } from '@/data/heroes';
@@ -112,6 +113,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
     ? (translations.heroes?.profession?.[hero.profession] || hero.profession)
     : '';
   const t = translations.heroes || {};
+  const glossary = useGlossary();
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -305,11 +307,11 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                     return (
                       <span
                         key={clave}
-                        title={translations.condiciones_d?.[clave] || clave}
+                        title={glossary.descriptions?.[clave] || clave}
                         className="inline-flex items-center gap-1 rounded-full border border-slate-600 bg-slate-800 px-1.5 py-0.5 text-[0.6rem] text-slate-200"
                       >
                         {meta?.imagen && <img src={meta.imagen} alt="" className="h-3.5 w-3.5" loading="lazy" decoding="async" />}
-                        {translations.condiciones_t?.[clave] || clave}
+                        {glossary.labels?.[clave] || clave}
                       </span>
                     );
                   })}

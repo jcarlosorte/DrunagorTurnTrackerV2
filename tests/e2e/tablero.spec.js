@@ -81,7 +81,7 @@ test.describe('Tablero de iniciativa', () => {
   test('la barra de acciones cabe en una sola fila', async ({ page }) => {
     await openTracker(page);
     const tops = await page.evaluate(() => {
-      const toolbar = document.querySelector('section > div');
+      const toolbar = document.querySelector('[data-testid="track-toolbar"]');
       return Array.from(toolbar.children).map((el) => el.getBoundingClientRect().top);
     });
 

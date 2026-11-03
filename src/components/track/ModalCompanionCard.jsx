@@ -8,6 +8,9 @@ import { parseCompanionAbilities } from '@/utils/companionAbilities';
 import { FiInfo } from 'react-icons/fi';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import useFocusTrap from '@/hooks/useFocusTrap';
+import useGlossary from '@/hooks/useGlossary';
+import { useRules } from '@/context/RulesContext';
+import { getEstadoLogo2 } from '@/data/estados2';
 
 /**
  * Ficha de un compañero o mascota: datos de la criatura, vida y estados
@@ -16,6 +19,8 @@ import useFocusTrap from '@/hooks/useFocusTrap';
 export default function ModalCompanionCard({ uid, onClose }) {
   const { trackerData, setTrackerData } = useTracker();
   const { translations } = useLanguage();
+  const { rulesVersion } = useRules();
+  const { labels, descriptions } = useGlossary();
   const t = translations.heroes || {};
   const ti = translations.trackerInit || {};
   const dialogRef = useRef(null);
@@ -38,10 +43,7 @@ export default function ModalCompanionCard({ uid, onClose }) {
 
   const image = getCompanionImage(companion.id);
   const background = getCompanionBackground(companion.id);
-  const abilities = parseCompanionAbilities(companion.abilities, {
-    labels: translations.condiciones_t || {},
-    descriptions: translations.condiciones_d || {},
-  });
+  const abilities = parseCompanionAbilities(companion.abilities, { labels, descriptions });
   const catalogue = getEnemyStatusCatalog();
   const estados = entry.estadosAlterados || [];
   const countOf = (id) => estados.find((estado) => estado.id === id)?.count || 0;
@@ -168,6 +170,7 @@ export default function ModalCompanionCard({ uid, onClose }) {
             <div className="grid grid-cols-2 gap-1 sm:grid-cols-3">
               {catalogue.map((estado) => {
                 const count = countOf(estado.id);
+                const logo = rulesVersion === '2.0' ? getEstadoLogo2(estado.id) : null;
                 return (
                   <div
                     key={estado.id}
@@ -175,8 +178,8 @@ export default function ModalCompanionCard({ uid, onClose }) {
                       count > 0 ? 'border-amber-700/70 bg-amber-950/40' : 'border-slate-700 bg-slate-800/60'
                     }`}
                   >
-                    {estado.imagen && (
-                      <img src={estado.imagen} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" />
+                    {(logo || estado.imagen) && (
+                      <img src={logo || estado.imagen} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" />
                     )}
                     <span className="min-w-0 flex-1 truncate text-[0.6rem] capitalize text-slate-200">{estado.texto}</span>
                     <button
