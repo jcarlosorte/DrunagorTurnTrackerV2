@@ -11,6 +11,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import { useTracker } from '@/context/TrackerContext';
 import PageTransition from "@/components/PageTransition";
+import HeroPortrait from "@/components/HeroPortrait";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 const MAX_HEROES = 5;
@@ -251,17 +252,11 @@ const TrackerSelect = () => {
             aria-label={getHeroName(hero.id)}
           />
           <span className="relative block">
-            {hero.image ? (
-              <img
-                src={hero.image}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                className="h-32 w-full object-cover object-top sm:h-40"
-              />
-            ) : (
-              <span className="flex h-32 w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
-            )}
+            <HeroPortrait
+              heroId={hero.id}
+              fallback={hero.image}
+              className="h-32 w-full sm:h-40"
+            />
             <span
               aria-hidden="true"
               className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black ${
@@ -519,12 +514,10 @@ const TrackerSelect = () => {
                   const usedRoles = Object.values(heroRoles).filter((id) => id !== heroRoles[hero.id]);
                   return (
                     <li key={hero.id} className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-950 p-2">
-                      <img
-                        src={hero.image}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        className="h-16 w-16 shrink-0 rounded-lg object-cover"
+                      <HeroPortrait
+                        heroId={hero.id}
+                        fallback={hero.image}
+                        className="h-16 w-16 shrink-0 rounded-lg"
                       />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-bold text-slate-100">{getHeroName(hero.id)}</p>

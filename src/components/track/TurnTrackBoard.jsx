@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import HeroPortrait from '@/components/HeroPortrait';
+import trackBackground from '@/assets/backgrounds/track.avif';
 
 const BASE_WIDTH = 1100;
 const MIN_SCALE = 0.45;
@@ -302,7 +304,15 @@ export default function TurnTrackBoard({
     >
       <div style={{ width: `${BASE_WIDTH * scale}px` }}>
         <div style={{ width: `${BASE_WIDTH}px`, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
-          <div className="grid snap-x snap-mandatory grid-cols-11 auto-rows-auto items-start gap-0 bg-slate-800 p-2">
+          <div
+            className="grid snap-x snap-mandatory grid-cols-11 auto-rows-auto items-start gap-0 p-2"
+            style={{
+              backgroundImage: `linear-gradient(rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.35)), url(${trackBackground})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          >
             {summaries.map(({ index }) => (
               <div key={index} className="min-w-0">{renderSlot(index, { density, overlap })}</div>
             ))}
@@ -314,15 +324,19 @@ export default function TurnTrackBoard({
 
   const listView = (
     <ul className="space-y-2">
-      {summaries.map(({ index, label, count, names }) => {
+      {summaries.map(({ index, label, count, names, entities = [], slotColor = null }) => {
         const isOpen = expandedIndex === index;
         const isCurrent = currentSlotIndex === index;
+        const accent = entities[0]?.color || slotColor || '#475569';
+        const hasColor = count > 0 || Boolean(slotColor);
         return (
-          <li key={index}>
+          <li key={index} data-slot-index={index}>
             <div
-              className={`overflow-hidden rounded-xl border transition ${
-                isCurrent ? 'border-emerald-400 bg-emerald-950/30' : 'border-slate-700 bg-slate-900'
-              }`}
+              className={`overflow-hidden rounded-xl border transition ${isCurrent ? 'ring-2 ring-emerald-400' : ''}`}
+              style={{
+                borderColor: hasColor ? accent : '#334155',
+                backgroundColor: hasColor ? `${accent}1f` : '#0f172a',
+              }}
             >
               <button
                 type="button"
@@ -333,12 +347,45 @@ export default function TurnTrackBoard({
               >
                 <span
                   aria-hidden="true"
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                    isCurrent ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-300'
-                  }`}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                  style={{ backgroundColor: hasColor ? accent : '#1e293b' }}
                 >
                   {index + 1}
                 </span>
+
+                {entities.length > 0 && (
+                  <span className="flex shrink-0 -space-x-2" aria-hidden="true">
+                    {entities.slice(0, 4).map((entity, entityIndex) => (
+                      <span
+                        key={`${entity.kind}-${entityIndex}`}
+                        className="relative flex h-8 w-8 overflow-hidden rounded-full border-2 bg-slate-950"
+                        style={{ borderColor: entity.color }}
+                      >
+                        {entity.kind === 'hero' ? (
+                          <HeroPortrait heroId={entity.heroId} className="h-full w-full" />
+                        ) : entity.image ? (
+                          <img
+                            src={entity.image}
+                            alt=""
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ) : (
+                          <span className="flex h-full w-full items-center justify-center text-[0.55rem] font-bold text-slate-300">
+                            {entity.name.slice(0, 1)}
+                          </span>
+                        )}
+                      </span>
+                    ))}
+                    {entities.length > 4 && (
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-slate-600 bg-slate-900 text-[0.55rem] font-bold text-slate-300">
+                        +{entities.length - 4}
+                      </span>
+                    )}
+                  </span>
+                )}
+
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
                     <span className="truncate text-sm font-bold text-slate-100">{label}</span>

@@ -4,6 +4,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { HEROES } from '@/data/heroes';
 import { getHeroClass } from '@/data/heroClasses';
+import HeroPortrait from '@/components/HeroPortrait';
+import heroBackground from '@/assets/interactions/draconian-altar.avif';
 import { getCompanion, getCompanionImage } from '@/data/companions';
 import { ESTADOS_ALTERADOS, INMUNIDADES, getHeroStatusCatalog } from '@/data/estadosAlterados';
 import {
@@ -25,6 +27,10 @@ import {
   GiBackpack,
   GiDungeonGate,
   GiWoodenCrate,
+  GiHearts,
+  GiRun,
+  GiSwordWound,
+  GiBullseye,
 } from 'react-icons/gi';
 
 const EQUIPMENT = [
@@ -165,22 +171,26 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
         />
 
         <header
-          className="shrink-0 border-b border-slate-700 px-3 py-2.5 backdrop-blur"
-          style={{ background: `linear-gradient(135deg, ${classColor}66, rgba(15, 23, 42, 0.95) 65%)` }}
+          className="shrink-0 border-b border-slate-700 px-3 py-2.5"
+          style={{
+            backgroundImage: `linear-gradient(110deg, ${classColor}cc, rgba(15, 23, 42, 0.78)), url(${heroBackground})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         >
           <div className="flex items-center gap-3">
             {hero?.image && (
-              <img
-                src={hero.image}
+              <HeroPortrait
+                heroId={heroId}
+                fallback={hero.image}
                 alt=""
-                className="h-14 w-14 shrink-0 rounded-xl object-cover"
-                style={{ boxShadow: `0 0 0 2px ${classColor}` }}
-                loading="lazy"
-                decoding="async"
+                className="h-24 w-24 shrink-0 rounded-xl border-2"
+                style={{ borderColor: classColor }}
               />
             )}
             <div className="min-w-0 flex-1">
-              <h2 id={titleId} className="truncate text-lg font-bold text-white">{heroName}</h2>
+              <h2 id={titleId} className="truncate text-xl font-bold text-white">{heroName}</h2>
+              <p className="truncate text-xs text-slate-200">{roleName || profession || 'Héroe'}</p>
               <div className="mt-1 flex flex-wrap items-center gap-1 text-[0.65rem]">
                 {profession && (
                   <span
@@ -190,31 +200,8 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                     {profession}
                   </span>
                 )}
-                {roleName && (
-                  <span className="rounded-full border border-slate-600 px-2 py-0.5 text-slate-300">{roleName}</span>
-                )}
-                {/* Vida resumida siempre visible */}
-                <span className="rounded-full border border-red-800/70 bg-red-950/60 px-2 py-0.5 font-bold tabular-nums text-red-100">
-                  {extras.vida}/{vidaMaxTotal}
-                </span>
               </div>
             </div>
-            <dl className="flex shrink-0 gap-3 text-center">
-              <div>
-                <dt className="text-[0.6rem] uppercase text-slate-400">{t.movementShort || 'Mov.'}</dt>
-                <dd className="text-base font-bold text-white">{movement}</dd>
-              </div>
-              <div>
-                <dt className="text-[0.6rem] uppercase text-slate-400">{t.attackShort || 'Ata.'}</dt>
-                <dd className="text-base font-bold text-white">{attack}</dd>
-              </div>
-              <div>
-                <dt className="text-[0.6rem] uppercase text-slate-400">{t.impactShort || 'Imp.'}</dt>
-                <dd className={`text-base font-bold ${extras.impactoMod ? 'text-emerald-300' : 'text-white'}`}>
-                  {extras.impactoMod > 0 ? `+${extras.impactoMod}` : extras.impactoMod}
-                </dd>
-              </div>
-            </dl>
           </div>
 
           {/* Iconos de estado activos: hasta 6, con su contador */}
@@ -242,6 +229,27 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
             </div>
           )}
         </header>
+
+        {/* Resumen en fila: vida, ataque, movimiento e impacto */}
+        <div className="grid grid-cols-2 gap-1.5 border-b border-slate-700 bg-slate-950/70 px-3 py-2 sm:grid-cols-4" data-testid="hero-summary">
+          {[
+            { key: 'vida', label: t.life || 'Vida', value: `${extras.vida}/${vidaMaxTotal}`, icon: GiHearts, tone: 'text-red-300' },
+            { key: 'ataque', label: t.attack || 'Ataque', value: attack, icon: GiSwordWound, tone: 'text-rose-300' },
+            { key: 'movimiento', label: t.movement || 'Movimiento', value: movement, icon: GiRun, tone: 'text-emerald-300' },
+            { key: 'impacto', label: t.impact || 'Impactar', value: extras.impactoMod > 0 ? `+${extras.impactoMod}` : extras.impactoMod, icon: GiBullseye, tone: 'text-amber-300' },
+          ].map((stat) => (
+            <div
+              key={stat.key}
+              className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900/70 px-2 py-1.5"
+            >
+              <stat.icon size={18} className={stat.tone} aria-hidden="true" />
+              <span className="min-w-0">
+                <span className="block truncate text-[0.6rem] uppercase tracking-wide text-slate-400">{stat.label}</span>
+                <span className="block text-sm font-bold tabular-nums text-white">{stat.value}</span>
+              </span>
+            </div>
+          ))}
+        </div>
 
         <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-3 py-3">
           {/* Estados alterados: iconos sobre la tarjeta, igual que en enemigos */}

@@ -2,7 +2,7 @@ import FitText from '@/components/track/FitText';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { ESTADOS_HEROE } from '@/data/heroes/index';
 import { getHeroClass } from '@/data/heroClasses';
-import ResponsiveImage from '@/components/track/ResponsiveImage';
+import HeroPortrait from '@/components/HeroPortrait';
 
 /**
  * Carta de héroe dentro del track.
@@ -41,14 +41,12 @@ export default function CharacterCard({
         aria-label={clickable ? `${name} · ${prof}` : undefined}
         data-hero-id={heroId}
       >
-        <ResponsiveImage
-          src={image}
+        <HeroPortrait
+          heroId={heroId}
+          fallback={image}
           alt={name}
-          sizes="(max-width: 640px) 45vw, 160px"
-          className="w-full h-auto object-cover rounded-lg border-2"
+          className="aspect-[3/4] w-full rounded-lg border-2"
           style={{ borderColor: classColor }}
-          loading="lazy"
-          decoding="async"
         />
 
         {/* Estados alterados del héroe sobre la imagen (iconos, como en enemigos) */}

@@ -14,8 +14,12 @@ test.describe('Vista ampliada del héroe', () => {
     await expect(dialog).toBeVisible();
 
     const header = dialog.locator('header');
-    await expect(header).toContainText('7/12');
-    await expect(header).toContainText('Imp.');
+    const summary = dialog.getByTestId('hero-summary');
+    await expect(summary).toContainText('7/12');
+    await expect(summary.getByText('Vida', { exact: true })).toBeVisible();
+    await expect(summary.getByText('Ataque', { exact: true })).toBeVisible();
+    await expect(summary.getByText('Movimiento', { exact: true })).toBeVisible();
+    await expect(summary.getByText('Impactar', { exact: true })).toBeVisible();
     expect(await header.locator('span[title] img').count()).toBeGreaterThanOrEqual(2);
   });
 

@@ -7,6 +7,7 @@ import { RiArrowTurnBackLine, RiArrowTurnForwardLine } from "react-icons/ri";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { HEROES } from '@/data/heroes';
+import { getHeroClass } from '@/data/heroClasses';
 import { ENEMIES } from '@/data/enemies';
 import { RUNAS, ASALTO } from '@/data/runas';
 import { INCURSION } from '@/data/incursion';
@@ -3311,6 +3312,7 @@ const InitTracker = () => {
     return { name, type: next.type };
   })();
 
+  const RUNE_HEX = { gris: '#94a3b8', rojo: '#ef4444', verde: '#22c55e', naranja: '#f97316', azul: '#3b82f6' };
   const slotSummaries = Array.from({ length: 11 }, (_, index) => {
     const runeColorId = Object.keys(runesColorMap).find((key) => runesColorMap[key] === index);
     const label =
@@ -3322,18 +3324,43 @@ const InitTracker = () => {
       index === 10 ? (ti.rune || 'Runa') :
       `${ti.rune || 'Runa'} ${ti.colores?.[runeColorId] || ''}`.trim();
 
-    const heroes = (trackerData.placedHeroes || [])
+    const heroEntities = (trackerData.placedHeroes || [])
       .filter((hero) => hero.position === index)
-      .map((hero) => getHeroName(hero.id));
-    const enemies = placedEnemies
+      .map((hero) => ({
+        kind: 'hero',
+        heroId: hero.id,
+        name: getHeroName(hero.id),
+        image: hero.image,
+        color: getHeroClass(hero.id)?.color || '#5e1f2a',
+      }));
+    const enemyEntities = placedEnemies
       .filter((entry) => entry.enemy.position === index)
-      .map((entry) => getEnemyName(entry.enemy.id, entry.enemy.color));
-    const slotRunes = placedRunes
+      .map((entry) => ({
+        kind: 'enemy',
+        name: getEnemyName(entry.enemy.id, entry.enemy.color),
+        image: entry.enemy.imagen,
+        color: entry.enemy.categoria === 'jefe'
+          ? '#a21caf'
+          : (entry.enemy.tipo === 'especial' ? '#b45309' : '#b91c1c'),
+      }));
+    const runeEntities = placedRunes
       .filter((entry) => entry.rune.colorIndex === index)
-      .map((entry) => entry.rune.id);
-    const names = [...heroes, ...enemies, ...slotRunes];
+      .map((entry) => {
+        const colorName = getRuneColorFromIndex(entry.rune.colorIndex);
+        const runeColor = COLOR_RUNAS.find((color) => color.id === colorName);
+        return {
+          kind: 'rune',
+          name: entry.rune.id,
+          image: runeColor?.imagenSin,
+          color: RUNE_HEX[colorName] || '#94a3b8',
+        };
+      });
 
-    return { index, label, count: names.length, names: names.join(' · ') };
+    const entities = [...heroEntities, ...enemyEntities, ...runeEntities];
+    const names = entities.map((entity) => entity.name);
+    const slotColor = index % 2 === 1 ? (RUNE_HEX[getRuneColorFromIndex(index)] || null) : null;
+
+    return { index, label, count: entities.length, names: names.join(' · '), entities, slotColor };
   });
 
   const handleRestartGame = ({ runas = false, heroes = false } = {}) => {

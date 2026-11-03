@@ -108,37 +108,72 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
     const background = getCompanionBackground(companion.id);
     const isSelected = selectedId === companion.id;
     return (
-      <button
+      <div
         key={companion.id}
-        type="button"
-        aria-pressed={isSelected}
-        onClick={() => setSelectedId(isSelected ? null : companion.id)}
-        className={`flex items-center gap-2 rounded-lg border p-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 ${
+        className={`rounded-lg border transition ${
           isSelected
             ? 'border-amber-400 bg-amber-950/50'
-            : 'border-slate-700 bg-slate-800/60 hover:border-slate-500'
+            : 'border-slate-700 bg-slate-800/60'
         }`}
       >
-        <span
-          className="relative flex h-14 w-11 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-950/60"
-          style={background ? {
-            backgroundImage: `url(${background})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          } : undefined}
+        <button
+          type="button"
+          aria-pressed={isSelected}
+          onClick={() => setSelectedId(isSelected ? null : companion.id)}
+          className="flex w-full items-center gap-2 p-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
         >
-          <span className="absolute inset-0 bg-slate-950/35" aria-hidden="true" />
-          {image && (
-            <img src={image} alt="" className="relative h-full w-full object-contain" loading="lazy" decoding="async" />
-          )}
-        </span>
-        <span className="min-w-0">
-          <span className="block truncate text-xs font-semibold text-slate-100">{companion.name}</span>
-          <span className="block truncate text-[0.6rem] text-slate-400">
-            {companion.type === 'mascota' ? (t.pet || 'Mascota') : (t.companion || 'Compañero')} · {companion.alias}
+          <span
+            className="relative flex h-14 w-11 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-950/60"
+            style={background ? {
+              backgroundImage: `url(${background})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            } : undefined}
+          >
+            <span className="absolute inset-0 bg-slate-950/35" aria-hidden="true" />
+            {image && (
+              <img src={image} alt="" className="relative h-full w-full object-contain" loading="lazy" decoding="async" />
+            )}
           </span>
-        </span>
-      </button>
+          <span className="min-w-0">
+            <span className="block truncate text-xs font-semibold text-slate-100">{companion.name}</span>
+            <span className="block truncate text-[0.6rem] text-slate-400">
+              {companion.type === 'mascota' ? (t.pet || 'Mascota') : (t.companion || 'Compañero')} · {companion.alias}
+            </span>
+          </span>
+        </button>
+
+        {isSelected && (
+          <div className="border-t border-amber-700/60 p-1.5">
+            <p className="mb-1 text-[0.6rem] font-semibold text-amber-100">
+              {t.companionsAddTo || 'Añadir'} {companion.name} {t.companionsToHero || 'a'}:
+            </p>
+            <div className="flex gap-1">
+              <select
+                value={selectedHeroId}
+                onChange={(event) => setSelectedHeroId(event.target.value)}
+                aria-label={t.companionsHero || 'Héroe'}
+                className="min-h-8 min-w-0 flex-1 rounded border border-slate-600 bg-slate-900 px-1 text-[0.65rem] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+              >
+                <option value="">{t.companionsChooseHero || 'Elegir héroe'}…</option>
+                {heroes.map((hero) => (
+                  <option key={hero.id} value={hero.id}>
+                    {heroName(hero.id)}{heroRole(hero.id) ? ` · ${heroRole(hero.id)}` : ''}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={add}
+                disabled={!selectedHeroId}
+                className="min-h-8 shrink-0 whitespace-nowrap rounded bg-amber-700 px-2 text-[0.65rem] font-semibold text-white hover:bg-amber-600 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+              >
+                + {t.companionsAdd || 'Añadir'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -258,37 +293,6 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
               </div>
             )}
           </section>
-
-          {selected && (
-            <section className="rounded-xl border border-amber-700/70 bg-amber-950/30 p-2">
-              <p className="mb-1.5 text-xs font-semibold text-amber-100">
-                {t.companionsAddTo || 'Añadir'} {selected.name} {t.companionsToHero || 'a'}:
-              </p>
-              <div className="flex gap-1.5">
-                <select
-                  value={selectedHeroId}
-                  onChange={(event) => setSelectedHeroId(event.target.value)}
-                  aria-label={t.companionsHero || 'Héroe'}
-                  className="min-h-9 min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-900 px-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
-                >
-                  <option value="">{t.companionsChooseHero || 'Elegir héroe'}…</option>
-                  {heroes.map((hero) => (
-                    <option key={hero.id} value={hero.id}>
-                      {heroName(hero.id)}{heroRole(hero.id) ? ` · ${heroRole(hero.id)}` : ''}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  onClick={add}
-                  disabled={!selectedHeroId}
-                  className="min-h-9 shrink-0 rounded-lg bg-amber-700 px-3 text-xs font-semibold text-white hover:bg-amber-600 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
-                >
-                  + {t.companionsAdd || 'Añadir'}
-                </button>
-              </div>
-            </section>
-          )}
 
           <section>
             <div className="mb-1.5 flex items-center justify-between gap-2">

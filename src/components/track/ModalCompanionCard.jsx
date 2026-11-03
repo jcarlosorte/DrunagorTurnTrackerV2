@@ -94,13 +94,15 @@ export default function ModalCompanionCard({ uid, onClose }) {
           } : undefined}
         >
           {image && (
-            <img
-              src={image}
-              alt={companion.name}
-              className="h-40 w-auto shrink-0 rounded-lg border border-slate-700 bg-slate-950/40 object-contain p-1"
-              loading="lazy"
-              decoding="async"
-            />
+            <div className="shrink-0 rounded-lg border border-amber-700/60 bg-gradient-to-b from-amber-100 to-amber-300 p-1 shadow-lg">
+              <img
+                src={image}
+                alt={companion.name}
+                className="h-40 w-auto object-contain"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
           )}
           <div className="min-w-0 flex-1">
             <h2 id="companion-title" className="truncate text-lg font-black">{companion.name}</h2>
@@ -109,14 +111,6 @@ export default function ModalCompanionCard({ uid, onClose }) {
               {companion.subtype && companion.subtype !== '-' ? ` · ${companion.subtype}` : ''}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t.close || 'Cerrar'}
-            className="min-h-9 shrink-0 rounded-lg bg-slate-700 px-3 text-sm font-bold text-white hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
-          >
-            ✕
-          </button>
         </header>
 
         <div className="flex-1 space-y-2 overflow-y-auto p-3">

@@ -13,6 +13,10 @@ import barricadeBackground from '@/assets/interactions/barricade.avif';
 import beerFactoryBackground from '@/assets/interactions/beer-factory.avif';
 import draconianAltarBackground from '@/assets/interactions/draconian-altar.avif';
 import forgeBackground from '@/assets/interactions/forge.avif';
+import floodBackground from '@/assets/interactions/flood.avif';
+import shipBackground from '@/assets/interactions/ship.avif';
+import knightBackground from '@/assets/interactions/knight.avif';
+import portalBackground from '@/assets/interactions/portal.avif';
 
 const INTERACTION_BACKGROUNDS = [
   runicBackground,
@@ -21,6 +25,10 @@ const INTERACTION_BACKGROUNDS = [
   beerFactoryBackground,
   draconianAltarBackground,
   forgeBackground,
+  floodBackground,
+  shipBackground,
+  knightBackground,
+  portalBackground,
 ];
 
 const COMPANION_IMAGES = import.meta.glob('../assets/companions/*.webp', {

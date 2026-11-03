@@ -1147,6 +1147,72 @@ E2E        55/55
 Fondos     6 (runic, seed, barricade, beer factory, altar, forge)
 ```
 
+### 39.ª tanda — Fondo del track, desplegable inline y cabeceras
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Track** | Fondo de tentáculos con `cover` y overlay; se adapta al grid que crece con las cartas | `TurnTrackBoard.jsx`, `backgrounds/track.avif` |
+| **Menú** | El panel de añadir aparece dentro de la tarjeta seleccionada, justo debajo | `CompanionPicker.jsx` |
+| **Compañero** | Retrato sobre fondo claro y sin el botón ✕ superior duplicado | `ModalCompanionCard.jsx` |
+| **Héroe** | Cabecera con imagen grande, nombre/rol/clase, fondo de interacción y fila Vida/Ataque/Movimiento/Impactar | `ModalHeroCard.jsx` |
+| **Pruebas** | 13 E2E de compañeros, colores, habilidades y recursos verificados | tests |
+
+**Medición**
+
+```text
+Unit       112 tests
+E2E        55/55
+Fondo      track.avif 1600×855 (0,1 MB)
+```
+
+### 40.ª tanda — Cuatro fondos más para criaturas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Fondos** | Añadidos `flood`, `ship`, `knight` y `portal` a la rotación, que pasa a 10 imágenes | `companions.js`, `assets/interactions/` |
+| **Asignación** | Se mantiene estable por posición en el catálogo | `getCompanionBackground` |
+
+**Medición**
+
+```text
+Unit       112 tests
+E2E        55/55
+Fondos     10 (6 previos + 4 nuevos)
+```
+
+### 41.ª tanda — Vista de lista con color e imagen
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Lista** | Cada turno usa el color de su entidad (clase del héroe, enemigo o runa) en borde, fondo y número | `TurnTrackBoard.jsx` |
+| **Imágenes** | Miniaturas solapadas de hasta 4 entidades por turno, con borde de su color | `TurnTrackBoard.jsx` |
+| **Datos** | `slotSummaries` añade `entities` (nombre, imagen y color) y `slotColor` para runas | `InitTracker.jsx` |
+| **Pruebas** | 1 E2E de color de borde e imagen en la lista | tests |
+
+**Medición**
+
+```text
+Unit       112 tests
+E2E        56/56
+```
+
+### 42.ª tanda — Retratos de héroe en tres capas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Componente** | `HeroPortrait`: gradiente del color de clase, icono de clase como marca de agua y PNG sin fondo encima | `components/HeroPortrait.jsx` |
+| **Datos** | `getHeroPortrait` indexa `assets/hero` y resuelve alias (`brihitte`, `lordwrath`, `vacren`/`vacron`) | `data/heroPortraits.js` |
+| **Vistas** | Track, ficha ampliada, selección de héroes y miniaturas de la lista usan el retrato | `CharacterCard`, `ModalHeroCard`, `Tracker`, `TurnTrackBoard` |
+| **Pruebas** | 1 unitario de retratos y E2E de color actualizados | tests |
+
+**Medición**
+
+```text
+Unit       113 tests
+E2E        56/56
+Retratos   40 PNG sin fondo
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
