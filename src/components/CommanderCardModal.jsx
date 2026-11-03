@@ -103,7 +103,9 @@ const CommanderCardModal = ({ carta, onClose }) => {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative max-w-sm rounded-lg border-2 border-yellow-400 bg-orange-900 p-6 text-white shadow-xl"
+        className={`relative max-w-sm rounded-lg border-2 p-6 text-white shadow-xl ${
+          carta.categoria === 'overlord' ? 'border-purple-500 bg-purple-950' : 'border-yellow-400 bg-orange-900'
+        }`}
       >
         <button
           ref={closeRef}
@@ -114,7 +116,7 @@ const CommanderCardModal = ({ carta, onClose }) => {
         >
           ✕
         </button>
-        <div id={titleId} className="mb-2 text-center text-lg text-yellow-300" style={{ fontFamily: 'Impact, Charcoal, sans-serif' }}>
+        <div id={titleId} className={`mb-2 text-center text-lg ${carta.categoria === 'overlord' ? 'text-purple-200' : 'text-yellow-300'}`} style={{ fontFamily: 'Impact, Charcoal, sans-serif' }}>
           {nombre}
         </div>
 

@@ -1499,6 +1499,21 @@ Unit       135 tests
 E2E        58/58
 ```
 
+### 61.ª tanda — Color de las cartas de Señor Supremo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cartas** | Las cartas de Señor Supremo usan el morado de su carta de enemigo: borde, anillo, fondo de fuego y título | `CommanderCard`, `CommanderCardModal` |
+| **Resto** | Comandantes y jefes mantienen sus colores actuales | — |
+| **Pruebas** | 135 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       135 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

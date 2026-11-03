@@ -16,7 +16,7 @@ const CommanderCard = ({ carta }) => {
   // 🎨 Clases visuales condicionales por tipo
   const ringClass =
     carta.categoria === "overlord"
-      ? 'ring-4 ring-orange-400 animate-pulse'
+      ? 'ring-4 ring-purple-500 animate-pulse'
       : carta.categoria === "comandante" || carta.categoria === "hero"
       ? 'ring-4 ring-yellow-400 animate-pulse'
       : carta.categoria === "jefe"
@@ -25,7 +25,7 @@ const CommanderCard = ({ carta }) => {
 
   const borderClass =
     carta.categoria === "overlord"
-      ? 'border-orange-400'
+      ? 'border-morado'
       : carta.categoria === "comandante" || carta.categoria === "hero"
       ? 'border-yellow-400'
       : carta.categoria === "jefe"
@@ -54,13 +54,20 @@ const CommanderCard = ({ carta }) => {
         <div
           onClick={() => setShowModal(true)}
           className={`cursor-custom relative w-full aspect-square p-2 rounded-lg border-2 shadow-md hover:scale-105 transition
+            ${carta.categoria === 'overlord' ? 'commander-card--overlord' : ''}
             ${carta.highlight ? ringClass : borderClass}`}
         >
 
           {/* Fondo animado separado */}
-          <div className="fire-bg-inner"></div>
+          <div
+            className="fire-bg-inner"
+            style={carta.categoria === 'overlord' ? { filter: 'hue-rotate(220deg) saturate(1.15)' } : undefined}
+          ></div>
           {/* Chispas */}
-          <div className="fire-sparks">
+          <div
+            className="fire-sparks"
+            style={carta.categoria === 'overlord' ? { filter: 'hue-rotate(220deg) saturate(1.15)' } : undefined}
+          >
             {Array.from({ length: 20 }).map((_, i) => (
               <span key={i}></span>
             ))}
@@ -96,7 +103,7 @@ const CommanderCard = ({ carta }) => {
             </div>
           
             <div
-              className="text-sm text-yellow-300 text-center"
+              className={`text-sm text-center ${carta.categoria === 'overlord' ? 'text-purple-200' : 'text-yellow-300'}`}
               style={{ fontFamily: 'Impact, Charcoal, sans-serif' }}
             >
               {nombre}
