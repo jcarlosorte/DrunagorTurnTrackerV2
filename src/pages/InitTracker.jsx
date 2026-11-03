@@ -13,7 +13,7 @@ import { RUNAS, ASALTO } from '@/data/runas';
 import { INCURSION } from '@/data/incursion';
 import { DEFENSA } from '@/data/defensa';
 import { ESTADOS_ALTERADOS, OTROS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
-import { CARTAS_COMANDANTE, CARTAS_OVERLORD, CARTAS_JEFE, CARTAS_HEROE_CAIDO, ASALTO_GUSANO, ACECHO, IRA } from '@/data/cartasEspeciales';
+import { CARTAS_COMANDANTE, CARTAS_JEFE, CARTAS_HEROE_CAIDO, ASALTO_GUSANO, ACECHO, IRA, getOverlordDeck } from '@/data/cartasEspeciales';
 import { TURN_ORDER } from '@/data/turnOrder';
 import { ENEMY_RING_COLORS } from '@/data/enemyRings';
 import { ENEMY_RING_COLORS_BIG } from '@/data/enemyRingsBig';
@@ -1058,7 +1058,7 @@ const InitTracker = () => {
     const enemyId = enemy.id;
     const enemyColor = enemy.color;
     const enemyCat = enemy.categoria;
-    const shuffled = [...CARTAS_OVERLORD].sort(() => 0.5 - Math.random());
+    const shuffled = [...getOverlordDeck(enemy.id)].sort(() => 0.5 - Math.random());
     const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     const selected = shuffled.slice(0, numHeroes);
     const nombreOverlord = getEnemyName(enemyId, enemyColor);

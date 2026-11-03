@@ -244,6 +244,24 @@ export const CARTAS_OVERLORD = [
   }
 ];
 
+const OVERLORD_DECKS = {
+  fallen_sisters: [
+    'over_11', 'over_12', 'over_13', 'over_14', 'over_15',
+    'over_16', 'over_17', 'over_18', 'over_19', 'over_20',
+  ],
+};
+
+const DEFAULT_OVERLORD_DECK = [
+  'over_1', 'over_2', 'over_3', 'over_4', 'over_5',
+  'over_6', 'over_7', 'over_8', 'over_9', 'over_10',
+];
+
+/** Cartas de acción que corresponden a cada Señor Supremo. */
+export function getOverlordDeck(enemyId) {
+  const ids = OVERLORD_DECKS[enemyId] || DEFAULT_OVERLORD_DECK;
+  return CARTAS_OVERLORD.filter((carta) => ids.includes(carta.id));
+}
+
 export const CARTAS_JEFE = [
   {
     id: 'boss_1',

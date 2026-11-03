@@ -1529,6 +1529,21 @@ Unit       136 tests
 E2E        58/58
 ```
 
+### 63.ª tanda — Barajas por Señor Supremo y nuevo Demon Lord
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Barajas** | Las Hermanas Fatídicas usan `over_11`…`over_20`; los demás señores supremos mantienen `over_1`…`over_10` | `cartasEspeciales`, `InitTracker` |
+| **Imagen** | Demon Lord usa el nuevo archivo PNG | `enemies.js` |
+| **Pruebas** | 1 unitaria de barajas por Señor Supremo (137 en total) | tests |
+
+**Medición**
+
+```text
+Unit       137 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

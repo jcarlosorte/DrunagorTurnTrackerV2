@@ -24,7 +24,7 @@ import shadow_knight from "@/assets/enemies/ShadowKnight.avif";
 import commander_thern from "@/assets/enemies/Thern.avif";
 import commander_twins from "@/assets/enemies/Twin.avif";
 // Jefes
-import demon_lord from "@/assets/enemies/DemonLord.avif";
+import demon_lord from "@/assets/enemies/DemonLord.png";
 import undead_king_boss from "@/assets/enemies/Lich.avif";
 import aralhezec from "@/assets/enemies/Dragon.avif";
 import wermunggdir from "@/assets/enemies/Wurm.avif";
