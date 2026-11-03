@@ -168,7 +168,7 @@ export const CARTAS_OVERLORD = [
     rune: 'rojo',
     runePosition: 'arriba',
     capacidades: 'over_11',
-    lista_capacidad: ["SANA_X", ";", "HEMORRAGIA_2", ",", "HEMORRAGIA_2_ALCANCE_1", ";", "SANA_X_SI_NO_HEMORRAGIA"]
+    lista_capacidad: ["SANA_X_SI", ";", "HEMORRAGIA_2", ";", "SANA_X_SI_NO_HEMORRAGIA"]
   },
   {
     id: 'over_12',
@@ -176,7 +176,7 @@ export const CARTAS_OVERLORD = [
     rune: 'rojo',
     runePosition: 'abajo',
     capacidades: 'over_12',
-    lista_capacidad: ["ACTIVA", ",", "DANO_BASICO_X"]
+    lista_capacidad: ["ACTIVA_0"]
   },
   {
     id: 'over_13',
@@ -184,7 +184,7 @@ export const CARTAS_OVERLORD = [
     rune: 'gris',
     runePosition: 'arriba',
     capacidades: 'over_13',
-    lista_capacidad: ["SANA_X", ";", "EVOLUCIONA"]
+    lista_capacidad: ["SANA_X_SI", ";", "EVOLUCIONA"]
   },
   {
     id: 'over_14',
@@ -192,7 +192,7 @@ export const CARTAS_OVERLORD = [
     rune: 'gris',
     runePosition: 'abajo',
     capacidades: 'over_14',
-    lista_capacidad: ["ESCUDO_X", ";", "DESEQUIPA"]
+    lista_capacidad: ["ESCUDO_X_SI"]
   },
   {
     id: 'over_15',
@@ -200,7 +200,7 @@ export const CARTAS_OVERLORD = [
     rune: 'azul',
     runePosition: 'abajo',
     capacidades: 'over_15',
-    lista_capacidad: ["SILENCIO", ";", "DANO_MITAD_CUBOS_SABIDURIA_X"]
+    lista_capacidad: ["SILENCIO"]
   },
   {
     id: 'over_16',
@@ -208,7 +208,7 @@ export const CARTAS_OVERLORD = [
     rune: 'azul',
     runePosition: 'arriba',
     capacidades: 'over_16',
-    lista_capacidad: ["ESCUDO_POR_CARTA", ";", "DANO_MITAD_ESCUDO"]
+    lista_capacidad: ["ESCUDO_POR_CARTA"]
   },
   {
     id: 'over_17',
@@ -216,7 +216,7 @@ export const CARTAS_OVERLORD = [
     rune: 'verde',
     runePosition: 'abajo',
     capacidades: 'over_17',
-    lista_capacidad: ["SANA_X", ";", "VENENO_2", ",", "VENENO_X_ALCANCE_1"]
+    lista_capacidad: ["SANA_X_SI", ";", "VENENO_2"]
   },
   {
     id: 'over_18',
@@ -224,7 +224,7 @@ export const CARTAS_OVERLORD = [
     rune: 'verde',
     runePosition: 'arriba',
     capacidades: 'over_18',
-    lista_capacidad: ["VENENO_X", ";", "VENENO_X_SEGUNDO_4_RUNAS"]
+    lista_capacidad: ["VENENO_X_ALCANCE_1"]
   },
   {
     id: 'over_19',
@@ -232,7 +232,7 @@ export const CARTAS_OVERLORD = [
     rune: 'naranja',
     runePosition: 'abajo',
     capacidades: 'over_19',
-    lista_capacidad: ["SANA_X", ";", "SALTA", ";", "DANO_X"]
+    lista_capacidad: ["SANA_X_SI"]
   },
   {
     id: 'over_20',
@@ -240,7 +240,7 @@ export const CARTAS_OVERLORD = [
     rune: 'naranja',
     runePosition: 'arriba',
     capacidades: 'over_20',
-    lista_capacidad: ["ESCUDO_X", ";", "QUEMADURA_2", ",", "QUEMADURA_X_ALCANCE_1"]
+    lista_capacidad: ["ESCUDO_X_SI", ";", "QUEMADURA_2"]
   }
 ];
 

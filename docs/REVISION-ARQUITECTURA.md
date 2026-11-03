@@ -1483,6 +1483,22 @@ Unit       135 tests
 E2E        58/58
 ```
 
+### 60.ª tanda — Resolvedor de cartas de las Hermanas Fatídicas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Resolvedor** | Aplica al Señor Supremo `SANA X`, `ESCUDO X`, `ACTIVA`, `EVOLUCIONA` y estados (hemorragia, veneno, quemadura), respetando inmunidades | `InitTracker.jsx` |
+| **Confirmación** | La hemorragia de FURIA HEMORRÁGICA se confirma antes de aplicarse; si no se sufre, se cura X | `InitTracker.jsx` |
+| **Instrucciones** | Desequipar, objetivos, saltos y daños a héroes quedan como texto de la carta | cartas |
+| **Pruebas** | 135 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       135 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

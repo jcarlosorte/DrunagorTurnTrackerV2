@@ -1499,10 +1499,22 @@ const InitTracker = () => {
     const enemigo = entry?.enemy;
 
     let curacionTotal = 0;
+    let hemorragiaAplicada = false;
     
     if (!enemigo) return { logs }; // Nada que hacer si no hay enemigo vinculado
   
     capacidades.forEach(cap => {
+      // Curación condicional de FURIA HEMORRÁGICA: solo si no sufrió la hemorragia.
+      if (cap === "SANA_X_SI_NO_HEMORRAGIA") {
+        if (hemorragiaAplicada) return;
+        const nuevaVida = enemigo.vida + runeCount;
+        const nuevoMax = Math.max(enemigo.vidaMax, nuevaVida);
+        updateEnemyVida(targetUUID, nuevaVida, nuevoMax);
+        const nombreCarta = ta?.nombre?.[cartaEspecial.id] || cartaEspecial.nombre || cartaEspecial.id;
+        logs.push(`💚 ${nombreCarta} ${ti.sana} ${runeCount}`);
+        return;
+      }
+
       // ✅ --- SANA ---
       if (cap.startsWith("SANA")) {
         const partes = cap.split("_");
@@ -1593,6 +1605,54 @@ const InitTracker = () => {
         logs.push(`🛡 ${nombreCarta} ${ti.gana} ${escudosAgregar} ${ti.escudos}`);
       }
   
+      // ✅ --- ESTADOS QUE SUFRE EL PROPIO SEÑOR SUPREMO ---
+      else if (/^(HEMORRAGIA|VENENO|QUEMADURA)_(\d+)$/.test(cap)) {
+        const [, tipo, cantidad] = cap.match(/^(HEMORRAGIA|VENENO|QUEMADURA)_(\d+)$/);
+        const estadoId = `${tipo}_I`;
+        const nombreCarta = ta?.nombre?.[cartaEspecial.id] || cartaEspecial.nombre || cartaEspecial.id;
+        const inmune = (enemigo.inmunidad || []).includes(estadoId);
+
+        if (inmune) {
+          logs.push(`🛡 ${nombreCarta} ${ti.inmuneA || 'es inmune a'} ${ttr[tipo] || tipo}`);
+          return;
+        }
+
+        if (tipo === 'HEMORRAGIA') {
+          const confirmar = window.confirm(`¿El Señor Supremo sufre HEMORRAGIA ${cantidad}?`);
+          if (!confirmar) return;
+          hemorragiaAplicada = true;
+        }
+
+        const estados = [...(enemigo.estadosAlterados || [])];
+        const idx = estados.findIndex((estado) => estado.id === estadoId);
+        if (idx >= 0) {
+          estados[idx] = { ...estados[idx], count: estados[idx].count + Number(cantidad) };
+        } else {
+          estados.push({ id: estadoId, count: Number(cantidad) });
+        }
+        updateEnemyEstados(targetUUID, estados);
+        logs.push(`☠ ${nombreCarta} ${ti.sufre || 'sufre'} ${cantidad} ${ttr[tipo] || tipo}`);
+      }
+
+      // ✅ --- EVOLUCIONA ---
+      else if (cap === "EVOLUCIONA") {
+        setPlacedEnemies(prev =>
+          prev.map(e => {
+            if (e.enemy.uuid !== targetUUID) return e;
+            return {
+              ...e,
+              enemy: {
+                ...e.enemy,
+                movimiento: (Number(e.enemy.movimiento) || 0) + 1,
+                ataque: (Number(e.enemy.ataque) || 0) + 2,
+              },
+            };
+          })
+        );
+        const nombreCarta = ta?.nombre?.[cartaEspecial.id] || cartaEspecial.nombre || cartaEspecial.id;
+        logs.push(`🧬 ${nombreCarta} ${ti.evoluciona || 'evoluciona'}: +1 movimiento, +2 daño`);
+      }
+
       // ✅ --- RECUPERA ---
       else if (cap.startsWith("RECUPERA")) {
         const partes = cap.split("_"); // ["RECUPERA", "2", "MALDICION", "SI"]
