@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { motion } from 'framer-motion';
 import { useLanguage } from "@/context/LanguageContext";
 import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useInitRunes } from "@/context/initRunesContext";
@@ -8,7 +9,10 @@ import PageTransition from "@/components/PageTransition";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { clearTrackState, isPlainObject, readJsonStorage } from "@/utils/storage";
 import logo from "@/assets/Corebox_Logo-1536x864.avif";
-import skeleton from "@/assets/enemies/skeleton_knight.avif";
+import logoApocalypse from "@/assets/home/logo-apocalypse.webp";
+import logoAwakenings from "@/assets/home/logo-awakenings.webp";
+import reyRedivivo from "@/assets/home/rey-redivivo.webp";
+import bg from "@/assets/home/dungeon-bg.webp";
 import SiteFooter from "@/components/SiteFooter";
 
 export default function HomeMenu() {
@@ -44,17 +48,15 @@ export default function HomeMenu() {
   return (
     <PageTransition>
       <main className="relative flex min-h-[calc(100dvh-3.5rem)] flex-col overflow-hidden bg-slate-950 text-white">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(16,185,129,0.18),transparent_42%),linear-gradient(180deg,#0f172a_0%,#020617_100%)]" />
-
-        {/* Fondo: caballero esqueleto a la deriva, muy tenue */}
         <img
-          src={skeleton}
+          src={bg}
           alt=""
           aria-hidden="true"
-          className="home-skeleton pointer-events-none absolute -right-24 bottom-0 h-[85%] max-h-[720px] w-auto select-none object-contain opacity-[0.07] mix-blend-luminosity"
-          loading="lazy"
+          className="pointer-events-none absolute inset-0 h-full w-full scale-105 object-cover opacity-80"
+          loading="eager"
           decoding="async"
         />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(16,185,129,0.14),transparent_45%),linear-gradient(180deg,rgba(15,23,42,0.58)_0%,rgba(2,6,23,0.86)_100%)]" />
 
         <div className="relative z-10 flex flex-1 items-center justify-center px-4 py-10 sm:px-6">
         <div className="grid w-full max-w-5xl gap-8 overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/80 p-5 shadow-2xl shadow-emerald-950/30 backdrop-blur sm:p-8 lg:grid-cols-[1.1fr_0.9fr] lg:p-10">
@@ -115,14 +117,32 @@ export default function HomeMenu() {
             </div>
           </section>
 
-          <aside className="relative flex min-h-64 items-center justify-center rounded-2xl border border-emerald-500/20 bg-slate-950/60 p-4 sm:p-8">
+          <aside className="relative flex min-h-[24rem] flex-col items-center justify-between gap-4 overflow-hidden rounded-2xl border border-emerald-500/20 bg-slate-950/60 p-4 sm:p-6">
             <div className="home-logo-glow absolute inset-8 rounded-full bg-emerald-500/10 blur-3xl" aria-hidden="true" />
             <img
-              src={logo}
-              alt="Drunagor"
-              className="home-logo relative max-h-72 w-full object-contain opacity-90 drop-shadow-2xl"
+              src={reyRedivivo}
+              alt="Rey Redivivo"
+              className="relative z-10 min-h-0 w-full flex-1 rounded-xl object-contain drop-shadow-2xl"
               loading="eager"
             />
+            <div className="relative z-10 w-full overflow-hidden rounded-xl bg-white/90 p-2 shadow-lg">
+              <motion.div
+                className="flex w-max items-center gap-5"
+                animate={{ x: ['0%', '-50%'] }}
+                transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
+              >
+                {[logo, logoApocalypse, logoAwakenings, logo, logoApocalypse, logoAwakenings].map((src, index) => (
+                  <img
+                    key={`${src}-${index}`}
+                    src={src}
+                    alt={index < 3 ? ['Drunagor', 'Apocalipsis', 'Awakenings'][index] : ''}
+                    aria-hidden={index >= 3}
+                    className="h-10 w-auto max-w-[9rem] shrink-0 object-contain sm:h-12"
+                    loading="eager"
+                  />
+                ))}
+              </motion.div>
+            </div>
           </aside>
         </div>
         </div>

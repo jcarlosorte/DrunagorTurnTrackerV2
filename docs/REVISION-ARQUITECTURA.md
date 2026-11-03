@@ -1544,6 +1544,21 @@ Unit       137 tests
 E2E        58/58
 ```
 
+### 64.ª tanda — Nueva portada
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Fondo** | La portada usa la imagen de mazmorra en lugar del caballero esqueleto | `HomeMenu` |
+| **Panel** | El Rey Redivivo preside los tres logos (base, Apocalipsis y Awakenings), que se mueven en bucle | `HomeMenu` |
+| **Pruebas** | 137 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       137 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
