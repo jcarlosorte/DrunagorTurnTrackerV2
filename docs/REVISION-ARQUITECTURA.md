@@ -1331,6 +1331,19 @@ E2E        57/57
 Glosario   182 claves ES/EN
 ```
 
+### 50.ª tanda — Discord en el pie
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enlace** | Icono de Discord con el usuario `darkfidodido`; al pulsar abre Discord y copia el nombre | `SiteFooter.jsx` |
+
+**Medición**
+
+```text
+Unit       124 tests
+E2E        57/57
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

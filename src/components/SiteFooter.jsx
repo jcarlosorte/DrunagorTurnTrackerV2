@@ -1,4 +1,5 @@
-import { FaGithub, FaInstagram } from 'react-icons/fa';
+import { useState } from 'react';
+import { FaDiscord, FaGithub, FaInstagram } from 'react-icons/fa';
 import { useLanguage } from '@/context/LanguageContext';
 import BuildBadge from '@/components/BuildBadge';
 import fido from '@/assets/assets_logo/darkfidodido.png';
@@ -12,6 +13,15 @@ import fido from '@/assets/assets_logo/darkfidodido.png';
 export default function SiteFooter() {
   const { translations } = useLanguage();
   const home = translations.home || {};
+  const [discordCopied, setDiscordCopied] = useState(false);
+
+  const copyDiscordUser = () => {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText('darkfidodido').then(() => {
+      setDiscordCopied(true);
+      setTimeout(() => setDiscordCopied(false), 2000);
+    }).catch(() => {});
+  };
 
   return (
     <footer className="relative z-10 border-t border-slate-800 bg-slate-950/80 px-4 py-5">
@@ -52,6 +62,20 @@ export default function SiteFooter() {
           >
             <FaInstagram aria-hidden="true" />
           </a>
+          <a
+            href="https://discord.com/"
+            target="_blank"
+            rel="noreferrer noopener"
+            onClick={copyDiscordUser}
+            aria-label="Discord: darkfidodido (copia el usuario al pulsar)"
+            title={discordCopied ? '¡Usuario copiado!' : 'Discord: darkfidodido'}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-300 transition hover:border-indigo-500 hover:text-indigo-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+          >
+            <FaDiscord aria-hidden="true" />
+          </a>
+          <span role="status" className="sr-only">
+            {discordCopied ? 'Usuario de Discord copiado: darkfidodido' : ''}
+          </span>
         </div>
       </div>
     </footer>
