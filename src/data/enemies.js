@@ -304,6 +304,6 @@ export const ENEMIES = [
 { id: "night_stalker", nombre: "Night Stalker", vida: 0, movimiento: 0, color: "gris", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: night_stalker, rune: "verde", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
 { id: "fell_asteris", nombre: "Fell Asteris", vida: 0, movimiento: 0, color: "gris", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: fell_asteris, rune: "naranja", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
 
-{ id: "fallen_sisters", nombre: "Fallen Sisters", vida: 8, movimiento: 3, color: "overlord", categoria: "overlord", tipo: "enemigo", expansionId: "apocalypse_sisters", imagen: fallen_sisters, rune: "rojo", runePosition: "arriba", inmunidad: ["GRANDE", "QUEMADURA_I", "INTIMIDAR_I"], tipo_ataque: "cuerpo", capacidades: ["VORAGINE", ";", "EMBATE 1", ",", "HEMORRAGIA X", "Y", "INTIMIDAR X"] }
+{ id: "fallen_sisters", nombre: "Fallen Sisters", vida: 8, movimiento: 3, ataque: 5, color: "overlord", categoria: "overlord", tipo: "enemigo", expansionId: "apocalypse_sisters", imagen: fallen_sisters, rune: "rojo", runePosition: "arriba", inmunidad: ["GRANDE", "QUEMADURA_I", "INTIMIDAR_I"], tipo_ataque: "cuerpo", capacidades: ["VORAGINE", ";", "EMBATE 1", ",", "HEMORRAGIA X", "Y", "INTIMIDAR X"] }
 ];
 
