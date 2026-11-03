@@ -88,6 +88,7 @@
     "monsters_pack_1": "Monster Pack No. 1",
     "war_loot": "Spoils of War",
     "gencon": "GenCon Exclusive",
+    "dicetower": "Dice Tower Exclusive",
     "apocalypse_adventures": "Apocalypse Adventures",
     "apocalypse_heroes_1": "Apocalypse - Hero Pack",
     "apocalypse_lorien": "Apocalypse - Lorien",
@@ -337,7 +338,8 @@
     "lider": "Leader",
     "agresor": "Striker",
     "apoyo": "Support",
-    "asistente": "Attendant"
+    "asistente": "Attendant",
+    "lanza_dados": "Dice Roller"
   },
   "trackerSelect": {
     "title": "Tracker setup",

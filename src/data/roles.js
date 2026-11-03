@@ -24,6 +24,10 @@ export const ROLES = [
     id: 'asistente',
     expansionId: 'gencon',
   },
+  {
+    id: 'lanza_dados',
+    expansionId: 'dicetower',
+  },
 ];
 
 /** Roles disponibles según las expansiones activas. */
@@ -37,5 +41,7 @@ export function getRolesForExpansions(expansionIds = []) {
 export const OPPOSITE_ROLES = {
   asistente: 'apoyo',
   apoyo: 'asistente',
+  lanza_dados: 'lider',
+  lider: 'lanza_dados',
 };
 

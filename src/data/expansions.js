@@ -14,6 +14,7 @@ import lorienImg from '@/assets/expansions/lorien.avif';
 import awakeningsImg from '@/assets/expansions/awakenings.avif';
 import sistersImg from '@/assets/expansions/sisters.avif';
 import genconImg from '@/assets/expansions/gencon.avif';
+import dicetowerImg from '@/assets/expansions/dicetower.avif';
 
 export const EXPANSIONS = [
   {
@@ -144,6 +145,18 @@ export const EXPANSIONS = [
     companions: [],
     pets: [],
     roles: ['asistente'],
+    dungeonRoles: [],
+    language: { en: '', es: '' },
+    active: "on"
+  },
+  {
+    id: "dicetower",
+    imagen: dicetowerImg,
+    heroes: [],
+    enemies: [],
+    companions: [],
+    pets: [],
+    roles: ['lanza_dados'],
     dungeonRoles: [],
     language: { en: '', es: '' },
     active: "on"

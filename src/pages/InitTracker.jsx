@@ -72,7 +72,9 @@ import { boardSlotHeightFrom } from '@/components/track/trackLayout';
 const rolesPositionMap = {
   defensor: 0,
   apoyo: 2,
+  asistente: 2,
   lider: 4,
+  lanza_dados: 4,
   agresor: 6,
   controlador: 8
 };
@@ -2968,7 +2970,7 @@ const InitTracker = () => {
     });
   };
 
-  const rolesOnTop = ['defensor', 'lider', 'controlador'];
+  const rolesOnTop = ['defensor', 'lider', 'lanza_dados', 'controlador'];
   const rolesOnBottom = ['apoyo', 'asistente', 'agresor'];
 
   const RuneCard = ({ rune, onRemove, flipped }) => {

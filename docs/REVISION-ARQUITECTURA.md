@@ -1014,6 +1014,41 @@ E2E        47/47
 Roles      base 5 · con GenCon 6
 ```
 
+### 31.ª tanda — Dice Tower Exclusive y rol Lanza Dados
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Expansión** | «Dice Tower Exclusive» después de GenCon y antes de Apocalipsis; solo aporta el rol Lanza Dados | `expansions.js`, `dicetower.avif` |
+| **Rol** | Lanza Dados/Dice Roller ligado a `dicetower`; ocupa la posición de Líder (índice 4 arriba) | `roles.js`, `turnOrder.js` |
+| **Exclusión** | Al asignar Lanza Dados se libera Líder y viceversa | `Tracker.jsx` |
+| **Track** | `rolesPositionMap` incluye Lanza Dados (4) y Asistente (2) | `InitTracker.jsx` |
+| **Pruebas** | 2 unitarios y 2 E2E | tests |
+
+**Medición**
+
+```text
+Unit       102 tests
+E2E        49/49
+Roles      base 5 · GenCon 6 · Dice Tower 6 · ambas 7
+```
+
+### 32.ª tanda — Selección de héroes agrupada por clase
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Agrupación** | Grupos por clase con cabecera, icono, color y contador; orden alfabético | `Tracker.jsx`, `heroClasses.js` |
+| **Iconos** | 16 PNG de `assets/classes` mapeados a las 16 clases | `heroClasses.js` |
+| **Orden** | Selector Clase (agrupado, por defecto) / Nombre (grid plano) | `Tracker.jsx` |
+| **Pruebas** | 2 unitarios y 1 E2E de cabeceras, iconos y color | tests |
+
+**Medición**
+
+```text
+Unit       104 tests
+E2E        50/50
+Clases     16 con icono y color
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

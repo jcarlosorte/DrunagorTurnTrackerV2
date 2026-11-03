@@ -26,7 +26,8 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Escenario**: monstruo de escenario y cartas de incursión y defensa.
 - **Héroes**: vista ampliada con vida, estados alterados, cubos de acción y equipo;
   edición de estados, vida y dados, y reinicio de la ficha (vida, estados, recursos y cubos).
-- **Selección de héroes**: búsqueda y orden por nombre o por clase.
+- **Selección de héroes**: agrupada por clase con su icono y color, búsqueda y orden
+  por clase (agrupado) o por nombre (lista plana).
 - **Recursos por clase**: Concentración para todos, Ki del monje, Furia del bárbaro y
   Fruto de vida del druida, con un máximo de 4 fichas cada uno.
 - **Habilidades y capacidades**: los rombos de cada habilidad viven dentro de su cubo de
@@ -38,6 +39,8 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
   (vida y estados), turno en orden de aparición y ficha ampliada con capacidades.
 - **GenCon Exclusive**: expansión con el rol **Asistente**, alternativa a Apoyo en el
   mismo hueco del track (no pueden convivir).
+- **Dice Tower Exclusive**: expansión con el rol **Lanza Dados**, alternativa a Líder en
+  el mismo hueco del track (no pueden convivir).
 - **Reinicio de partida por capas**: turno, historial y enemigos, con opción de
   reiniciar runas y de restablecer héroes (vida, estados y cubos).
 - **Guardados**: autoguardado, hasta 10 partidas con nombre, exportación e
@@ -157,8 +160,8 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      100 tests
-e2e       47 tests
+unit      104 tests
+e2e       50 tests
 build     OK
 ```
 

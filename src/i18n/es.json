@@ -88,6 +88,7 @@
     "monsters_pack_1": "Pack de Monstruos Nº1",
     "war_loot": "Botines de Guerra",
     "gencon": "GenCon Exclusive",
+    "dicetower": "Dice Tower Exclusive",
     "apocalypse_adventures": "Apocalipsis - Aventuras",
     "apocalypse_heroes_1": "Apocalipsis - Pack de Héroe #1",
     "apocalypse_lorien": "Apocalipsis - Lorien",
@@ -337,7 +338,8 @@
     "lider": "Líder",
     "agresor": "Agresor",
     "apoyo": "Apoyo",
-    "asistente": "Asistente"
+    "asistente": "Asistente",
+    "lanza_dados": "Lanza Dados"
   },
   "trackerSelect": {
     "title": "Configuración",

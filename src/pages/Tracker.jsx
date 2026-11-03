@@ -6,7 +6,7 @@ import { HEROES } from '@/data/heroes';
 import { ENEMIES } from '@/data/enemies';
 import { OPPOSITE_ROLES, getRolesForExpansions } from '@/data/roles';
 import { COLORS } from '@/data/color';
-import { HERO_CLASSES, getHeroClassId } from '@/data/heroClasses';
+import { getHeroClassGroups } from '@/data/heroClasses';
 import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import { useTracker } from '@/context/TrackerContext';
@@ -35,7 +35,7 @@ const TrackerSelect = () => {
   const [selectedBehaviors, setSelectedBehaviors] = useState(["estandar", "alternativo", "complejo"]);
   const [step, setStep] = useState('heroes');
   const [heroQuery, setHeroQuery] = useState('');
-  const [heroSort, setHeroSort] = useState('name');
+  const [heroSort, setHeroSort] = useState('class');
   const [enemyQuery, setEnemyQuery] = useState('');
   const [enemyExpansion, setEnemyExpansion] = useState('all');
   const [enemyColor, setEnemyColor] = useState('all');
@@ -212,22 +212,80 @@ const TrackerSelect = () => {
 
   const filteredHeroes = useMemo(() => {
     const q = normalize(heroQuery.trim());
-    const filtered = heroesInSelectedExpansions.filter((hero) => (
-      !q || normalize(getHeroName(hero.id)).includes(q) || normalize(hero.id).includes(q)
-    ));
-    const byName = (a, b) => normalize(getHeroName(a.id)).localeCompare(normalize(getHeroName(b.id)), 'es');
+    return heroesInSelectedExpansions
+      .filter((hero) => (
+        !q || normalize(getHeroName(hero.id)).includes(q) || normalize(hero.id).includes(q)
+      ))
+      .sort((a, b) => normalize(getHeroName(a.id)).localeCompare(normalize(getHeroName(b.id)), 'es'));
+  }, [heroQuery, heroesInSelectedExpansions, getHeroName]);
 
-    if (heroSort !== 'class') return [...filtered].sort(byName);
+  const groupedHeroes = useMemo(() => (
+    getHeroClassGroups(filteredHeroes).map((group) => ({
+      ...group,
+      heroes: [...group.heroes].sort((a, b) => (
+        normalize(getHeroName(a.id)).localeCompare(normalize(getHeroName(b.id)), 'es')
+      )),
+    }))
+  ), [filteredHeroes, getHeroName]);
 
-    const classLabel = (hero) => {
-      const classId = getHeroClassId(hero.id);
-      return classId ? (HERO_CLASSES[classId]?.[language] || HERO_CLASSES[classId]?.es || classId) : '~';
-    };
-    return [...filtered].sort((a, b) => {
-      const byClass = classLabel(a).localeCompare(classLabel(b), 'es');
-      return byClass !== 0 ? byClass : byName(a, b);
-    });
-  }, [heroQuery, heroesInSelectedExpansions, getHeroName, heroSort, language]);
+  const renderHeroCard = (hero) => {
+    const isSelected = selectedHeroes.includes(hero.id);
+    const isBlocked = !isSelected && selectedHeroes.length >= MAX_HEROES;
+    return (
+      <li key={hero.id}>
+        <label
+          className={`group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border-2 transition focus-within:ring-2 focus-within:ring-sky-300 ${
+            isSelected
+              ? 'border-emerald-400 bg-emerald-950/50 shadow-lg shadow-emerald-950/40'
+              : isBlocked
+                ? 'cursor-not-allowed border-slate-800 bg-slate-900/40 opacity-50'
+                : 'border-slate-700 bg-slate-900 hover:border-slate-500'
+          }`}
+        >
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => handleHeroSelect(hero.id)}
+            disabled={isBlocked}
+            className="sr-only"
+            aria-label={getHeroName(hero.id)}
+          />
+          <span className="relative block">
+            {hero.image ? (
+              <img
+                src={hero.image}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                className="h-32 w-full object-cover object-top sm:h-40"
+              />
+            ) : (
+              <span className="flex h-32 w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
+            )}
+            <span
+              aria-hidden="true"
+              className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black ${
+                isSelected
+                  ? 'border-emerald-200 bg-emerald-500 text-slate-950'
+                  : 'border-slate-400 bg-slate-900/80 text-slate-500'
+              }`}
+            >
+              {isSelected ? '✓' : ''}
+            </span>
+          </span>
+          <span className="flex flex-1 flex-col justify-center gap-0.5 px-2 py-2 text-center">
+            <span className="line-clamp-2 text-sm font-bold text-slate-100">{getHeroName(hero.id)}</span>
+            <span className="truncate text-[0.7rem] text-slate-400">{getExpansionName(hero.expansionId)}</span>
+            {heroRoles[hero.id] && (
+              <span className="mt-1 truncate rounded-full bg-emerald-900/70 px-2 py-0.5 text-[0.7rem] font-semibold text-emerald-200">
+                {getRoleName(heroRoles[hero.id])}
+              </span>
+            )}
+          </span>
+        </label>
+      </li>
+    );
+  };
 
   const enemiesOfExpansion = useMemo(() => (
     enemyExpansion === 'all'
@@ -386,66 +444,39 @@ const TrackerSelect = () => {
               <p className="rounded-xl border border-slate-700 bg-slate-950 p-6 text-center text-slate-400">
                 {t.noResults || 'No hay resultados con los filtros actuales.'}
               </p>
+            ) : heroSort === 'class' ? (
+              <div className="space-y-5">
+                {groupedHeroes.map((group) => (
+                  <section key={group.id} aria-labelledby={`class-${group.id}`}>
+                    <header
+                      className="mb-2 flex items-center gap-2 rounded-lg px-3 py-2 text-white shadow"
+                      style={{ backgroundColor: group.color }}
+                    >
+                      {group.icon && (
+                        <img
+                          src={group.icon}
+                          alt=""
+                          className="h-7 w-7 shrink-0 object-contain"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      )}
+                      <h3 id={`class-${group.id}`} className="min-w-0 flex-1 truncate text-sm font-bold uppercase tracking-wide">
+                        {group.label[language] || group.label.es}
+                      </h3>
+                      <span className="shrink-0 rounded-full bg-black/30 px-2 py-0.5 text-xs font-semibold tabular-nums">
+                        {group.heroes.length}
+                      </span>
+                    </header>
+                    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                      {group.heroes.map(renderHeroCard)}
+                    </ul>
+                  </section>
+                ))}
+              </div>
             ) : (
               <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                {filteredHeroes.map((hero) => {
-                  const isSelected = selectedHeroes.includes(hero.id);
-                  const isBlocked = !isSelected && selectedHeroes.length >= MAX_HEROES;
-                  return (
-                    <li key={hero.id}>
-                      <label
-                        className={`group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border-2 transition focus-within:ring-2 focus-within:ring-sky-300 ${
-                          isSelected
-                            ? 'border-emerald-400 bg-emerald-950/50 shadow-lg shadow-emerald-950/40'
-                            : isBlocked
-                              ? 'cursor-not-allowed border-slate-800 bg-slate-900/40 opacity-50'
-                              : 'border-slate-700 bg-slate-900 hover:border-slate-500'
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => handleHeroSelect(hero.id)}
-                          disabled={isBlocked}
-                          className="sr-only"
-                          aria-label={getHeroName(hero.id)}
-                        />
-                        <span className="relative block">
-                          {hero.image ? (
-                            <img
-                              src={hero.image}
-                              alt=""
-                              loading="lazy"
-                              decoding="async"
-                              className="h-32 w-full object-cover object-top sm:h-40"
-                            />
-                          ) : (
-                            <span className="flex h-32 w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
-                          )}
-                          <span
-                            aria-hidden="true"
-                            className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black ${
-                              isSelected
-                                ? 'border-emerald-200 bg-emerald-500 text-slate-950'
-                                : 'border-slate-400 bg-slate-900/80 text-slate-500'
-                            }`}
-                          >
-                            {isSelected ? '✓' : ''}
-                          </span>
-                        </span>
-                        <span className="flex flex-1 flex-col justify-center gap-0.5 px-2 py-2 text-center">
-                          <span className="line-clamp-2 text-sm font-bold text-slate-100">{getHeroName(hero.id)}</span>
-                          <span className="truncate text-[0.7rem] text-slate-400">{getExpansionName(hero.expansionId)}</span>
-                          {heroRoles[hero.id] && (
-                            <span className="mt-1 truncate rounded-full bg-emerald-900/70 px-2 py-0.5 text-[0.7rem] font-semibold text-emerald-200">
-                              {getRoleName(heroRoles[hero.id])}
-                            </span>
-                          )}
-                        </span>
-                      </label>
-                    </li>
-                  );
-                })}
+                {filteredHeroes.map(renderHeroCard)}
               </ul>
             )}
           </section>
