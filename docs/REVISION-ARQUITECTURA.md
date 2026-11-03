@@ -1304,13 +1304,13 @@ E2E        56/56
 | **Draugr** | Se permiten varias copias; Hakkon no desaparece de Disponibles | `CompanionPicker.jsx` |
 | **Claves** | `NO_MUERTO` y `DRAUGR` con descripción en español e inglés; el parser asocia DRAUGR a la frase | i18n, `companionAbilities.js` |
 | **Reglas** | Las expansiones de Apocalipsis ya activan el reglamento 2.0 | `rulesVersion.js` |
-| **Faltante** | Imágenes de Neva y Hakkon | assets |
+| **Imágenes** | Neva y Hakkon con retrato WebP (`neva.webp` y `hakkon.webp`) | assets |
 | **Pruebas** | 1 unitario de mascotas, 1 de claves y 1 E2E de duplicado | tests |
 
 **Medición**
 
 ```text
-Unit       121 tests
+Unit       122 tests
 E2E        57/57
 ```
 

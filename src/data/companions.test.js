@@ -3,6 +3,7 @@ import {
   COMPANIONS,
   getCompanionBackground,
   getCompanionGroup,
+  getCompanionImage,
   getCompanionsForExpansions,
 } from '@/data/companions';
 
@@ -27,6 +28,11 @@ describe('getCompanionsForExpansions', () => {
     const pack = getCompanionsForExpansions(['apocalypse_heroes_1']);
     expect(pack.map((companion) => companion.id).sort()).toEqual(['hakkon', 'neva']);
     expect(pack.find((companion) => companion.id === 'hakkon').subtype).toBe('Draugr');
+  });
+
+  it('Neva y Hakkon tienen retrato', () => {
+    expect(getCompanionImage('neva')).toBeTruthy();
+    expect(getCompanionImage('hakkon')).toBeTruthy();
   });
 });
 
