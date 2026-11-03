@@ -6,16 +6,19 @@ import { useLanguage } from '@/context/LanguageContext';
 import {
   createCompanionEntry,
   getCompanion,
+  getCompanionGroup,
   getCompanionImage,
   getCompanionsForExpansions,
 } from '@/data/companions';
+import ConfirmDialog from '@/components/ConfirmDialog';
 import useFocusTrap from '@/hooks/useFocusTrap';
 
 /**
  * Menú de compañeros y mascotas.
  *
- * Muestra las criaturas de las expansiones activas, las asigna a un héroe en
- * juego y lista las ya asignadas. Todo vive en `trackerData.companions`.
+ * Muestra las criaturas de las expansiones activas separadas por tipo, las
+ * asigna a un héroe en juego y lista las ya asignadas. Una criatura asignada
+ * deja de ofrecerse hasta que se quita.
  */
 export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
   const { trackerData, setTrackerData } = useTracker();
@@ -27,6 +30,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
   const dialogRef = useRef(null);
   const [selectedId, setSelectedId] = useState(null);
   const [selectedHeroId, setSelectedHeroId] = useState('');
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useFocusTrap(dialogRef, open);
 
@@ -48,7 +52,18 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
   if (!open) return null;
 
   const companions = trackerData.companions || [];
-  const available = getCompanionsForExpansions(selectedExpansions);
+  const assignedIds = new Set(companions.map((entry) => entry.id));
+  const allCompanions = getCompanionsForExpansions(selectedExpansions);
+  const available = allCompanions.filter((companion) => !assignedIds.has(companion.id));
+  const groups = [
+    { id: 'mascota', label: t.pets || 'Mascotas' },
+    { id: 'companero', label: t.companions || 'Compañeros' },
+    { id: 'daren_hero', label: t.darenHeroes || 'Héroes de Daren' },
+  ];
+  const availableGroups = groups.map((group) => ({
+    ...group,
+    list: available.filter((companion) => getCompanionGroup(companion) === group.id),
+  }));
   const heroes = trackerData.placedHeroes?.length
     ? trackerData.placedHeroes
     : (trackerData.heroes || []).map((id) => ({ id }));
@@ -74,6 +89,96 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
       companions: (prev.companions || []).filter((entry) => entry.uid !== uid),
     }));
   };
+
+  const resetAll = () => {
+    setTrackerData((prev) => ({
+      ...prev,
+      companions: (prev.companions || []).map((entry) => ({
+        ...entry,
+        vida: entry.vidaMax ?? entry.vida,
+        estadosAlterados: [],
+      })),
+    }));
+    setConfirmReset(false);
+  };
+
+  const renderAvailableCard = (companion) => {
+    const image = getCompanionImage(companion.id);
+    const isSelected = selectedId === companion.id;
+    return (
+      <button
+        key={companion.id}
+        type="button"
+        aria-pressed={isSelected}
+        onClick={() => setSelectedId(isSelected ? null : companion.id)}
+        className={`flex items-center gap-2 rounded-lg border p-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 ${
+          isSelected
+            ? 'border-amber-400 bg-amber-950/50'
+            : 'border-slate-700 bg-slate-800/60 hover:border-slate-500'
+        }`}
+      >
+        <span className="flex h-14 w-11 shrink-0 items-center justify-center rounded bg-slate-950/60">
+          {image && (
+            <img src={image} alt="" className="h-full w-full object-contain" loading="lazy" decoding="async" />
+          )}
+        </span>
+        <span className="min-w-0">
+          <span className="block truncate text-xs font-semibold text-slate-100">{companion.name}</span>
+          <span className="block truncate text-[0.6rem] text-slate-400">
+            {companion.type === 'mascota' ? (t.pet || 'Mascota') : (t.companion || 'Compañero')} · {companion.alias}
+          </span>
+        </span>
+      </button>
+    );
+  };
+
+  const renderAssignedRow = (entry) => {
+    const companion = getCompanion(entry.id);
+    const image = getCompanionImage(entry.id);
+    const stateCount = (entry.estadosAlterados || []).reduce((sum, item) => sum + item.count, 0);
+    return (
+      <li
+        key={entry.uid}
+        className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/70 px-2 py-1"
+      >
+        {image && (
+          <img src={image} alt="" className="h-10 w-8 shrink-0 rounded object-contain" loading="lazy" />
+        )}
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-xs font-semibold text-slate-100">
+            {companion?.name || entry.id}
+            <span className="ml-1 font-normal text-slate-400">→ {heroName(entry.heroId)}</span>
+          </span>
+          <span className="flex items-center gap-1 text-[0.6rem] text-slate-400">
+            <GiHearts size={10} aria-hidden="true" /> {entry.vida}/{entry.vidaMax}
+            <GiSwordWound size={10} aria-hidden="true" /> {stateCount} {t.alteredStatesShort || 'estados'}
+          </span>
+        </span>
+        <button
+          type="button"
+          onClick={() => onOpenCompanion?.(entry.uid)}
+          className="min-h-7 shrink-0 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-semibold text-white hover:bg-slate-600"
+        >
+          {t.open || 'Abrir'}
+        </button>
+        <button
+          type="button"
+          onClick={() => remove(entry.uid)}
+          aria-label={`${companion?.name || entry.id}: ${t.remove || 'Quitar'}`}
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-xs text-white hover:bg-red-700"
+        >
+          ✕
+        </button>
+      </li>
+    );
+  };
+
+  const inPlayGroups = groups.map((group) => ({
+    ...group,
+    list: companions
+      .filter((entry) => getCompanionGroup(getCompanion(entry.id)) === group.id)
+      .sort((a, b) => (a.order || 0) - (b.order || 0)),
+  }));
 
   return (
     <div className="layer-dialog fixed inset-0 flex items-center justify-center bg-black/70 p-3" role="presentation">
@@ -109,39 +214,26 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
             </p>
             {available.length === 0 ? (
               <p className="rounded-lg border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-400">
-                {t.noCompanionsInExpansions || 'No hay compañeros ni mascotas en las expansiones activas.'}
+                {allCompanions.length === 0
+                  ? (t.noCompanionsInExpansions || 'No hay compañeros ni mascotas en las expansiones activas.')
+                  : (t.companionsAllAssigned || 'Todas las criaturas están asignadas.')}
               </p>
             ) : (
-              <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-4">
-                {available.map((companion) => {
-                  const image = getCompanionImage(companion.id);
-                  const isSelected = selectedId === companion.id;
-                  return (
-                    <button
-                      key={companion.id}
-                      type="button"
-                      aria-pressed={isSelected}
-                      onClick={() => setSelectedId(isSelected ? null : companion.id)}
-                      className={`flex items-center gap-2 rounded-lg border p-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 ${
-                        isSelected
-                          ? 'border-amber-400 bg-amber-950/50'
-                          : 'border-slate-700 bg-slate-800/60 hover:border-slate-500'
-                      }`}
-                    >
-                      <span className="flex h-14 w-11 shrink-0 items-center justify-center rounded bg-slate-950/60">
-                        {image && (
-                          <img src={image} alt="" className="h-full w-full object-contain" loading="lazy" decoding="async" />
-                        )}
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block truncate text-xs font-semibold text-slate-100">{companion.name}</span>
-                        <span className="block truncate text-[0.6rem] text-slate-400">
-                          {companion.type === 'mascota' ? (t.pet || 'Mascota') : (t.companion || 'Compañero')} · {companion.alias}
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
+              <div className="space-y-2.5">
+                {availableGroups.map(({ id, label, list }) => (
+                  <div key={id}>
+                    <p className="mb-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
+                      {label} ({list.length})
+                    </p>
+                    {list.length === 0 ? (
+                      <p className="text-[0.65rem] text-slate-500">{t.companionsTypeEmpty || 'Ninguna disponible.'}</p>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-4">
+                        {list.map(renderAvailableCard)}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             )}
           </section>
@@ -178,58 +270,38 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
           )}
 
           <section>
-            <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-              {t.companionsInPlay || 'En juego'} ({companions.length})
-            </p>
+            <div className="mb-1.5 flex items-center justify-between gap-2">
+              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+                {t.companionsInPlay || 'En juego'} ({companions.length})
+              </p>
+              <button
+                type="button"
+                onClick={() => setConfirmReset(true)}
+                disabled={companions.length === 0}
+                className="min-h-7 shrink-0 rounded-lg border border-amber-800 bg-amber-950/50 px-2 text-[0.65rem] font-semibold text-amber-100 hover:bg-amber-900/60 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+              >
+                ↺ {t.companionsReset || 'Resetear'}
+              </button>
+            </div>
             {companions.length === 0 ? (
               <p className="rounded-lg border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-400">
                 {t.companionsEmpty || 'Sin compañeros ni mascotas.'}
               </p>
             ) : (
-              <ul className="space-y-1">
-                {[...companions]
-                  .sort((a, b) => (a.order || 0) - (b.order || 0))
-                  .map((entry) => {
-                    const companion = getCompanion(entry.id);
-                    const image = getCompanionImage(entry.id);
-                    const stateCount = (entry.estadosAlterados || []).reduce((sum, item) => sum + item.count, 0);
-                    return (
-                      <li
-                        key={entry.uid}
-                        className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/70 px-2 py-1"
-                      >
-                        {image && (
-                          <img src={image} alt="" className="h-10 w-8 shrink-0 rounded object-contain" loading="lazy" />
-                        )}
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-xs font-semibold text-slate-100">
-                            {companion?.name || entry.id}
-                            <span className="ml-1 font-normal text-slate-400">→ {heroName(entry.heroId)}</span>
-                          </span>
-                          <span className="flex items-center gap-1 text-[0.6rem] text-slate-400">
-                            <GiHearts size={10} aria-hidden="true" /> {entry.vida}/{entry.vidaMax}
-                            <GiSwordWound size={10} aria-hidden="true" /> {stateCount} {t.alteredStatesShort || 'estados'}
-                          </span>
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => onOpenCompanion?.(entry.uid)}
-                          className="min-h-7 shrink-0 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-semibold text-white hover:bg-slate-600"
-                        >
-                          {t.open || 'Abrir'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => remove(entry.uid)}
-                          aria-label={`${companion?.name || entry.id}: ${t.remove || 'Quitar'}`}
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-xs text-white hover:bg-red-700"
-                        >
-                          ✕
-                        </button>
-                      </li>
-                    );
-                  })}
-              </ul>
+              <div className="space-y-2.5">
+                {inPlayGroups.map(({ id, label, list }) => (
+                  list.length > 0 && (
+                    <div key={id}>
+                      <p className="mb-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
+                        {label} ({list.length})
+                      </p>
+                      <ul className="space-y-1">
+                        {list.map(renderAssignedRow)}
+                      </ul>
+                    </div>
+                  )
+                ))}
+              </div>
             )}
           </section>
         </div>
@@ -244,6 +316,16 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
             {t.close || 'Cerrar'}
           </button>
         </footer>
+
+        <ConfirmDialog
+          open={confirmReset}
+          title={t.companionsResetTitle || 'Resetear compañeros'}
+          description={t.companionsResetConfirm || 'Se restaurará la vida y se quitarán los estados de todas las criaturas asignadas.'}
+          confirmLabel={t.companionsResetAction || 'Resetear'}
+          cancelLabel={translations.trackerSelect?.cancel || 'Cancelar'}
+          onCancel={() => setConfirmReset(false)}
+          onConfirm={resetAll}
+        />
       </div>
     </div>
   );

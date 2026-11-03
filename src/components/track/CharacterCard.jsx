@@ -1,6 +1,7 @@
 import FitText from '@/components/track/FitText';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { ESTADOS_HEROE } from '@/data/heroes/index';
+import { getHeroClass } from '@/data/heroClasses';
 import ResponsiveImage from '@/components/track/ResponsiveImage';
 
 /**
@@ -22,6 +23,7 @@ export default function CharacterCard({
   const estadosAlterados = extras?.estadosAlterados || [];
   const condiciones = extras?.estados || [];
   const tieneEstados = estadosAlterados.length > 0 || condiciones.length > 0;
+  const classColor = getHeroClass(heroId)?.color || '#800020';
 
   return (
     <div className="flex flex-col items-center mx-1">
@@ -43,7 +45,8 @@ export default function CharacterCard({
           src={image}
           alt={name}
           sizes="(max-width: 640px) 45vw, 160px"
-          className="w-full h-auto object-cover rounded-lg border-2 border-[#800020]/70"
+          className="w-full h-auto object-cover rounded-lg border-2"
+          style={{ borderColor: classColor }}
           loading="lazy"
           decoding="async"
         />
@@ -88,8 +91,9 @@ export default function CharacterCard({
         )}
 
         <div
-          className="absolute bottom-0 left-1/2 w-[94%] -translate-x-1/2 rounded-lg bg-[#800020] px-1 text-center text-white leading-tight"
-          style={{ textShadow: '0 0 4px #b87333aa' }}
+          className="absolute bottom-0 left-1/2 w-[94%] -translate-x-1/2 rounded-lg px-1 text-center text-white leading-tight"
+          style={{ backgroundColor: classColor, textShadow: '0 0 4px #b87333aa' }}
+          data-hero-band
         >
           <FitText text={name} max={12} min={6.5} className="w-full text-center font-semibold" />
           <span className="block text-[0.50rem] italic opacity-90 mb-1">{prof}</span>

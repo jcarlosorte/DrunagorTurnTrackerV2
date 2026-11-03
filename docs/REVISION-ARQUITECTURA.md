@@ -1068,6 +1068,67 @@ E2E        50/50
 Escudo     Bronx gana 2 al inicio de su turno (máx. 4)
 ```
 
+### 34.ª tanda — Menú de compañeros: disponibilidad y tipos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Disponibilidad** | Las criaturas asignadas desaparecen de «Disponibles» y vuelven al eliminarlas | `CompanionPicker.jsx` |
+| **Agrupación** | «Disponibles» y «En juego» separados en Mascotas y Compañeros, con contadores por tipo | `CompanionPicker.jsx` |
+| **Pruebas** | 1 E2E nuevo de asignación → no disponible → eliminación → disponible | tests |
+
+**Medición**
+
+```text
+Unit       109 tests
+E2E        51/51
+```
+
+### 35.ª tanda — Eliminar compañero y resetear el grupo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Vista ampliada** | Botón «Eliminar» con confirmación; quita la criatura de `trackerData` y cierra la ficha | `ModalCompanionCard.jsx` |
+| **Menú** | Botón «Resetear» con confirmación; restaura vida y quita estados de todas las criaturas asignadas | `CompanionPicker.jsx` |
+| **Pruebas** | 2 E2E nuevos (reset y eliminación) | tests |
+
+**Medición**
+
+```text
+Unit       109 tests
+E2E        53/53
+```
+
+### 36.ª tanda — Héroes de Daren como grupo propio
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Agrupación** | Tercer grupo «Héroes de Daren» en Disponibles y En juego, separado de Compañeros | `CompanionPicker.jsx` |
+| **Detección** | `getCompanionGroup` clasifica por tipo y alias normalizado («Héroe de Daren») | `data/companions.js` |
+| **Pruebas** | 1 unitario de clasificación y 1 E2E de los tres grupos | tests |
+
+**Medición**
+
+```text
+Unit       110 tests
+E2E        54/54
+Grupos     Mascotas 7 · Compañeros 10 · Héroes de Daren 6
+```
+
+### 37.ª tanda — Color de clase en carta y ficha
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Track** | Borde de la carta y banda del nombre con el color de la clase del héroe | `CharacterCard.jsx` |
+| **Ficha** | Borde del modal, barra superior, cabecera, avatar y chip de clase con el mismo color | `ModalHeroCard.jsx` |
+| **Pruebas** | 1 E2E de borde de carta, banda, modal y chip | tests |
+
+**Medición**
+
+```text
+Unit       110 tests
+E2E        55/55
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

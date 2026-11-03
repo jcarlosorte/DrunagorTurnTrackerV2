@@ -27,6 +27,8 @@ describe('clases de héroe', () => {
 
   it('devuelve etiquetas bilingües', () => {
     expect(getHeroClass('sun')).toMatchObject({ id: 'monje', es: 'Monje', en: 'Monk' });
+    expect(getHeroClass('maya')).toMatchObject({ id: 'arquero', es: 'Arquero', en: 'Ranger' });
+    expect(getHeroClass('barak')).toMatchObject({ id: 'hechicero', es: 'Hechicero', en: 'Sorcerer' });
     expect(getHeroClass('no-existe')).toBeNull();
   });
 

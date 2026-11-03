@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { COMPANIONS, getCompanionsForExpansions } from '@/data/companions';
+import { COMPANIONS, getCompanionGroup, getCompanionsForExpansions } from '@/data/companions';
 
 describe('getCompanionsForExpansions', () => {
   it('devuelve las 23 criaturas del juego base', () => {
@@ -16,5 +16,19 @@ describe('getCompanionsForExpansions', () => {
 
   it('todas las criaturas declaran su expansión', () => {
     expect(COMPANIONS.every((companion) => typeof companion.expansionId === 'string' && companion.expansionId)).toBe(true);
+  });
+});
+
+describe('getCompanionGroup', () => {
+  it('separa mascotas, compañeros y Héroes de Daren', () => {
+    const drummer = COMPANIONS.find((companion) => companion.id === 'drumm');
+    const conner = COMPANIONS.find((companion) => companion.id === 'capitan_conner');
+    const lorelai = COMPANIONS.find((companion) => companion.id === 'lorelai_companion');
+    const reborn = COMPANIONS.find((companion) => companion.id === 'heroe_renacido');
+
+    expect(getCompanionGroup(drummer)).toBe('mascota');
+    expect(getCompanionGroup(conner)).toBe('companero');
+    expect(getCompanionGroup(lorelai)).toBe('daren_hero');
+    expect(getCompanionGroup(reborn)).toBe('daren_hero');
   });
 });

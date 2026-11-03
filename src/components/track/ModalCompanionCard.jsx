@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GiNightSleep, GiRun, GiSwordWound, GiHearts } from 'react-icons/gi';
 import { useTracker } from '@/context/TrackerContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -6,6 +6,7 @@ import { getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { getCompanion, getCompanionImage } from '@/data/companions';
 import { parseCompanionAbilities } from '@/utils/companionAbilities';
 import { FiInfo } from 'react-icons/fi';
+import ConfirmDialog from '@/components/ConfirmDialog';
 import useFocusTrap from '@/hooks/useFocusTrap';
 
 /**
@@ -16,7 +17,9 @@ export default function ModalCompanionCard({ uid, onClose }) {
   const { trackerData, setTrackerData } = useTracker();
   const { translations } = useLanguage();
   const t = translations.heroes || {};
+  const ti = translations.trackerInit || {};
   const dialogRef = useRef(null);
+  const [confirmRemove, setConfirmRemove] = useState(false);
 
   useFocusTrap(dialogRef, true);
 
@@ -49,6 +52,15 @@ export default function ModalCompanionCard({ uid, onClose }) {
         item.uid === uid ? { ...item, ...changes } : item
       )),
     }));
+  };
+
+  const remove = () => {
+    setTrackerData((prev) => ({
+      ...prev,
+      companions: (prev.companions || []).filter((item) => item.uid !== uid),
+    }));
+    setConfirmRemove(false);
+    onClose?.();
   };
 
   const changeVida = (delta) => {
@@ -217,15 +229,34 @@ export default function ModalCompanionCard({ uid, onClose }) {
         </div>
 
         <footer className="flex items-center justify-between gap-2 border-t border-slate-700 px-4 py-2.5">
-          <span className="text-[0.7rem] text-slate-400">{t.savedWithGame || 'Se guarda con la partida'}</span>
           <button
             type="button"
-            onClick={onClose}
-            className="min-h-10 rounded-lg bg-slate-700 px-4 text-sm font-bold text-white hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+            onClick={() => setConfirmRemove(true)}
+            className="min-h-10 rounded-lg border border-red-800 bg-red-950/60 px-4 text-sm font-bold text-red-200 hover:bg-red-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
           >
-            {t.close || 'Cerrar'}
+            {ti.companionsRemoveAction || 'Eliminar'}
           </button>
+          <div className="flex items-center gap-2">
+            <span className="text-[0.7rem] text-slate-400">{t.savedWithGame || 'Se guarda con la partida'}</span>
+            <button
+              type="button"
+              onClick={onClose}
+              className="min-h-10 rounded-lg bg-slate-700 px-4 text-sm font-bold text-white hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+            >
+              {t.close || 'Cerrar'}
+            </button>
+          </div>
         </footer>
+
+        <ConfirmDialog
+          open={confirmRemove}
+          title={ti.companionsRemove || 'Eliminar compañero'}
+          description={ti.companionsRemoveConfirm || 'Se quitará de la partida. Esta acción no se puede deshacer.'}
+          confirmLabel={ti.companionsRemoveAction || 'Eliminar'}
+          cancelLabel={translations.trackerSelect?.cancel || 'Cancelar'}
+          onCancel={() => setConfirmRemove(false)}
+          onConfirm={remove}
+        />
       </div>
     </div>
   );

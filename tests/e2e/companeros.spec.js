@@ -84,4 +84,89 @@ test.describe('Compañeros y mascotas', () => {
         ?.estadosAlterados?.find((estado) => estado.id === 'ESCUDO')?.count;
     }).toBe(2);
   });
+
+  test('una criatura asignada deja de estar disponible y vuelve al quitarla', async ({ page }) => {
+    await seedStorage(page, { ...buildSeed(), trackerData: JSON.stringify({ ...baseTracker, companions: [] }) });
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Compañeros' }).click();
+    const picker = page.getByRole('dialog', { name: 'Compañeros y mascotas' });
+    const catalogue = picker.locator('section').filter({ hasText: 'Disponibles' });
+    await expect(catalogue.getByRole('button', { name: /Drumm/ })).toHaveCount(1);
+
+    await picker.getByRole('button', { name: /Drumm/ }).click();
+    await picker.getByLabel('Héroe').selectOption('vorn');
+    await picker.getByRole('button', { name: '+ Añadir' }).click();
+
+    await expect(catalogue.getByRole('button', { name: /Drumm/ })).toHaveCount(0);
+    await expect(picker.getByRole('button', { name: /Drumm:/ })).toBeVisible();
+
+    await picker.getByRole('button', { name: /Drumm:/ }).click();
+    await expect(catalogue.getByRole('button', { name: /Drumm/ })).toHaveCount(1);
+  });
+
+  test('resetear restaura vida y estados de todas las criaturas', async ({ page }) => {
+    await seedStorage(page, {
+      ...buildSeed(),
+      trackerData: JSON.stringify({
+        ...baseTracker,
+        companions: [
+          { uid: 'c-drumm', id: 'drumm', heroId: 'vorn', order: 0, vida: 0, vidaMax: 1, estadosAlterados: [{ id: 'QUEMADURA', count: 1 }] },
+          { uid: 'c-bronx', id: 'bronx', heroId: 'vorn', order: 1, vida: 0, vidaMax: 1, estadosAlterados: [] },
+        ],
+      }),
+    });
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Compañeros' }).click();
+    const picker = page.getByRole('dialog', { name: 'Compañeros y mascotas' });
+    await picker.getByRole('button', { name: /Resetear/ }).click();
+    const confirm = page.getByRole('dialog', { name: 'Resetear compañeros' });
+    await confirm.getByRole('button', { name: 'Resetear' }).click();
+
+    await expect.poll(async () => {
+      const data = await readStorage(page, 'trackerData', {});
+      const drumm = (data.companions || []).find((entry) => entry.id === 'drumm');
+      return [drumm?.vida, drumm?.estadosAlterados?.length];
+    }).toEqual([1, 0]);
+  });
+
+  test('eliminar desde la vista ampliada quita la criatura de la partida', async ({ page }) => {
+    await seedStorage(page, {
+      ...buildSeed(),
+      trackerData: JSON.stringify({
+        ...baseTracker,
+        companions: [
+          { uid: 'c-drumm', id: 'drumm', heroId: 'vorn', order: 0, vida: 1, vidaMax: 1, estadosAlterados: [] },
+        ],
+      }),
+    });
+    await openTracker(page);
+
+    await page.locator('[data-companion-id="drumm"]').click();
+    const modal = page.getByRole('dialog', { name: 'Drumm' });
+    await modal.getByRole('button', { name: 'Eliminar' }).click();
+    const confirm = page.getByRole('dialog', { name: 'Eliminar compañero' });
+    await confirm.getByRole('button', { name: 'Eliminar' }).click();
+
+    await expect.poll(async () => {
+      const data = await readStorage(page, 'trackerData', {});
+      return data.companions?.length || 0;
+    }).toBe(0);
+    await expect(page.locator('[data-companion-id="drumm"]')).toHaveCount(0);
+  });
+
+  test('separa a los Héroes de Daren en su propio grupo', async ({ page }) => {
+    await seedStorage(page, { ...buildSeed(), trackerData: JSON.stringify({ ...baseTracker, companions: [] }) });
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Compañeros' }).click();
+    const picker = page.getByRole('dialog', { name: 'Compañeros y mascotas' });
+
+    await expect(picker.getByText('Mascotas (7)')).toBeVisible();
+    await expect(picker.getByText('Compañeros (10)')).toBeVisible();
+    await expect(picker.getByText('Héroes de Daren (6)')).toBeVisible();
+    await expect(picker.getByRole('button', { name: /Lorelai/ })).toBeVisible();
+    await expect(picker.getByRole('button', { name: /Capitán Conner/ })).toBeVisible();
+  });
 });

@@ -49,9 +49,9 @@ export const HERO_CLASSES = {
   mago: classEntry('mago', 'Mago', 'Mage'),
   monje: classEntry('monje', 'Monje', 'Monk'),
   paladin: classEntry('paladin', 'Paladín', 'Paladin'),
-  arquero: classEntry('arquero', 'Arquero', 'Archer'),
+  arquero: classEntry('arquero', 'Arquero', 'Ranger'),
   caballero_sombrio: classEntry('caballero_sombrio', 'Caballero Sombrío', 'Shadow Knight'),
-  hechicero: classEntry('hechicero', 'Hechicero', 'Warlock'),
+  hechicero: classEntry('hechicero', 'Hechicero', 'Sorcerer'),
   guerrero: classEntry('guerrero', 'Guerrero', 'Warrior'),
   // Apocalipsis
   necromante: classEntry('necromante', 'Necromante', 'Necromancer'),

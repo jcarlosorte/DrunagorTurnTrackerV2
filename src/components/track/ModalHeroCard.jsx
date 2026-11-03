@@ -3,6 +3,7 @@ import useFocusTrap from '@/hooks/useFocusTrap';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { HEROES } from '@/data/heroes';
+import { getHeroClass } from '@/data/heroClasses';
 import { getCompanion, getCompanionImage } from '@/data/companions';
 import { ESTADOS_ALTERADOS, INMUNIDADES, getHeroStatusCatalog } from '@/data/estadosAlterados';
 import {
@@ -99,6 +100,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
 
   const hero = useMemo(() => HEROES.find((item) => item.id === heroId), [heroId]);
   const heroName = translations.heroes?.[heroId] || heroId;
+  const classColor = getHeroClass(heroId)?.color || '#9f1239';
   const roleName = translations.roles?.[role] || role || '';
   const profession = hero?.profession
     ? (translations.heroes?.profession?.[hero.profession] || hero.profession)
@@ -153,20 +155,38 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
         ref={dialogRef}
         aria-modal="true"
         aria-labelledby={titleId}
-        className="modal-enter relative flex max-h-[92dvh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border-2 border-rose-900/70 bg-slate-900 text-slate-100 shadow-2xl"
+        className="modal-enter relative flex max-h-[92dvh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border-2 bg-slate-900 text-slate-100 shadow-2xl"
+        style={{ borderColor: classColor }}
       >
-        <div className="h-1.5 w-full shrink-0 bg-gradient-to-r from-rose-700 via-rose-500 to-rose-800" aria-hidden="true" />
+        <div
+          className="h-1.5 w-full shrink-0"
+          style={{ background: `linear-gradient(90deg, ${classColor}, ${classColor}aa, ${classColor})` }}
+          aria-hidden="true"
+        />
 
-        <header className="shrink-0 border-b border-slate-700 bg-slate-900/95 px-3 py-2.5 backdrop-blur">
+        <header
+          className="shrink-0 border-b border-slate-700 px-3 py-2.5 backdrop-blur"
+          style={{ background: `linear-gradient(135deg, ${classColor}66, rgba(15, 23, 42, 0.95) 65%)` }}
+        >
           <div className="flex items-center gap-3">
             {hero?.image && (
-              <img src={hero.image} alt="" className="h-14 w-14 shrink-0 rounded-xl object-cover ring-2 ring-rose-900" loading="lazy" decoding="async" />
+              <img
+                src={hero.image}
+                alt=""
+                className="h-14 w-14 shrink-0 rounded-xl object-cover"
+                style={{ boxShadow: `0 0 0 2px ${classColor}` }}
+                loading="lazy"
+                decoding="async"
+              />
             )}
             <div className="min-w-0 flex-1">
               <h2 id={titleId} className="truncate text-lg font-bold text-white">{heroName}</h2>
               <div className="mt-1 flex flex-wrap items-center gap-1 text-[0.65rem]">
                 {profession && (
-                  <span className="rounded-full bg-rose-800 px-2 py-0.5 font-semibold uppercase tracking-wide text-white">
+                  <span
+                    className="rounded-full px-2 py-0.5 font-semibold uppercase tracking-wide text-white"
+                    style={{ backgroundColor: classColor }}
+                  >
                     {profession}
                   </span>
                 )}

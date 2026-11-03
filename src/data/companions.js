@@ -332,6 +332,18 @@ export function getCompanionName(id) {
   return getCompanion(id)?.name || id;
 }
 
+const normalizeAlias = (value) => String(value || '')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase();
+
+/** Grupo del menú: mascota, compañero o héroe de Daren. */
+export function getCompanionGroup(companion) {
+  if (!companion) return 'companero';
+  if (companion.type === 'mascota') return 'mascota';
+  return normalizeAlias(companion.alias).includes('heroe de daren') ? 'daren_hero' : 'companero';
+}
+
 /** Criaturas disponibles según las expansiones activas. */
 export function getCompanionsForExpansions(expansionIds = []) {
   if (!Array.isArray(expansionIds) || expansionIds.length === 0) return [];
