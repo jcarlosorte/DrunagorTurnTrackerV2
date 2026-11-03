@@ -14,4 +14,9 @@ describe('glosario 2.0', () => {
     expect(Object.keys(glosarioEs).length).toBeGreaterThan(150);
     expect(Object.keys(glosarioEn).length).toBe(Object.keys(glosarioEs).length);
   });
+
+  it('no conserva caracteres mal codificados en español', () => {
+    expect(JSON.stringify(glosarioEs)).not.toMatch(/[ÃÂ]/);
+    expect(glosarioEs.CODICIA).toContain('CONCENTRACIÓN');
+  });
 });

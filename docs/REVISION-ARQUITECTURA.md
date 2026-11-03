@@ -1344,6 +1344,21 @@ Unit       124 tests
 E2E        57/57
 ```
 
+### 51.ª tanda — Glosario español corregido
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Codificación** | Reconstruido desde el TXT original leyendo bytes (`Ã±` → `ñ`, `Ã�` → `Í`) | `glosario2.es.json` |
+| **Prefijos** | 62 términos iniciales que repetían la clave eliminados, igual que en inglés | `glosario2.es.json` |
+| **Pruebas** | 1 unitario de acentos y prefijos (125 en total) | tests |
+
+**Medición**
+
+```text
+Unit       125 tests
+E2E        57/57
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
