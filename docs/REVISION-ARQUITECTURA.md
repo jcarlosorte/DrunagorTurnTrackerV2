@@ -1245,6 +1245,24 @@ E2E        56/56
 Símbolos   14 para 16 expansiones
 ```
 
+### 45.ª tanda — Retrato de Arkhanos y limpieza de recursos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Alias** | `hero-arkhanos-mage.png` se asigna al héroe `arkanos` | `heroPortraits.js` |
+| **Cobertura** | 35 de 36 héroes con retrato; solo falta Garamond (`hero-gramosh-shaman.png` no coincide con su id) | tests |
+| **Limpieza** | Eliminadas 36 variantes `.webp`/`.png` no referenciadas de `assets/heroes` (2,16 MB) | assets |
+| **Pruebas** | 1 unitario de cobertura (116 en total) | tests |
+
+**Medición**
+
+```text
+Unit       116 tests
+E2E        56/56
+Retratos   35/36 (falta Garamond)
+Liberado   2,16 MB
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

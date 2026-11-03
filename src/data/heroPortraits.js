@@ -2,6 +2,7 @@ const PORTRAIT_FILES = import.meta.glob('../assets/hero/*.png', { eager: true, i
 
 // Algunos archivos usan una variante del nombre del héroe.
 const ALIASES = {
+  arkhanos: 'arkanos',
   brihitte: 'brigitte',
   lordwrath: 'lord-of-wrath',
   vacren: 'vacrem',
