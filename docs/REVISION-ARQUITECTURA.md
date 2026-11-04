@@ -1929,6 +1929,21 @@ Unit       147 tests
 E2E        58/58
 ```
 
+### 89.ª tanda — Estados alterados en mascotas, compañeros y seguidores
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Turno** | Aplica estados al inicio y al final del turno, con daño, escudos y reducción de fichas | `InitTracker` |
+| **Capacidades** | ESCUDO X de las capacidades añade escudos al empezar el turno | `companionAbilities` |
+| **Pruebas** | 147 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       147 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

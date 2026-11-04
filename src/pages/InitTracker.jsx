@@ -2292,6 +2292,12 @@ const InitTracker = () => {
     groupTurnTracker, extraTurnsQueue, extraTurnIndex, extraTurnTotal,
   ]);
   
+  const applyAllyTurnStart = (entry, abilitiesText) => {
+    const { enemy: withStatus, logs } = aplicarEfectosEstados(entry, 'inicio');
+    const { entry: withShields, shields } = applyCompanionTurnEffects(withStatus, { abilities: abilitiesText });
+    return { entry: withShields, logs, shields };
+  };
+
   useEffect(() => {
 
     if (turnIndex < 0 || turnIndex >= effectiveTurnOrder.length) return;
@@ -2365,11 +2371,40 @@ const InitTracker = () => {
     if (step.type === 'follower') {
       const follower = (trackerData.followers || []).find((entry) => entry.uid === step.uid);
       if (follower) {
-        setCurrentTurnEntity({
-          ...follower,
-          type: 'follower',
-          name: getFollower(follower.id)?.name || follower.name || follower.id,
-        });
+        const data = getFollower(follower.id);
+        const name = data?.name || follower.name || follower.id;
+        const effectKey = `seguidor-${roundNumber}-${turnIndex}-${follower.uid}`;
+        let effective = follower;
+        if (!processedCompanionEffectsRef.current.has(effectKey)) {
+          processedCompanionEffectsRef.current.add(effectKey);
+          const { entry: updated, logs, shields } = applyAllyTurnStart(
+            follower,
+            (data?.capabilities || []).join('; '),
+          );
+          effective = updated;
+          if ((updated.vida ?? 0) <= 0) {
+            setTrackerData((prev) => ({
+              ...prev,
+              followers: (prev.followers || []).filter((item) => item.uid !== follower.uid),
+            }));
+            showScenarioToast(`☠ ${name}: ${ti.cae || 'cae'}`);
+            setTimeout(() => handleNextTurn(), 800);
+            return;
+          }
+          if (updated !== follower) {
+            setTrackerData((prev) => ({
+              ...prev,
+              followers: (prev.followers || []).map((item) => (
+                item.uid === follower.uid ? updated : item
+              )),
+            }));
+          }
+          logs.forEach((log) => showScenarioToast(`🌀 ${name}: ${log}`));
+          if (shields > 0) {
+            showScenarioToast(`🎭 ${name}: ${ti.gana || 'gana'} ${shields} ${ti.escudos || 'escudos'}`);
+          }
+        }
+        setCurrentTurnEntity({ ...effective, type: 'follower', name });
         setGroupTurnTracker({ group: [], index: 0 });
       }
       return;
@@ -2378,23 +2413,39 @@ const InitTracker = () => {
     if (step.type === 'companion') {
       const companion = (trackerData.companions || []).find((entry) => entry.uid === step.uid);
       if (companion) {
+        const name = getCompanionName(companion.id);
         const effectKey = `${roundNumber}-${turnIndex}-${companion.uid}`;
         let effective = companion;
         if (!processedCompanionEffectsRef.current.has(effectKey)) {
           processedCompanionEffectsRef.current.add(effectKey);
-          const { entry, shields } = applyCompanionTurnEffects(companion, getCompanion(companion.id));
-          if (shields > 0) {
+          const { entry: updated, logs, shields } = applyAllyTurnStart(
+            companion,
+            getCompanion(companion.id)?.abilities || '',
+          );
+          effective = updated;
+          if ((updated.vida ?? 0) <= 0) {
+            setTrackerData((prev) => ({
+              ...prev,
+              companions: (prev.companions || []).filter((item) => item.uid !== companion.uid),
+            }));
+            showScenarioToast(`☠ ${name}: ${ti.cae || 'cae'}`);
+            setTimeout(() => handleNextTurn(), 800);
+            return;
+          }
+          if (updated !== companion) {
             setTrackerData((prev) => ({
               ...prev,
               companions: (prev.companions || []).map((item) => (
-                item.uid === companion.uid ? entry : item
+                item.uid === companion.uid ? updated : item
               )),
             }));
-            showScenarioToast(`🐾 ${getCompanionName(companion.id)}: ${ti.gana || 'gana'} ${shields} ${ti.escudos || 'escudos'}`);
-            effective = entry;
+          }
+          logs.forEach((log) => showScenarioToast(`🌀 ${name}: ${log}`));
+          if (shields > 0) {
+            showScenarioToast(`🐾 ${name}: ${ti.gana || 'gana'} ${shields} ${ti.escudos || 'escudos'}`);
           }
         }
-        setCurrentTurnEntity({ ...effective, type: 'companion', name: getCompanionName(companion.id) });
+        setCurrentTurnEntity({ ...effective, type: 'companion', name });
         setGroupTurnTracker({ group: [], index: 0 });
       }
       return;
@@ -2797,6 +2848,38 @@ const InitTracker = () => {
       if (!processedHeroEffectsRef.current.has(heroEndKey)) {
         processedHeroEffectsRef.current.add(heroEndKey);
         aplicarEfectosHeroe(currentTurnEntity.id, 'fin');
+      }
+    }
+
+    if (currentTurnEntity?.type === 'companion' || currentTurnEntity?.type === 'follower') {
+      const uid = currentTurnEntity.uid;
+      const endKey = `fin-${roundNumber}-${turnIndex}-${uid}`;
+      if (!processedCompanionEffectsRef.current.has(endKey)) {
+        processedCompanionEffectsRef.current.add(endKey);
+        const isCompanion = currentTurnEntity.type === 'companion';
+        const field = isCompanion ? 'companions' : 'followers';
+        const entry = (trackerData[field] || []).find((item) => item.uid === uid);
+        if (entry) {
+          const { enemy: updated, logs } = aplicarEfectosEstados(entry, 'fin');
+          const name = isCompanion
+            ? getCompanionName(entry.id)
+            : (getFollower(entry.id)?.name || entry.name || entry.id);
+          if ((updated.vida ?? 0) <= 0) {
+            setTrackerData((prev) => ({
+              ...prev,
+              [field]: (prev[field] || []).filter((item) => item.uid !== uid),
+            }));
+            showScenarioToast(`☠ ${name}: ${ti.cae || 'cae'}`);
+          } else {
+            if (updated !== entry) {
+              setTrackerData((prev) => ({
+                ...prev,
+                [field]: (prev[field] || []).map((item) => (item.uid === uid ? updated : item)),
+              }));
+            }
+            logs.forEach((log) => showScenarioToast(`🌀 ${name}: ${log}`));
+          }
+        }
       }
     }
 
