@@ -1,6 +1,7 @@
 /** Resolución de entidades sobre el orden de iniciativa (TURN_ORDER). */
 import { getCompanion } from '@/data/companions';
 import { getFollower } from '@/data/followers';
+import { getFollowerSide, getRoleSide } from '@/data/roles';
 
 /**
  * Inserta a los compañeros y mascotas justo después de su héroe y a los
@@ -19,10 +20,16 @@ export function buildTurnOrder(baseOrder, companions = [], placedHeroes = [], fo
 
   return baseOrder.flatMap((step) => {
     if (step.type !== 'hero') return [step];
-    const hero = placedHeroes.find((entry) => entry.role === step.role && entry.position === step.index);
+    const hero = placedHeroes.find((entry) => (
+      entry.role === step.role
+      && entry.position === step.index
+      && (!step.position || step.position === getRoleSide(entry.role))
+    ));
     const ofHero = hero ? sorted.filter((entry) => entry.heroId === hero.id) : [];
     const atStep = (followers || []).filter((entry) => (
-      entry.role === step.role && entry.position === step.index
+      entry.role === step.role
+      && entry.position === step.index
+      && (!step.position || step.position === getFollowerSide(entry.role))
     ));
     const followerSteps = atStep.map((entry) => ({
       type: 'follower',
@@ -59,7 +66,11 @@ export function indexOfEntityInOrder(order, entity) {
   if (!Array.isArray(order) || !entity) return -1;
   return order.findIndex((step) => {
     if (step.type !== entity.type) return false;
-    if (step.type === 'hero') return step.role === entity.role && step.index === entity.position;
+    if (step.type === 'hero') {
+      return step.role === entity.role
+        && step.index === entity.position
+        && (!step.position || step.position === getRoleSide(entity.role));
+    }
     if (step.type === 'enemy') {
       return step.rune === entity.rune && step.index === entity.position && step.position === entity.runePosition;
     }
@@ -82,7 +93,11 @@ export function findNextActiveEntity({ order, startIndex = 0, heroes = [], enemi
     const step = order[(start + i) % order.length];
 
     if (step.type === 'hero') {
-      const hero = heroes.find((entry) => entry.role === step.role && entry.position === step.index);
+      const hero = heroes.find((entry) => (
+        entry.role === step.role
+        && entry.position === step.index
+        && (!step.position || step.position === getRoleSide(entry.role))
+      ));
       if (hero) return { ...hero, type: 'hero' };
     } else if (step.type === 'enemy') {
       const group = enemies

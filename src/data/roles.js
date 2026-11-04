@@ -78,6 +78,25 @@ export const ROLE_POSITIONS = {
   embaucador: 8,
 };
 
+/** Roles cuyo héroe se coloca en la línea superior. */
+export const ROLES_ON_TOP = ['defensor', 'maton', 'lider', 'lanza_dados', 'guardian', 'controlador', 'embaucador'];
+/** Roles cuyo héroe se coloca en la línea inferior. */
+export const ROLES_ON_BOTTOM = ['apoyo', 'asistente', 'sanador', 'agresor', 'asesino'];
+
+/** Línea del track en la que se coloca el héroe de un rol. */
+export function getRoleSide(role) {
+  if (ROLES_ON_TOP.includes(role)) return 'arriba';
+  if (ROLES_ON_BOTTOM.includes(role)) return 'abajo';
+  return null;
+}
+
+/** Línea del track en la que se coloca un seguidor de ese rol (la contraria). */
+export function getFollowerSide(role) {
+  const side = getRoleSide(role);
+  if (!side) return null;
+  return side === 'arriba' ? 'abajo' : 'arriba';
+}
+
 /** Roles que comparten posición y se excluyen entre sí. */
 export const OPPOSITE_ROLES = {
   apoyo: ['asistente', 'sanador'],

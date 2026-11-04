@@ -1915,6 +1915,20 @@ Unit       147 tests
 E2E        58/58
 ```
 
+### 88.ª tanda — Orden de turno de las dos líneas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Turno** | Ambas líneas recorren roles, enemigos y runas; héroes y seguidores actúan solo en su línea | `turnOrder`, `roles` |
+| **Pruebas** | 147 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       147 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

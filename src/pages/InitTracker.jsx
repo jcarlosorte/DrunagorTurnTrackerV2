@@ -52,7 +52,7 @@ import { formatClock } from '@/utils/turnTimer';
 import { findNextActiveEntity, buildTurnOrder, indexOfEntityInOrder } from '@/utils/turnOrder';
 import { getCompanion, getCompanionName, getCompanionBackground } from '@/data/companions';
 import { getFollower, getFollowerState } from '@/data/followers';
-import { ROLE_POSITIONS } from '@/data/roles';
+import { ROLE_POSITIONS, ROLES_ON_TOP as rolesOnTop, ROLES_ON_BOTTOM as rolesOnBottom, getRoleSide } from '@/data/roles';
 import { readCampFollowers } from '@/utils/campFollowers';
 import { applyCompanionTurnEffects } from '@/utils/companionAbilities';
 import { findEnemyVariant } from '@/utils/enemyVariant';
@@ -2346,6 +2346,7 @@ const InitTracker = () => {
     } else if (step.type === "hero") {
       hasEntities = trackerData.placedHeroes?.some(
         h => h.role === step.role && h.position === step.index
+          && (!step.position || step.position === getRoleSide(h.role))
       );
     } else if (step.type === "companion") {
       hasEntities = (trackerData.companions || []).some((companion) => companion.uid === step.uid);
@@ -2981,7 +2982,8 @@ const InitTracker = () => {
         }
       } else if (step.type === 'hero') {
         const hero = trackerData.placedHeroes?.find(h =>
-          h.role === step.role && h.position === step.index);
+          h.role === step.role && h.position === step.index
+            && (!step.position || step.position === getRoleSide(h.role)));
         if (hero) {
           setTurnIndex(idx);
           setLastRealTurnIndex(idx);
@@ -3166,9 +3168,6 @@ const InitTracker = () => {
       turn: turnIndex,
     });
   };
-
-  const rolesOnTop = ['defensor', 'maton', 'lider', 'lanza_dados', 'guardian', 'controlador', 'embaucador'];
-  const rolesOnBottom = ['apoyo', 'asistente', 'sanador', 'agresor', 'asesino'];
 
   // Alturas de carta y separación desde la barra central (ver trackLayout.js).
 
