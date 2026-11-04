@@ -1637,6 +1637,22 @@ Unit       138 tests
 E2E        58/58
 ```
 
+### 70.ª tanda — Cartas de runa compactas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Track** | La carta muestra solo el título y la cara cuando la usa | `InitTracker` |
+| **Vista ampliada** | Mecánicas, estados, aplicar efecto y eliminar, con el tono del tipo | `InitTracker` |
+| **Tonos** | Índigo para runa/asalto, verde para defensa, rojo para incursión y morado para acecho | `InitTracker` |
+| **Pruebas** | 138 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       138 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
