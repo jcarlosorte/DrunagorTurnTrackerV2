@@ -159,6 +159,7 @@ export default function ModalCompanionCard({ uid, onClose }) {
           label: ability.label,
           description: ability.description,
         }))}
+        activeStatuses={estados}
         statusPanel={statusPanel}
         onDelete={() => setConfirmRemove(true)}
         onClose={onClose}

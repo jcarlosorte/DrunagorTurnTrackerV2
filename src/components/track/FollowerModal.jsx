@@ -143,6 +143,7 @@ export default function FollowerModal({ uid, onClose }) {
         lifeTestId="follower-life"
         onLifeChange={changeVida}
         abilities={abilities}
+        activeStatuses={estados}
         statusPanel={statusPanel}
         onDelete={() => setConfirmRemove(true)}
         onClose={onClose}

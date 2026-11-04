@@ -164,3 +164,12 @@ export function getAllyStatusCatalog(rulesVersion = '1.5') {
   ));
 }
 
+
+/** Metadatos de un estado, aceptando el id con o sin el sufijo _I. */
+export function getEstadoMeta(id) {
+  if (!id) return null;
+  const normalized = String(id).replace(/_I$/, '');
+  return ESTADOS_ALTERADOS.find((item) => (
+    item.id === id || item.id.replace(/_I$/, '') === normalized
+  )) || null;
+}

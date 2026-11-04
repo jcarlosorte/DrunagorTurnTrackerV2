@@ -1,5 +1,6 @@
 import { getFollower, getFollowerState } from '@/data/followers';
 import { getCompanionBackground } from '@/data/companions';
+import { getEstadoMeta } from '@/data/estadosAlterados';
 
 const ROLE_COLORS = {
   lider: '#b45309',
@@ -23,6 +24,7 @@ export default function FollowerCard({ entry, onOpen }) {
   const lifePercent = Math.max(0, Math.min(100, (life / Math.max(lifeMax, 1)) * 100));
   const color = ROLE_COLORS[follower.role] || '#334155';
   const background = entry.background || getCompanionBackground(entry.id);
+  const estados = entry.estadosAlterados || [];
 
   return (
     <div className="mx-1 flex w-full flex-col items-center">
@@ -64,6 +66,31 @@ export default function FollowerCard({ entry, onOpen }) {
               loading="lazy"
               decoding="async"
             />
+          )}
+
+          {estados.length > 0 && (
+            <div className="absolute left-0.5 top-0.5 z-10 flex flex-col gap-0.5">
+              {estados.slice(0, 3).map((estado) => {
+                const meta = getEstadoMeta(estado.id);
+                if (!meta) return null;
+                return (
+                  <span key={estado.id} className="relative" title={`${meta.texto} ×${estado.count}`}>
+                    <img
+                      src={meta.imagen}
+                      alt=""
+                      className="h-3.5 w-3.5 rounded-full border border-white/80 bg-slate-950/60"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    {estado.count > 1 && (
+                      <span className="absolute -right-1 -top-1 rounded-full bg-red-600 px-0.5 text-[0.4rem] font-bold leading-none text-white">
+                        {estado.count}
+                      </span>
+                    )}
+                  </span>
+                );
+              })}
+            </div>
           )}
 
           <div className="absolute inset-x-0 bottom-0">

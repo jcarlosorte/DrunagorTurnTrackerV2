@@ -1839,6 +1839,21 @@ Unit       142 tests
 E2E        58/58
 ```
 
+### 83.ª tanda — Iconos de estados en aliados
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Track** | Iconos de estados en la tarjeta del seguidor y en compañeros, aceptando ids con o sin `_I` | `FollowerCard`, `CompanionTrackCard` |
+| **Ficha** | Franja de estados activos en la vista ampliada, además del panel de gestión | `AllyDetailModal` |
+| **Pruebas** | 142 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       142 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -1,4 +1,4 @@
-import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
+import { getEstadoMeta } from '@/data/estadosAlterados';
 import { getCompanion, getCompanionBackground, getCompanionImage } from '@/data/companions';
 
 /**
@@ -74,7 +74,7 @@ export default function CompanionTrackCard({ entry, onOpen, estadosLabels = {} }
         {estados.length > 0 && (
           <div className="absolute -left-1 top-0 flex flex-col gap-0.5">
             {estados.slice(0, 3).map((estado) => {
-              const meta = ESTADOS_ALTERADOS.find((item) => item.id === estado.id);
+              const meta = getEstadoMeta(estado.id);
               if (!meta) return null;
               return (
                 <span

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { GiFootprint, GiBroadsword, GiBowArrow } from 'react-icons/gi';
 import { FiInfo, FiTrash2, FiX } from 'react-icons/fi';
 import { useLanguage } from '@/context/LanguageContext';
+import { getEstadoMeta } from '@/data/estadosAlterados';
 
 const normalizeAttackType = (value) => {
   const text = String(value || '').toLowerCase();
@@ -32,6 +33,7 @@ export default function AllyDetailModal({
   lifeTestId,
   onLifeChange,
   abilities = [],
+  activeStatuses = [],
   statusPanel,
   onDelete,
   onClose,
@@ -82,6 +84,34 @@ export default function AllyDetailModal({
       </header>
 
       <div className="flex-1 space-y-3 overflow-y-auto p-3">
+        {activeStatuses.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 rounded-xl border border-amber-800/60 bg-amber-950/30 px-2 py-1">
+            <span className="text-[0.6rem] font-bold uppercase tracking-wide text-amber-200">
+              {t.alteredStatesShort || 'Estados'}
+            </span>
+            {activeStatuses.map((estado) => {
+              const meta = getEstadoMeta(estado.id);
+              if (!meta) return null;
+              return (
+                <span key={estado.id} className="relative" title={`${meta.texto} ×${estado.count}`}>
+                  <img
+                    src={meta.imagen}
+                    alt=""
+                    className="h-5 w-5 rounded-full border border-white/70 bg-slate-950/60"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  {estado.count > 1 && (
+                    <span className="absolute -right-1 -top-1 rounded-full bg-red-600 px-0.5 text-[0.4rem] font-bold leading-none text-white">
+                      {estado.count}
+                    </span>
+                  )}
+                </span>
+              );
+            })}
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-2">
           <div
             title="Movimiento"
