@@ -1886,6 +1886,21 @@ Unit       147 tests
 E2E        58/58
 ```
 
+### 86.ª tanda — Orden de turno por líneas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Turno** | Primero la línea superior completa (roles, enemigos y runas de arriba) y después la inferior | `turnOrder` |
+| **Roles** | Los roles de Despertar se añaden en la posición que les corresponde | `turnOrder` |
+| **Pruebas** | 147 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       147 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
