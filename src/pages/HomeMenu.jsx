@@ -9,8 +9,8 @@ import PageTransition from "@/components/PageTransition";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { clearTrackState, isPlainObject, readJsonStorage } from "@/utils/storage";
 import logo from "@/assets/Corebox_Logo-1536x864.avif";
-import logoApocalypse from "@/assets/home/logo-apocalypse.webp";
-import logoAwakenings from "@/assets/home/logo-awakenings.webp";
+import logoApocalypse from "@/assets/home/logo-apocalypse-transparent.webp";
+import logoAwakenings from "@/assets/home/logo-awakenings-transparent.webp";
 import reyRedivivo from "@/assets/home/rey-redivivo.webp";
 import bg from "@/assets/home/dungeon-bg.webp";
 import SiteFooter from "@/components/SiteFooter";
@@ -65,7 +65,7 @@ export default function HomeMenu() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(16,185,129,0.14),transparent_45%),linear-gradient(180deg,rgba(15,23,42,0.58)_0%,rgba(2,6,23,0.86)_100%)]" />
 
         <div className="relative z-10 flex flex-1 items-center justify-center px-4 py-10 sm:px-6">
-        <div className="grid w-full max-w-5xl gap-8 overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/80 p-5 shadow-2xl shadow-emerald-950/30 backdrop-blur sm:p-8 lg:grid-cols-[1.1fr_0.9fr] lg:p-10">
+        <div className="grid w-full max-w-5xl gap-8 overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/80 p-5 shadow-2xl shadow-emerald-950/30 backdrop-blur sm:p-8 lg:grid-cols-[1fr_1.15fr] lg:p-10">
           <section className="flex flex-col justify-center">
             <div className="mb-6 flex items-center gap-3">
               <span className="h-2 w-12 rounded-full bg-emerald-400" aria-hidden="true" />
@@ -125,7 +125,7 @@ export default function HomeMenu() {
             </div>
           </section>
 
-          <aside className="relative flex min-h-[26rem] items-end justify-center overflow-hidden rounded-2xl border border-emerald-500/20 bg-slate-950/60 sm:min-h-[30rem]">
+          <aside className="relative flex min-h-[18rem] items-end justify-center overflow-hidden rounded-2xl border border-emerald-500/20 bg-slate-950/60 sm:min-h-[22rem] lg:h-[24rem] lg:self-center">
             <div
               className="absolute inset-0 z-0 bg-cover bg-center"
               style={{ backgroundImage: `url(${reyRedivivo})` }}
@@ -141,8 +141,8 @@ export default function HomeMenu() {
               {HOME_LOGOS.map((item, index) => (
                 <motion.div
                   key={item.alt}
-                  className="flex h-20 w-20 items-center justify-center rounded-2xl border bg-white/95 p-2 shadow-2xl sm:h-24 sm:w-24"
-                  style={{ borderColor: `${item.tone}99` }}
+                  className="flex h-20 w-20 items-center justify-center rounded-2xl border p-2 shadow-2xl sm:h-24 sm:w-24"
+                  style={{ borderColor: `${item.tone}99`, backgroundColor: `${item.tone}22` }}
                   animate={{
                     scale: [1, 1.06, 1],
                     boxShadow: [
@@ -156,7 +156,7 @@ export default function HomeMenu() {
                   <img
                     src={item.src}
                     alt={item.alt}
-                    className="h-10 w-auto max-w-[4rem] object-contain sm:h-12 sm:max-w-[5rem]"
+                    className="h-10 w-auto max-w-[4rem] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:h-12 sm:max-w-[5rem]"
                     loading="eager"
                   />
                 </motion.div>

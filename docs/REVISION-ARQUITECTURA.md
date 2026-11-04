@@ -1606,6 +1606,21 @@ Unit       138 tests
 E2E        58/58
 ```
 
+### 68.ª tanda — Logos transparentes y panel horizontal
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Logos** | Fondo transparente con tinte y borde del tono, dejando ver la imagen del panel | `HomeMenu`, assets |
+| **Panel** | El panel del Rey Redivivo pasa a ser más horizontal en escritorio | `HomeMenu` |
+| **Pruebas** | 138 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       138 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
