@@ -1729,6 +1729,23 @@ Unit       140 tests
 E2E        58/58
 ```
 
+### 76.ª tanda — Despertar, retratos y avisos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Retratos** | Dos retratos por personaje (Andreas, Catharina, Nyx y Vacrem) | `heroPortraits` |
+| **Vida** | 8/10/10/8/10/10/10/12 para las ocho variantes | `heroes` |
+| **Caja** | El paso de caja principal pasa a la configuración de partida, antes de héroes | `Tracker`, `Config` |
+| **Avisos** | Runas y enemigos con tarjetas acordes al tema | `TileToast`, `AnimatedEnemyToast` |
+| **Pruebas** | 140 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       140 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

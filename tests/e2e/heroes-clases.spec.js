@@ -5,6 +5,7 @@ test.describe('Selección de héroes por clase', () => {
   test('agrupa con título, icono y color de clase', async ({ page }) => {
     await seedStorage(page, buildSeed());
     await page.goto('./tracker', { waitUntil: 'networkidle' });
+    await page.getByRole('button', { name: 'Selecciona tus héroes' }).click();
 
     const section = page.locator('section[aria-labelledby="heroes-heading"]');
     await expect(section.locator('h3')).toHaveText(['Arquero', 'Asesino', 'Clérigo', 'Guerrero', 'Mago']);

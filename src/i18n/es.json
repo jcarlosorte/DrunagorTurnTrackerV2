@@ -360,6 +360,7 @@
   "trackerSelect": {
     "title": "Configuración",
     "selectHeroes": "Selecciona tus héroes",
+    "selectBox": "Caja",
     "assignRoles": "Asigna roles de mazmorra",
     "noHeroesSelected": "Debes seleccionar al menos un héroe.",
     "heroesWithoutRoles": "Todos los héroes deben tener un rol asignado. Faltan: {heroes}",

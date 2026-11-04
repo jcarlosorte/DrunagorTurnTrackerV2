@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { GiAttachedShield, GiShadowFollower, GiSharpedTeethSkull, GiCheckMark, GiMagnifyingGlass } from 'react-icons/gi';
+import { GiAttachedShield, GiShadowFollower, GiSharpedTeethSkull, GiCheckMark, GiMagnifyingGlass, GiCardboardBox } from 'react-icons/gi';
 import { useNavigate } from "react-router-dom";
 import { EXPANSIONS } from '@/data/expansions';
+import { MAIN_BOXES, isBoxUnlocked } from '@/data/boxes';
 import { HEROES } from '@/data/heroes';
 import { ENEMIES } from '@/data/enemies';
 import { OPPOSITE_ROLES, getRolesForExpansions } from '@/data/roles';
@@ -18,9 +19,9 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 
 const MAX_HEROES = 5;
 const BEHAVIORS = ["estandar", "alternativo", "complejo"];
-const STEPS = ['heroes', 'roles', 'enemies'];
+const STEPS = ['box', 'heroes', 'roles', 'enemies'];
 /** Icono de cada paso de configuración. */
-const STEP_ICONS = { heroes: GiAttachedShield, roles: GiShadowFollower, enemies: GiSharpedTeethSkull };
+const STEP_ICONS = { box: GiCardboardBox, heroes: GiAttachedShield, roles: GiShadowFollower, enemies: GiSharpedTeethSkull };
 
 const normalize = (value) => String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
@@ -36,7 +37,7 @@ const TrackerSelect = () => {
   const [heroRoles, setHeroRoles] = useState({});
   const [selectedEnemies, setSelectedEnemies] = useState([]);
   const [selectedBehaviors, setSelectedBehaviors] = useState(["estandar", "alternativo", "complejo"]);
-  const [step, setStep] = useState('heroes');
+  const [step, setStep] = useState('box');
   const [heroQuery, setHeroQuery] = useState('');
   const [heroSort, setHeroSort] = useState('class');
   const [enemyQuery, setEnemyQuery] = useState('');
@@ -45,10 +46,11 @@ const TrackerSelect = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
 
-  const { selectedExpansions } = useExpansions();
+  const { selectedExpansions, mainBox, setMainBox } = useExpansions();
   const { language, translations } = useLanguage();
   const { trackerData, setTrackerData } = useTracker();
   const t = translations?.trackerSelect || {};
+  const config = translations?.config || {};
   const navigate = useNavigate();
 
   const expansionKey = selectedExpansions.join(',');
@@ -343,7 +345,7 @@ const TrackerSelect = () => {
     setMessage({ type: '', text: '' });
   };
 
-  const stepLabel = { heroes: t.selectHeroes, roles: t.assignRoles, enemies: t.selectEnemies };
+  const stepLabel = { box: t.selectBox || 'Caja', heroes: t.selectHeroes, roles: t.assignRoles, enemies: t.selectEnemies };
 
   return (
     <PageTransition>
@@ -358,7 +360,7 @@ const TrackerSelect = () => {
 
         {/* Paso actual */}
         <nav aria-label={t.stepsLabel || 'Pasos de configuración'} className="mb-6">
-          <ol className="grid grid-cols-3 gap-2 rounded-2xl border border-slate-700 bg-slate-900/60 p-2">
+          <ol className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-700 bg-slate-900/60 p-2 sm:grid-cols-4">
             {STEPS.map((item, index) => {
               const isActive = item === step;
               const isDone = index < stepIndex;
@@ -404,6 +406,51 @@ const TrackerSelect = () => {
             </p>
           )}
         </div>
+
+        {/* PASO: CAJA */}
+        {step === 'box' && (
+          <section aria-labelledby="box-heading" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-4 sm:p-6">
+            <div className="mb-4">
+              <h2 id="box-heading" className="border-l-4 border-emerald-400 pl-3 text-xl font-bold">
+                {config.mainBoxTitle || 'Caja principal'}
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm text-slate-400">
+                {config.mainBoxHint || 'Elige la caja con la que jugarás. Solo se pueden seleccionar las que tengas desbloqueadas.'}
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {MAIN_BOXES.map((box) => {
+                const unlocked = isBoxUnlocked(box);
+                const selected = mainBox === box.id;
+                return (
+                  <button
+                    key={box.id}
+                    type="button"
+                    onClick={() => setMainBox(box.id)}
+                    disabled={!unlocked}
+                    aria-pressed={selected}
+                    className={`flex min-h-32 flex-col items-center justify-center gap-3 rounded-2xl border p-4 text-center transition ${
+                      selected ? 'border-emerald-400 bg-emerald-950/40' : 'border-slate-700 bg-slate-950/50'
+                    } ${unlocked ? 'hover:border-slate-500' : 'cursor-not-allowed opacity-50'}`}
+                  >
+                    <img src={box.logo} alt="" className="h-16 w-full object-contain" loading="lazy" decoding="async" />
+                    <span className="text-sm font-bold">{config[`box_${box.id}`] || box.label}</span>
+                    {!unlocked && (
+                      <span className="text-[0.65rem] uppercase tracking-wide text-slate-400">
+                        {config.boxLocked || 'Bloqueada'}
+                      </span>
+                    )}
+                    {selected && unlocked && (
+                      <span className="text-[0.65rem] font-bold text-emerald-300">
+                        {config.boxSelected || 'Seleccionada'}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* PASO: HÉROES */}
         {step === 'heroes' && (

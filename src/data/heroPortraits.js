@@ -17,10 +17,22 @@ const VARIANT_FALLBACK = {
   vacrem_guerrero: 'vacrem',
 };
 
+const VARIANT_FILES = {
+  'andreas-necromancer': 'andreas',
+  'andreas-cleric-1': 'andreas_clerigo',
+  'catharina-shaman': 'catharina',
+  'catharina-mage': 'catharina_maga',
+  'nyx-swordmage': 'nyx',
+  'nyx-assasin': 'nyx_asesino',
+  'vacren-warlord': 'vacrem',
+  'vacron-warrior': 'vacrem_guerrero',
+};
+
 const HERO_PORTRAITS = {};
 for (const [path, url] of Object.entries(PORTRAIT_FILES)) {
   const fileName = path.split('/').pop().replace(/\.png$/i, '');
-  const rawId = fileName.replace(/^hero-/, '').split('-')[0];
+  const slug = fileName.replace(/^hero-/, '');
+  const rawId = VARIANT_FILES[slug] || slug.split('-')[0];
   const id = ALIASES[rawId] || rawId;
   if (!HERO_PORTRAITS[id]) HERO_PORTRAITS[id] = url;
 }

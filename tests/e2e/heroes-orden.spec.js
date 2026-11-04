@@ -5,6 +5,7 @@ test.describe('Orden de héroes', () => {
   test('la selección se puede ordenar por clase o por nombre', async ({ page }) => {
     await seedStorage(page, buildSeed());
     await page.goto('./tracker', { waitUntil: 'networkidle' });
+    await page.getByRole('button', { name: 'Selecciona tus héroes' }).click();
 
     const section = page.locator('section[aria-labelledby="heroes-heading"]');
     await expect(section.getByRole('checkbox')).toHaveCount(5);

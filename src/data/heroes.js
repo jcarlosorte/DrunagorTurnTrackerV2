@@ -70,13 +70,13 @@ export const HEROES = [
   { id: "drixx", expansionId: "apocalypse_heroes_1", baseLife: 10, baseMove: 2, type: "hero", profession: "Adalid", image: drixx },
   { id: "lorien", expansionId: "apocalypse_lorien", baseLife: 10, baseMove: 2, type: "hero", profession: "Maga", image: lorien },
   { id: "vacrem", expansionId: "apocalypse_awakenings", baseLife: 10, baseMove: 2, type: "hero", profession: "Adalid", image: vacrem },
-  { id: "andreas", expansionId: "apocalypse_awakenings", baseLife: 10, baseMove: 2, type: "hero", profession: "Necromante", image: andreas },
+  { id: "andreas", expansionId: "apocalypse_awakenings", baseLife: 8, baseMove: 2, type: "hero", profession: "Necromante", image: andreas },
   { id: "nyx", expansionId: "apocalypse_awakenings", baseLife: 10, baseMove: 2, type: "hero", profession: "Mago_Espadachin", image: nyx },
   { id: "catharina", expansionId: "apocalypse_awakenings", baseLife: 10, baseMove: 2, type: "hero", profession: "Chamana", image: catharina },
-  { id: "vacrem_guerrero", expansionId: "apocalypse_awakenings", baseLife: 10, baseMove: 2, type: "hero", profession: "Guerrero", image: vacrem },
+  { id: "vacrem_guerrero", expansionId: "apocalypse_awakenings", baseLife: 12, baseMove: 2, type: "hero", profession: "Guerrero", image: vacrem },
   { id: "andreas_clerigo", expansionId: "apocalypse_awakenings", baseLife: 10, baseMove: 2, type: "hero", profession: "Clérigo", image: andreas },
   { id: "nyx_asesino", expansionId: "apocalypse_awakenings", baseLife: 10, baseMove: 2, type: "hero", profession: "Asesino", image: nyx },
-  { id: "catharina_maga", expansionId: "apocalypse_awakenings", baseLife: 10, baseMove: 2, type: "hero", profession: "Maga", image: catharina },
+  { id: "catharina_maga", expansionId: "apocalypse_awakenings", baseLife: 8, baseMove: 2, type: "hero", profession: "Maga", image: catharina },
 ];
 
 /**

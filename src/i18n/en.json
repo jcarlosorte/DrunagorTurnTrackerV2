@@ -360,6 +360,7 @@
   "trackerSelect": {
     "title": "Tracker setup",
     "selectHeroes": "Select your heroes",
+    "selectBox": "Box",
     "assignRoles": "Assign dungeon roles",
     "noHeroesSelected": "You must select at least one hero.",
     "heroesWithoutRoles": "All heroes must have an assigned role. Missing: {heroes}",
