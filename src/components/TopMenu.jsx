@@ -60,7 +60,8 @@ const TopMenu = ({
   const menuRefRunes = useRef(null);
   const menuRefScenario = useRef(null);
   const menuRefNodes = useRef(null);
-  const { selectedExpansions } = useExpansions();
+  const { selectedExpansions, mainBox, previewOtherBoxes, togglePreview, canPreviewOtherBoxes } = useExpansions();
+  const showCoreContent = mainBox === 'core' || previewOtherBoxes;
   
   const colorMap = {
     rojo: 'state-btn-remove',
@@ -322,6 +323,19 @@ const TopMenu = ({
                   <GiMusicalNotes size={18} aria-hidden="true" />
                   {t.music || 'Música'}
                 </button>
+                {canPreviewOtherBoxes && (
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => { togglePreview(); setGameMenuOpen(false); }}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                  >
+                    <span aria-hidden="true">🎴</span>
+                    {previewOtherBoxes
+                      ? (t.hideOtherBoxes || 'Ocultar contenido de otras cajas')
+                      : (t.showOtherBoxes || 'Ver contenido de otras cajas')}
+                  </button>
+                )}
                 <button
                   type="button"
                   role="menuitem"
@@ -603,7 +617,7 @@ const TopMenu = ({
                   </div>
                   
                   {/* --- Bloque 2: ASALTO (solo si expansión activa) --- */}
-                  {selectedExpansions.includes("infernal_desert") && (
+                  {showCoreContent && selectedExpansions.includes("infernal_desert") && (
                     <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
                       <div className="flex flex-wrap gap-2 justify-center">
                         <GiLeechingWorm className="text-indigo-300 text-xl" />
@@ -665,6 +679,7 @@ const TopMenu = ({
                   <div className="grid gap-2 sm:grid-cols-3">
 
                 {/* --- Bloque 3: ACECHO --- */}
+                {showCoreContent && (
                   <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"> 
                     <div className="flex flex-col items-center gap-2">
                       <div className="flex flex-wrap gap-2 justify-center items-center">
@@ -737,9 +752,10 @@ const TopMenu = ({
                       )}
                     </div>
                   </div>
+                )}
 
                  {/* --- Bloque 4: MONSTRUO HUESPED (solo si expansión activa) --- */}
-                 {selectedExpansions.includes("undead_dragon") && (
+                 {showCoreContent && selectedExpansions.includes("undead_dragon") && (
                   <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"> 
                     <div className="flex flex-wrap gap-2 justify-center">
                       <GiSpikedDragonHead className="text-indigo-300 text-xl" />
@@ -764,6 +780,7 @@ const TopMenu = ({
                 )}
 
                 {/* --- Bloque 5: INVADIDOS --- */}
+                {showCoreContent && (
                 <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"> 
                   <div className="flex flex-wrap gap-2 justify-center">
                     <GiReaperScythe className="text-indigo-300 text-xl" />
@@ -791,6 +808,7 @@ const TopMenu = ({
                     )}
                   </div>
                 </div>
+                )}
                 </div>
                 </div>
               </section>
@@ -1189,6 +1207,7 @@ const TopMenu = ({
                   </div>
 
                   {/* Defensa */}
+                  {showCoreContent && (
                   <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
                     <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-sky-200">
                       <GiStoneTower className="text-sky-300 text-xl" />
@@ -1226,6 +1245,7 @@ const TopMenu = ({
                       </div>
                     )}
                   </div>
+                  )}
                 </div>
               </section>
               </div>

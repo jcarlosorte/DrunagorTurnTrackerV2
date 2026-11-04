@@ -2,9 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { createPortal } from 'react-dom';
 
-import { RiArrowTurnBackLine, RiArrowTurnForwardLine } from "react-icons/ri";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { HEROES } from '@/data/heroes';
@@ -64,6 +62,7 @@ import useTurnCursor from '@/hooks/useTurnCursor';
 import { classifyScenarioToast } from '@/utils/toastKind';
 
 import TrackSlot from '@/components/track/TrackSlot';
+import RuneCard from '@/components/track/RuneCard';
 import TurnCarousel from '@/components/track/TurnCarousel';
 import BossBanner from '@/components/track/BossBanner';
 import CampDialog from '@/components/track/CampDialog';
@@ -112,7 +111,6 @@ const InitTracker = () => {
   const tee = translations.enemies || {};
   const tb = translations.trackerSelect?.comportamientos || {};
   const ta = translations.cartas_ataque || {};
-  const ts = translations.scenarioCard || {};
   const td = translations.defensaCard || {};
   const tea = translations.estadosAlterados || {};
   const ttr = translations.defensaCard.cartas_trad || {};
@@ -3103,196 +3101,6 @@ const InitTracker = () => {
 
   const rolesOnTop = ['defensor', 'lider', 'lanza_dados', 'controlador'];
   const rolesOnBottom = ['apoyo', 'asistente', 'agresor'];
-
-  const RuneCard = ({ rune, onRemove, flipped }) => {
-    const tipo = rune.tipo;
-    const [estadosLocal, setEstadosLocal] = useState(rune?.estadosAlterados || []);
-    const [expanded, setExpanded] = useState(false);
-    const { toggleRuneEffect } = useInitRunes();
-    const applyEffect = rune.applyEffect !== false;
-    const totalHeroes = trackerData.placedHeroes?.length || 0;
-    const replacementValue = totalHeroes <= 2 ? '2' : totalHeroes <= 4 ? '3' : '4';
-
-    const tones = {
-      runa: { border: 'border-indigo-400', header: 'bg-indigo-500/10', text: 'text-indigo-200', button: 'bg-indigo-600 hover:bg-indigo-500' },
-      asalto: { border: 'border-indigo-300', header: 'bg-indigo-400/10', text: 'text-indigo-100', button: 'bg-indigo-500 hover:bg-indigo-400' },
-      defensa: { border: 'border-green-400', header: 'bg-green-500/10', text: 'text-green-200', button: 'bg-green-600 hover:bg-green-500' },
-      incursion: { border: 'border-red-400', header: 'bg-red-500/10', text: 'text-red-200', button: 'bg-red-600 hover:bg-red-500' },
-      acecho: { border: 'border-purple-400', header: 'bg-purple-500/10', text: 'text-purple-200', button: 'bg-purple-600 hover:bg-purple-500' },
-    };
-    const tone = tones[tipo] || tones.runa;
-
-    const isCaraB = rune.cara === 'B';
-    const title = ts[rune.id] || rune.nombre;
-    const accion = ts[rune.accion];
-    const accion2 = ts[rune.accion2];
-    const y = ts.Y || 'Y';
-    const nombre = ts[rune.nombre]?.replace('{x}', replacementValue) || rune.nombre;
-
-    useEffect(() => {
-      setEstadosLocal(rune?.estadosAlterados ? [...rune.estadosAlterados] : []);
-    }, [rune?.estadosAlterados]);
-
-    const renderMechanics = () => {
-      if (tipo === 'asalto') {
-        return (
-          <div className="space-y-1 text-center">
-            <div className="font-bold">{isCaraB ? accion2 : accion} {y}</div>
-            <div className="font-bold">{isCaraB ? accion : accion2}</div>
-          </div>
-        );
-      }
-      return (
-        <div className="space-y-1 text-center">
-          <div className="font-bold">{accion} {rune.numRunas || ''}</div>
-          <div>{nombre}</div>
-        </div>
-      );
-    };
-
-    const renderSide = (caraB = false) => {
-      const posicion = rune.posicion;
-      return (
-        <div className={`${posicion === 'abajo' ? 'absolute top-0 left-0 right-0' : 'absolute bottom-0 left-0 right-0'} backface-hidden ${caraB ? 'rotate-y-180' : ''}`}>
-          <div className="relative">
-            <div className="river-bg rounded-lg max-w-[95%] mx-auto sm:max-w-[140px]">
-              <svg className="river-waves" viewBox="0 0 1440 320" preserveAspectRatio="none">
-                <path d="M0,160 C360,240 1080,80 1440,160 L1440,320 L0,320 Z" fill="rgba(0, 255, 150, 0.2)" />
-              </svg>
-              <svg className="river-waves2" viewBox="0 0 100 800" preserveAspectRatio="none">
-                <path d="M50,0 C60,100 40,200 50,300 C60,400 40,500 50,600 C60,700 40,800 50,900" fill="none" stroke="rgba(0, 255, 150, 0.2)" strokeWidth="10" />
-              </svg>
-              <svg className="river-waves3" viewBox="0 0 100 800" preserveAspectRatio="none">
-                <path d="M50,0 C60,100 40,200 50,300 C60,400 40,500 50,600 C60,700 40,800 50,900" fill="none" stroke="rgba(0, 255, 150, 0.2)" strokeWidth="10" />
-              </svg>
-            </div>
-
-            <div className="relative z-10">
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => setExpanded(true)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    setExpanded(true);
-                  }
-                }}
-                className={`cursor-pointer rounded-lg border-2 p-1 shadow-md ${tone.border} max-w-[95%] mx-auto sm:max-w-[140px]`}
-                aria-label={`${title}${rune.cara ? ` · ${ti.cara || 'Cara'} ${rune.cara}` : ''}`}
-              >
-                <div className="flex justify-center text-center text-xs font-bold text-white sm:text-sm">
-                  {title}
-                </div>
-                {rune.cara && (
-                  <div className="flex items-center justify-center gap-1 text-center text-[0.55rem] font-bold italic text-indigo-100 sm:text-[0.65rem]">
-                    <RiArrowTurnBackLine className="text-xs text-white" />
-                    {ti.cara || 'Cara'} {rune.cara}
-                    <RiArrowTurnForwardLine className="text-xs text-white" />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    return (
-      <div className="w-full perspective hover:scale-105">
-        <div className={`relative w-full h-full transform-style preserve-3d ${flipped ? 'card-flip' : ''}`}>
-          {renderSide(false)}
-          {renderSide(true)}
-        </div>
-
-        {expanded && createPortal(
-          <div className="layer-modal fixed inset-0 flex items-center justify-center bg-black/70 p-4" role="presentation">
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby={`rune-title-${rune.uuid}`}
-              className={`relative flex max-h-[86vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border bg-slate-900/95 text-slate-100 shadow-2xl ${tone.border}`}
-            >
-              <div className={`flex items-start justify-between gap-3 border-b border-slate-700/80 px-5 py-4 ${tone.header}`}>
-                <div className="min-w-0">
-                  <p className="text-[0.6rem] font-bold uppercase tracking-[0.25em] text-emerald-300">
-                    {ti.runeCard || 'Carta de runa'}
-                  </p>
-                  <h2 id={`rune-title-${rune.uuid}`} className="mt-1 truncate text-xl font-black text-slate-50">
-                    {title}
-                  </h2>
-                  <p className="mt-0.5 text-xs text-slate-400">
-                    {tipo}
-                    {rune.cara ? ` · ${ti.cara || 'Cara'} ${rune.cara}` : ''}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setExpanded(false)}
-                  aria-label={translations.trackerSelect?.close || 'Cerrar'}
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-sm text-slate-200 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
-                <div className={`rounded-xl border border-slate-700/80 bg-slate-950/60 p-4 text-sm ${tone.text}`}>
-                  {renderMechanics()}
-                </div>
-
-                {estadosLocal.filter((estado) => estado.count > 0).length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {estadosLocal.filter((estado) => estado.count > 0).map((estado) => {
-                      const estadoConfig = ESTADOS_ALTERADOS.find((item) => item.id === estado.id);
-                      if (!estadoConfig) return null;
-                      return (
-                        <span key={estado.id} className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-800/80 px-2 py-1 text-xs text-slate-200">
-                          <img src={estadoConfig.imagen} alt={estadoConfig.texto} className="h-5 w-5 rounded-full" />
-                          {tea[estadoConfig.texto] || estadoConfig.texto} ×{estado.count}
-                        </span>
-                      );
-                    })}
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => toggleRuneEffect(rune.uuid)}
-                  className={`flex w-full items-center justify-between gap-2 rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-bold transition hover:bg-slate-700/70 ${tone.text}`}
-                >
-                  <span>{ti.applyEffect || 'Aplicar efecto'}</span>
-                  <span>{applyEffect ? 'Sí' : 'No'}</span>
-                </button>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-700/80 px-5 py-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    onRemove(rune.uuid);
-                    setExpanded(false);
-                  }}
-                  className="min-h-9 rounded-lg border border-red-500/40 bg-red-950/40 px-3 text-xs font-bold text-red-200 transition hover:bg-red-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
-                >
-                  {ti.eliminarRuna || 'Eliminar'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setExpanded(false)}
-                  className="min-h-9 rounded-lg bg-emerald-600 px-4 text-xs font-bold text-white transition hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
-                >
-                  Cerrar
-                </button>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
-      </div>
-    );
-  };
-
 
   // Alturas de carta y separación desde la barra central (ver trackLayout.js).
 

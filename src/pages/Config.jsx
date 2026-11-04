@@ -5,6 +5,7 @@ import { useExpansions } from "@/context/ExpansionContext";
 import { useRules } from "@/context/RulesContext";
 import { languages as availableLanguages, languageNames } from "@/i18n/languageData";
 import { EXPANSIONS } from "@/data/expansions";
+import { MAIN_BOXES, isBoxUnlocked } from "@/data/boxes";
 import { RULES_VERSIONS } from "@/utils/rulesVersion";
 import PageTransition from "@/components/PageTransition";
 import ExpansionIcon from "@/components/ExpansionIcon";
@@ -14,7 +15,7 @@ import { isHeroManagementEnabled, setHeroManagementEnabled } from "@/utils/heroS
 export default function Config() {
   const navigate = useNavigate();
   const { language, setLanguage, translations } = useLanguage();
-  const { selectedExpansions, toggleExpansion } = useExpansions();
+  const { selectedExpansions, toggleExpansion, mainBox, setMainBox } = useExpansions();
   const { rulesVersion, detected, isAuto, setRulesVersion } = useRules();
   const [heroManagement, setHeroManagement] = useState(isHeroManagementEnabled);
   const config = translations.config || {};
@@ -38,6 +39,46 @@ export default function Config() {
             {config.subtitle || 'Elige el idioma y las expansiones que estarán disponibles al preparar una partida.'}
           </p>
         </header>
+
+        <section className="rounded-2xl border border-slate-700 bg-slate-900/80 p-4 sm:p-6" aria-labelledby="main-box-title">
+          <h2 id="main-box-title" className="text-xl font-bold">{config.mainBoxTitle || 'Caja principal'}</h2>
+          <p className="mt-1 max-w-2xl text-sm text-slate-400">
+            {config.mainBoxHint || 'Elige la caja con la que jugarás. Solo se pueden seleccionar las que tengas desbloqueadas.'}
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            {MAIN_BOXES.map((box) => {
+              const unlocked = isBoxUnlocked(box);
+              const selected = mainBox === box.id;
+              return (
+                <button
+                  key={box.id}
+                  type="button"
+                  onClick={() => setMainBox(box.id)}
+                  disabled={!unlocked}
+                  aria-pressed={selected}
+                  className={`flex min-h-28 flex-col items-center justify-center gap-2 rounded-2xl border p-3 text-center transition ${
+                    selected
+                      ? 'border-emerald-400 bg-emerald-950/40'
+                      : 'border-slate-700 bg-slate-950/50'
+                  } ${unlocked ? 'hover:border-slate-500' : 'cursor-not-allowed opacity-50'}`}
+                >
+                  <img src={box.logo} alt="" className="h-12 w-full object-contain" loading="lazy" decoding="async" />
+                  <span className="text-sm font-bold">{config[`box_${box.id}`] || box.label}</span>
+                  {!unlocked && (
+                    <span className="text-[0.65rem] uppercase tracking-wide text-slate-400">
+                      {config.boxLocked || 'Bloqueada'}
+                    </span>
+                  )}
+                  {selected && unlocked && (
+                    <span className="text-[0.65rem] font-bold text-emerald-300">
+                      {config.boxSelected || 'Seleccionada'}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </section>
 
         <section className="rounded-2xl border border-slate-700 bg-slate-900/80 p-4 sm:p-6" aria-labelledby="language-section-title">
           <h2 id="language-section-title" className="text-xl font-bold">{config.language_section_title || 'Idioma'}</h2>
