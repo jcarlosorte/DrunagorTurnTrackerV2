@@ -1,4 +1,5 @@
 import { getFollower, getFollowerState } from '@/data/followers';
+import { getCompanionBackground } from '@/data/companions';
 
 const ROLE_COLORS = {
   lider: '#b45309',
@@ -9,8 +10,8 @@ const ROLE_COLORS = {
 };
 
 /**
- * Tarjeta del seguidor en el track: rectangular, con fondo, retrato, nombre
- * con color y barra de vida. La ficha ampliada se abre al pulsar.
+ * Tarjeta del seguidor en el track: mismo ancho que los héroes, fondo de
+ * interacción, retrato, nombre y vida dentro del marco.
  */
 export default function FollowerCard({ entry, onOpen }) {
   const follower = getFollower(entry.id);
@@ -21,12 +22,12 @@ export default function FollowerCard({ entry, onOpen }) {
   const lifeMax = entry.vidaMax ?? state?.vida ?? 1;
   const lifePercent = Math.max(0, Math.min(100, (life / Math.max(lifeMax, 1)) * 100));
   const color = ROLE_COLORS[follower.role] || '#334155';
-  const background = entry.background || follower.image;
+  const background = entry.background || getCompanionBackground(entry.id);
 
   return (
     <div className="mx-1 flex w-full flex-col items-center">
       <div
-        className="w-full max-w-[120px] cursor-pointer transition hover:scale-105"
+        className="w-full max-w-[90px] cursor-pointer transition hover:scale-105"
         onClick={onOpen}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
@@ -64,23 +65,25 @@ export default function FollowerCard({ entry, onOpen }) {
               decoding="async"
             />
           )}
-          <div
-            className="absolute inset-x-0 bottom-0 px-1 py-0.5 text-center"
-            style={{ backgroundColor: color }}
-          >
-            <span className="block truncate text-[0.55rem] font-bold text-white">{follower.name}</span>
-          </div>
-        </div>
 
-        <div className="mt-0.5 w-full rounded bg-slate-950/85 px-1 py-0.5">
-          <span className="relative block h-1.5 w-full">
-            <span className="absolute inset-0 z-10 flex items-center justify-center text-[0.45rem] font-bold leading-none text-white">
-              {life}/{lifeMax}
-            </span>
-            <span className="block h-full w-full rounded bg-red-950">
-              <span className="block h-full rounded bg-red-500" style={{ width: `${lifePercent}%` }} />
-            </span>
-          </span>
+          <div className="absolute inset-x-0 bottom-0">
+            <div className="bg-slate-950/85 px-1 py-0.5">
+              <span className="relative block h-1.5 w-full">
+                <span className="absolute inset-0 z-10 flex items-center justify-center text-[0.45rem] font-bold leading-none text-white">
+                  {life}/{lifeMax}
+                </span>
+                <span className="block h-full w-full rounded bg-red-950">
+                  <span className="block h-full rounded bg-red-500" style={{ width: `${lifePercent}%` }} />
+                </span>
+              </span>
+            </div>
+            <div
+              className="px-1 py-0.5 text-center"
+              style={{ backgroundColor: color }}
+            >
+              <span className="block truncate text-[0.55rem] font-bold text-white">{follower.name}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

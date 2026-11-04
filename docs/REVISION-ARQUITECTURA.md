@@ -1824,6 +1824,21 @@ Unit       142 tests
 E2E        58/58
 ```
 
+### 82.ª tanda — Tarjetas y fichas de aliados unificadas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Track** | Seguidor con ancho de héroe, fondo de interacciones y vida dentro del marco | `FollowerCard` |
+| **Ficha** | Ficha común para mascotas, compañeros y seguidores: 4 paneles, firmeza, estados y pie de dos botones | `AllyDetailModal`, `ModalCompanionCard`, `FollowerModal` |
+| **Pruebas** | 142 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       142 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
