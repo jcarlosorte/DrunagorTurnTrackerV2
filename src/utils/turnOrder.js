@@ -1,24 +1,42 @@
 /** Resolución de entidades sobre el orden de iniciativa (TURN_ORDER). */
 import { getCompanion } from '@/data/companions';
+import { getFollower } from '@/data/followers';
 
 /**
- * Inserta a los compañeros y mascotas justo después de su héroe.
+ * Inserta a los compañeros y mascotas justo después de su héroe y a los
+ * seguidores en el paso de su rol, aunque no haya héroe en esa posición.
  *
  * El orden dentro de cada héroe es el de aparición (`order`), y cada criatura
- * ocupa un único paso: actúa una vez por vuelta.
+ * y seguidor ocupa un único paso: actúa una vez por vuelta.
  */
-export function buildTurnOrder(baseOrder, companions = [], placedHeroes = []) {
+export function buildTurnOrder(baseOrder, companions = [], placedHeroes = [], followers = []) {
   if (!Array.isArray(baseOrder)) return [];
-  if (!Array.isArray(companions) || companions.length === 0) return baseOrder;
+  const hasCompanions = Array.isArray(companions) && companions.length > 0;
+  const hasFollowers = Array.isArray(followers) && followers.length > 0;
+  if (!hasCompanions && !hasFollowers) return baseOrder;
 
-  const sorted = [...companions].sort((a, b) => (a.order || 0) - (b.order || 0));
+  const sorted = [...(companions || [])].sort((a, b) => (a.order || 0) - (b.order || 0));
 
   return baseOrder.flatMap((step) => {
     if (step.type !== 'hero') return [step];
     const hero = placedHeroes.find((entry) => entry.role === step.role && entry.position === step.index);
-    if (!hero) return [step];
+    const ofHero = hero ? sorted.filter((entry) => entry.heroId === hero.id) : [];
+    const atStep = (followers || []).filter((entry) => (
+      entry.role === step.role && entry.position === step.index
+    ));
+    const followerSteps = atStep.map((entry) => ({
+      type: 'follower',
+      uid: entry.uid,
+      id: entry.id,
+      role: entry.role,
+      position: entry.position,
+      name: getFollower(entry.id)?.name || entry.name || entry.id,
+    }));
 
-    const ofHero = sorted.filter((entry) => entry.heroId === hero.id);
+    // Sin héroe, el hueco del rol lo ocupa directamente el seguidor: así el
+    // turno no se salta la casilla que antes estaba vacía.
+    if (!hero) return atStep.length > 0 ? followerSteps : [step];
+
     return [
       step,
       ...ofHero.map((entry) => ({
@@ -28,6 +46,7 @@ export function buildTurnOrder(baseOrder, companions = [], placedHeroes = []) {
         heroId: entry.heroId,
         name: getCompanion(entry.id)?.name || entry.id,
       })),
+      ...followerSteps,
     ];
   });
 }
@@ -46,6 +65,7 @@ export function indexOfEntityInOrder(order, entity) {
     }
     if (step.type === 'rune') return step.index === entity.colorIndex && step.position === entity.posicion;
     if (step.type === 'companion') return step.uid === entity.uid;
+    if (step.type === 'follower') return step.uid === entity.uid;
     return false;
   });
 }
@@ -54,7 +74,7 @@ export function indexOfEntityInOrder(order, entity) {
  * Primera entidad activa a partir de un índice (con vuelta al principio).
  * Recibe las listas ya colocadas en el tablero.
  */
-export function findNextActiveEntity({ order, startIndex = 0, heroes = [], enemies = [], runes = [], companions = [] }) {
+export function findNextActiveEntity({ order, startIndex = 0, heroes = [], enemies = [], runes = [], companions = [], followers = [] }) {
   if (!Array.isArray(order) || order.length === 0) return null;
   const start = ((startIndex % order.length) + order.length) % order.length;
 
@@ -85,6 +105,15 @@ export function findNextActiveEntity({ order, startIndex = 0, heroes = [], enemi
           ...companion,
           type: 'companion',
           name: getCompanion(companion.id)?.name || companion.id,
+        };
+      }
+    } else if (step.type === 'follower') {
+      const follower = followers.find((entry) => entry.uid === step.uid);
+      if (follower) {
+        return {
+          ...follower,
+          type: 'follower',
+          name: getFollower(follower.id)?.name || follower.name || follower.id,
         };
       }
     }

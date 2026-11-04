@@ -16,6 +16,7 @@ import ConfirmDialog from '@/components/ConfirmDialog';
 import { getHeroClassId } from '@/data/heroClasses';
 import { FOLLOWERS, getFollower } from '@/data/followers';
 import { ROLE_POSITIONS } from '@/data/roles';
+import { saveCampFollower } from '@/utils/campFollowers';
 import useFocusTrap from '@/hooks/useFocusTrap';
 
 /**
@@ -143,6 +144,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
       image: null,
     };
     setTrackerData((prev) => ({ ...prev, followers: [...(prev.followers || []), entry] }));
+    saveCampFollower(entry);
     setSelectedFollowerId(null);
     setSelectedFollowerState('');
   };

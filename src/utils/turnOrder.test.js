@@ -79,3 +79,25 @@ describe('compañeros y mascotas', () => {
     expect(indexOfEntityInOrder(order, { uid: 'c1', type: 'companion' })).toBe(2);
   });
 });
+
+describe('seguidores', () => {
+  const follower = { uid: 'f1', id: 'elros_asesino', role: 'lider', position: 4 };
+
+  it('ocupa el paso del rol cuando no hay héroe', () => {
+    const order = buildTurnOrder(ORDER, [], [hero], [follower]);
+    expect(order.map((step) => step.type)).toEqual(['hero', 'enemy', 'follower', 'rune']);
+  });
+
+  it('con héroe en el rol va después del héroe', () => {
+    const liderHero = { id: 'vorn2', role: 'lider', position: 4 };
+    const order = buildTurnOrder(ORDER, [], [hero, liderHero], [follower]);
+    expect(order.map((step) => step.type)).toEqual(['hero', 'enemy', 'hero', 'follower', 'rune']);
+  });
+
+  it('lo encuentra y lo indexa', () => {
+    const order = buildTurnOrder(ORDER, [], [hero], [follower]);
+    const entity = findNextActiveEntity({ order, startIndex: 2, followers: [follower] });
+    expect(entity).toMatchObject({ uid: 'f1', type: 'follower', name: 'Elros' });
+    expect(indexOfEntityInOrder(order, { uid: 'f1', type: 'follower' })).toBe(2);
+  });
+});

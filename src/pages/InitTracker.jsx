@@ -50,7 +50,10 @@ import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import { findNextActiveEntity, buildTurnOrder, indexOfEntityInOrder } from '@/utils/turnOrder';
-import { getCompanion, getCompanionName } from '@/data/companions';
+import { getCompanion, getCompanionName, getCompanionBackground } from '@/data/companions';
+import { getFollower, getFollowerState } from '@/data/followers';
+import { ROLE_POSITIONS } from '@/data/roles';
+import { readCampFollowers } from '@/utils/campFollowers';
 import { applyCompanionTurnEffects } from '@/utils/companionAbilities';
 import { findEnemyVariant } from '@/utils/enemyVariant';
 import { resolveEntityLabel } from '@/utils/entityLabel';
@@ -105,8 +108,8 @@ const toSet = (value) => new Set(Array.isArray(value) ? value : []);
 const InitTracker = () => {
   const { trackerData, setTrackerData } = useTracker();
   const effectiveTurnOrder = useMemo(
-    () => buildTurnOrder(TURN_ORDER, trackerData.companions || [], trackerData.placedHeroes || []),
-    [trackerData.companions, trackerData.placedHeroes],
+    () => buildTurnOrder(TURN_ORDER, trackerData.companions || [], trackerData.placedHeroes || [], trackerData.followers || []),
+    [trackerData.companions, trackerData.placedHeroes, trackerData.followers],
   );
   const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetEnemySession, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, acechoActivo, invadidosActivo, desactivaAcecho, desactivaHuesped, desactivaOscuridad, desactivaAsalto, desactivaInvadidos } = useInitEnemies();
   const { translations } = useLanguage();
@@ -2145,6 +2148,35 @@ const InitTracker = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
+  // Al iniciar partida, coloca los seguidores guardados en el campamento.
+  useEffect(() => {
+    const camp = readCampFollowers();
+    if (camp.length === 0) return;
+    setTrackerData((prev) => {
+      if ((prev.followers || []).length > 0) return prev;
+      const entries = camp.map((blueprint) => {
+        const follower = getFollower(blueprint.id);
+        if (!follower) return null;
+        const state = getFollowerState(blueprint.id, blueprint.stateId) || follower.states[0];
+        return {
+          uid: crypto.randomUUID(),
+          id: follower.id,
+          name: follower.name,
+          epithet: follower.epithet,
+          role: follower.role,
+          position: ROLE_POSITIONS[follower.role] ?? blueprint.position ?? 0,
+          stateId: state.id,
+          vida: state.vida,
+          vidaMax: state.vida,
+          estadosAlterados: [],
+          background: blueprint.background || getCompanionBackground(follower.id),
+          image: null,
+        };
+      }).filter(Boolean);
+      return { ...prev, followers: entries };
+    });
+  }, [setTrackerData]);
+
   // Cursor del turno e historial de deshacer (H8 2/3).
   const {
     turnIndex,
@@ -2317,6 +2349,8 @@ const InitTracker = () => {
       );
     } else if (step.type === "companion") {
       hasEntities = (trackerData.companions || []).some((companion) => companion.uid === step.uid);
+    } else if (step.type === "follower") {
+      hasEntities = (trackerData.followers || []).some((follower) => follower.uid === step.uid);
     }
     
     if (!hasEntities) {
@@ -2324,6 +2358,19 @@ const InitTracker = () => {
       setTimeout(() => {
         handleNextTurn();
       }, 800); 
+      return;
+    }
+
+    if (step.type === 'follower') {
+      const follower = (trackerData.followers || []).find((entry) => entry.uid === step.uid);
+      if (follower) {
+        setCurrentTurnEntity({
+          ...follower,
+          type: 'follower',
+          name: getFollower(follower.id)?.name || follower.name || follower.id,
+        });
+        setGroupTurnTracker({ group: [], index: 0 });
+      }
       return;
     }
 
@@ -2687,6 +2734,7 @@ const InitTracker = () => {
     enemies: placedEnemies,
     runes: placedRunes,
     companions: trackerData.companions || [],
+    followers: trackerData.followers || [],
   });
   const handleNextTurn = () => {
     // Guardamos el cursor de turno para poder deshacer el último avance.
@@ -2915,6 +2963,19 @@ const InitTracker = () => {
           setTurnIndex(idx);
           setLastRealTurnIndex(idx);
           setCurrentTurnEntity({ ...companion, type: 'companion', name: getCompanionName(companion.id) });
+          setGroupTurnTracker({ group: [], index: 0 });
+          return;
+        }
+      } else if (step.type === 'follower') {
+        const follower = (trackerData.followers || []).find((entry) => entry.uid === step.uid);
+        if (follower) {
+          setTurnIndex(idx);
+          setLastRealTurnIndex(idx);
+          setCurrentTurnEntity({
+            ...follower,
+            type: 'follower',
+            name: getFollower(follower.id)?.name || follower.name || follower.id,
+          });
           setGroupTurnTracker({ group: [], index: 0 });
           return;
         }

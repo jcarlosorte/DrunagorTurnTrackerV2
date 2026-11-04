@@ -1871,6 +1871,21 @@ Unit       142 tests
 E2E        58/58
 ```
 
+### 85.ª tanda — Turno y campamento de seguidores
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Turno** | Los seguidores ocupan el paso de su rol y el turno ya no se salta; el carrusel usa su icono | `turnOrder`, `InitTracker`, `TurnCarousel` |
+| **Campamento** | Los seguidores se guardan y se colocan al iniciar cada partida | `campFollowers`, `CampDialog`, `InitTracker` |
+| **Pruebas** | 147 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       147 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

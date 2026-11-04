@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { GiWoodenCrate } from 'react-icons/gi';
 import { useLanguage } from '@/context/LanguageContext';
 import { useGame } from '@/context/GameContext';
+import { getFollower, getFollowerState } from '@/data/followers';
+import { readCampFollowers, removeCampFollower } from '@/utils/campFollowers';
 import useFocusTrap from '@/hooks/useFocusTrap';
 
 /**
@@ -12,15 +14,18 @@ export default function CampDialog({ open, onClose }) {
   const { translations } = useLanguage();
   const { campamento, addCampItem, removeCampItem } = useGame();
   const t = translations.trackerInit || {};
+  const rolesT = translations.roles || {};
   const dialogRef = useRef(null);
   const inputRef = useRef(null);
   const [text, setText] = useState('');
+  const [campFollowerList, setCampFollowerList] = useState([]);
 
   useFocusTrap(dialogRef, open);
 
   useEffect(() => {
     if (!open) return undefined;
     setText('');
+    setCampFollowerList(readCampFollowers());
     inputRef.current?.focus();
     const onKey = (event) => {
       if (event.key === 'Escape') onClose?.();
@@ -117,6 +122,54 @@ export default function CampDialog({ open, onClose }) {
             </ul>
           )}
         </div>
+
+        <section className="border-t border-slate-700 p-3">
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <h3 className="text-sm font-bold text-slate-100">{t.campFollowers || 'Seguidores del campamento'}</h3>
+            <span className="rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums">
+              {campFollowerList.length}
+            </span>
+          </div>
+          <p className="mb-2 text-[0.65rem] text-slate-400">
+            {t.campFollowersHint || 'Se colocarán al iniciar cada partida.'}
+          </p>
+          {campFollowerList.length === 0 ? (
+            <p className="rounded-lg border border-slate-700 bg-slate-950/60 p-3 text-center text-xs text-slate-400">
+              {t.campFollowersEmpty || 'Sin seguidores guardados.'}
+            </p>
+          ) : (
+            <ul className="space-y-1">
+              {campFollowerList.map((entry) => {
+                const follower = getFollower(entry.id);
+                const state = getFollowerState(entry.id, entry.stateId);
+                return (
+                  <li
+                    key={entry.id}
+                    className="flex items-center justify-between gap-2 rounded-lg border border-slate-700 bg-slate-800/70 px-2 py-1 text-sm"
+                  >
+                    <span className="min-w-0 flex-1 truncate">
+                      {follower?.name || entry.id}
+                      <span className="ml-1 text-xs text-slate-400">
+                        · {rolesT[entry.role] || entry.role}{state ? ` · ${state.name}` : ''}
+                      </span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        removeCampFollower(entry.id);
+                        setCampFollowerList(readCampFollowers());
+                      }}
+                      aria-label={`${follower?.name || entry.id}: ${t.remove || 'Quitar'}`}
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-slate-700 text-xs text-white hover:bg-red-700"
+                    >
+                      ✕
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
 
         <footer className="flex items-center justify-between gap-2 border-t border-slate-700 px-4 py-2.5">
           <span className="text-[0.7rem] text-slate-400">{t.campHint || 'Se guarda con la partida'}</span>
