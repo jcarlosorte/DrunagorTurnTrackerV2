@@ -36,3 +36,8 @@ export function removeCampFollower(id) {
   writeJsonStorage(CAMP_FOLLOWERS_KEY, next);
   return next;
 }
+
+/** Vacía el campamento de seguidores (nueva partida). */
+export function clearCampFollowers() {
+  writeJsonStorage(CAMP_FOLLOWERS_KEY, []);
+}

@@ -1944,6 +1944,20 @@ Unit       147 tests
 E2E        58/58
 ```
 
+### 90.ª tanda — Nueva partida sin seguidores
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Guardado** | Al iniciar una nueva partida se vacían los seguidores del track y del campamento | `HomeMenu`, `Tracker`, `campFollowers` |
+| **Pruebas** | 148 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       148 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

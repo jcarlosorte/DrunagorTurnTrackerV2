@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { readCampFollowers, removeCampFollower, saveCampFollower } from '@/utils/campFollowers';
+import { clearCampFollowers, readCampFollowers, removeCampFollower, saveCampFollower } from '@/utils/campFollowers';
 
 const blueprint = {
   id: 'elros_asesino',
@@ -34,6 +34,12 @@ describe('seguidores del campamento', () => {
   it('elimina un seguidor del campamento', () => {
     saveCampFollower(blueprint);
     removeCampFollower('elros_asesino');
+    expect(readCampFollowers()).toEqual([]);
+  });
+
+  it('vacía el campamento al iniciar una nueva partida', () => {
+    saveCampFollower(blueprint);
+    clearCampFollowers();
     expect(readCampFollowers()).toEqual([]);
   });
 });

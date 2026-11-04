@@ -3,6 +3,7 @@ import { GiAttachedShield, GiShadowFollower, GiSharpedTeethSkull, GiCheckMark, G
 import { useNavigate } from "react-router-dom";
 import { EXPANSIONS } from '@/data/expansions';
 import { MAIN_BOXES, isBoxUnlocked } from '@/data/boxes';
+import { clearCampFollowers } from '@/utils/campFollowers';
 import { HEROES } from '@/data/heroes';
 import { ENEMIES } from '@/data/enemies';
 import { OPPOSITE_ROLES, getRolesForExpansions } from '@/data/roles';
@@ -189,6 +190,7 @@ const TrackerSelect = () => {
     const validEnemies = selectedEnemies.filter((id) => validEnemyIds.has(id));
     const behaviors = selectedBehaviors.filter((behavior) => BEHAVIORS.includes(behavior));
 
+    clearCampFollowers();
     setTrackerData({
       heroes,
       roles,

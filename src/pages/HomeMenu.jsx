@@ -7,7 +7,8 @@ import { useInitRunes } from "@/context/initRunesContext";
 import { useGame } from "@/context/GameContext";
 import PageTransition from "@/components/PageTransition";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import { clearTrackState, isPlainObject, readJsonStorage } from "@/utils/storage";
+import { clearTrackState, isPlainObject, readJsonStorage, writeJsonStorage } from "@/utils/storage";
+import { clearCampFollowers } from "@/utils/campFollowers";
 import logo from "@/assets/Corebox_Logo-1536x864.avif";
 import logoApocalypse from "@/assets/home/logo-apocalypse-transparent.webp";
 import logoAwakenings from "@/assets/home/logo-awakenings-transparent.webp";
@@ -53,6 +54,11 @@ export default function HomeMenu() {
   const startNewGame = () => {
     // La configuración (héroes, roles, enemigos) se conserva; solo se reinicia el track.
     clearTrackState();
+    const trackerData = readJsonStorage('trackerData', {}, isPlainObject);
+    if (isPlainObject(trackerData) && trackerData.followers !== undefined) {
+      writeJsonStorage('trackerData', { ...trackerData, followers: [] });
+    }
+    clearCampFollowers();
     resetGameState();
     resetEnemySession();
     resetPlacedRunes();
