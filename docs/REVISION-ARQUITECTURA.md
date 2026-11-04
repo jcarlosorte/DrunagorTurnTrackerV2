@@ -1752,7 +1752,7 @@ E2E        58/58
 |---|---|---|
 | **Compañeros** | Compañeros y héroes de Daren se ocultan fuera de la caja Core | `CompanionPicker` |
 | **Seguidores** | Seis seguidores con dos estados, colocados en la posición de su rol | `followers`, `FollowerCard` |
-| **Track** | Los seguidores se apilan en su rol y permiten cambiar de estado | `TrackSlot`, `InitTracker` |
+| **Track** | Los seguidores se apilan en el **lado contrario** al de su rol y permiten cambiar de estado | `TrackSlot`, `InitTracker` |
 | **Datos** | Base de seguidores importada del Excel de referencia | `followers` |
 | **Pendiente** | Imágenes de los seguidores (se usa un marcador con la inicial) | `followers` |
 | **Pruebas** | 142 unitarios · 58 E2E | tests |

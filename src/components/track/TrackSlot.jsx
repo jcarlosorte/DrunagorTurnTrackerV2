@@ -66,13 +66,13 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
   const stackAbove = [
     ...withCompanions(heroesAbove),
     ...placedFollowers
-      .filter((follower) => follower.position === index && rolesOnTop.includes(follower.role))
+      .filter((follower) => follower.position === index && rolesOnBottom.includes(follower.role))
       .map((follower) => ({ ...follower, kind: 'follower' })),
   ];
   const stackBelow = [
     ...withCompanions(heroesBelow),
     ...placedFollowers
-      .filter((follower) => follower.position === index && rolesOnBottom.includes(follower.role))
+      .filter((follower) => follower.position === index && rolesOnTop.includes(follower.role))
       .map((follower) => ({ ...follower, kind: 'follower' })),
   ];
   const enemiesAbove = placedEnemies.filter((e) => e.enemy.position === index && e.enemy.runePosition === 'arriba');

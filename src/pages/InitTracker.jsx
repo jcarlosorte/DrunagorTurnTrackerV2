@@ -3135,8 +3135,9 @@ const InitTracker = () => {
     const heroesBelow = (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnBottom.includes(h.role));
     const companionsAbove = (trackerData.companions || []).filter((c) => heroesAbove.some((h) => h.id === c.heroId)).length;
     const companionsBelow = (trackerData.companions || []).filter((c) => heroesBelow.some((h) => h.id === c.heroId)).length;
-    const followersAbove = (trackerData.followers || []).filter((f) => f.position === i && rolesOnTop.includes(f.role)).length;
-    const followersBelow = (trackerData.followers || []).filter((f) => f.position === i && rolesOnBottom.includes(f.role)).length;
+    // Los seguidores se colocan en el lado contrario al de su rol.
+    const followersAbove = (trackerData.followers || []).filter((f) => f.position === i && rolesOnBottom.includes(f.role)).length;
+    const followersBelow = (trackerData.followers || []).filter((f) => f.position === i && rolesOnTop.includes(f.role)).length;
     const above =
       heroesAbove.length + companionsAbove + followersAbove +
       (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'arriba').length : 0) +
