@@ -1684,6 +1684,21 @@ Unit       140 tests
 E2E        58/58
 ```
 
+### 73.ª tanda — Portada: logos a la izquierda y fondo al borde superior
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Logos** | Conjunto a la izquierda y a la altura completa del panel, con el carrusel | `HomeMenu` |
+| **Fondo** | La imagen del Rey Redivivo se alinea al borde superior | `HomeMenu` |
+| **Pruebas** | 140 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       140 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

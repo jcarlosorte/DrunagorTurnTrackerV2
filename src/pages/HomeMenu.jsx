@@ -135,18 +135,17 @@ export default function HomeMenu() {
 
           <aside className="relative flex min-h-[18rem] items-end justify-center overflow-hidden rounded-2xl border border-emerald-500/20 bg-slate-950/60 sm:min-h-[22rem] lg:h-[24rem] lg:self-center">
             <div
-              className="absolute inset-0 z-0 bg-cover bg-center"
+              className="absolute inset-0 z-0 bg-cover bg-top"
               style={{ backgroundImage: `url(${reyRedivivo})` }}
               role="img"
               aria-label="Rey Redivivo"
             />
             <div
-              className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(2,6,23,0.95)_0%,rgba(2,6,23,0.15)_14%,rgba(2,6,23,0.15)_55%,rgba(2,6,23,0.94)_100%)]"
+              className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(2,6,23,0.35)_0%,rgba(2,6,23,0.12)_18%,rgba(2,6,23,0.18)_55%,rgba(2,6,23,0.94)_100%)]"
               aria-hidden="true"
             />
-            <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-8 bg-gradient-to-b from-slate-950 via-slate-950/80 to-transparent" aria-hidden="true" />
-            <div className="relative z-30 mb-4 flex w-full items-end justify-center px-3">
-              <div className="relative h-32 w-32 sm:h-40 sm:w-40">
+            <div className="absolute bottom-3 left-3 top-3 z-30 flex items-center">
+              <div className="relative h-full aspect-square">
                 {HOME_LOGOS.map((item, index) => {
                   const active = index === activeLogo;
                   return (
@@ -175,7 +174,7 @@ export default function HomeMenu() {
                       <img
                         src={item.src}
                         alt={item.alt}
-                        className="h-16 w-auto max-w-[7rem] object-contain drop-shadow-[0_4px_14px_rgba(0,0,0,0.95)] sm:h-20 sm:max-w-[8.5rem]"
+                        className="h-[70%] w-auto max-w-[85%] object-contain drop-shadow-[0_4px_14px_rgba(0,0,0,0.95)]"
                         loading="lazy"
                         decoding="async"
                       />
