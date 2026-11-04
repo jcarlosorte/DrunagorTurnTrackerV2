@@ -144,44 +144,34 @@ export default function HomeMenu() {
               className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(2,6,23,0.35)_0%,rgba(2,6,23,0.12)_18%,rgba(2,6,23,0.18)_55%,rgba(2,6,23,0.94)_100%)]"
               aria-hidden="true"
             />
-            <div className="absolute bottom-3 left-3 top-3 z-30 flex items-center">
-              <div className="relative h-full aspect-square">
-                {HOME_LOGOS.map((item, index) => {
-                  const active = index === activeLogo;
-                  return (
-                    <motion.div
-                      key={item.alt}
-                      className="absolute inset-0 flex items-center justify-center rounded-3xl p-3"
-                      style={{
-                        backgroundColor: `${item.tone}22`,
-                        boxShadow: active ? `0 0 38px ${item.tone}99` : 'none',
-                      }}
-                      animate={{
-                        opacity: active ? 1 : 0,
-                        scale: active ? [1, 1.05, 1] : 0.85,
-                      }}
+            <div className="pointer-events-none absolute inset-0 z-30">
+              {HOME_LOGOS.map((item, index) => {
+                const active = index === activeLogo;
+                return (
+                  <motion.div
+                    key={item.alt}
+                    className="absolute inset-0 flex items-center justify-start p-3"
+                    style={{
+                      background: `linear-gradient(135deg, ${item.tone}66 0%, ${item.tone}33 45%, transparent 78%)`,
+                    }}
+                    animate={{ opacity: active ? 1 : 0 }}
+                    transition={{ duration: active ? 0.6 : 0.5 }}
+                    aria-hidden={!active}
+                  >
+                    <motion.img
+                      src={item.src}
+                      alt={item.alt}
+                      className="h-[62%] w-auto max-w-[48%] object-contain drop-shadow-[0_4px_18px_rgba(0,0,0,0.95)]"
+                      loading="lazy"
+                      decoding="async"
+                      animate={{ scale: active ? [1, 1.05, 1] : 0.95 }}
                       transition={active
-                        ? {
-                            opacity: { duration: 0.5 },
-                            scale: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
-                          }
-                        : {
-                            opacity: { duration: 0.4 },
-                            scale: { duration: 0.4 },
-                          }}
-                      aria-hidden={!active}
-                    >
-                      <img
-                        src={item.src}
-                        alt={item.alt}
-                        className="h-[70%] w-auto max-w-[85%] object-contain drop-shadow-[0_4px_14px_rgba(0,0,0,0.95)]"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </motion.div>
-                  );
-                })}
-              </div>
+                        ? { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }
+                        : { duration: 0.4 }}
+                    />
+                  </motion.div>
+                );
+              })}
             </div>
           </aside>
         </div>
