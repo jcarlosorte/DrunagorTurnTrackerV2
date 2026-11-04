@@ -24,22 +24,28 @@ export default function FollowerCard({ entry, onChangeState, onRemove }) {
         type="button"
         onClick={() => onRemove?.(entry.uid)}
         aria-label={`${follower.name}: quitar`}
-        className="absolute right-1 top-1 z-10 flex h-5 w-5 items-center justify-center rounded bg-black/40 text-[0.6rem] font-bold text-white hover:bg-red-700"
+        className="absolute right-1 top-1 z-10 flex h-5 w-5 items-center justify-center rounded bg-black/50 text-[0.6rem] font-bold text-white hover:bg-red-700"
       >
         ✕
       </button>
 
-      <div className="flex items-center gap-1.5 border-b border-white/10 p-1 pr-6">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-950/60 text-base font-black text-white">
-          {follower.name.charAt(0)}
-        </span>
-        <div className="min-w-0">
-          <p className="truncate text-[0.62rem] font-black leading-tight">{follower.name}</p>
-          <p className="truncate text-[0.5rem] leading-tight text-slate-300">{follower.epithet}</p>
-        </div>
+      <div className="relative flex h-24 items-end justify-center overflow-hidden bg-slate-950/30">
+        {follower.image ? (
+          <img
+            src={follower.image}
+            alt={follower.name}
+            className="h-full w-full object-contain object-bottom drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)]"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <span className="pb-1 text-3xl font-black text-white/80">{follower.name.charAt(0)}</span>
+        )}
       </div>
 
       <div className="space-y-0.5 p-1">
+        <p className="truncate text-[0.62rem] font-black leading-tight">{follower.name}</p>
+        <p className="truncate text-[0.5rem] leading-tight text-slate-300">{follower.epithet}</p>
         <p className="truncate text-[0.5rem] font-bold uppercase tracking-wide text-slate-300">
           {rolesT[follower.role] || follower.role}
         </p>

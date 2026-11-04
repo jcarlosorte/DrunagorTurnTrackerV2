@@ -1754,7 +1754,7 @@ E2E        58/58
 | **Seguidores** | Seis seguidores con dos estados, colocados en la posición de su rol | `followers`, `FollowerCard` |
 | **Track** | Los seguidores se apilan en el **lado contrario** al de su rol y permiten cambiar de estado | `TrackSlot`, `InitTracker` |
 | **Datos** | Base de seguidores importada del Excel de referencia | `followers` |
-| **Pendiente** | Imágenes de los seguidores (se usa un marcador con la inicial) | `followers` |
+| **Imágenes** | Retratos de los seis seguidores, compartidos por ambos estados | `followers`, `FollowerCard` |
 | **Pruebas** | 142 unitarios · 58 E2E | tests |
 
 **Medición**
@@ -1769,6 +1769,20 @@ E2E        58/58
 | Cambio | Detalle | Archivos |
 |---|---|---|
 | **Compañeros** | Botón local «Ver otras cajas» en el selector de compañeros; no afecta al menú de juego | `CompanionPicker` |
+| **Pruebas** | 142 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       142 tests
+E2E        58/58
+```
+
+### 79.ª tanda — Retratos de los seguidores
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Seguidores** | Retratos de los seis seguidores, compartidos por ambos estados | `followers`, `FollowerCard` |
 | **Pruebas** | 142 unitarios · 58 E2E | tests |
 
 **Medición**

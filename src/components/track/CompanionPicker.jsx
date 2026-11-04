@@ -408,8 +408,18 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
                           }}
                           className="flex w-full items-center gap-2 p-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
                         >
-                          <span className="flex h-14 w-11 shrink-0 items-center justify-center rounded bg-gradient-to-br from-emerald-700/60 to-slate-900 text-lg font-black text-emerald-100">
-                            {follower.name.charAt(0)}
+                          <span className="relative flex h-14 w-11 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-950/60">
+                            {follower.image ? (
+                              <img
+                                src={follower.image}
+                                alt=""
+                                className="h-full w-full object-contain object-bottom"
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            ) : (
+                              <span className="text-lg font-black text-emerald-100">{follower.name.charAt(0)}</span>
+                            )}
                           </span>
                           <span className="min-w-0">
                             <span className="block truncate text-xs font-semibold text-slate-100">{follower.name}</span>
