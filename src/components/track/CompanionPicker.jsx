@@ -26,7 +26,7 @@ import useFocusTrap from '@/hooks/useFocusTrap';
  */
 export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
   const { trackerData, setTrackerData } = useTracker();
-  const { selectedExpansions, mainBox, previewOtherBoxes } = useExpansions();
+  const { selectedExpansions, mainBox, previewOtherBoxes, canPreviewOtherBoxes } = useExpansions();
   const { translations } = useLanguage();
   const t = translations.trackerInit || {};
   const heroesT = translations.heroes || {};
@@ -37,9 +37,10 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
   const [confirmReset, setConfirmReset] = useState(false);
   const [selectedFollowerId, setSelectedFollowerId] = useState(null);
   const [selectedFollowerState, setSelectedFollowerState] = useState('');
+  const [showAllBoxes, setShowAllBoxes] = useState(false);
 
-  const showCoreContent = mainBox === 'core' || previewOtherBoxes;
-  const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes;
+  const showCoreContent = mainBox === 'core' || previewOtherBoxes || showAllBoxes;
+  const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes || showAllBoxes;
 
   useFocusTrap(dialogRef, open);
 
@@ -49,6 +50,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
     setSelectedHeroId('');
     setSelectedFollowerId(null);
     setSelectedFollowerState('');
+    setShowAllBoxes(false);
   }, [open]);
 
   useEffect(() => {
@@ -333,9 +335,27 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
 
         <div className="flex-1 space-y-3 overflow-y-auto p-3">
           <section>
-            <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-              {t.companionsAvailable || 'Disponibles'} ({visibleAvailable.length})
-            </p>
+            <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+                {t.companionsAvailable || 'Disponibles'} ({visibleAvailable.length})
+              </p>
+              {canPreviewOtherBoxes && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllBoxes((value) => !value)}
+                  aria-pressed={showAllBoxes}
+                  className={`min-h-7 shrink-0 rounded-lg border px-2 text-[0.65rem] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 ${
+                    showAllBoxes
+                      ? 'border-amber-400 bg-amber-700 text-white'
+                      : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-amber-500'
+                  }`}
+                >
+                  {showAllBoxes
+                    ? (t.hideOtherBoxes || 'Ocultar otras cajas')
+                    : (t.showOtherBoxes || 'Ver otras cajas')}
+                </button>
+              )}
+            </div>
             {visibleAvailable.length === 0 ? (
               <p className="rounded-lg border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-400">
                 {allCompanions.length === 0
