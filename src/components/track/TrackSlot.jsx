@@ -105,6 +105,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
         (type === 'enemy' && item.enemy.uuid === currentTurnEntity.uuid) ||
         (type === 'rune' && item.uuid === currentTurnEntity.uuid) ||
         (type === 'hero' && isCompanion && currentTurnEntity.type === 'companion' && item.uid === currentTurnEntity.uid) ||
+        (type === 'hero' && isFollower && currentTurnEntity.type === 'follower' && item.uid === currentTurnEntity.uid) ||
         (type === 'hero' && !isCompanion && !isFollower && currentTurnEntity.type === 'hero' && item.id === currentTurnEntity.id)
       );
       const isEntityFlipping = type === 'enemy' && flippedCards.includes(item.enemy.uuid);

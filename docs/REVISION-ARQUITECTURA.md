@@ -1901,6 +1901,20 @@ Unit       147 tests
 E2E        58/58
 ```
 
+### 87.ª tanda — Marcador de turno en seguidores
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Turno** | El marcador flotante aparece sobre el seguidor cuando es su turno | `TrackSlot` |
+| **Pruebas** | 147 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       147 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
