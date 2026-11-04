@@ -141,8 +141,8 @@ export default function HomeMenu() {
               {HOME_LOGOS.map((item, index) => (
                 <motion.div
                   key={item.alt}
-                  className="flex h-20 w-20 items-center justify-center rounded-2xl border p-2 shadow-2xl sm:h-24 sm:w-24"
-                  style={{ borderColor: `${item.tone}99`, backgroundColor: `${item.tone}22` }}
+                  className="flex h-24 min-w-0 flex-1 items-center justify-center rounded-2xl p-2 shadow-2xl"
+                  style={{ backgroundColor: `${item.tone}22` }}
                   animate={{
                     scale: [1, 1.06, 1],
                     boxShadow: [
@@ -156,7 +156,7 @@ export default function HomeMenu() {
                   <img
                     src={item.src}
                     alt={item.alt}
-                    className="h-10 w-auto max-w-[4rem] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:h-12 sm:max-w-[5rem]"
+                    className="h-12 w-auto max-w-[5rem] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:h-14 sm:max-w-[6rem]"
                     loading="eager"
                   />
                 </motion.div>

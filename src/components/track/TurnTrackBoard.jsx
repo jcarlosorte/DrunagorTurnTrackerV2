@@ -438,7 +438,7 @@ export default function TurnTrackBoard({
             <div
               role="toolbar"
               aria-label={labels.toolbar || 'Controles de turno'}
-              className="fixed inset-x-0 top-16 z-40 border-b border-slate-700/70 bg-slate-900/95 px-2 py-2 shadow-lg backdrop-blur-xl"
+              className="fixed inset-x-0 top-16 z-30 border-b border-slate-700/70 bg-slate-900/95 px-2 py-2 shadow-lg backdrop-blur-xl"
             >
               <div className="mx-auto max-w-[1600px]">{toolbar}</div>
             </div>,

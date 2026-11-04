@@ -338,8 +338,8 @@
     "lider": "Leader",
     "agresor": "Striker",
     "apoyo": "Support",
-    "asistente": "Attendant",
-    "lanza_dados": "Dice Roller"
+    "asistente": "Attendant (Support)",
+    "lanza_dados": "Dice Roller (Leader)"
   },
   "trackerSelect": {
     "title": "Tracker setup",

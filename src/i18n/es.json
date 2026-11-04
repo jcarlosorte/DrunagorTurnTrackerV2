@@ -338,8 +338,8 @@
     "lider": "Líder",
     "agresor": "Agresor",
     "apoyo": "Apoyo",
-    "asistente": "Asistente",
-    "lanza_dados": "Lanza Dados"
+    "asistente": "Asistente (Apoyo)",
+    "lanza_dados": "Lanza Dados (Líder)"
   },
   "trackerSelect": {
     "title": "Configuración",

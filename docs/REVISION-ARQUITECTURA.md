@@ -1621,6 +1621,22 @@ Unit       138 tests
 E2E        58/58
 ```
 
+### 69.ª tanda — Roles, logos y capas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Roles** | Asistente (Apoyo) y Lanza Dados (Líder) indican a quién sustituyen | i18n |
+| **Logos** | Ocupan todo el ancho disponible, sin borde y solo con el tinte translúcido | `HomeMenu` |
+| **Capas** | El menú de juego y las ventanas de enemigos y runas quedan por encima de la barra del track | `TopMenu`, `TurnTrackBoard`, `PageTransition` |
+| **Pruebas** | 138 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       138 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
