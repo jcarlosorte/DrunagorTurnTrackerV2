@@ -4,6 +4,7 @@ import CommanderCard from '@/components/CommanderCard';
 import EnemyCard from '@/components/track/EnemyCard';
 import CharacterCard from '@/components/track/CharacterCard';
 import CompanionTrackCard from '@/components/track/CompanionTrackCard';
+import FollowerCard from '@/components/track/FollowerCard';
 import { cardDistance, compactSlotHeight } from '@/components/track/trackLayout';
 
 /**
@@ -42,6 +43,9 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     setSelectedHeroId,
     companions = [],
     onOpenCompanion,
+    placedFollowers = [],
+    updateFollower,
+    removeFollower,
     RuneCard,
   } = deps;
 
@@ -59,8 +63,18 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       .sort((a, b) => (a.order || 0) - (b.order || 0))
       .map((entry) => ({ ...entry, kind: 'companion' })),
   ]);
-  const stackAbove = withCompanions(heroesAbove);
-  const stackBelow = withCompanions(heroesBelow);
+  const stackAbove = [
+    ...withCompanions(heroesAbove),
+    ...placedFollowers
+      .filter((follower) => follower.position === index && rolesOnTop.includes(follower.role))
+      .map((follower) => ({ ...follower, kind: 'follower' })),
+  ];
+  const stackBelow = [
+    ...withCompanions(heroesBelow),
+    ...placedFollowers
+      .filter((follower) => follower.position === index && rolesOnBottom.includes(follower.role))
+      .map((follower) => ({ ...follower, kind: 'follower' })),
+  ];
   const enemiesAbove = placedEnemies.filter((e) => e.enemy.position === index && e.enemy.runePosition === 'arriba');
   const enemiesBelow = placedEnemies.filter((e) => e.enemy.position === index && e.enemy.runePosition === 'abajo');
   const runesAbove = placedRunes.filter((r) => r.rune.colorIndex === index && r.rune.posicion === 'arriba');
@@ -87,17 +101,18 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       const zIndex = count - i;
 
       const isCompanion = type === 'hero' && item.kind === 'companion';
+      const isFollower = type === 'hero' && item.kind === 'follower';
       const isCurrentTurn = currentTurnEntity && (
         (type === 'enemy' && item.enemy.uuid === currentTurnEntity.uuid) ||
         (type === 'rune' && item.uuid === currentTurnEntity.uuid) ||
         (type === 'hero' && isCompanion && currentTurnEntity.type === 'companion' && item.uid === currentTurnEntity.uid) ||
-        (type === 'hero' && !isCompanion && currentTurnEntity.type === 'hero' && item.id === currentTurnEntity.id)
+        (type === 'hero' && !isCompanion && !isFollower && currentTurnEntity.type === 'hero' && item.id === currentTurnEntity.id)
       );
       const isEntityFlipping = type === 'enemy' && flippedCards.includes(item.enemy.uuid);
 
       return (
         <div
-          key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : isCompanion ? item.uid : `${type}-${item.id}`}
+          key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : isFollower ? item.uid : isCompanion ? item.uid : `${type}-${item.id}`}
           className="absolute left-1/2 w-[108px] max-w-full transition-transform duration-300"
           style={{
             ...(isTop
@@ -114,7 +129,13 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
                 <GiWingedSword className="animate-bounce text-white" size={40} />
               </div>
             )}
-            {isCompanion ? (
+            {isFollower ? (
+              <FollowerCard
+                entry={item}
+                onChangeState={updateFollower}
+                onRemove={removeFollower}
+              />
+            ) : isCompanion ? (
               <CompanionTrackCard
                 entry={item}
                 onOpen={() => onOpenCompanion?.(item.uid)}

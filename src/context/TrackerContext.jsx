@@ -9,6 +9,7 @@ const defaultTrackerData = {
   enemies: [],
   behaviors: ["estandar", "alternativo", "complejo"],
   companions: [],
+  followers: [],
 };
 
 const isStringArray = (value) => Array.isArray(value) && value.every((item) => typeof item === 'string');
@@ -18,7 +19,8 @@ const isTrackerData = (value) => (
   isPlainObject(value.roles) &&
   isStringArray(value.enemies) &&
   isStringArray(value.behaviors) &&
-  (value.companions === undefined || Array.isArray(value.companions))
+  (value.companions === undefined || Array.isArray(value.companions)) &&
+  (value.followers === undefined || Array.isArray(value.followers))
 );
 
 export const TrackerProvider = ({ children }) => {

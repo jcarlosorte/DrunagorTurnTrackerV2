@@ -1746,6 +1746,24 @@ Unit       140 tests
 E2E        58/58
 ```
 
+### 77.ª tanda — Compañeros de Core y seguidores de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Compañeros** | Compañeros y héroes de Daren se ocultan fuera de la caja Core | `CompanionPicker` |
+| **Seguidores** | Seis seguidores con dos estados, colocados en la posición de su rol | `followers`, `FollowerCard` |
+| **Track** | Los seguidores se apilan en su rol y permiten cambiar de estado | `TrackSlot`, `InitTracker` |
+| **Datos** | Base de seguidores importada del Excel de referencia | `followers` |
+| **Pendiente** | Imágenes de los seguidores (se usa un marcador con la inicial) | `followers` |
+| **Pruebas** | 142 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       142 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

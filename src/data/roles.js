@@ -63,6 +63,22 @@ export function getRolesForExpansions(expansionIds = []) {
 }
 
 /** Roles que comparten posición y se excluyen entre sí. */
+export const ROLE_POSITIONS = {
+  defensor: 0,
+  maton: 0,
+  apoyo: 2,
+  asistente: 2,
+  sanador: 2,
+  lider: 4,
+  lanza_dados: 4,
+  guardian: 4,
+  agresor: 6,
+  asesino: 6,
+  controlador: 8,
+  embaucador: 8,
+};
+
+/** Roles que comparten posición y se excluyen entre sí. */
 export const OPPOSITE_ROLES = {
   apoyo: ['asistente', 'sanador'],
   asistente: ['apoyo', 'sanador'],

@@ -3112,6 +3112,22 @@ const InitTracker = () => {
   // Altura única para TODO el tablero: así todas las etiquetas comparten la misma
   // línea central aunque una posición acumule muchas cartas.
   // Se pasan NÚMEROS DE CARTAS (no alturas): boardSlotHeightFrom aplica stackHeight.
+  const updateFollower = (uid, stateId) => {
+    setTrackerData((prev) => ({
+      ...prev,
+      followers: (prev.followers || []).map((entry) => (
+        entry.uid === uid ? { ...entry, stateId } : entry
+      )),
+    }));
+  };
+
+  const removeFollower = (uid) => {
+    setTrackerData((prev) => ({
+      ...prev,
+      followers: (prev.followers || []).filter((entry) => entry.uid !== uid),
+    }));
+  };
+
   const countsPerSlot = Array.from({ length: 11 }, (_, i) => {
     const isRuneSlot = Object.values(runesColorMap).includes(i);
     const isRuneText = i === 10;
@@ -3119,12 +3135,14 @@ const InitTracker = () => {
     const heroesBelow = (trackerData.placedHeroes || []).filter((h) => h.position === i && rolesOnBottom.includes(h.role));
     const companionsAbove = (trackerData.companions || []).filter((c) => heroesAbove.some((h) => h.id === c.heroId)).length;
     const companionsBelow = (trackerData.companions || []).filter((c) => heroesBelow.some((h) => h.id === c.heroId)).length;
+    const followersAbove = (trackerData.followers || []).filter((f) => f.position === i && rolesOnTop.includes(f.role)).length;
+    const followersBelow = (trackerData.followers || []).filter((f) => f.position === i && rolesOnBottom.includes(f.role)).length;
     const above =
-      heroesAbove.length + companionsAbove +
+      heroesAbove.length + companionsAbove + followersAbove +
       (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'arriba').length : 0) +
       (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'arriba').length : 0);
     const below =
-      heroesBelow.length + companionsBelow +
+      heroesBelow.length + companionsBelow + followersBelow +
       (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'abajo').length : 0) +
       (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'abajo').length : 0);
     return Math.max(above, below);
@@ -3157,6 +3175,9 @@ const InitTracker = () => {
     placedHeroes: trackerData.placedHeroes || [],
     placedEnemies,
     placedRunes,
+    placedFollowers: trackerData.followers || [],
+    updateFollower,
+    removeFollower,
     rolesOnTop,
     rolesOnBottom,
     currentTurnEntity,
