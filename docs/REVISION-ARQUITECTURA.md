@@ -1670,6 +1670,20 @@ Unit       140 tests
 E2E        58/58
 ```
 
+### 72.ª tanda — Logos de la portada en carrusel
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Logos** | Los tres logos se superponen y aparece uno cada 3,2 s, más grandes y con su tono | `HomeMenu` |
+| **Pruebas** | 140 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       140 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { motion } from 'framer-motion';
 import { useLanguage } from "@/context/LanguageContext";
@@ -41,6 +41,14 @@ export default function HomeMenu() {
   }, []);
 
   const [confirmNewGame, setConfirmNewGame] = useState(false);
+  const [activeLogo, setActiveLogo] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveLogo((index) => (index + 1) % HOME_LOGOS.length);
+    }, 3200);
+    return () => clearInterval(timer);
+  }, []);
 
   const startNewGame = () => {
     // La configuración (héroes, roles, enemigos) se conserva; solo se reinicia el track.
@@ -137,30 +145,44 @@ export default function HomeMenu() {
               aria-hidden="true"
             />
             <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-8 bg-gradient-to-b from-slate-950 via-slate-950/80 to-transparent" aria-hidden="true" />
-            <div className="relative z-30 flex w-full items-end justify-center gap-3 px-3 pb-4 sm:gap-4">
-              {HOME_LOGOS.map((item, index) => (
-                <motion.div
-                  key={item.alt}
-                  className="flex h-24 min-w-0 flex-1 items-center justify-center rounded-2xl p-2 shadow-2xl"
-                  style={{ backgroundColor: `${item.tone}22` }}
-                  animate={{
-                    scale: [1, 1.06, 1],
-                    boxShadow: [
-                      `0 0 10px ${item.tone}44`,
-                      `0 0 24px ${item.tone}aa`,
-                      `0 0 10px ${item.tone}44`,
-                    ],
-                  }}
-                  transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: index * 0.35 }}
-                >
-                  <img
-                    src={item.src}
-                    alt={item.alt}
-                    className="h-12 w-auto max-w-[5rem] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:h-14 sm:max-w-[6rem]"
-                    loading="eager"
-                  />
-                </motion.div>
-              ))}
+            <div className="relative z-30 mb-4 flex w-full items-end justify-center px-3">
+              <div className="relative h-32 w-32 sm:h-40 sm:w-40">
+                {HOME_LOGOS.map((item, index) => {
+                  const active = index === activeLogo;
+                  return (
+                    <motion.div
+                      key={item.alt}
+                      className="absolute inset-0 flex items-center justify-center rounded-3xl p-3"
+                      style={{
+                        backgroundColor: `${item.tone}22`,
+                        boxShadow: active ? `0 0 38px ${item.tone}99` : 'none',
+                      }}
+                      animate={{
+                        opacity: active ? 1 : 0,
+                        scale: active ? [1, 1.05, 1] : 0.85,
+                      }}
+                      transition={active
+                        ? {
+                            opacity: { duration: 0.5 },
+                            scale: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
+                          }
+                        : {
+                            opacity: { duration: 0.4 },
+                            scale: { duration: 0.4 },
+                          }}
+                      aria-hidden={!active}
+                    >
+                      <img
+                        src={item.src}
+                        alt={item.alt}
+                        className="h-16 w-auto max-w-[7rem] object-contain drop-shadow-[0_4px_14px_rgba(0,0,0,0.95)] sm:h-20 sm:max-w-[8.5rem]"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
           </aside>
         </div>
