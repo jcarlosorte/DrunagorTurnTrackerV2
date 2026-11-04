@@ -204,17 +204,17 @@ export const EXPANSIONS = [
   {
     id: "apocalypse_awakenings",
     imagen: awakeningsImg,
-    heroes: ["vacrem", "andreas", "nyx", "catharina"],
+    heroes: ["vacrem", "andreas", "nyx", "catharina", "vacrem_guerrero", "andreas_clerigo", "nyx_asesino", "catharina_maga"],
     enemies: [
       "soul_harvester", "gorgon_hexer", "gremlin_horde", "gorgoness_witch",
       "grim_doctor", "fell_asteris", "nagian_hunter", "hellspawn_brute", "night_stalker"
     ],
     companions: [],
     pets: [],
-    roles: [],
-    dungeonRoles: [],
+    roles: ["sanador", "maton", "asesino", "embaucador", "guardian"],
+    dungeonRoles: ["sanador", "maton", "asesino", "embaucador", "guardian"],
     language: { en: '', es: '' },
-    active: "off"
+    active: "on"
   },
   {
     id: "apocalypse_sisters",

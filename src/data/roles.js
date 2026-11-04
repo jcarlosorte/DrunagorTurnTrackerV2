@@ -28,6 +28,31 @@ export const ROLES = [
     id: 'lanza_dados',
     expansionId: 'dicetower',
   },
+  {
+    id: 'sanador',
+    expansionId: 'apocalypse_awakenings',
+    replaces: 'apoyo',
+  },
+  {
+    id: 'maton',
+    expansionId: 'apocalypse_awakenings',
+    replaces: 'defensor',
+  },
+  {
+    id: 'asesino',
+    expansionId: 'apocalypse_awakenings',
+    replaces: 'agresor',
+  },
+  {
+    id: 'embaucador',
+    expansionId: 'apocalypse_awakenings',
+    replaces: 'controlador',
+  },
+  {
+    id: 'guardian',
+    expansionId: 'apocalypse_awakenings',
+    replaces: 'lider',
+  },
 ];
 
 /** Roles disponibles según las expansiones activas. */
@@ -39,9 +64,17 @@ export function getRolesForExpansions(expansionIds = []) {
 
 /** Roles que comparten posición y se excluyen entre sí. */
 export const OPPOSITE_ROLES = {
-  asistente: 'apoyo',
-  apoyo: 'asistente',
-  lanza_dados: 'lider',
-  lider: 'lanza_dados',
+  apoyo: ['asistente', 'sanador'],
+  asistente: ['apoyo', 'sanador'],
+  sanador: ['apoyo', 'asistente'],
+  defensor: ['maton'],
+  maton: ['defensor'],
+  agresor: ['asesino'],
+  asesino: ['agresor'],
+  controlador: ['embaucador'],
+  embaucador: ['controlador'],
+  lider: ['lanza_dados', 'guardian'],
+  lanza_dados: ['lider', 'guardian'],
+  guardian: ['lider', 'lanza_dados'],
 };
 

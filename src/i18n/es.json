@@ -139,6 +139,10 @@
     "andreas": "Andreas",
     "nyx": "Nyx",
     "catharina": "Catharina",
+    "andreas_clerigo": "Andreas",
+    "catharina_maga": "Catharina",
+    "nyx_asesino": "Nyx",
+    "vacrem_guerrero": "Vacrem",
     "profession": {
       "Maga": "Maga",
       "Mago": "Mago",
@@ -165,7 +169,7 @@
       "Druida": "Druida",
       "Necromante": "Nigromante",
       "Guerrero_Sombrio": "Guerrero Sombrío",
-      "Adalid": "Adalid",
+      "Adalid": "Señor de la Guerra",
       "Monje": "Monje"
     },
     "lifeTitle": "Vida",
@@ -346,7 +350,12 @@
     "agresor": "Agresor",
     "apoyo": "Apoyo",
     "asistente": "Asistente (Apoyo)",
-    "lanza_dados": "Lanza Dados (Líder)"
+    "lanza_dados": "Lanza Dados (Líder)",
+    "sanador": "Sanador (Apoyo)",
+    "maton": "Matón (Defensor)",
+    "asesino": "Asesino (Agresor)",
+    "embaucador": "Embaucador (Controlador)",
+    "guardian": "Guardián (Líder)"
   },
   "trackerSelect": {
     "title": "Configuración",

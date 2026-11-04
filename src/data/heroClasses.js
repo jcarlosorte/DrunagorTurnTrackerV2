@@ -57,7 +57,7 @@ export const HERO_CLASSES = {
   necromante: classEntry('necromante', 'Nigromante', 'Necromancer'),
   chaman: classEntry('chaman', 'Chamán', 'Shaman'),
   mago_espadachin: classEntry('mago_espadachin', 'Mago de la Espada', 'Swordmage'),
-  adalid: classEntry('adalid', 'Adalid', 'Champion'),
+  adalid: classEntry('adalid', 'Señor de la Guerra', 'Warlord'),
 };
 
 const PROFESSION_TO_CLASS = {

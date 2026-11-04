@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { MAIN_BOXES, getMainBox, isBoxUnlocked } from '@/data/boxes';
 
 describe('cajas principales', () => {
-  it('solo la caja core está desbloqueada por ahora', () => {
+  it('core y Despertar están desbloqueadas; Apocalipsis todavía no', () => {
     expect(isBoxUnlocked(getMainBox('core'))).toBe(true);
-    expect(isBoxUnlocked(getMainBox('awakenings'))).toBe(false);
+    expect(isBoxUnlocked(getMainBox('awakenings'))).toBe(true);
     expect(isBoxUnlocked(getMainBox('apocalypse'))).toBe(false);
   });
 

@@ -1713,6 +1713,22 @@ Unit       140 tests
 E2E        58/58
 ```
 
+### 75.ª tanda — Caja Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Roles** | Sanador, Matón, Asesino, Embaucador y Guardián con sustituto y logo | `roles`, `Tracker` |
+| **Héroes** | Andreas, Catharina, Nyx y Vacrem con sus dos clases y cubos | `heroes`, `heroCubes` |
+| **Caja** | Despertar desbloqueada; al elegirla se activa su expansión | `boxes`, `ExpansionContext` |
+| **Pruebas** | 140 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       140 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

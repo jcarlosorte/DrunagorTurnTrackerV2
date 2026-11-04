@@ -94,6 +94,14 @@ const HERO_CUBES = {
   willow: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
   mordred: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
   gramosh: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  vacrem: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  vacrem_guerrero: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  andreas: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  andreas_clerigo: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  nyx: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  nyx_asesino: { amarillo: 2, rojo: 1, verde: 1, azul: 1 },
+  catharina: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
+  catharina_maga: { amarillo: 1, rojo: 2, verde: 1, azul: 1 },
 };
 
 /**

@@ -38,7 +38,11 @@ export const ExpansionProvider = ({ children }) => {
 
   const setMainBox = (id) => {
     const box = getMainBox(id);
-    if (box && isBoxUnlocked(box)) setMainBoxState(box.id);
+    if (!box || !isBoxUnlocked(box)) return;
+    setMainBoxState(box.id);
+    setSelectedExpansions((prev) => (
+      prev.includes(box.expansionId) ? prev : [...prev, box.expansionId]
+    ));
   };
 
   const togglePreview = () => setPreviewOtherBoxes((value) => !value);

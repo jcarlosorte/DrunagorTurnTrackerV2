@@ -73,12 +73,17 @@ import { boardSlotHeightFrom } from '@/components/track/trackLayout';
 
 const rolesPositionMap = {
   defensor: 0,
+  maton: 0,
   apoyo: 2,
   asistente: 2,
+  sanador: 2,
   lider: 4,
   lanza_dados: 4,
+  guardian: 4,
   agresor: 6,
-  controlador: 8
+  asesino: 6,
+  controlador: 8,
+  embaucador: 8
 };
 
 const runesColorMap = {
@@ -3099,8 +3104,8 @@ const InitTracker = () => {
     });
   };
 
-  const rolesOnTop = ['defensor', 'lider', 'lanza_dados', 'controlador'];
-  const rolesOnBottom = ['apoyo', 'asistente', 'agresor'];
+  const rolesOnTop = ['defensor', 'maton', 'lider', 'lanza_dados', 'guardian', 'controlador', 'embaucador'];
+  const rolesOnBottom = ['apoyo', 'asistente', 'sanador', 'agresor', 'asesino'];
 
   // Alturas de carta y separación desde la barra central (ver trackLayout.js).
 

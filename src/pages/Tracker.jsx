@@ -9,6 +9,7 @@ import { COLORS } from '@/data/color';
 import { getHeroClassGroups } from '@/data/heroClasses';
 import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
+import awakeningsLogo from '@/assets/home/logo-awakenings-transparent.webp';
 import { useTracker } from '@/context/TrackerContext';
 import PageTransition from "@/components/PageTransition";
 import HeroPortrait from "@/components/HeroPortrait";
@@ -101,11 +102,11 @@ const TrackerSelect = () => {
       const next = { ...prev };
       if (roleId) next[heroId] = roleId;
       else delete next[heroId];
-      // Asistente y Apoyo comparten posición: al elegir uno se libera el otro.
-      const opposite = OPPOSITE_ROLES[roleId];
-      if (opposite) {
+      // Los roles que comparten posición se liberan entre sí.
+      const opposites = OPPOSITE_ROLES[roleId] || [];
+      if (opposites.length > 0) {
         Object.keys(next).forEach((id) => {
-          if (next[id] === opposite) delete next[id];
+          if (opposites.includes(next[id])) delete next[id];
         });
       }
       return next;
@@ -520,6 +521,7 @@ const TrackerSelect = () => {
               <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {selectedHeroObjects.map((hero) => {
                   const usedRoles = Object.values(heroRoles).filter((id) => id !== heroRoles[hero.id]);
+                  const selectedRole = availableRoles.find((role) => role.id === heroRoles[hero.id]);
                   return (
                     <li key={hero.id} className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-950 p-2">
                       <HeroPortrait
@@ -530,21 +532,28 @@ const TrackerSelect = () => {
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-bold text-slate-100">{getHeroName(hero.id)}</p>
                         <label htmlFor={`role-${hero.id}`} className="sr-only">{`${t.chooseRole || 'Rol'} — ${getHeroName(hero.id)}`}</label>
-                        <select
-                          id={`role-${hero.id}`}
-                          value={heroRoles[hero.id] || ''}
-                          onChange={(event) => handleRoleSelect(hero.id, event.target.value)}
-                          className={`mt-1 min-h-11 w-full rounded-lg border bg-slate-900 px-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
-                            heroRoles[hero.id] ? 'border-emerald-600' : 'border-amber-600'
-                          }`}
-                        >
-                          <option value="">{t.chooseRole || 'Elegir rol'}</option>
-                          {availableRoles
-                            .filter((role) => !usedRoles.includes(role.id) || role.id === heroRoles[hero.id])
-                            .map((role) => (
-                              <option key={role.id} value={role.id}>{getRoleName(role.id)}</option>
-                            ))}
-                        </select>
+                        <div className="mt-1 flex items-center gap-2">
+                          <select
+                            id={`role-${hero.id}`}
+                            value={heroRoles[hero.id] || ''}
+                            onChange={(event) => handleRoleSelect(hero.id, event.target.value)}
+                            className={`min-h-11 w-full rounded-lg border bg-slate-900 px-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                              heroRoles[hero.id] ? 'border-emerald-600' : 'border-amber-600'
+                            }`}
+                          >
+                            <option value="">{t.chooseRole || 'Elegir rol'}</option>
+                            {availableRoles
+                              .filter((role) => !usedRoles.includes(role.id) || role.id === heroRoles[hero.id])
+                              .map((role) => (
+                                <option key={role.id} value={role.id}>
+                                  {getRoleName(role.id)}{role.expansionId === 'apocalypse_awakenings' ? ' · Despertar' : ''}
+                                </option>
+                              ))}
+                          </select>
+                          {selectedRole?.expansionId === 'apocalypse_awakenings' && (
+                            <img src={awakeningsLogo} alt="Despertar" className="h-6 w-auto shrink-0" />
+                          )}
+                        </div>
                       </div>
                     </li>
                   );

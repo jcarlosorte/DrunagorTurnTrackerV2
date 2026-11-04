@@ -139,6 +139,10 @@
     "andreas": "Andreas",
     "nyx": "Nyx",
     "catharina": "Catharina",
+    "andreas_clerigo": "Andreas",
+    "catharina_maga": "Catharina",
+    "nyx_asesino": "Nyx",
+    "vacrem_guerrero": "Vacrem",
     "profession": {
       "Maga": "Mage",
       "Mago": "Mage",
@@ -346,7 +350,12 @@
     "agresor": "Striker",
     "apoyo": "Support",
     "asistente": "Attendant (Support)",
-    "lanza_dados": "Dice Roller (Leader)"
+    "lanza_dados": "Dice Roller (Leader)",
+    "sanador": "Healer (Support)",
+    "maton": "Thug (Defender)",
+    "asesino": "Assassin (Striker)",
+    "embaucador": "Deceiver (Controller)",
+    "guardian": "Guardian (Leader)"
   },
   "trackerSelect": {
     "title": "Tracker setup",

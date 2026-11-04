@@ -30,10 +30,14 @@ describe('getRolesForExpansions', () => {
     expect(roles).toContain('lanza_dados');
   });
 
-  it('Asistente/Apoyo y Lanza Dados/Líder se excluyen entre sí', () => {
-    expect(OPPOSITE_ROLES.asistente).toBe('apoyo');
-    expect(OPPOSITE_ROLES.apoyo).toBe('asistente');
-    expect(OPPOSITE_ROLES.lanza_dados).toBe('lider');
-    expect(OPPOSITE_ROLES.lider).toBe('lanza_dados');
+  it('los roles de la misma posición se excluyen entre sí', () => {
+    expect(OPPOSITE_ROLES.asistente).toEqual(['apoyo', 'sanador']);
+    expect(OPPOSITE_ROLES.apoyo).toEqual(['asistente', 'sanador']);
+    expect(OPPOSITE_ROLES.sanador).toEqual(['apoyo', 'asistente']);
+    expect(OPPOSITE_ROLES.lanza_dados).toEqual(['lider', 'guardian']);
+    expect(OPPOSITE_ROLES.lider).toEqual(['lanza_dados', 'guardian']);
+    expect(OPPOSITE_ROLES.maton).toEqual(['defensor']);
+    expect(OPPOSITE_ROLES.asesino).toEqual(['agresor']);
+    expect(OPPOSITE_ROLES.embaucador).toEqual(['controlador']);
   });
 });
