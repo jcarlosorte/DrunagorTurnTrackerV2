@@ -10,6 +10,7 @@ import {
   getCompanionGroup,
   getCompanionImage,
   getCompanionsForExpansions,
+  getRandomCompanionBackground,
 } from '@/data/companions';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import { getHeroClassId } from '@/data/heroClasses';
@@ -135,6 +136,10 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
       role: selectedFollower.role,
       position: ROLE_POSITIONS[selectedFollower.role] ?? 0,
       stateId: state.id,
+      vida: state.vida,
+      vidaMax: state.vida,
+      estadosAlterados: [],
+      background: getRandomCompanionBackground(),
       image: null,
     };
     setTrackerData((prev) => ({ ...prev, followers: [...(prev.followers || []), entry] }));

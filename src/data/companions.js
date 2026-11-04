@@ -399,6 +399,11 @@ export function getCompanionBackground(id) {
   return INTERACTION_BACKGROUNDS[(index >= 0 ? index : 0) % INTERACTION_BACKGROUNDS.length];
 }
 
+/** Fondo aleatorio del catálogo de interacciones (para los seguidores). */
+export function getRandomCompanionBackground() {
+  return INTERACTION_BACKGROUNDS[Math.floor(Math.random() * INTERACTION_BACKGROUNDS.length)];
+}
+
 /** Criaturas disponibles según las expansiones activas. */
 export function getCompanionsForExpansions(expansionIds = []) {
   if (!Array.isArray(expansionIds) || expansionIds.length === 0) return [];

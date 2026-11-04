@@ -1807,6 +1807,23 @@ Unit       142 tests
 E2E        58/58
 ```
 
+### 81.ª tanda — Perfiles y ficha completa de seguidores
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Perfiles** | Las versiones de los seguidores pasan a llamarse perfil | `followers`, `CompanionPicker` |
+| **Track** | Tarjeta rectangular con fondo aleatorio, nombre con color y barra de vida; sin rol | `FollowerCard` |
+| **Ficha** | Vida, estados alterados, ataque con icono y capacidades con descripciones | `FollowerModal`, `followerAbilities` |
+| **2.0** | Ataque doble en verde como capacidad de las reglas 2.0 | `followerAbilities` |
+| **Pruebas** | 142 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       142 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
