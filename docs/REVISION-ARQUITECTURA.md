@@ -1660,7 +1660,7 @@ E2E        58/58
 | **Cartas de runa** | Fondo de bandera por tipo, título y acción arriba y cara en la banderola | `RuneCard`, assets |
 | **Vista ampliada** | Componente fuera de `InitTracker` para que el modal no se cierre al iniciar los turnos | `RuneCard` |
 | **Cajas** | Paso previo en Configuración con Core, Despertar y Apocalipsis; solo las desbloqueadas | `boxes`, `ExpansionContext`, `Config` |
-| **Contenido** | Core: Asalto, Acecho, Monstruo Huésped, Invadidos y Defensa; previsualización si hay otra caja activa | `TopMenu` |
+| **Contenido** | Core: Asalto, Acecho, Monstruo Huésped, Invadidos, Defensa, Pila de runas y Control de áreas; previsualización si hay otra caja activa | `TopMenu` |
 | **Pruebas** | 2 unitarias de cajas (140 en total) | tests |
 
 **Medición**

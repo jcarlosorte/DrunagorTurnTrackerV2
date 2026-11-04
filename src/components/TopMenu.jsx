@@ -1048,6 +1048,7 @@ const TopMenu = ({
                 </button>
               </div>
 
+              {showCoreContent && (
               <section aria-labelledby="nodes-section" className="track-surface-raised p-2.5 shadow-md">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
@@ -1057,6 +1058,7 @@ const TopMenu = ({
                 </div>
                 <ScenarioPanels />
               </section>
+              )}
             </div>
           </motion.div>
         )}
