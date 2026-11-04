@@ -1,72 +1,70 @@
 import { useLanguage } from '@/context/LanguageContext';
 import { getFollower, getFollowerState } from '@/data/followers';
 
-const ROLE_TONES = {
-  lider: 'border-amber-500/60 from-amber-900/50',
-  defensor: 'border-sky-500/60 from-sky-900/50',
-  apoyo: 'border-emerald-500/60 from-emerald-900/50',
-  agresor: 'border-rose-500/60 from-rose-900/50',
-  controlador: 'border-violet-500/60 from-violet-900/50',
-};
-
-export default function FollowerCard({ entry, onChangeState, onRemove }) {
+/**
+ * Tarjeta pequeña del seguidor en el track: retrato sobre su fondo y nombre.
+ * La ficha ampliada se abre al pulsar.
+ */
+export default function FollowerCard({ entry, onOpen }) {
   const { translations } = useLanguage();
   const rolesT = translations.roles || {};
   const follower = getFollower(entry.id);
-  const state = getFollowerState(entry.id, entry.stateId);
   if (!follower) return null;
-
-  const tone = ROLE_TONES[follower.role] || 'border-slate-500/60 from-slate-800/60';
+  const state = getFollowerState(entry.id, entry.stateId);
+  const name = follower.name;
 
   return (
-    <div className={`relative w-full overflow-hidden rounded-xl border bg-gradient-to-b to-slate-950 text-slate-100 shadow-lg ${tone}`}>
-      <button
-        type="button"
-        onClick={() => onRemove?.(entry.uid)}
-        aria-label={`${follower.name}: quitar`}
-        className="absolute right-1 top-1 z-10 flex h-5 w-5 items-center justify-center rounded bg-black/50 text-[0.6rem] font-bold text-white hover:bg-red-700"
+    <div className="mx-1 flex w-full flex-col items-center">
+      <div
+        className="relative mx-auto w-20 cursor-pointer transition hover:scale-105"
+        onClick={onOpen}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onOpen?.();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={`${name} · ${rolesT[follower.role] || follower.role}`}
+        data-follower-id={entry.id}
+        data-follower-uid={entry.uid}
       >
-        ✕
-      </button>
-
-      <div className="relative flex h-24 items-end justify-center overflow-hidden bg-slate-950/30">
-        {follower.image ? (
-          <img
-            src={follower.image}
-            alt={follower.name}
-            className="h-full w-full object-contain object-bottom drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)]"
-            loading="lazy"
-            decoding="async"
-          />
-        ) : (
-          <span className="pb-1 text-3xl font-black text-white/80">{follower.name.charAt(0)}</span>
-        )}
-      </div>
-
-      <div className="space-y-0.5 p-1">
-        <p className="truncate text-[0.62rem] font-black leading-tight">{follower.name}</p>
-        <p className="truncate text-[0.5rem] leading-tight text-slate-300">{follower.epithet}</p>
-        <p className="truncate text-[0.5rem] font-bold uppercase tracking-wide text-slate-300">
-          {rolesT[follower.role] || follower.role}
-        </p>
-        <select
-          value={entry.stateId}
-          onChange={(event) => onChangeState?.(entry.uid, event.target.value)}
-          aria-label={`${follower.name}: estado`}
-          className="w-full rounded border border-slate-600 bg-slate-900 px-1 py-0.5 text-[0.55rem] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-        >
-          {follower.states.map((item) => (
-            <option key={item.id} value={item.id}>{item.name}</option>
-          ))}
-        </select>
-        <div className="flex items-center justify-between text-[0.55rem] tabular-nums">
-          <span title="Vida">❤ {state?.vida}</span>
-          <span title="Ataque">⚔ {state?.ataque}</span>
-          <span title="Movimiento">👣 {state?.movimiento}</span>
+        <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-emerald-400 shadow-lg shadow-emerald-950/40">
+          {follower.image ? (
+            <img
+              src={follower.image}
+              alt=""
+              className="absolute inset-0 h-full w-full scale-110 object-cover opacity-40 blur-[1px]"
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : null}
+          <div className="absolute inset-0 bg-slate-950/25" aria-hidden="true" />
+          {follower.image ? (
+            <img
+              src={follower.image}
+              alt=""
+              className="relative h-full w-full object-contain p-0.5"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <span className="relative flex h-full w-full items-center justify-center text-2xl font-black text-white/80">
+              {name.charAt(0)}
+            </span>
+          )}
+          <div className="absolute inset-x-0 bottom-0 bg-black/70 px-1 py-0.5 text-center">
+            <span className="block truncate text-[0.5rem] font-bold text-white">{name}</span>
+          </div>
         </div>
-        {follower.capabilities?.length > 0 && (
-          <p className="text-[0.5rem] leading-tight text-slate-300">{follower.capabilities.join(' · ')}</p>
-        )}
+
+        <div className="mt-0.5 w-20 rounded bg-slate-950/80 px-1 py-0.5 text-center">
+          <span className="block truncate text-[0.45rem] font-semibold text-slate-300">
+            {rolesT[follower.role] || follower.role}{state ? ` · ${state.name}` : ''}
+          </span>
+        </div>
       </div>
     </div>
   );

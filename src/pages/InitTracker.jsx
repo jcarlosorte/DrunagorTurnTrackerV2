@@ -39,6 +39,7 @@ import BagStatusPanel from '@/components/track/BagStatusPanel';
 import HistoryPanel from '@/components/track/HistoryPanel';
 import ModalHeroCard from '@/components/track/ModalHeroCard';
 import ModalCompanionCard from '@/components/track/ModalCompanionCard';
+import FollowerModal from '@/components/track/FollowerModal';
 import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 
@@ -152,6 +153,7 @@ const InitTracker = () => {
   const [enemyEvolutions, setEnemyEvolutions] = useState(() => persistedSession.enemyEvolutions || []);
   const [selectedHeroId, setSelectedHeroId] = useState(null);
   const [selectedCompanionUid, setSelectedCompanionUid] = useState(null);
+  const [selectedFollowerUid, setSelectedFollowerUid] = useState(null);
   const [isCompanionPickerOpen, setIsCompanionPickerOpen] = useState(false);
   const [diceOpen, setDiceOpen] = useState(false);
   const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
@@ -3112,22 +3114,6 @@ const InitTracker = () => {
   // Altura única para TODO el tablero: así todas las etiquetas comparten la misma
   // línea central aunque una posición acumule muchas cartas.
   // Se pasan NÚMEROS DE CARTAS (no alturas): boardSlotHeightFrom aplica stackHeight.
-  const updateFollower = (uid, stateId) => {
-    setTrackerData((prev) => ({
-      ...prev,
-      followers: (prev.followers || []).map((entry) => (
-        entry.uid === uid ? { ...entry, stateId } : entry
-      )),
-    }));
-  };
-
-  const removeFollower = (uid) => {
-    setTrackerData((prev) => ({
-      ...prev,
-      followers: (prev.followers || []).filter((entry) => entry.uid !== uid),
-    }));
-  };
-
   const countsPerSlot = Array.from({ length: 11 }, (_, i) => {
     const isRuneSlot = Object.values(runesColorMap).includes(i);
     const isRuneText = i === 10;
@@ -3177,8 +3163,7 @@ const InitTracker = () => {
     placedEnemies,
     placedRunes,
     placedFollowers: trackerData.followers || [],
-    updateFollower,
-    removeFollower,
+    openFollower: setSelectedFollowerUid,
     rolesOnTop,
     rolesOnBottom,
     currentTurnEntity,
@@ -4082,6 +4067,12 @@ const InitTracker = () => {
             onClose={() => setSelectedCompanionUid(null)}
           />
         )}
+        {selectedFollowerUid && (
+          <FollowerModal
+            uid={selectedFollowerUid}
+            onClose={() => setSelectedFollowerUid(null)}
+          />
+        )}
         <RestartGameDialog
           open={isRestartOpen}
           onClose={() => setIsRestartOpen(false)}
@@ -4094,6 +4085,10 @@ const InitTracker = () => {
           onOpenCompanion={(uid) => {
             setIsCompanionPickerOpen(false);
             setSelectedCompanionUid(uid);
+          }}
+          onOpenFollower={(uid) => {
+            setIsCompanionPickerOpen(false);
+            setSelectedFollowerUid(uid);
           }}
         />
         <DiceRoller

@@ -44,8 +44,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     companions = [],
     onOpenCompanion,
     placedFollowers = [],
-    updateFollower,
-    removeFollower,
+    openFollower,
     RuneCard,
   } = deps;
 
@@ -132,8 +131,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
             {isFollower ? (
               <FollowerCard
                 entry={item}
-                onChangeState={updateFollower}
-                onRemove={removeFollower}
+                onOpen={() => openFollower?.(item.uid)}
               />
             ) : isCompanion ? (
               <CompanionTrackCard

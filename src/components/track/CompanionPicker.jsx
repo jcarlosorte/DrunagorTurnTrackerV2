@@ -24,7 +24,7 @@ import useFocusTrap from '@/hooks/useFocusTrap';
  * asigna a un héroe en juego y lista las ya asignadas. Una criatura asignada
  * deja de ofrecerse hasta que se quita.
  */
-export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
+export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpenFollower }) {
   const { trackerData, setTrackerData } = useTracker();
   const { selectedExpansions, mainBox, previewOtherBoxes, canPreviewOtherBoxes } = useExpansions();
   const { translations } = useLanguage();
@@ -469,6 +469,13 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion }) {
                         <span className="min-w-0 flex-1 truncate text-xs text-slate-200">
                           {follower?.name || entry.id} · {rolesT[entry.role] || entry.role} · {state?.name}
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => onOpenFollower?.(entry.uid)}
+                          className="min-h-7 shrink-0 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-semibold text-white hover:bg-slate-600"
+                        >
+                          {t.open || 'Abrir'}
+                        </button>
                         <button
                           type="button"
                           onClick={() => removeFollower(entry.uid)}

@@ -1792,6 +1792,21 @@ Unit       142 tests
 E2E        58/58
 ```
 
+### 80.ª tanda — Ficha ampliada de los seguidores
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Track** | Tarjeta compacta de seguidor con fondo y retrato, como los compañeros | `FollowerCard` |
+| **Ficha** | Vista ampliada con estados, capacidades, tipo de ataque y retirada | `FollowerModal` |
+| **Pruebas** | 142 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       142 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
