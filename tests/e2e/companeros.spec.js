@@ -156,8 +156,10 @@ test.describe('Compañeros y mascotas', () => {
     });
     await openTracker(page);
 
+    await page.locator('[data-companion-id="drumm"]').waitFor({ state: 'visible' });
     await page.locator('[data-companion-id="drumm"]').click();
     const modal = page.getByRole('dialog', { name: 'Drumm' });
+    await modal.waitFor({ state: 'visible' });
     await modal.getByRole('button', { name: 'Eliminar' }).click();
     const confirm = page.getByRole('dialog', { name: 'Eliminar compañero' });
     await confirm.getByRole('button', { name: 'Eliminar' }).click();

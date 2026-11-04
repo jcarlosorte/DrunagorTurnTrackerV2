@@ -53,3 +53,22 @@ export function getAbilityColor(claveGeneral, rulesVersion) {
   }
   return '';
 }
+
+const ENEMY_TONES = {
+  blanco: '#cbd5e1',
+  gris: '#94a3b8',
+  negro: '#475569',
+  comandante: '#f59e0b',
+  dorado: '#fbbf24',
+  overlord: '#a855f7',
+  jefe: '#a855f7',
+  morado: '#a855f7',
+  escenario: '#22d3ee',
+  esbirro: '#22d3ee',
+  hero: '#fb923c',
+};
+
+/** Tono de fondo de una carta de enemigo según su color o categoría. */
+export function getEnemyTone(color, categoria) {
+  return ENEMY_TONES[color] || ENEMY_TONES[categoria] || '#475569';
+}

@@ -5,7 +5,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useGame } from '@/context/GameContext';
 import { useTracker } from '@/context/TrackerContext';
 
-const CommanderCardModal = ({ carta, onClose }) => {
+const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   const { translations } = useLanguage();
   const { getRuneCount } = useGame();
   const { trackerData } = useTracker();
@@ -26,6 +26,7 @@ const CommanderCardModal = ({ carta, onClose }) => {
   const numHeroes = Math.min(selectedHeroes.length, 4);
   const numRunasColor = getRuneCount(carta.rune);
   const nombre = ta.nombre?.[carta.id] || carta.nombre;
+  const nombreEnemy = carta.nombreEnemy;
   
   let capacidad = ta.capacidad?.[carta.id] || carta.capacidad;
   
@@ -103,27 +104,72 @@ const CommanderCardModal = ({ carta, onClose }) => {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`relative max-w-sm rounded-lg border-2 p-6 text-white shadow-xl ${
-          carta.categoria === 'overlord' ? 'border-purple-500 bg-purple-950' : 'border-yellow-400 bg-orange-900'
+        className={`relative flex max-h-[86vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border bg-slate-900/95 text-slate-100 shadow-2xl ${
+          carta.categoria === 'overlord'
+            ? 'border-purple-500/70'
+            : carta.categoria === 'comandante' || carta.categoria === 'hero'
+            ? 'border-yellow-500/60'
+            : carta.categoria === 'jefe'
+            ? 'border-purple-400/60'
+            : 'border-slate-600'
         }`}
       >
-        <button
-          ref={closeRef}
-          type="button"
-          onClick={onClose}
-          aria-label={translations.trackerSelect?.close || 'Cerrar'}
-          className="absolute right-2 top-1 flex h-9 w-9 items-center justify-center rounded bg-red-500 text-sm hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-        >
-          ✕
-        </button>
-        <div id={titleId} className={`mb-2 text-center text-lg ${carta.categoria === 'overlord' ? 'text-purple-200' : 'text-yellow-300'}`} style={{ fontFamily: 'Impact, Charcoal, sans-serif' }}>
-          {nombre}
+        <div className="flex items-start justify-between gap-3 border-b border-slate-700/80 px-5 pb-3 pt-5">
+          <div className="min-w-0">
+            <p className="text-[0.6rem] font-bold uppercase tracking-[0.25em] text-emerald-300">
+              {carta.categoria === 'overlord'
+                ? ta.ataqueO || 'Acción de Señor Supremo'
+                : carta.categoria === 'comandante'
+                ? ta.ataqueC || 'Acción de Comandante'
+                : carta.categoria === 'hero'
+                ? ta.ataqueF || 'Acción de Héroe Caído'
+                : carta.categoria === 'jefe'
+                ? ta.ataqueB || 'Acción de Jefe'
+                : 'Carta de acción'}
+            </p>
+            <h2 id={titleId} className="mt-1 truncate text-lg font-black text-slate-50 sm:text-xl">
+              {nombre}
+            </h2>
+            <p className="mt-0.5 truncate text-xs text-slate-400">
+              {nombreEnemy || ''}
+              {carta.rune ? ` · ${carta.rune}` : ''}
+            </p>
+          </div>
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={onClose}
+            aria-label={translations.trackerSelect?.close || 'Cerrar'}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-sm text-slate-200 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+          >
+            ✕
+          </button>
         </div>
 
-        <div className="text-sm whitespace-pre-line text-center leading-tight">
-          {capacidad}
+        <div className="flex-1 overflow-y-auto px-5 py-4">
+          <div className="rounded-xl border border-slate-700/80 bg-slate-950/60 p-4 text-sm leading-relaxed text-slate-200">
+            {capacidad}
+          </div>
         </div>
-        
+
+        <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-700/80 px-5 py-3">
+          {onDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="min-h-9 rounded-lg border border-red-500/40 bg-red-950/40 px-3 text-xs font-bold text-red-200 transition hover:bg-red-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
+            >
+              Eliminar carta
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            className="min-h-9 rounded-lg bg-emerald-600 px-4 text-xs font-bold text-white transition hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
+          >
+            Cerrar
+          </button>
+        </div>
       </div>
 
     </div>,

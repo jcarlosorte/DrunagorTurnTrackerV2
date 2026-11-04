@@ -15,6 +15,12 @@ import reyRedivivo from "@/assets/home/rey-redivivo.webp";
 import bg from "@/assets/home/dungeon-bg.webp";
 import SiteFooter from "@/components/SiteFooter";
 
+const HOME_LOGOS = [
+  { src: logo, alt: 'Drunagor', tone: '#fbbf24' },
+  { src: logoApocalypse, alt: 'Apocalipsis', tone: '#f87171' },
+  { src: logoAwakenings, alt: 'Awakenings', tone: '#a78bfa' },
+];
+
 export default function HomeMenu() {
   const navigate = useNavigate();
   const { translations } = useLanguage();
@@ -90,22 +96,24 @@ export default function HomeMenu() {
               >
                 {home.start_tracker || 'Nueva partida'}
               </button>
-              <button
-                type="button"
-                onClick={() => navigate("/config")}
-                className="min-h-12 rounded-xl border border-slate-600 bg-slate-800 px-5 py-3 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-              >
-                <span className="block">{home.configure_environment || 'Configurar entorno'}</span>
-                <span className="mt-1 block text-xs font-normal text-slate-400">{home.configure_hint || 'Idioma, expansiones y versión de reglas'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate("/saves")}
-                className="min-h-12 rounded-xl border border-slate-600 bg-slate-800 px-5 py-3 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-              >
-                <span className="block">{home.saves || 'Partidas'}</span>
-                <span className="mt-1 block text-xs font-normal text-slate-400">{home.saves_hint || 'Guardar, exportar o importar'}</span>
-              </button>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigate("/config")}
+                  className="min-h-12 rounded-xl border border-slate-600 bg-slate-800 px-3 py-3 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  <span className="block text-sm">{home.configure_environment || 'Configurar entorno'}</span>
+                  <span className="mt-1 block text-[0.65rem] font-normal leading-snug text-slate-400">{home.configure_hint || 'Idioma, expansiones y versión de reglas'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/saves")}
+                  className="min-h-12 rounded-xl border border-slate-600 bg-slate-800 px-3 py-3 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                >
+                  <span className="block text-sm">{home.saves || 'Partidas'}</span>
+                  <span className="mt-1 block text-[0.65rem] font-normal leading-snug text-slate-400">{home.saves_hint || 'Guardar, exportar o importar'}</span>
+                </button>
+              </div>
               <button
                 type="button"
                 onClick={() => navigate("/tutorial")}
@@ -117,31 +125,42 @@ export default function HomeMenu() {
             </div>
           </section>
 
-          <aside className="relative flex min-h-[24rem] flex-col items-center justify-between gap-4 overflow-hidden rounded-2xl border border-emerald-500/20 bg-slate-950/60 p-4 sm:p-6">
-            <div className="home-logo-glow absolute inset-8 rounded-full bg-emerald-500/10 blur-3xl" aria-hidden="true" />
-            <img
-              src={reyRedivivo}
-              alt="Rey Redivivo"
-              className="relative z-10 min-h-0 w-full flex-1 rounded-xl object-contain drop-shadow-2xl"
-              loading="eager"
+          <aside className="relative flex min-h-[26rem] items-end justify-center overflow-hidden rounded-2xl border border-emerald-500/20 bg-slate-950/60 sm:min-h-[30rem]">
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${reyRedivivo})` }}
+              role="img"
+              aria-label="Rey Redivivo"
             />
-            <div className="relative z-10 w-full overflow-hidden rounded-xl bg-white/90 p-2 shadow-lg">
-              <motion.div
-                className="flex w-max items-center gap-5"
-                animate={{ x: ['0%', '-50%'] }}
-                transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
-              >
-                {[logo, logoApocalypse, logoAwakenings, logo, logoApocalypse, logoAwakenings].map((src, index) => (
+            <div
+              className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(2,6,23,0.95)_0%,rgba(2,6,23,0.15)_14%,rgba(2,6,23,0.15)_55%,rgba(2,6,23,0.94)_100%)]"
+              aria-hidden="true"
+            />
+            <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-8 bg-gradient-to-b from-slate-950 via-slate-950/80 to-transparent" aria-hidden="true" />
+            <div className="relative z-30 flex w-full items-end justify-center gap-3 px-3 pb-4 sm:gap-4">
+              {HOME_LOGOS.map((item, index) => (
+                <motion.div
+                  key={item.alt}
+                  className="flex h-20 w-20 items-center justify-center rounded-2xl border bg-white/95 p-2 shadow-2xl sm:h-24 sm:w-24"
+                  style={{ borderColor: `${item.tone}99` }}
+                  animate={{
+                    scale: [1, 1.06, 1],
+                    boxShadow: [
+                      `0 0 10px ${item.tone}44`,
+                      `0 0 24px ${item.tone}aa`,
+                      `0 0 10px ${item.tone}44`,
+                    ],
+                  }}
+                  transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: index * 0.35 }}
+                >
                   <img
-                    key={`${src}-${index}`}
-                    src={src}
-                    alt={index < 3 ? ['Drunagor', 'Apocalipsis', 'Awakenings'][index] : ''}
-                    aria-hidden={index >= 3}
-                    className="h-10 w-auto max-w-[9rem] shrink-0 object-contain sm:h-12"
+                    src={item.src}
+                    alt={item.alt}
+                    className="h-10 w-auto max-w-[4rem] object-contain sm:h-12 sm:max-w-[5rem]"
                     loading="eager"
                   />
-                ))}
-              </motion.div>
+                </motion.div>
+              ))}
             </div>
           </aside>
         </div>

@@ -49,7 +49,7 @@ import night_stalker from "@/assets/enemies/night_stalker.avif";
 import gorgon_hexer from "@/assets/enemies/gorgon_hexer.avif";
 import soul_harvester from "@/assets/enemies/soul_harvester.avif";
 import fell_asteris from "@/assets/enemies/FellAsteris.avif";
-import fallen_sisters from "@/assets/enemies/fallen_sisters.avif";
+import fallen_sisters from "@/assets/enemies/fallen_sister.png";
 //heroes caidos
 import lorelai from "@/assets/heroes/Lorelai.avif";
 import elros from "@/assets/heroes/Elros.avif";

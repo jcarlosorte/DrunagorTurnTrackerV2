@@ -1315,6 +1315,7 @@ const InitTracker = () => {
       }
     });
   
+    ataqueModificado += Number(enemyData.bonusAtaqueTemporal) || 0;
     return {
       ...enemyData,
       idCartaEspecial: cartaId,
@@ -1568,6 +1569,27 @@ const InitTracker = () => {
         logs.push(`💚 ${nombreCarta} ${ti.sana} ${curacionReal}`);
       }
   
+      // ✅ --- ESCUDO POR CARTA DE ATAQUE ---
+      else if (cap === "ESCUDO_POR_CARTA") {
+        const cartasOverlord = placedEnemies.filter(e =>
+          e.enemy.tipo === 'especial' && e.enemy.sourceEnemyUUID === targetUUID
+        );
+        const escudos = Math.min(4, cartasOverlord.length);
+        if (escudos <= 0) return;
+
+        const estados = [...(enemigo.estadosAlterados || [])];
+        const idx = estados.findIndex((estado) => estado.id === "ESCUDO");
+        if (idx >= 0) {
+          estados[idx] = { ...estados[idx], count: Math.min(4, estados[idx].count + escudos) };
+        } else {
+          estados.push({ id: "ESCUDO", count: escudos });
+        }
+        updateEnemyEstados(targetUUID, estados);
+
+        const nombreCarta = ta?.nombre?.[cartaEspecial.id] || cartaEspecial.nombre || cartaEspecial.id;
+        logs.push(`🛡 ${nombreCarta} ${ti.gana || 'gana'} ${escudos} ${ti.escudos || 'escudos'} (${cartasOverlord.length} cartas)`);
+      }
+
       // ✅ --- ESCUDO ---
       else if (cap.startsWith("ESCUDO")) {
         const partes = cap.split("_");
@@ -1620,8 +1642,6 @@ const InitTracker = () => {
         }
 
         if (tipo === 'HEMORRAGIA') {
-          const confirmar = window.confirm(`¿El Señor Supremo sufre HEMORRAGIA ${cantidad}?`);
-          if (!confirmar) return;
           hemorragiaAplicada = true;
         }
 
@@ -1653,6 +1673,25 @@ const InitTracker = () => {
         );
         const nombreCarta = ta?.nombre?.[cartaEspecial.id] || cartaEspecial.nombre || cartaEspecial.id;
         logs.push(`🧬 ${nombreCarta} ${ti.evoluciona || 'evoluciona'}: +1 movimiento, +2 daño`);
+      }
+
+      // ✅ --- BONIFICACIÓN DE DAÑO BÁSICO TEMPORAL ---
+      else if (cap === "DANO_BASICO_X") {
+        const bonus = runeCount;
+        setPlacedEnemies(prev =>
+          prev.map(e => {
+            if (e.enemy.uuid !== targetUUID) return e;
+            return {
+              ...e,
+              enemy: {
+                ...e.enemy,
+                bonusAtaqueTemporal: (Number(e.enemy.bonusAtaqueTemporal) || 0) + bonus,
+              },
+            };
+          })
+        );
+        const nombreCarta = ta?.nombre?.[cartaEspecial.id] || cartaEspecial.nombre || cartaEspecial.id;
+        logs.push(`⚔ ${nombreCarta} +${bonus} ${ti.ataque || 'ataque'} ${ti.temporal || 'temporal'}`);
       }
 
       // ✅ --- RECUPERA ---
@@ -2645,6 +2684,14 @@ const InitTracker = () => {
   });
   const handleNextTurn = () => {
     // Guardamos el cursor de turno para poder deshacer el último avance.
+    if (currentTurnEntity?.bonusAtaqueTemporal) {
+      setPlacedEnemies(prev =>
+        prev.map(e => {
+          if (e.enemy.uuid !== currentTurnEntity.uuid) return e;
+          return { ...e, enemy: { ...e.enemy, bonusAtaqueTemporal: 0 } };
+        })
+      );
+    }
     pushHistory({ currentTurnEntity });
 
     if (extraTurnsQueue.length > 0) {

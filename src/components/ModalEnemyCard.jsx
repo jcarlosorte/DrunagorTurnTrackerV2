@@ -122,8 +122,8 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
     return valor; // Si es un número directo o no aplicable
   };
 
-  const valorMovimiento = interpretarValorRuna(movimiento, rune, getRuneCount, categoria, "M");
-  const valorAtaque = interpretarValorRuna(ataque, rune, getRuneCount, categoria, "A");
+  const valorMovimiento = interpretarValorRuna(effectiveStats.movimiento ?? movimiento, rune, getRuneCount, categoria, "M");
+  const valorAtaque = interpretarValorRuna(effectiveStats.ataqueModificado ?? ataque, rune, getRuneCount, categoria, "A");
   
 
   const borderColorMap = {

@@ -176,7 +176,7 @@ export const CARTAS_OVERLORD = [
     rune: 'rojo',
     runePosition: 'abajo',
     capacidades: 'over_12',
-    lista_capacidad: ["ACTIVA_0"]
+    lista_capacidad: ["ACTIVA_0", ",", "DANO_BASICO_X"]
   },
   {
     id: 'over_13',

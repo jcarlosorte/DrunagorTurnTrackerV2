@@ -1559,6 +1559,53 @@ Unit       137 tests
 E2E        58/58
 ```
 
+### 65.ª tanda — Ajustes de las cartas de Señor Supremo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Histeria** | Añade +X al ataque durante la activación y se limpia al avanzar el turno | `InitTracker` |
+| **Furia** | Sin diálogo del sistema: la hemorragia se aplica directamente | `InitTracker` |
+| **Armazón** | Escudos según las cartas activas del Señor Supremo propietario, con tope de 4 | `InitTracker` |
+| **Vista ampliada** | Tema actual de la app y botón «Eliminar carta» | `CommanderCard`, `CommanderCardModal` |
+| **Pruebas** | 137 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       137 tests
+E2E        58/58
+```
+
+### 66.ª tanda — Composición de la portada
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Panel** | El Rey Redivivo ocupa el panel y los tres logos palpitan en su borde inferior, cada uno con su tono | `HomeMenu` |
+| **Botones** | Configurar y Partidas quedan en dos columnas | `HomeMenu` |
+| **Pruebas** | 137 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       137 tests
+E2E        58/58
+```
+
+### 67.ª tanda — Fondo de las cartas especiales
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Fondo** | Señores supremos, comandantes, jefes y héroes caídos usan un degradado difuminado con su tono, como las fichas de héroe | `CommanderCard`, `enemyVisuals` |
+| **Tonos** | Morado para señores y jefes, dorado para comandantes, naranja para héroes caídos y cian para escenario | `enemyVisuals` |
+| **Pruebas** | 1 unitaria de tonos (138 en total) | tests |
+
+**Medición**
+
+```text
+Unit       138 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

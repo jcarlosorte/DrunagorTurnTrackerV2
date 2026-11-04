@@ -1,11 +1,14 @@
 // src/components/CommanderCard.jsx
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
+import { getEnemyTone } from '@/components/track/enemyVisuals';
 import CommanderCardModal from '@/components/CommanderCardModal';
 
 const CommanderCard = ({ carta }) => {
   const { translations } = useLanguage();
+  const { removeEnemyByUUID } = useInitEnemies();
   const [showModal, setShowModal] = useState(false);
   const [estadosLocal, setEstadosLocal] = useState(carta?.estadosAlterados || []);
   const ta = translations.cartas_ataque || {};
@@ -13,6 +16,7 @@ const CommanderCard = ({ carta }) => {
   
   const nombre = ta.nombre?.[carta.id] || carta.nombre;
   const nombreEnemy = carta.nombreEnemy;
+  const tone = getEnemyTone(carta.color, carta.categoria);
   // 🎨 Clases visuales condicionales por tipo
   const ringClass =
     carta.categoria === "overlord"
@@ -53,24 +57,21 @@ const CommanderCard = ({ carta }) => {
 
         <div
           onClick={() => setShowModal(true)}
-          className={`cursor-custom relative w-full aspect-square p-2 rounded-lg border-2 shadow-md hover:scale-105 transition
-            ${carta.categoria === 'overlord' ? 'commander-card--overlord' : ''}
+          className={`cursor-custom relative w-full aspect-square overflow-hidden p-2 rounded-lg border-2 shadow-md hover:scale-105 transition
             ${carta.highlight ? ringClass : borderClass}`}
         >
 
-          {/* Fondo animado separado */}
-          <div
-            className="fire-bg-inner"
-            style={carta.categoria === 'overlord' ? { filter: 'hue-rotate(220deg) saturate(1.15)' } : undefined}
-          ></div>
-          {/* Chispas */}
-          <div
-            className="fire-sparks"
-            style={carta.categoria === 'overlord' ? { filter: 'hue-rotate(220deg) saturate(1.15)' } : undefined}
-          >
-            {Array.from({ length: 20 }).map((_, i) => (
-              <span key={i}></span>
-            ))}
+          {/* Fondo al estilo de los héroes, con el tono del enemigo */}
+          <div className="absolute inset-0 overflow-hidden rounded-lg" aria-hidden="true">
+            <div
+              className="absolute inset-0"
+              style={{ backgroundImage: `linear-gradient(160deg, ${tone}cc 0%, ${tone}66 55%, #0f172a 100%)` }}
+            />
+            <div
+              className="absolute -inset-6 opacity-70 blur-2xl"
+              style={{ background: `radial-gradient(circle at 50% 30%, ${tone}aa 0%, transparent 70%)` }}
+            />
+            <div className="absolute inset-0 bg-slate-950/20" />
           </div>
 
           {/* Contenido de la carta (siempre por encima) */}
@@ -119,7 +120,14 @@ const CommanderCard = ({ carta }) => {
         </div>
       </div>
       {showModal && (
-        <CommanderCardModal carta={carta} onClose={() => setShowModal(false)} />
+        <CommanderCardModal
+          carta={carta}
+          onClose={() => setShowModal(false)}
+          onDelete={() => {
+            removeEnemyByUUID(carta.uuid);
+            setShowModal(false);
+          }}
+        />
       )}
    </div>
   );
