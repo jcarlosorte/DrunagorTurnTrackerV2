@@ -43,7 +43,7 @@ test.describe('Compañeros y mascotas', () => {
 
     const drummCard = page.locator('[data-companion-id="drumm"]');
     await expect(drummCard).toBeVisible();
-    await expect(drummCard).toContainText('1/1');
+    await expect(drummCard).not.toContainText('1/1');
     await expect(drummCard.locator('[data-companion-name]')).toContainText('Drumm');
     const background = await drummCard.locator('[data-companion-avatar]').evaluate((el) => getComputedStyle(el).backgroundImage);
     expect(background).toContain('url(');
@@ -65,7 +65,7 @@ test.describe('Compañeros y mascotas', () => {
 
     await page.reload({ waitUntil: 'networkidle' });
     await page.waitForSelector('.track-slot');
-    await expect(page.locator('[data-companion-id="drumm"]')).toContainText('0/1');
+    await expect(page.locator('[data-companion-id="drumm"]')).not.toContainText('0/1');
 
     await page.locator('[role="button"][aria-label*="Vorn"]').first().click({ force: true });
     dialog = page.getByRole('dialog');

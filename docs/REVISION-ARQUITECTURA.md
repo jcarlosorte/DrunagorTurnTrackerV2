@@ -1854,6 +1854,23 @@ Unit       142 tests
 E2E        58/58
 ```
 
+### 84.ª tanda — Tarjetas de aliados: vida, tipo e iconos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Seguidores** | Vida bajo el nombre, dentro de su cuadro, y subtítulo «Seguidor» | `FollowerCard` |
+| **Mascotas** | Sin barra de vida en el track | `CompanionTrackCard` |
+| **Compañeros** | Nombre y vida subidos para ganar visibilidad | `CompanionTrackCard` |
+| **Ficha** | Iconos de movimiento, ataque y firmeza iguales a los de los enemigos | `AllyDetailModal` |
+| **Pruebas** | 142 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       142 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

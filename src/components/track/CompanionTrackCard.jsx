@@ -54,22 +54,24 @@ export default function CompanionTrackCard({ entry, onOpen, estadosLabels = {} }
           )}
           <div
             data-companion-name
-            className="absolute inset-x-0 bottom-0 bg-black/70 px-1 py-0.5 text-center"
+            className="absolute inset-x-0 bottom-1 bg-black/70 px-1 py-0.5 text-center"
           >
             <span className="block truncate text-[0.5rem] font-bold text-white">{name}</span>
           </div>
         </div>
 
-        <div className="mt-0.5 w-20 rounded bg-slate-950/80 px-1 py-0.5">
-          <span className="relative block h-1.5 w-full">
-            <span className="absolute inset-0 z-10 flex items-center justify-center text-[0.45rem] font-bold leading-none text-white">
-              {entry.vida}/{entry.vidaMax}
+        {companion?.type !== 'mascota' && (
+          <div className="mt-0 w-20 rounded bg-slate-950/80 px-1 py-0.5">
+            <span className="relative block h-1.5 w-full">
+              <span className="absolute inset-0 z-10 flex items-center justify-center text-[0.45rem] font-bold leading-none text-white">
+                {entry.vida}/{entry.vidaMax}
+              </span>
+              <span className="block h-full w-full rounded bg-red-950">
+                <span className="block h-full rounded bg-red-500" style={{ width: `${lifePercent}%` }} />
+              </span>
             </span>
-            <span className="block h-full w-full rounded bg-red-950">
-              <span className="block h-full rounded bg-red-500" style={{ width: `${lifePercent}%` }} />
-            </span>
-          </span>
-        </div>
+          </div>
+        )}
 
         {estados.length > 0 && (
           <div className="absolute -left-1 top-0 flex flex-col gap-0.5">

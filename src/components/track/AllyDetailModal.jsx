@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { GiFootprint, GiBroadsword, GiBowArrow } from 'react-icons/gi';
+import {
+  GiHeartBeats,
+  GiSteeltoeBoots,
+  GiBloodySword,
+  GiArcheryTarget,
+  GiMoebiusTrefoil,
+  GiSwordClash,
+} from 'react-icons/gi';
 import { FiInfo, FiTrash2, FiX } from 'react-icons/fi';
 import { useLanguage } from '@/context/LanguageContext';
 import { getEstadoMeta } from '@/data/estadosAlterados';
@@ -43,8 +50,17 @@ export default function AllyDetailModal({
   const [openAbility, setOpenAbility] = useState(null);
 
   const type = normalizeAttackType(attackType);
-  const AttackIcon = type === 'distancia' ? GiBowArrow : GiBroadsword;
-  const attackTitle = type === 'distancia' ? 'Ataque · A distancia' : 'Ataque · Cuerpo a cuerpo';
+  const ATTACK_ICONS = {
+    cuerpo: GiBloodySword,
+    distancia: GiArcheryTarget,
+    magia: GiMoebiusTrefoil,
+  };
+  const AttackIcon = ATTACK_ICONS[type] || GiSwordClash;
+  const attackTitle = type === 'distancia'
+    ? 'Ataque · A distancia'
+    : type === 'magia'
+      ? 'Ataque · Magia'
+      : 'Ataque · Cuerpo a cuerpo';
   const lifePercent = Math.max(0, Math.min(100, (life / Math.max(lifeMax, 1)) * 100));
 
   return (
@@ -118,7 +134,7 @@ export default function AllyDetailModal({
             aria-label="Movimiento"
             className="flex flex-col items-center justify-center gap-1 rounded-xl border border-slate-700 bg-slate-950/60 p-2 text-center"
           >
-            <GiFootprint className="text-xl text-sky-300" aria-hidden="true" />
+            <GiSteeltoeBoots className="text-xl text-blue-400" aria-hidden="true" />
             <p className="text-xl font-black tabular-nums">{movement ?? '—'}</p>
           </div>
 
@@ -132,6 +148,7 @@ export default function AllyDetailModal({
           </div>
 
           <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+            <GiHeartBeats className="mx-auto text-lg text-rose-400" aria-hidden="true" />
             <p className="text-center text-[0.65rem] font-bold uppercase tracking-wide text-slate-300">
               {t.firmness || 'Firmeza'}
             </p>
