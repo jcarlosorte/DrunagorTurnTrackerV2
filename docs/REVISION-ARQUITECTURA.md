@@ -2131,6 +2131,20 @@ Unit       165 tests
 E2E        60/60
 ```
 
+### 103.ª tanda — Fórmula de HEMORRAGIA
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | `HEMORRAGIA X±N` usa el mismo cálculo de runas que el resto de capacidades X, con mínimo 0 | `adjustCapabilitiesByRunes` |
+| **Pruebas** | 166 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       166 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
