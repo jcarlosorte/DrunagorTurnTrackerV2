@@ -2016,6 +2016,20 @@ Unit       152 tests
 E2E        58/58
 ```
 
+### 95.ª tanda — Rombos de mazmorra sin círculos extra
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Héroes** | El rol de mazmorra muestra solo los dos rombos; el color se cambia reabriendo el rombo | `ModalHeroCard` |
+| **Pruebas** | 152 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       152 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -545,22 +545,6 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                         </button>
                       );
                     })}
-                    {[1, 2].map((level) => {
-                      const current = extras.habilidades?.dungeon?.nivel || 0;
-                      const disabled = level === 2 && current === 0;
-                      return (
-                        <button
-                          key={`color-${level}`}
-                          type="button"
-                          disabled={disabled}
-                          onClick={() => setDungeonPicker(level)}
-                          aria-label={`${t.dungeonColor || 'Color del cubo'} · ${t.level || 'Nivel'} ${level}`}
-                          title={`${t.dungeonColor || 'Color del cubo'} · ${t.level || 'Nivel'} ${level}`}
-                          className="h-4 w-4 rounded-full border border-white/70 transition hover:scale-110 disabled:opacity-30"
-                          style={{ backgroundColor: CUBE_COLOR_BY_KEY[getDungeonColor(level)] }}
-                        />
-                      );
-                    })}
                   </div>
                 </div>
 

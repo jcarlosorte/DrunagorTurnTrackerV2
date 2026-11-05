@@ -76,7 +76,8 @@ test.describe('Habilidades del héroe', () => {
     await expect(dialog.getByRole('button', { name: 'Rol de mazmorra · Nivel 1' })).toHaveAttribute('aria-pressed', 'true');
     expect(await maxOf(red)).toBe(redBefore + 1);
 
-    await dialog.getByRole('button', { name: 'Color del cubo · Nivel 1' }).click();
+    await dialog.getByRole('button', { name: 'Rol de mazmorra · Nivel 1' }).click();
+    await dialog.getByRole('button', { name: 'Rol de mazmorra · Nivel 1' }).click();
     await dialog.getByRole('button', { name: 'Color del cubo 1: verde' }).click();
     expect(await maxOf(red)).toBe(redBefore);
     expect(await maxOf(green)).toBeGreaterThan(0);
