@@ -2030,6 +2030,20 @@ Unit       152 tests
 E2E        58/58
 ```
 
+### 96.ª tanda — Comandantes según enemigos y campaña
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Comandantes** | Aleatorio y manual solo usan comandantes seleccionados, de la campaña activa y que no sean de escenario | `commanderSelection`, `InitTracker` |
+| **Pruebas** | 156 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       156 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

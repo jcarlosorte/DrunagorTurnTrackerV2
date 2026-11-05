@@ -35,6 +35,12 @@ export function getScenarioExpansionIds(boxId) {
   return getMainBox(boxId).scenarioExpansionIds || [];
 }
 
+/** Expansiones que forman parte de la campaña indicada. */
+export function getCampaignExpansionIds(boxId) {
+  const box = getMainBox(boxId);
+  return [...new Set([box.expansionId, ...(box.scenarioExpansionIds || [])])];
+}
+
 export function isBoxUnlocked(box) {
   if (!box) return false;
   const expansion = EXPANSIONS.find((entry) => entry.id === box.expansionId);

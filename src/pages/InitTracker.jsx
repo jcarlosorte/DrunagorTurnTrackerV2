@@ -74,6 +74,7 @@ import RestartGameDialog from '@/components/track/RestartGameDialog';
 import CompanionPicker from '@/components/track/CompanionPicker';
 import { boardSlotHeightFrom } from '@/components/track/trackLayout';
 import { getScenarioExpansionIds } from '@/data/boxes';
+import { getCommanderCandidates } from '@/utils/commanderSelection';
 
 
 const rolesPositionMap = {
@@ -346,9 +347,16 @@ const InitTracker = () => {
   // Los escenarios se limitan a la campaña principal salvo que se pidan todos.
   const isScenarioEnemy = (enemy) => enemy.color === 'escenario' || Boolean(enemy.scenario);
   const scenarioExpansionIds = getScenarioExpansionIds(mainBox);
+  const selectedEnemyIds = trackerData.enemies || [];
+  const commanderCandidates = getCommanderCandidates({ mainBox, selectedEnemyIds });
+  const commanderIds = new Set(commanderCandidates.map((enemy) => enemy.id));
   const manualPool = manualSelector.open
     ? (() => {
-      const regular = enemiesInSelectedExpansions.filter((enemy) => !isScenarioEnemy(enemy));
+      const regular = enemiesInSelectedExpansions.filter((enemy) => {
+        if (isScenarioEnemy(enemy)) return false;
+        if (enemy.categoria === 'comandante') return commanderIds.has(enemy.id);
+        return true;
+      });
       const scenario = ENEMIES.filter((enemy) => isScenarioEnemy(enemy) && (
         previewOtherBoxes || showAllScenario || scenarioExpansionIds.includes(enemy.expansionId)
       ));
@@ -996,9 +1004,15 @@ const InitTracker = () => {
   };
   
   const handleRandomCommander = () => {
-    const filtered = ENEMIES.filter(e => e.categoria === 'comandante');
-    if (filtered.length === 0) return;
-    const selected = filtered[Math.floor(Math.random() * filtered.length)];
+    const candidates = getCommanderCandidates({
+      mainBox,
+      selectedEnemyIds: trackerData.enemies || [],
+    });
+    if (candidates.length === 0) {
+      showScenarioToast(`⚠ ${ti.noCommanders || 'No hay comandantes seleccionados en esta campaña.'}`);
+      return;
+    }
+    const selected = candidates[Math.floor(Math.random() * candidates.length)];
     const uuid = createId();
     const isBig = selected.size === 'grande';
     const colorId = assignColorToEnemy(uuid, isBig);

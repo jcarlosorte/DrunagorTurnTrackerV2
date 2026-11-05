@@ -560,6 +560,7 @@
     "addGrayEnemies": "MG (Gris)",
     "addBlackEnemies": "MN (Negro)",
     "addCommanders": "Comandante",
+    "noCommanders": "No hay comandantes seleccionados en esta campaña.",
     "selectBosses": "Jefe",
     "selectHeroFall": "Héroe Caído",
     "selectScenario": "Escenario",
