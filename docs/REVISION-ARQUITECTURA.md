@@ -2257,6 +2257,20 @@ Unit       170 tests
 E2E        60/60
 ```
 
+### 112.ª tanda — Traducciones de monstruos de escenario de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **i18n** | Skeleton Guard → Guardia Esqueleto, Violent Bully → Matón Violento, Tangled Witch → Bruja Enredada, Infamous Monster → Engendro Infame, Infamous Striker → Artillero Infame | `es.json`, `en.json` |
+| **Pruebas** | 170 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       170 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

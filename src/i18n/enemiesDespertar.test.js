@@ -16,6 +16,11 @@ describe('traducciones de enemigos de Despertar', () => {
     expect(es.enemies.nightmare).toBe('Pesadilla');
     expect(es.enemies.boatswain).toBe('Contramaestre');
     expect(es.enemies.tide_hunter).toBe('Cazamareas');
+    expect(es.enemies.skeleton_guard).toBe('Guardia Esqueleto');
+    expect(es.enemies.violent_bully).toBe('Matón Violento');
+    expect(es.enemies.tangled_witch).toBe('Bruja Enredada');
+    expect(es.enemies.infamous_monster).toBe('Engendro Infame');
+    expect(es.enemies.infamous_striker).toBe('Artillero Infame');
   });
 
   it('traduce sus comandantes', () => {
