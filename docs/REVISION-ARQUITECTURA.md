@@ -2159,6 +2159,20 @@ Unit       167 tests
 E2E        60/60
 ```
 
+### 105.ª tanda — Fórmulas de ABSORBER SALUD y QUEMADURA
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | `ABSORBER SALUD X±N` y `QUEMADURA X±N` calculan X, aplican la fórmula y mantienen el mínimo 0 | `adjustCapabilitiesByRunes`, `constants` |
+| **Pruebas** | 168 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       168 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -26,6 +26,18 @@ describe('ajuste de capacidades por runas', () => {
     expect(adjustCapabilitiesByRunes(['HEMORRAGIA X+2'], 'rojo', runeCount(2))).toEqual(['HEMORRAGIA 4']);
   });
 
+  it('calcula ABSORBER SALUD y QUEMADURA X con fórmula y nunca baja de 0', () => {
+    expect(adjustCapabilitiesByRunes(['ABSORBER SALUD X'], 'rojo', runeCount(2))).toEqual(['ABSORBER SALUD 2']);
+    expect(adjustCapabilitiesByRunes(['ABSORBER SALUD X-5'], 'rojo', runeCount(7))).toEqual(['ABSORBER SALUD 2']);
+    expect(adjustCapabilitiesByRunes(['ABSORBER SALUD X-5'], 'rojo', runeCount(2))).toEqual(['ABSORBER SALUD 0']);
+    expect(adjustCapabilitiesByRunes(['ABSORBER SALUD X+2'], 'rojo', runeCount(2))).toEqual(['ABSORBER SALUD 4']);
+
+    expect(adjustCapabilitiesByRunes(['QUEMADURA X'], 'rojo', runeCount(2))).toEqual(['QUEMADURA 2']);
+    expect(adjustCapabilitiesByRunes(['QUEMADURA X-5'], 'rojo', runeCount(7))).toEqual(['QUEMADURA 2']);
+    expect(adjustCapabilitiesByRunes(['QUEMADURA X-5'], 'rojo', runeCount(2))).toEqual(['QUEMADURA 0']);
+    expect(adjustCapabilitiesByRunes(['QUEMADURA X+2'], 'rojo', runeCount(2))).toEqual(['QUEMADURA 4']);
+  });
+
   it('mantiene el ajuste del resto de capacidades', () => {
     expect(adjustCapabilitiesByRunes(['SANAR X'], 'rojo', runeCount(2))).toEqual(['SANAR 2']);
     expect(adjustCapabilitiesByRunes(['DESAFIO'], 'rojo', runeCount(2))).toEqual(['DESAFIO']);
