@@ -2145,6 +2145,20 @@ Unit       166 tests
 E2E        60/60
 ```
 
+### 104.ª tanda — ESPARCIR en el glosario 2.0
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Glosario** | Se añade ESPARCIR / SPREAD con su descripción en español e inglés | `glosario2.es.json`, `glosario2.en.json`, `es.json`, `en.json` |
+| **Pruebas** | 167 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       167 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

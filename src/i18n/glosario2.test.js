@@ -15,6 +15,11 @@ describe('glosario 2.0', () => {
     expect(Object.keys(glosarioEn).length).toBe(Object.keys(glosarioEs).length);
   });
 
+  it('incluye ESPARCIR en español y SPREAD en inglés', () => {
+    expect(glosarioEs.ESPARCIR).toContain('daño no prevenible');
+    expect(glosarioEn.ESPARCIR).toContain('SPREAD');
+  });
+
   it('usa CARGA en lugar de CARGAR', () => {
     expect(glosarioEs.CARGA).toBeTruthy();
     expect(glosarioEn.CARGA).toBeTruthy();

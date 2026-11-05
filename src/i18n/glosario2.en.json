@@ -72,6 +72,7 @@
   "ENTROPIA": "Stackable resource for spellcasters. Discarding 4 grants an extra Cube Action or an extra Reaction.",
   "EOT": "(END OF TURN) The final timing window of a turn right before advancing initiative, triggering end-of-turn effects.",
   "ESCUDO_X": "Target gains X Shield tokens. Each absorbs 1 damage. Must be used before losing Health or using Prevent. Stackable.",
+  "ESPARCIR": "When a Hero suffers damage from an attack with SPREAD (after applying shields and prevents) each other Hero adjacent to them takes that same amount of non-preventable damage.",
   "ESTADO": "Campaign log story status or condition cleared during the Camp Phase.",
   "EVOLUCION": "Monster permanently gains +2 DMG and +1 MOVE tokens on the Monster Status board.",
   "FATIGA_X": "Hero immediately Expends X available Action Cubes without effect.",

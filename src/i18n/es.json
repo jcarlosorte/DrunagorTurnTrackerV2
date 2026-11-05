@@ -803,6 +803,7 @@
   },
   "condiciones_t": {
     "none": "",
+    "ESPARCIR": "ESPARCIR",
     "ABSORCION": "ABSORCIÓN",
     "ABSORBER_SALUD_X": "ABSORBER SALUD {x}",
     "AC_ALCANCE_DE_CUBO": "AC (ALCANCE DE CUBO)",

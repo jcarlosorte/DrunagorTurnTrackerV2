@@ -802,6 +802,7 @@
   },
   "condiciones_t": {
     "none": "",
+    "ESPARCIR": "SPREAD",
     "ABSORCION": "ABSORPTION",
     "ABSORBER_SALUD_X": "DRAIN HEALTH {x}",
     "AC_ALCANCE_DE_CUBO": "CR (CUBE RANGE)",
