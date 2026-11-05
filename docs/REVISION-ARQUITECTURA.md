@@ -2002,6 +2002,20 @@ Unit       152 tests
 E2E        58/58
 ```
 
+### 94.ª tanda — Fondo de los seguidores en el selector
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Compañeros** | Los seguidores del selector muestran un fondo de interacción; al colocarse conservan ese mismo fondo | `CompanionPicker`, `companions` |
+| **Pruebas** | 152 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       152 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

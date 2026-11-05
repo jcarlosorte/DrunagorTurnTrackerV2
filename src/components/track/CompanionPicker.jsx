@@ -10,7 +10,7 @@ import {
   getCompanionGroup,
   getCompanionImage,
   getCompanionsForExpansions,
-  getRandomCompanionBackground,
+  getInteractionBackgroundAt,
 } from '@/data/companions';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import { getHeroClassId } from '@/data/heroClasses';
@@ -129,6 +129,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
     if (!selectedFollower) return;
     const state = selectedFollower.states.find((item) => item.id === selectedFollowerState)
       || selectedFollower.states[0];
+    const followerIndex = FOLLOWERS.findIndex((item) => item.id === selectedFollower.id);
     const entry = {
       uid: crypto.randomUUID(),
       id: selectedFollower.id,
@@ -140,7 +141,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
       vida: state.vida,
       vidaMax: state.vida,
       estadosAlterados: [],
-      background: getRandomCompanionBackground(),
+      background: getInteractionBackgroundAt(followerIndex),
       image: null,
     };
     setTrackerData((prev) => ({ ...prev, followers: [...(prev.followers || []), entry] }));
@@ -404,6 +405,8 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
                 <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
                   {availableFollowers.map((follower) => {
                     const isSelected = selectedFollowerId === follower.id;
+                    const followerIndex = FOLLOWERS.findIndex((item) => item.id === follower.id);
+                    const background = getInteractionBackgroundAt(followerIndex);
                     return (
                       <div key={follower.id} className={`rounded-lg border transition ${isSelected ? 'border-emerald-400 bg-emerald-950/40' : 'border-slate-700 bg-slate-800/60'}`}>
                         <button
@@ -415,17 +418,25 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
                           }}
                           className="flex w-full items-center gap-2 p-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
                         >
-                          <span className="relative flex h-14 w-11 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-950/60">
+                          <span
+                            className="relative flex h-14 w-11 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-950/60"
+                            style={background ? {
+                              backgroundImage: `url(${background})`,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                            } : undefined}
+                          >
+                            <span className="absolute inset-0 bg-slate-950/35" aria-hidden="true" />
                             {follower.image ? (
                               <img
                                 src={follower.image}
                                 alt=""
-                                className="h-full w-full object-contain object-bottom"
+                                className="relative h-full w-full object-contain object-bottom"
                                 loading="lazy"
                                 decoding="async"
                               />
                             ) : (
-                              <span className="text-lg font-black text-emerald-100">{follower.name.charAt(0)}</span>
+                              <span className="relative text-lg font-black text-emerald-100">{follower.name.charAt(0)}</span>
                             )}
                           </span>
                           <span className="min-w-0">

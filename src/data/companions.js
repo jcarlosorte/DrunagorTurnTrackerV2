@@ -404,6 +404,14 @@ export function getRandomCompanionBackground() {
   return INTERACTION_BACKGROUNDS[Math.floor(Math.random() * INTERACTION_BACKGROUNDS.length)];
 }
 
+/** Fondo de interacción por índice estable (seguidores). */
+export function getInteractionBackgroundAt(index = 0) {
+  if (INTERACTION_BACKGROUNDS.length === 0) return null;
+  const normalized = ((Number(index) || 0) % INTERACTION_BACKGROUNDS.length + INTERACTION_BACKGROUNDS.length)
+    % INTERACTION_BACKGROUNDS.length;
+  return INTERACTION_BACKGROUNDS[normalized];
+}
+
 /** Criaturas disponibles según las expansiones activas. */
 export function getCompanionsForExpansions(expansionIds = []) {
   if (!Array.isArray(expansionIds) || expansionIds.length === 0) return [];
