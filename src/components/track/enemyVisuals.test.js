@@ -17,6 +17,8 @@ describe('colores de capacidades de enemigo', () => {
 
   it('mantiene los colores rosa y azul existentes y añade los nuevos', () => {
     expect(getAbilityColor('ESCUDO_X')).toContain('pink');
+    expect(getAbilityColor('ESCUDO 2')).toContain('pink');
+    expect(getAbilityColor('ESCUDO 0')).toContain('pink');
     expect(getAbilityColor('ESCUDO X-5')).toContain('pink');
     expect(getAbilityColor('ESCUDO X+2')).toContain('pink');
     expect(getAbilityColor('ALIVIAR_X')).toContain('pink');

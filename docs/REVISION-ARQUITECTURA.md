@@ -2074,6 +2074,20 @@ Unit       159 tests
 E2E        59/59
 ```
 
+### 99.ª tanda — Escudo X con fórmula
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | `ESCUDO X±N` calcula X, aplica la fórmula y mantiene el mínimo 0; al aplicar el escudo se respeta el máximo de 4 | `adjustCapabilitiesByRunes`, `InitTracker` |
+| **Pruebas** | 161 unitarios · 59 E2E | tests |
+
+**Medición**
+
+```text
+Unit       161 tests
+E2E        59/59
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

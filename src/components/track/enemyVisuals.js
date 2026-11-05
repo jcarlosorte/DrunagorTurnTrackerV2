@@ -69,7 +69,7 @@ const normalizeAbility = (key) => String(key || '').trim().toUpperCase().replace
 /** Color de una capacidad. Los colores se usan en todas las versiones de reglas. */
 export function getAbilityColor(claveGeneral) {
   const key = normalizeAbility(claveGeneral);
-  if (/^ESCUDO_X([+-]\d+)?$/.test(key)) return 'text-pink-500 font-semibold';
+  if (key === 'ESCUDO' || /^ESCUDO_(\d+|X([+-]\d+)?)$/.test(key)) return 'text-pink-500 font-semibold';
   if (PINK_ABILITIES.includes(key)) return 'text-pink-500 font-semibold';
   if (BLUE_ABILITIES.includes(key)) return 'text-blue-500 font-semibold';
   if (GREEN_ABILITIES.includes(key)) return 'text-emerald-500 font-semibold';
