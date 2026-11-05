@@ -77,13 +77,22 @@ export function sanitizeHeroEntry(raw) {
     equipoMods[slot] = { value: clamp(entry?.value, -20, 20, 0), stat };
   });
 
+  const dungeonFallbackColor = SKILL_COLORS.includes(raw.habilidades?.dungeon?.color)
+    ? raw.habilidades.dungeon.color
+    : 'amarillo';
+  const rawDungeonColors = Array.isArray(raw.habilidades?.dungeon?.colors)
+    ? raw.habilidades.dungeon.colors
+    : [];
+  const dungeonColors = [0, 1].map((index) => (
+    SKILL_COLORS.includes(rawDungeonColors[index]) ? rawDungeonColors[index] : dungeonFallbackColor
+  ));
+
   const habilidades = {
     ...Object.fromEntries(SKILL_KEYS.map((key) => [key, clamp(raw.habilidades?.[key], 0, 2, 0)])),
     dungeon: {
       nivel: clamp(raw.habilidades?.dungeon?.nivel, 0, 2, 0),
-      color: SKILL_COLORS.includes(raw.habilidades?.dungeon?.color)
-        ? raw.habilidades.dungeon.color
-        : 'amarillo',
+      color: dungeonColors[0],
+      colors: dungeonColors,
     },
   };
 

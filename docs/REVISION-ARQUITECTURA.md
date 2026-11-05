@@ -1973,6 +1973,20 @@ Unit       149 tests
 E2E        58/58
 ```
 
+### 92.ª tanda — Colores independientes del rol de mazmorra
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Héroes** | Cada nivel del rol de mazmorra tiene su propio color y su propio cubo | `heroExtras`, `ModalHeroCard`, `heroSanitize` |
+| **Pruebas** | 150 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       150 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

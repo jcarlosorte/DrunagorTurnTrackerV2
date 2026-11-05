@@ -62,7 +62,27 @@ describe('habilidades y capacidades', () => {
     const moved = setDungeonSkillColor('shadow', 'rojo');
     expect(moved.cubosMax.amarillo).toBe(before.cubosMax.amarillo);
     expect(moved.cubosMax.rojo).toBe(before.cubosMax.rojo + 1);
-    expect(moved.habilidades.dungeon).toEqual({ nivel: 1, color: 'rojo' });
+    expect(moved.habilidades.dungeon).toEqual({
+      nivel: 1,
+      color: 'rojo',
+      colors: ['rojo', 'amarillo'],
+    });
+  });
+
+  it('permite elegir un color distinto para cada nivel de mazmorra', () => {
+    const before = getHeroExtras('vorn');
+    setHeroSkill('vorn', 'dungeon', 2);
+    setDungeonSkillColor('vorn', 'rojo', 1);
+    const result = setDungeonSkillColor('vorn', 'verde', 2);
+
+    expect(result.habilidades.dungeon).toEqual({
+      nivel: 2,
+      color: 'rojo',
+      colors: ['rojo', 'verde'],
+    });
+    expect(result.cubosMax.rojo).toBe(before.cubosMax.rojo + 1);
+    expect(result.cubosMax.verde).toBe(before.cubosMax.verde + 1);
+    expect(result.cubosMax.amarillo).toBe(before.cubosMax.amarillo);
   });
 
   it('los rombos 2 y 3 de una capacidad exigen el 1', () => {

@@ -67,7 +67,7 @@ export const emptyHeroExtras = (heroId) => {
       agility: 0,
       ranged: 0,
       wisdom: 0,
-      dungeon: { nivel: 0, color: 'amarillo' },
+      dungeon: { nivel: 0, color: 'amarillo', colors: ['amarillo', 'amarillo'] },
     },
     /** Tres capacidades de clase con nombre libre y tres niveles. */
     capacidadesClase: [
@@ -96,6 +96,11 @@ const clampSkillLevel = (value) => Math.max(0, Math.min(MAX_SKILL_LEVEL, Number(
 function normalizeHabilidades(raw, base) {
   const source = isPlainObject(raw) ? raw : {};
   const dungeon = isPlainObject(source.dungeon) ? source.dungeon : {};
+  const fallbackColor = DUNGEON_SKILL_COLORS.includes(dungeon.color) ? dungeon.color : base.dungeon.color;
+  const rawColors = Array.isArray(dungeon.colors) ? dungeon.colors : [];
+  const colors = [0, 1].map((index) => (
+    DUNGEON_SKILL_COLORS.includes(rawColors[index]) ? rawColors[index] : fallbackColor
+  ));
   return {
     melee: clampSkillLevel(source.melee),
     agility: clampSkillLevel(source.agility),
@@ -103,7 +108,8 @@ function normalizeHabilidades(raw, base) {
     wisdom: clampSkillLevel(source.wisdom),
     dungeon: {
       nivel: clampSkillLevel(dungeon.nivel),
-      color: DUNGEON_SKILL_COLORS.includes(dungeon.color) ? dungeon.color : base.dungeon.color,
+      color: colors[0],
+      colors,
     },
   };
 }
@@ -432,7 +438,6 @@ export function setHeroSkill(heroId, key, level) {
     dungeon: { ...current.habilidades.dungeon },
   };
   const nextLevel = Math.max(0, Math.min(MAX_SKILL_LEVEL, Number(level) || 0));
-  const color = key === 'dungeon' ? habilidades.dungeon.color : SKILLS.find((skill) => skill.key === key).color;
   const prevLevel = key === 'dungeon' ? habilidades.dungeon.nivel : habilidades[key];
   const delta = nextLevel - prevLevel;
   if (delta === 0) return current;
@@ -442,31 +447,61 @@ export function setHeroSkill(heroId, key, level) {
 
   const cubosMax = { ...current.cubosMax };
   const cubos = { ...current.cubos };
-  cubosMax[color] = Math.max(0, (cubosMax[color] || 0) + delta);
-  cubos[color] = Math.max(0, Math.min((cubos[color] || 0) + delta, cubosMax[color]));
+  const addCube = (cubeColor, amount) => {
+    cubosMax[cubeColor] = Math.max(0, (cubosMax[cubeColor] || 0) + amount);
+    cubos[cubeColor] = Math.max(0, Math.min((cubos[cubeColor] || 0) + amount, cubosMax[cubeColor]));
+  };
+
+  if (key === 'dungeon') {
+    const fallback = habilidades.dungeon.color || 'amarillo';
+    const colors = Array.isArray(habilidades.dungeon.colors)
+      ? habilidades.dungeon.colors
+      : [fallback, fallback];
+    for (let skillLevel = 1; skillLevel <= MAX_SKILL_LEVEL; skillLevel += 1) {
+      const cubeColor = colors[skillLevel - 1] || fallback;
+      const wasActive = prevLevel >= skillLevel;
+      const isActive = nextLevel >= skillLevel;
+      if (isActive && !wasActive) addCube(cubeColor, 1);
+      if (!isActive && wasActive) addCube(cubeColor, -1);
+    }
+  } else {
+    const color = SKILLS.find((skill) => skill.key === key).color;
+    addCube(color, delta);
+  }
 
   return patchHeroExtras(heroId, { habilidades, cubosMax, cubos });
 }
 
-/** Cambia el color de la habilidad de mazmorra y mueve sus cubos si ya había niveles. */
-export function setDungeonSkillColor(heroId, color) {
+/** Cambia el color de un nivel de la habilidad de mazmorra y mueve su cubo. */
+export function setDungeonSkillColor(heroId, color, level = 1) {
   const current = getHeroExtras(heroId);
   if (!DUNGEON_SKILL_COLORS.includes(color)) return current;
 
+  const targetLevel = Math.max(1, Math.min(MAX_SKILL_LEVEL, Number(level) || 1));
   const dungeon = current.habilidades.dungeon;
-  if (dungeon.color === color) return current;
+  const fallback = dungeon.color || 'amarillo';
+  const colors = Array.isArray(dungeon.colors) && dungeon.colors.length >= MAX_SKILL_LEVEL
+    ? [...dungeon.colors]
+    : [fallback, fallback];
+  const previous = colors[targetLevel - 1];
+  if (previous === color) return current;
+  colors[targetLevel - 1] = color;
 
   const cubosMax = { ...current.cubosMax };
   const cubos = { ...current.cubos };
-  if (dungeon.nivel > 0) {
-    cubosMax[dungeon.color] = Math.max(0, (cubosMax[dungeon.color] || 0) - dungeon.nivel);
-    cubos[dungeon.color] = Math.min(cubos[dungeon.color] || 0, cubosMax[dungeon.color]);
-    cubosMax[color] = (cubosMax[color] || 0) + dungeon.nivel;
-    cubos[color] = Math.min((cubos[color] || 0) + dungeon.nivel, cubosMax[color]);
+  // Cada nivel activo aporta un cubo: al cambiar su color se mueve ese cubo.
+  if (dungeon.nivel >= targetLevel) {
+    cubosMax[previous] = Math.max(0, (cubosMax[previous] || 0) - 1);
+    cubos[previous] = Math.min(cubos[previous] || 0, cubosMax[previous]);
+    cubosMax[color] = (cubosMax[color] || 0) + 1;
+    cubos[color] = Math.min((cubos[color] || 0) + 1, cubosMax[color]);
   }
 
   return patchHeroExtras(heroId, {
-    habilidades: { ...current.habilidades, dungeon: { ...dungeon, color } },
+    habilidades: {
+      ...current.habilidades,
+      dungeon: { ...dungeon, color: colors[0], colors },
+    },
     cubosMax,
     cubos,
   });

@@ -69,15 +69,15 @@ test.describe('Habilidades del héroe', () => {
 
     const redBefore = await maxOf(red);
     await dialog.getByRole('button', { name: 'Rol de mazmorra · Nivel 1' }).click();
-    await expect(dialog.getByRole('button', { name: 'Color del cubo: rojo' })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Color del cubo 1: rojo' })).toBeVisible();
     await expect(dialog.getByRole('button', { name: 'Rol de mazmorra · Nivel 1' })).toHaveAttribute('aria-pressed', 'false');
 
-    await dialog.getByRole('button', { name: 'Color del cubo: rojo' }).click();
+    await dialog.getByRole('button', { name: 'Color del cubo 1: rojo' }).click();
     await expect(dialog.getByRole('button', { name: 'Rol de mazmorra · Nivel 1' })).toHaveAttribute('aria-pressed', 'true');
     expect(await maxOf(red)).toBe(redBefore + 1);
 
-    await dialog.getByRole('button', { name: 'Color del cubo', exact: true }).click();
-    await dialog.getByRole('button', { name: 'Color del cubo: verde' }).click();
+    await dialog.getByRole('button', { name: 'Color del cubo · Nivel 1' }).click();
+    await dialog.getByRole('button', { name: 'Color del cubo 1: verde' }).click();
     expect(await maxOf(red)).toBe(redBefore);
     expect(await maxOf(green)).toBeGreaterThan(0);
   });

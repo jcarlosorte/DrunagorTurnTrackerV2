@@ -89,7 +89,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
   const [recobrado, setRecobrado] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [almacenInput, setAlmacenInput] = useState('');
-  const [dungeonPicker, setDungeonPicker] = useState(false);
+  const [dungeonPicker, setDungeonPicker] = useState(0);
 
   useFocusTrap(dialogRef, true);
 
@@ -137,12 +137,18 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
     setAlmacenInput('');
   };
 
-  const chooseDungeonColor = (color) => {
-    const withColor = setDungeonSkillColor(heroId, color);
-    const nivel = withColor.habilidades?.dungeon?.nivel || 0;
-    const next = nivel > 0 ? withColor : setHeroSkill(heroId, 'dungeon', 1);
+  const getDungeonColor = (level) => (
+    extras.habilidades?.dungeon?.colors?.[level - 1]
+    || extras.habilidades?.dungeon?.color
+    || 'amarillo'
+  );
+
+  const chooseDungeonColor = (color, level) => {
+    const withColor = setDungeonSkillColor(heroId, color, level);
+    const currentLevel = withColor.habilidades?.dungeon?.nivel || 0;
+    const next = currentLevel >= level ? withColor : setHeroSkill(heroId, 'dungeon', level);
     apply(next);
-    setDungeonPicker(false);
+    setDungeonPicker(0);
   };
 
   const movement = (hero?.baseMove ?? 0) + getEquipmentBonus(extras, 'movimiento');
@@ -508,7 +514,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                     {[1, 2].map((level) => {
                       const current = extras.habilidades?.dungeon?.nivel || 0;
                       const active = current >= level;
-                      const color = CUBE_COLOR_BY_KEY[extras.habilidades?.dungeon?.color || 'amarillo'];
+                      const color = CUBE_COLOR_BY_KEY[getDungeonColor(level)];
                       return (
                         <button
                           key={level}
@@ -517,11 +523,12 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                           aria-label={`${t.dungeonRole || 'Rol de mazmorra'} · ${t.level || 'Nivel'} ${level}`}
                           disabled={level === 2 && current === 0}
                           onClick={() => {
-                            if (level === 1 && current === 0) {
-                              setDungeonPicker(true);
+                            if (active) {
+                              apply(setHeroSkill(heroId, 'dungeon', current === level ? level - 1 : level));
                               return;
                             }
-                            apply(setHeroSkill(heroId, 'dungeon', current === level ? level - 1 : level));
+                            if (level === 2 && current === 0) return;
+                            setDungeonPicker(level);
                           }}
                           className={`relative flex h-6 w-6 rotate-45 items-center justify-center rounded-sm border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 disabled:opacity-30 ${active ? 'border-white' : 'border-slate-500 bg-slate-900'}`}
                           style={active ? { backgroundColor: color } : undefined}
@@ -530,33 +537,43 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                         </button>
                       );
                     })}
-                    <button
-                      type="button"
-                      onClick={() => setDungeonPicker((open) => !open)}
-                      aria-label={t.dungeonColor || 'Color del cubo'}
-                      title={t.dungeonColor || 'Color del cubo'}
-                      className="h-5 w-5 rounded-full border border-white/70"
-                      style={{ backgroundColor: CUBE_COLOR_BY_KEY[extras.habilidades?.dungeon?.color || 'amarillo'] }}
-                    />
+                    {[1, 2].map((level) => {
+                      const current = extras.habilidades?.dungeon?.nivel || 0;
+                      const disabled = level === 2 && current === 0;
+                      return (
+                        <button
+                          key={`color-${level}`}
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => setDungeonPicker(level)}
+                          aria-label={`${t.dungeonColor || 'Color del cubo'} · ${t.level || 'Nivel'} ${level}`}
+                          title={`${t.dungeonColor || 'Color del cubo'} · ${t.level || 'Nivel'} ${level}`}
+                          className="h-4 w-4 rounded-full border border-white/70 transition hover:scale-110 disabled:opacity-30"
+                          style={{ backgroundColor: CUBE_COLOR_BY_KEY[getDungeonColor(level)] }}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
 
-                {dungeonPicker && (
+                {dungeonPicker > 0 && (
                   <div className="mt-1.5 flex flex-wrap items-center gap-1.5 rounded-lg border border-slate-600 bg-slate-900 p-1.5">
-                    <span className="text-[0.6rem] text-slate-400">{t.dungeonColor || 'Color del cubo'}:</span>
+                    <span className="text-[0.6rem] text-slate-400">
+                      {t.dungeonColor || 'Color del cubo'} · {t.level || 'Nivel'} {dungeonPicker}:
+                    </span>
                     {DUNGEON_SKILL_COLORS.map((color) => (
                       <button
                         key={color}
                         type="button"
-                        aria-label={`${t.dungeonColor || 'Color del cubo'}: ${color}`}
-                        onClick={() => chooseDungeonColor(color)}
+                        aria-label={`${t.dungeonColor || 'Color del cubo'} ${dungeonPicker}: ${color}`}
+                        onClick={() => chooseDungeonColor(color, dungeonPicker)}
                         className="h-5 w-5 rounded-full border border-slate-500 hover:scale-110"
                         style={{ backgroundColor: CUBE_COLOR_BY_KEY[color] }}
                       />
                     ))}
                     <button
                       type="button"
-                      onClick={() => setDungeonPicker(false)}
+                      onClick={() => setDungeonPicker(0)}
                       aria-label={t.close || 'Cerrar'}
                       className="ml-auto rounded px-1 text-xs text-slate-400 hover:text-white"
                     >

@@ -46,7 +46,11 @@ describe('sanitizeHeroEntry', () => {
     expect(result.habilidades.agility).toBe(0);
     expect(result.habilidades.ranged).toBe(2);
     expect(result.habilidades.wisdom).toBe(0);
-    expect(result.habilidades.dungeon).toEqual({ nivel: 2, color: 'amarillo' });
+    expect(result.habilidades.dungeon).toEqual({
+      nivel: 2,
+      color: 'amarillo',
+      colors: ['amarillo', 'amarillo'],
+    });
     expect(result.capacidadesClase).toHaveLength(3);
     expect(result.capacidadesClase[0]).toEqual({ nombre: 'A', niveles: [true, true, false] });
     expect(result.capacidadesClase[1]).toEqual({ nombre: '', niveles: [true, false, false] });
