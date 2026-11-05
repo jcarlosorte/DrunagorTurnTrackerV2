@@ -1987,6 +1987,21 @@ Unit       150 tests
 E2E        58/58
 ```
 
+### 93.ª tanda — Campañas y efectos de héroe por campaña
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **UI** | Las cajas principales pasan a llamarse campañas en la selección y textos asociados | `Tracker`, i18n |
+| **Héroes** | Auras, consecuencias y estados se filtran por la campaña; los actuales pertenecen a Core | `heroes/index`, `ModalHeroCard` |
+| **Pruebas** | 152 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       152 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -1,8 +1,18 @@
-import AURAS from './auras';
-import CONSECUENCIAS from './consecuencias';
-import ESTADOS_HEROE from './estados';
+import AURAS_SOURCE from './auras';
+import CONSECUENCIAS_SOURCE from './consecuencias';
+import ESTADOS_HEROE_SOURCE from './estados';
 
-export { AURAS, CONSECUENCIAS, ESTADOS_HEROE };
+/** Campañas principales a las que puede pertenecer un efecto de héroe. */
+export const HERO_EFFECT_CAMPAIGNS = ['core', 'awakenings', 'apocalypse'];
+
+const withCampaign = (items) => items.map((item) => ({
+  ...item,
+  campaign: HERO_EFFECT_CAMPAIGNS.includes(item.campaign) ? item.campaign : 'core',
+}));
+
+export const AURAS = withCampaign(AURAS_SOURCE);
+export const CONSECUENCIAS = withCampaign(CONSECUENCIAS_SOURCE);
+export const ESTADOS_HEROE = withCampaign(ESTADOS_HEROE_SOURCE);
 
 export const HERO_EFFECT_GROUPS = [
   { id: 'auras', label: { es: 'Auras', en: 'Auras' }, items: AURAS },

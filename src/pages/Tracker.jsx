@@ -347,7 +347,7 @@ const TrackerSelect = () => {
     setMessage({ type: '', text: '' });
   };
 
-  const stepLabel = { box: t.selectBox || 'Caja', heroes: t.selectHeroes, roles: t.assignRoles, enemies: t.selectEnemies };
+  const stepLabel = { box: t.selectBox || 'Campaña', heroes: t.selectHeroes, roles: t.assignRoles, enemies: t.selectEnemies };
 
   return (
     <PageTransition>
@@ -409,15 +409,15 @@ const TrackerSelect = () => {
           )}
         </div>
 
-        {/* PASO: CAJA */}
+        {/* PASO: CAMPAÑA */}
         {step === 'box' && (
           <section aria-labelledby="box-heading" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-4 sm:p-6">
             <div className="mb-4">
               <h2 id="box-heading" className="border-l-4 border-emerald-400 pl-3 text-xl font-bold">
-                {config.mainBoxTitle || 'Caja principal'}
+                {config.mainBoxTitle || 'Campaña'}
               </h2>
               <p className="mt-2 max-w-2xl text-sm text-slate-400">
-                {config.mainBoxHint || 'Elige la caja con la que jugarás. Solo se pueden seleccionar las que tengas desbloqueadas.'}
+                {config.mainBoxHint || 'Elige la campaña con la que jugarás. Solo se pueden seleccionar las que tengas desbloqueadas.'}
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-3">

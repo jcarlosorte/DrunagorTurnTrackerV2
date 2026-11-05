@@ -358,8 +358,8 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
                   }`}
                 >
                   {showAllBoxes
-                    ? (t.hideOtherBoxes || 'Ocultar otras cajas')
-                    : (t.showOtherBoxes || 'Ver otras cajas')}
+                    ? (t.hideOtherBoxes || 'Ocultar otras campañas')
+                    : (t.showOtherBoxes || 'Ver otras campañas')}
                 </button>
               )}
             </div>
@@ -369,7 +369,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
                   ? (t.noCompanionsInExpansions || 'No hay compañeros ni mascotas en las expansiones activas.')
                   : showCoreContent
                     ? (t.companionsAllAssigned || 'Todas las criaturas están asignadas.')
-                    : (t.companionsNotInBox || 'No hay criaturas de esta caja.')}
+                    : (t.companionsNotInBox || 'No hay criaturas de esta campaña.')}
               </p>
             ) : (
               <div className="space-y-2.5">

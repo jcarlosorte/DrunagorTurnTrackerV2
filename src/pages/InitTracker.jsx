@@ -343,7 +343,7 @@ const InitTracker = () => {
   const enemiesInSelectedExpansions = ENEMIES.filter(e => selectedExpansions.includes(e.expansionId) );
 
   // Selector manual: pool sin variantes ocultas, facetas presentes y filtrado combinado.
-  // Los escenarios se limitan a la caja principal salvo que se pidan todos.
+  // Los escenarios se limitan a la campaña principal salvo que se pidan todos.
   const isScenarioEnemy = (enemy) => enemy.color === 'escenario' || Boolean(enemy.scenario);
   const scenarioExpansionIds = getScenarioExpansionIds(mainBox);
   const manualPool = manualSelector.open
@@ -4063,7 +4063,7 @@ const InitTracker = () => {
                     {(manualSelector.color === 'escenario' || manualColor === 'escenario') && (
                       <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-cyan-800/60 bg-cyan-950/30 px-2 py-1">
                         <span className="text-[0.65rem] font-semibold text-cyan-100">
-                          {ti.manualScenarioBox || 'Escenario de la caja'}: {translations.config?.[`box_${mainBox}`] || mainBox}
+                          {ti.manualScenarioBox || 'Escenario de la campaña'}: {translations.config?.[`box_${mainBox}`] || mainBox}
                         </span>
                         <button
                           type="button"
@@ -4076,7 +4076,7 @@ const InitTracker = () => {
                           }`}
                         >
                           {showAllScenario
-                            ? (ti.manualOnlyBox || 'Solo la caja')
+                            ? (ti.manualOnlyBox || 'Solo la campaña')
                             : (ti.manualSeeAll || 'Ver todos')}
                         </button>
                       </div>

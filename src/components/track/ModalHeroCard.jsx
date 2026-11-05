@@ -17,6 +17,7 @@ import {
   getHeroEffectName,
   getHeroEffectDescription,
 } from '@/data/heroes/index';
+import { useExpansions } from '@/context/ExpansionContext';
 import { CUBE_META, MAX_HERO_VIDA, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, removeAlmacenItem, resetHero, toggleCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import ConfirmDialog from '@/components/ConfirmDialog';
@@ -81,6 +82,7 @@ const STAT_LABELS = {
 export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpenCompanion }) {
   const { language, translations } = useLanguage();
   const { trackerData, setTrackerData } = useTracker();
+  const { mainBox } = useExpansions();
   const dialogRef = useRef(null);
   const closeRef = useRef(null);
   const titleId = useId();
@@ -90,6 +92,12 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
   const [confirmReset, setConfirmReset] = useState(false);
   const [almacenInput, setAlmacenInput] = useState('');
   const [dungeonPicker, setDungeonPicker] = useState(0);
+
+  const campaign = mainBox || 'core';
+  const heroEffectGroups = GROUPS.map((group) => ({
+    ...group,
+    catalogue: group.catalogue.filter((item) => (item.campaign || 'core') === campaign),
+  }));
 
   useFocusTrap(dialogRef, true);
 
@@ -864,7 +872,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
           </section>
 
           {/* Auras y consecuencias */}
-          {GROUPS.map((group) => {
+          {heroEffectGroups.map((group) => {
             const added = extras[group.key] || [];
             const available = group.catalogue.filter((item) => !added.includes(item.id));
             return (
