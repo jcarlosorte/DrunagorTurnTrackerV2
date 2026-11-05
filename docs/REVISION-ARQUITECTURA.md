@@ -2201,6 +2201,20 @@ Unit       169 tests
 E2E        60/60
 ```
 
+### 108.ª tanda — Fórmula de INTIMIDAR
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | `INTIMIDAR X±N` calcula X, aplica la fórmula y mantiene el mínimo 0 | `adjustCapabilitiesByRunes` |
+| **Pruebas** | 170 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       170 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
