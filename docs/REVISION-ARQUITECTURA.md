@@ -2102,6 +2102,20 @@ Unit       161 tests
 E2E        60/60
 ```
 
+### 101.ª tanda — Traducciones de enemigos de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **i18n** | Nombres de Gorgoness, Gremlin Horde, Grim Doctor y Nagian Hunter, y de sus comandantes | `es.json`, `en.json` |
+| **Pruebas** | 163 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       163 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
