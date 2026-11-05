@@ -1958,6 +1958,21 @@ Unit       148 tests
 E2E        58/58
 ```
 
+### 91.ª tanda — Escenarios por caja en el selector manual
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Selector** | Los enemigos de escenario se filtran por la caja principal | `boxes`, `InitTracker` |
+| **Botón** | «Ver todos» muestra los escenarios de las tres cajas | `InitTracker` |
+| **Pruebas** | 149 unitarios · 58 E2E | tests |
+
+**Medición**
+
+```text
+Unit       149 tests
+E2E        58/58
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

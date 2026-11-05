@@ -73,6 +73,7 @@ import CampDialog from '@/components/track/CampDialog';
 import RestartGameDialog from '@/components/track/RestartGameDialog';
 import CompanionPicker from '@/components/track/CompanionPicker';
 import { boardSlotHeightFrom } from '@/components/track/trackLayout';
+import { getScenarioExpansionIds } from '@/data/boxes';
 
 
 const rolesPositionMap = {
@@ -113,7 +114,7 @@ const InitTracker = () => {
   );
   const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetEnemySession, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, acechoActivo, invadidosActivo, desactivaAcecho, desactivaHuesped, desactivaOscuridad, desactivaAsalto, desactivaInvadidos } = useInitEnemies();
   const { translations } = useLanguage();
-  const { selectedExpansions } = useExpansions();
+  const { selectedExpansions, mainBox, previewOtherBoxes } = useExpansions();
   const ti = translations.trackerInit || {};
   const tr = translations.roles || {};
   const tc = translations.enemies?.categoria || {};
@@ -136,6 +137,7 @@ const InitTracker = () => {
   const [manualQuery, setManualQuery] = useState('');
   const [manualColor, setManualColor] = useState('all');
   const [manualCategory, setManualCategory] = useState('all');
+  const [showAllScenario, setShowAllScenario] = useState(false);
 
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
@@ -184,6 +186,7 @@ const InitTracker = () => {
     ).colors;
     setManualQuery('');
     setManualCategory('all');
+    setShowAllScenario(false);
     setManualColor(color && availableColors.includes(color) ? color : 'all');
     setManualSelector({ open: true, color });
   };
@@ -340,8 +343,17 @@ const InitTracker = () => {
   const enemiesInSelectedExpansions = ENEMIES.filter(e => selectedExpansions.includes(e.expansionId) );
 
   // Selector manual: pool sin variantes ocultas, facetas presentes y filtrado combinado.
+  // Los escenarios se limitan a la caja principal salvo que se pidan todos.
+  const isScenarioEnemy = (enemy) => enemy.color === 'escenario' || Boolean(enemy.scenario);
+  const scenarioExpansionIds = getScenarioExpansionIds(mainBox);
   const manualPool = manualSelector.open
-    ? enemiesInSelectedExpansions.filter((enemy) => !EnemiesNoShow.includes(enemy.id))
+    ? (() => {
+      const regular = enemiesInSelectedExpansions.filter((enemy) => !isScenarioEnemy(enemy));
+      const scenario = ENEMIES.filter((enemy) => isScenarioEnemy(enemy) && (
+        previewOtherBoxes || showAllScenario || scenarioExpansionIds.includes(enemy.expansionId)
+      ));
+      return [...regular, ...scenario].filter((enemy) => !EnemiesNoShow.includes(enemy.id));
+    })()
     : [];
   const manualColorScope = manualSelector.open && manualColor !== 'all'
     ? manualPool.filter((enemy) => enemy.color === manualColor)
@@ -4047,6 +4059,28 @@ const InitTracker = () => {
                         ))}
                       </div>
                     </div>
+
+                    {(manualSelector.color === 'escenario' || manualColor === 'escenario') && (
+                      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-cyan-800/60 bg-cyan-950/30 px-2 py-1">
+                        <span className="text-[0.65rem] font-semibold text-cyan-100">
+                          {ti.manualScenarioBox || 'Escenario de la caja'}: {translations.config?.[`box_${mainBox}`] || mainBox}
+                        </span>
+                        <button
+                          type="button"
+                          aria-pressed={showAllScenario}
+                          onClick={() => setShowAllScenario((value) => !value)}
+                          className={`min-h-8 shrink-0 rounded-lg border px-2 text-[0.65rem] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
+                            showAllScenario
+                              ? 'border-cyan-300 bg-cyan-700 text-white'
+                              : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-cyan-400'
+                          }`}
+                        >
+                          {showAllScenario
+                            ? (ti.manualOnlyBox || 'Solo la caja')
+                            : (ti.manualSeeAll || 'Ver todos')}
+                        </button>
+                      </div>
+                    )}
 
                     <div className="flex items-start gap-2">
                       <span className="w-14 shrink-0 pt-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
