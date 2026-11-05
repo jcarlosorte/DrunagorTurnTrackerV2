@@ -280,7 +280,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               <div className="flex flex-wrap gap-2">
                 {accion.map((clave, idx) => {
                   const { claveGeneral, texto, detalle } = traducirClaveConNumero(clave, tt, tte);
-                  const classColor = getAbilityColor(claveGeneral, rulesVersion);
+                  const classColor = getAbilityColor(claveGeneral);
   
                   return (
                     <span key={clave + idx} className={`inline-flex items-center gap-1 mr-2 ${classColor}`}>

@@ -32,25 +32,48 @@ export const textBgColorMap = {
   jefe: 'bg-purple-700',
 };
 
-const PINK_ABILITIES = ['ESCUDO_X', 'REGENERACION_X', 'MANDO', 'EVOLUCION', 'SANAR_X', 'VORAGINE', 'HASTA 2 MOSTRUOS MAS DEBILES'];
-const BLUE_ABILITIES = ['SANGUINARIO', 'IMPLACABLE', 'DESAFIO', 'SALTO', 'VENGATIVO', 'CODICIA', 'BRUTAL'];
-const GREEN_2_ABILITIES = ['EMBATE_X', 'ANDANADA_X'];
-const VIOLET_2_ABILITIES = ['SOBREPRESION'];
+const PINK_ABILITIES = [
+  'ESCUDO_X',
+  'REGENERACION_X',
+  'MANDO',
+  'EVOLUCION',
+  'SANAR_X',
+  'VORAGINE',
+  'HASTA_2_MOSTRUOS_MAS_DEBILES',
+  'ALIVIAR_X',
+  'ENCADENAR',
+  'VUDU',
+  'GRITO_DE_GUERRA',
+];
+const BLUE_ABILITIES = [
+  'SANGUINARIO',
+  'IMPLACABLE',
+  'DESAFIO',
+  'SALTO',
+  'VENGATIVO',
+  'CODICIA',
+  'BRUTAL',
+  'CARGA',
+  'ENJAMBRE',
+  'CONTRAATAQUE_X',
+  'ASESINAR',
+  'ROMPECRANEOS',
+  'ARMADURA_DE_ASALTO',
+  'GIGANTE',
+];
+const GREEN_ABILITIES = ['EMBATE_X', 'ANDANADA_X', 'HENDEDURA_X', 'ATAQUE_DOBLE'];
+const VIOLET_ABILITIES = ['SOBREPRESION', 'CONTROL_MENTAL'];
 
-/** Color de una capacidad según la versión de reglas. */
-export function getAbilityColor(claveGeneral, rulesVersion) {
-  if (rulesVersion === '2.0' && GREEN_2_ABILITIES.includes(claveGeneral)) {
-    return 'text-emerald-500 font-semibold';
-  }
-  if (rulesVersion === '2.0' && VIOLET_2_ABILITIES.includes(claveGeneral)) {
-    return 'text-violet-500 font-semibold';
-  }
-  if (PINK_ABILITIES.includes(claveGeneral)) {
-    return 'text-pink-500 font-semibold';
-  }
-  if (BLUE_ABILITIES.includes(claveGeneral)) {
-    return 'text-blue-500 font-semibold';
-  }
+const normalizeAbility = (key) => String(key || '').trim().toUpperCase().replace(/\s+/g, '_');
+
+/** Color de una capacidad. Los colores se usan en todas las versiones de reglas. */
+export function getAbilityColor(claveGeneral) {
+  const key = normalizeAbility(claveGeneral);
+  if (/^ESCUDO_X([+-]\d+)?$/.test(key)) return 'text-pink-500 font-semibold';
+  if (PINK_ABILITIES.includes(key)) return 'text-pink-500 font-semibold';
+  if (BLUE_ABILITIES.includes(key)) return 'text-blue-500 font-semibold';
+  if (GREEN_ABILITIES.includes(key)) return 'text-emerald-500 font-semibold';
+  if (VIOLET_ABILITIES.includes(key)) return 'text-violet-500 font-semibold';
   return '';
 }
 

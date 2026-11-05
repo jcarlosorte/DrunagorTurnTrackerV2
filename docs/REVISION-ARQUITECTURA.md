@@ -2060,6 +2060,20 @@ Unit       157 tests
 E2E        59/59
 ```
 
+### 98.ª tanda — Colores de capacidades ampliados
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | Nuevas capacidades con color rosa, azul, verde y violeta; los colores se aplican en todas las reglas | `enemyVisuals` |
+| **Pruebas** | 159 unitarios · 59 E2E | tests |
+
+**Medición**
+
+```text
+Unit       159 tests
+E2E        59/59
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
