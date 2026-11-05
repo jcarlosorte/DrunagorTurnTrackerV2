@@ -27,6 +27,12 @@ describe('glosario 2.0', () => {
     expect(glosarioEn.CARGAR).toBeUndefined();
   });
 
+  it('incluye la capacidad del cañón terrorífico', () => {
+    const key = 'ESTE MONSTRUO SE MUEVE HACIA EL CAÑON TERRORÍFICO MÁS CERCANO Y LO DISPARA';
+    expect(glosarioEs[key]).toBe('este monstruo se mueve hacia el cañon terrorífico más cercano y lo dispara');
+    expect(glosarioEn[key]).toBe('This monster moves toward the nearest terrifying cannon and fires it');
+  });
+
   it('no conserva caracteres mal codificados en español', () => {
     expect(JSON.stringify(glosarioEs)).not.toMatch(/[ÃÂ]/);
     expect(glosarioEs.CODICIA).toContain('CONCENTRACIÓN');

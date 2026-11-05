@@ -2271,6 +2271,20 @@ Unit       170 tests
 E2E        60/60
 ```
 
+### 113.ª tanda — Capacidad del cañón terrorífico
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | Nueva capacidad «Este monstruo se mueve hacia el cañón terrorífico más cercano y lo dispara», en azul, con etiqueta y descripciones ES/EN | `enemyVisuals`, `es.json`, `en.json`, `glosario2` |
+| **Pruebas** | 171 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       171 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

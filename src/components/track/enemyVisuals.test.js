@@ -32,6 +32,7 @@ describe('colores de capacidades de enemigo', () => {
     expect(getAbilityColor('ASESINAR')).toContain('blue');
     expect(getAbilityColor('ROMPECRANEOS')).toContain('blue');
     expect(getAbilityColor('ARMADURA DE ASALTO')).toContain('blue');
+    expect(getAbilityColor('ESTE MONSTRUO SE MUEVE HACIA EL CAÑON TERRORÍFICO MÁS CERCANO Y LO DISPARA')).toContain('blue');
     expect(getAbilityColor('GIGANTE')).toContain('blue');
   });
 
