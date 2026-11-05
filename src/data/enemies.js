@@ -383,6 +383,10 @@ export const ENEMIES = [
 
 { id: "maya_ranger_com", nombre: "Maya, The Ranger", vida: 8, movimiento: 4, ataque: 5, color: "escenario", categoria: "comandante", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: maya, rune: "gris", runePosition: "arriba", inmunidad: ["SIGILO_I", "ATURDIMIENTO_I"], tipo_ataque: "distancia", capacidades: ["DESAFIO", ";", "ATAQUE DOBLE", ";", "HEMORRAGIA X"] },
 
+{ id: "fallen_woodcutter", nombre: "Fallen Woodcutter", vida: 9, movimiento: 5, ataque: 3, color: "escenario", categoria: "esbirro", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: hellspawn_brute, rune: "rojo", runePosition: "arriba", inmunidad: [], tipo_ataque: "cuerpo", capacidades: ["SEMILLA_DEL_CAOS 1"] },
+{ id: "nightmare", nombre: "Nightmare", vida: 6, movimiento: 4, ataque: 2, color: "escenario", categoria: "esbirro", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: night_stalker, rune: "gris", runePosition: "arriba", inmunidad: [], tipo_ataque: "cuerpo", capacidades: ["VENGATIVO", ";", "PENITENCIA"] },
+{ id: "boatswain", nombre: "Boatswain", vida: 9, movimiento: 4, ataque: 4, color: "escenario", categoria: "esbirro", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: executioner, rune: "rojo", runePosition: "arriba", inmunidad: [], tipo_ataque: "cuerpo", capacidades: ["HENDEDURA 2", ";", "DERRIBO"] },
+{ id: "tide_hunter", nombre: "Tide Hunter", vida: 6, movimiento: 5, ataque: 3, color: "escenario", categoria: "esbirro", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: nagian_hunter, rune: "naranja", runePosition: "arriba", inmunidad: [], tipo_ataque: "cuerpo", capacidades: ["ASESINAR", ";", "ROMPRECRANEOS", ";", "HEMORRAGIA 2"] },
 
 { id: "soul_harvester", nombre: "Soul Harvester", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: soul_harvester, rune: "azul", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
 
