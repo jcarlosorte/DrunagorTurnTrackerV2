@@ -2187,6 +2187,20 @@ Unit       168 tests
 E2E        60/60
 ```
 
+### 107.ª tanda — Fórmula de FATIGA
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | `FATIGA X±N` calcula X, aplica la fórmula y mantiene el mínimo 0 | `adjustCapabilitiesByRunes` |
+| **Pruebas** | 169 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       169 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
