@@ -84,12 +84,12 @@ test.describe('Selector manual de enemigos', () => {
     await colors.getByRole('button', { name: 'Todos', exact: true }).click();
     await categories.getByRole('button', { name: 'Campeón' }).click();
     await expect(categories.getByRole('button', { name: 'Campeón' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(dialog.getByText('Vampiro Oscuro')).toBeVisible();
+    await expect(dialog.getByText('Vampiro Oscuro').first()).toBeVisible();
 
     await dialog.getByRole('searchbox').fill('dark');
-    await expect(dialog.getByText('Vampiro Oscuro')).toBeVisible();
+    await expect(dialog.getByText('Vampiro Oscuro').first()).toBeVisible();
     await expect(dialog.getByText('Arquero Esqueleto')).toHaveCount(0);
-    await expect(counter).toHaveText(/^1 de \d+$/);
+    await expect(counter).toHaveText(/^[1-9]\d* de \d+$/);
 
     await dialog.getByRole('searchbox').fill('zzz');
     await expect(dialog.getByText('Sin resultados con los filtros actuales.')).toBeVisible();
@@ -110,5 +110,18 @@ test.describe('Selector manual de enemigos', () => {
         (entry) => entry.enemy.id === 'skeleton_archer' && entry.enemy.comportamiento === 'estandar',
       );
     })).toBe(true);
+  });
+
+  test('filtra por campaña y vuelve a todas', async ({ page }) => {
+    const dialog = await openManualSelector(page, 'Blanco');
+    const campaigns = dialog.getByRole('group', { name: 'Campaña' });
+
+    await expect(campaigns.getByRole('button', { name: 'Todas' })).toHaveAttribute('aria-pressed', 'true');
+    await campaigns.getByRole('button', { name: 'Core' }).click();
+    await expect(campaigns.getByRole('button', { name: 'Core' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(dialog.getByText('Arquero Esqueleto', { exact: true })).toBeVisible();
+
+    await campaigns.getByRole('button', { name: 'Todas' }).click();
+    await expect(campaigns.getByRole('button', { name: 'Todas' })).toHaveAttribute('aria-pressed', 'true');
   });
 });

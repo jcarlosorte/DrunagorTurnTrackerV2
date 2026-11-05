@@ -56,6 +56,12 @@ const TrackerSelect = () => {
 
   const expansionKey = selectedExpansions.join(',');
 
+  // Al entrar en la configuración de partida se aplican las expansiones de la campaña.
+  useEffect(() => {
+    setMainBox(mainBox);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Se depende de `expansionKey` (cadena estable) en lugar del array.
   const heroesInSelectedExpansions = useMemo(
     () => HEROES.filter((h) => expansionKey.split(',').includes(h.expansionId)),

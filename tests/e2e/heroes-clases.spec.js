@@ -8,7 +8,9 @@ test.describe('Selección de héroes por clase', () => {
     await page.getByRole('button', { name: 'Selecciona tus héroes' }).click();
 
     const section = page.locator('section[aria-labelledby="heroes-heading"]');
-    await expect(section.locator('h3')).toHaveText(['Arquero', 'Asesino', 'Clérigo', 'Guerrero', 'Mago']);
+    await expect(section.locator('h3')).toHaveCount(12);
+    const headings = await section.locator('h3').allTextContents();
+    expect(headings).toEqual(expect.arrayContaining(['Arquero', 'Asesino', 'Clérigo', 'Guerrero', 'Mago']));
 
     const archerGroup = section.locator('section').filter({ hasText: 'Arquero' });
     await expect(archerGroup.locator('header img')).toBeVisible();

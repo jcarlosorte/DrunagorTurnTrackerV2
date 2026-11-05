@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { HEROES } from '@/data/heroes';
 import { getHeroClass } from '@/data/heroClasses';
 import { ENEMIES } from '@/data/enemies';
+import { EXPANSIONS } from '@/data/expansions';
 import { RUNAS, ASALTO } from '@/data/runas';
 import { INCURSION } from '@/data/incursion';
 import { DEFENSA } from '@/data/defensa';
@@ -73,7 +74,7 @@ import CampDialog from '@/components/track/CampDialog';
 import RestartGameDialog from '@/components/track/RestartGameDialog';
 import CompanionPicker from '@/components/track/CompanionPicker';
 import { boardSlotHeightFrom } from '@/components/track/trackLayout';
-import { getScenarioExpansionIds } from '@/data/boxes';
+import { CAMPAIGN_EXPANSIONS, getExpansionCampaigns, getScenarioExpansionIds } from '@/data/boxes';
 import { getCommanderCandidates } from '@/utils/commanderSelection';
 
 
@@ -138,6 +139,7 @@ const InitTracker = () => {
   const [manualQuery, setManualQuery] = useState('');
   const [manualColor, setManualColor] = useState('all');
   const [manualCategory, setManualCategory] = useState('all');
+  const [manualCampaign, setManualCampaign] = useState('all');
   const [showAllScenario, setShowAllScenario] = useState(false);
 
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
@@ -187,6 +189,7 @@ const InitTracker = () => {
     ).colors;
     setManualQuery('');
     setManualCategory('all');
+    setManualCampaign('all');
     setShowAllScenario(false);
     setManualColor(color && availableColors.includes(color) ? color : 'all');
     setManualSelector({ open: true, color });
@@ -348,11 +351,15 @@ const InitTracker = () => {
   const isScenarioEnemy = (enemy) => enemy.color === 'escenario' || Boolean(enemy.scenario);
   const scenarioExpansionIds = getScenarioExpansionIds(mainBox);
   const selectedEnemyIds = trackerData.enemies || [];
-  const commanderCandidates = getCommanderCandidates({ mainBox, selectedEnemyIds });
+  const commanderCandidates = getCommanderCandidates({ selectedEnemyIds });
   const commanderIds = new Set(commanderCandidates.map((enemy) => enemy.id));
+  const activeEnemies = ENEMIES.filter((enemy) => {
+    const expansion = EXPANSIONS.find((entry) => entry.id === enemy.expansionId);
+    return expansion && expansion.active !== 'off';
+  });
   const manualPool = manualSelector.open
     ? (() => {
-      const regular = enemiesInSelectedExpansions.filter((enemy) => {
+      const regular = activeEnemies.filter((enemy) => {
         if (isScenarioEnemy(enemy)) return false;
         if (enemy.categoria === 'comandante') return commanderIds.has(enemy.id);
         return true;
@@ -363,17 +370,31 @@ const InitTracker = () => {
       return [...regular, ...scenario].filter((enemy) => !EnemiesNoShow.includes(enemy.id));
     })()
     : [];
+  const campaignOrder = [mainBox, ...Object.keys(CAMPAIGN_EXPANSIONS).filter((id) => id !== mainBox)];
+  const enemyCampaignRank = (enemy) => {
+    const campaigns = getExpansionCampaigns(enemy.expansionId);
+    const index = campaignOrder.findIndex((id) => campaigns.includes(id));
+    return index === -1 ? campaignOrder.length : index;
+  };
+  const manualCampaignScope = manualSelector.open
+    ? (manualCampaign === 'all'
+      ? manualPool
+      : manualPool.filter((enemy) => getExpansionCampaigns(enemy.expansionId).includes(manualCampaign)))
+    : [];
   const manualColorScope = manualSelector.open && manualColor !== 'all'
-    ? manualPool.filter((enemy) => enemy.color === manualColor)
-    : manualPool;
+    ? manualCampaignScope.filter((enemy) => enemy.color === manualColor)
+    : manualCampaignScope;
   const manualFacets = manualSelector.open
     ? {
-      colors: collectManualFacets(manualPool).colors,
+      colors: collectManualFacets(manualCampaignScope).colors,
       categories: collectManualFacets(manualColorScope).categories,
     }
     : { colors: [], categories: [] };
+  const manualSorted = manualSelector.open
+    ? [...manualColorScope].sort((a, b) => enemyCampaignRank(a) - enemyCampaignRank(b))
+    : [];
   const filteredManualEnemies = manualSelector.open
-    ? filterManualEnemies(manualColorScope, {
+    ? filterManualEnemies(manualSorted, {
       category: manualCategory,
       query: manualQuery,
       getLabel: (enemy) => getEnemyName(enemy.id, enemy.color),
@@ -1005,7 +1026,6 @@ const InitTracker = () => {
   
   const handleRandomCommander = () => {
     const candidates = getCommanderCandidates({
-      mainBox,
       selectedEnemyIds: trackerData.enemies || [],
     });
     if (candidates.length === 0) {
@@ -4069,6 +4089,45 @@ const InitTracker = () => {
                             }`}
                           >
                             {ti.manualColors?.[color] || tc?.[color] || color}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      <span className="w-14 shrink-0 pt-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
+                        {ti.manualCampaign || 'Campaña'}
+                      </span>
+                      <div
+                        role="group"
+                        aria-label={ti.manualCampaign || 'Filtrar por campaña'}
+                        className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto pb-0.5"
+                      >
+                        <button
+                          type="button"
+                          aria-pressed={manualCampaign === 'all'}
+                          onClick={() => setManualCampaign('all')}
+                          className={`min-h-8 shrink-0 rounded-full border px-2.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                            manualCampaign === 'all'
+                              ? 'border-cyan-300 bg-cyan-700 text-white'
+                              : 'border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-400'
+                          }`}
+                        >
+                          {ti.manualAllCampaigns || 'Todas'}
+                        </button>
+                        {campaignOrder.map((campaignId) => (
+                          <button
+                            key={campaignId}
+                            type="button"
+                            aria-pressed={manualCampaign === campaignId}
+                            onClick={() => setManualCampaign(manualCampaign === campaignId ? 'all' : campaignId)}
+                            className={`min-h-8 shrink-0 rounded-full border px-2.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                              manualCampaign === campaignId
+                                ? 'border-cyan-300 bg-cyan-700 text-white'
+                                : 'border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-400'
+                            }`}
+                          >
+                            {translations.config?.[`box_${campaignId}`] || campaignId}
                           </button>
                         ))}
                       </div>

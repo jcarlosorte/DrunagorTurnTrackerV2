@@ -537,6 +537,8 @@
     "manualColor": "Color",
     "manualCategory": "Category",
     "manualAllColors": "All",
+    "manualCampaign": "Campaign",
+    "manualAllCampaigns": "All",
     "manualSeeAll": "See all",
     "manualOnlyBox": "Campaign only",
     "manualScenarioBox": "Campaign scenario",

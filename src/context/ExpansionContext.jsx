@@ -1,7 +1,7 @@
 // src/context/ExpansionContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import { EXPANSIONS } from '../data/expansions';
-import { MAIN_BOXES, getMainBox, isBoxUnlocked } from '../data/boxes';
+import { MAIN_BOXES, getCampaignExpansionIds, getMainBox, isBoxUnlocked } from '../data/boxes';
 import { readJsonStorage, writeJsonStorage } from '../utils/storage';
 
 const ExpansionContext = createContext();
@@ -40,9 +40,11 @@ export const ExpansionProvider = ({ children }) => {
     const box = getMainBox(id);
     if (!box || !isBoxUnlocked(box)) return;
     setMainBoxState(box.id);
-    setSelectedExpansions((prev) => (
-      prev.includes(box.expansionId) ? prev : [...prev, box.expansionId]
-    ));
+    const campaignExpansions = getCampaignExpansionIds(box.id).filter((expansionId) => {
+      const expansion = EXPANSIONS.find((entry) => entry.id === expansionId);
+      return expansion && expansion.active !== 'off';
+    });
+    setSelectedExpansions((prev) => [...new Set([...prev, ...campaignExpansions])]);
   };
 
   const togglePreview = () => setPreviewOtherBoxes((value) => !value);

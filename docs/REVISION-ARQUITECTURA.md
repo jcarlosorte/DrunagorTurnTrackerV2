@@ -2044,6 +2044,22 @@ Unit       156 tests
 E2E        58/58
 ```
 
+### 97.ª tanda — Campañas, expansiones por defecto y filtro manual
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Campañas** | Al iniciar partida se añaden las expansiones activas de la campaña | `ExpansionContext`, `boxes`, `Tracker` |
+| **Comandantes** | Se retira el filtro de campaña; mandan los enemigos seleccionados | `commanderSelection` |
+| **Manual** | Nuevo filtro por campaña y orden con la activa primero | `InitTracker` |
+| **Pruebas** | 157 unitarios · 59 E2E | tests |
+
+**Medición**
+
+```text
+Unit       157 tests
+E2E        59/59
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
