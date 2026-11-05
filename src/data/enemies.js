@@ -40,6 +40,8 @@ import war_horsemen from "@/assets/enemies/war_horsemen.avif";
 import death_horsemen from "@/assets/enemies/death_horsemen.avif";
 import plague_horsemen from "@/assets/enemies/plague_horsemen.avif";
 import famine_horsemen from "@/assets/enemies/famine_horsemen.avif";
+
+// Despertar
 import gremlin_horde from "@/assets/enemies/gremlin_horde.avif";
 import gorgoness_witch from "@/assets/enemies/gorgoness_witch.avif";
 import grim_doctor from "@/assets/enemies/grim_doctor.avif";
@@ -49,7 +51,10 @@ import night_stalker from "@/assets/enemies/night_stalker.avif";
 import gorgon_hexer from "@/assets/enemies/gorgon_hexer.avif";
 import soul_harvester from "@/assets/enemies/soul_harvester.avif";
 import fell_asteris from "@/assets/enemies/FellAsteris.avif";
+
+// Hermanas caidas
 import fallen_sisters from "@/assets/enemies/fallen_sister.png";
+
 //heroes caidos
 import lorelai from "@/assets/heroes/Lorelai.avif";
 import elros from "@/assets/heroes/Elros.avif";
@@ -375,6 +380,8 @@ export const ENEMIES = [
 { id: "gorgon_hexer", nombre: "Gorgon Hexer", vida: 24, movimiento: 4, ataque: 8, color: "gris", categoria: "campeon", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: gorgon_hexer, rune: "azul", runePosition: "abajo", comportamiento: "estandar", inmunidad: ["INTIMIDAR_I", "DERRIBO_I"], tipo_ataque: "distancia", capacidades: ["VUDU", ";", "VENENO 2", "Y", "ESPARCIR"] },
 { id: "gorgon_hexer", nombre: "Gorgon Hexer", vida: 18, movimiento: 4, ataque: 6, color: "gris", categoria: "campeon", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: gorgon_hexer, rune: "azul", runePosition: "abajo", comportamiento: "alternativo", inmunidad: ["INTIMIDAR_I", "DERRIBO_I"], tipo_ataque: "distancia", capacidades: ["VENGATIVO", ";", "ATAQUE DOBLE", ",", "INTIMIDAR X-2"] },
 { id: "gorgon_hexer_com", nombre: "Hexer Commander", vida: 7, movimiento: 3, ataque: 5, color: "comandante", categoria: "comandante", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: gorgon_hexer, rune: "gris", runePosition: "arriba", inmunidad: ["GRANDE", "VENENO_I"], tipo_ataque: "distancia", capacidades: ["SOBREPRESION", ";", "ANDANADA 2", ",", "VENENO X"] },
+
+{ id: "maya_ranger_com", nombre: "Maya, The Ranger", vida: 8, movimiento: 4, ataque: 5, color: "escenario", categoria: "comandante", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: maya, rune: "gris", runePosition: "arriba", inmunidad: ["SIGILO_I", "ATURDIMIENTO_I"], tipo_ataque: "distancia", capacidades: ["DESAFIO", ";", "ATAQUE DOBLE", ";", "HEMORRAGIA X"] },
 
 
 { id: "soul_harvester", nombre: "Soul Harvester", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: soul_harvester, rune: "azul", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },

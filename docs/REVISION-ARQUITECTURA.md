@@ -2229,6 +2229,20 @@ Unit       170 tests
 E2E        60/60
 ```
 
+### 110.ª tanda — Traducción de Maya, La Montaraz
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **i18n** | Maya, The Ranger → Maya, La Montaraz | `es.json`, `en.json` |
+| **Pruebas** | 170 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       170 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
