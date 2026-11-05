@@ -15,6 +15,13 @@ describe('glosario 2.0', () => {
     expect(Object.keys(glosarioEn).length).toBe(Object.keys(glosarioEs).length);
   });
 
+  it('usa CARGA en lugar de CARGAR', () => {
+    expect(glosarioEs.CARGA).toBeTruthy();
+    expect(glosarioEn.CARGA).toBeTruthy();
+    expect(glosarioEs.CARGAR).toBeUndefined();
+    expect(glosarioEn.CARGAR).toBeUndefined();
+  });
+
   it('no conserva caracteres mal codificados en español', () => {
     expect(JSON.stringify(glosarioEs)).not.toMatch(/[ÃÂ]/);
     expect(glosarioEs.CODICIA).toContain('CONCENTRACIÓN');

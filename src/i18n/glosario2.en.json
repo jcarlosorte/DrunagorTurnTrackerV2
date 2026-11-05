@@ -29,7 +29,7 @@
   "BRUTAL": "The damage dealt by this Monster's attack is non-preventable.",
   "CANALIZAR": "As long as a Skill with Channel has an Action Cube occupying its slot, the passive bonus described in \"Channel - Effect\" takes effect as a Passive Skill until the Action Cube is recalled.",
   "CANCELAR": "Associated with Interrupts ( Â¬ ). When an attack is Canceled, it no longer exists and deals no damage to any of its targets.",
-  "CARGAR": "Whenever a Monster with this ability moves 3 or more squares to reach its target, double the base damage value of its attack.",
+  "CARGA": "Whenever a Monster with this ability moves 3 or more squares to reach its target, double the base damage value of its attack.",
   "CATALIZAR": "The next Action Cube the Hero uses this turn is treated as a Wild Cube (doubling numerical values on Hero Skills).",
   "CEGUERA": "The Character takes a Blind token. While holding it, they automatically miss any Weapon Attack if the natural d20 roll is 10 or lower. Lasts until a Recall Action or Cleanse effect.",
   "CODICIA": "A Monster with Covetous targets the Hero holding the most Resource tokens (Focus, Shield, Ki) as its Primary Target. Ties are broken by fastest Initiative.",

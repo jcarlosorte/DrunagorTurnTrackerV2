@@ -29,7 +29,7 @@
   "BRUTAL": "El daño causado por este Ataque de Monstruo es no prevenible.",
   "CANALIZAR": "Mientras una Habilidad con Canalizar tenga un cubo de acción en su ranura, la bonificación pasiva descrita en «Canalizar - Efecto» tiene efecto como si fuera una Habilidad pasiva. Permanece hasta que se recobre el cubo.",
   "CANCELAR": "Asociado a las interrupciones ( ¬ ). Cuando un ataque es cancelado, significa que ya no existe y no inflige daño a ninguno de sus objetivos.",
-  "CARGAR": "Cuando un Monstruo con esta Habilidad se mueve 3 o más casillas para alcanzar a su objetivo, considera el valor de daño base de su ataque como si fuera el doble.",
+  "CARGA": "Cuando un Monstruo con esta Habilidad se mueve 3 o más casillas para alcanzar a su objetivo, considera el valor de daño base de su ataque como si fuera el doble.",
   "CATALIZAR": "El siguiente cubo de acción que use el Héroe este turno se trata como un cubo comodín (si se usa para una Habilidad de Héroe, se duplican todos los números en forma numérica).",
   "CEGUERA": "El personaje debe coger una ficha de Ceguera. Mientras la tenga, falla automáticamente cualquier Ataque con Arma si su tirada natural de d20 es 10 o menor. Permanece hasta hacer Recobrar o usar Purificación.",
   "CODICIA": "Un Monstruo con Codicia elige como objetivo principal al Héroe con más fichas de recurso (como CONCENTRACIÓN, ESCUDO y KI). Si 2 Héroes están empatados en número de fichas de recurso, el Monstruo con Codicia elige al que vaya primero en el medidor de Iniciativa.",

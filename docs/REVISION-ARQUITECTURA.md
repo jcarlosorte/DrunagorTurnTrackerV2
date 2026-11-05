@@ -2116,6 +2116,21 @@ Unit       163 tests
 E2E        60/60
 ```
 
+### 102.ª tanda — Veneno X con fórmula y Carga en el glosario
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | `VENENO X±N` calcula X, aplica la fórmula y mantiene el mínimo 0 | `adjustCapabilitiesByRunes`, `constants` |
+| **Glosario** | La capacidad 2.0 pasa de `CARGAR` a `CARGA` | `glosario2.es.json`, `glosario2.en.json` |
+| **Pruebas** | 165 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       165 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
