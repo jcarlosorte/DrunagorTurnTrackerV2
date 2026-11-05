@@ -2088,6 +2088,20 @@ Unit       161 tests
 E2E        59/59
 ```
 
+### 100.ª tanda — Aviso de héroes de la caja base en Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Héroes** | Los héroes de la caja base muestran «Se recomienda no usar» al configurar la campaña Despertar | `Tracker`, i18n |
+| **Pruebas** | 161 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       161 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

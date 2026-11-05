@@ -269,6 +269,12 @@ const TrackerSelect = () => {
               fallback={hero.image}
               className="h-32 w-full sm:h-40"
             />
+            {mainBox === 'awakenings' && hero.expansionId === 'base' && (
+              <span className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-0.5 bg-amber-950/85 p-1 text-center text-[0.65rem] font-bold uppercase leading-tight tracking-wide text-amber-100">
+                <span aria-hidden="true">⚠</span>
+                {t.baseHeroAwakeningsWarning || 'Se recomienda no usar'}
+              </span>
+            )}
             <span className="absolute left-2 top-2 z-10">
               <ExpansionIcon
                 expansionId={hero.expansionId}

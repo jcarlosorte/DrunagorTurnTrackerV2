@@ -360,6 +360,7 @@
   "trackerSelect": {
     "title": "Configuración",
     "selectHeroes": "Selecciona tus héroes",
+    "baseHeroAwakeningsWarning": "Se recomienda no usar",
     "selectBox": "Campaña",
     "assignRoles": "Asigna roles de mazmorra",
     "noHeroesSelected": "Debes seleccionar al menos un héroe.",
