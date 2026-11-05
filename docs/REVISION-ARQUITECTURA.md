@@ -2173,6 +2173,20 @@ Unit       168 tests
 E2E        60/60
 ```
 
+### 106.ª tanda — Traducciones de Hellspawn y Fell Asteris
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **i18n** | Hellspawn Brute → Bruto Infernal, Brute Commander → Comandante Vástago, Fell Asteris → Aestris Letal, Ox Commander → Comandante Buey | `es.json`, `en.json` |
+| **Pruebas** | 168 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       168 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

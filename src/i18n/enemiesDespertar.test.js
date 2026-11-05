@@ -8,6 +8,8 @@ describe('traducciones de enemigos de Despertar', () => {
     expect(es.enemies.gremlin_horde).toBe('Horda de Duendes');
     expect(es.enemies.grim_doctor).toBe('Doctor Nefasto');
     expect(es.enemies.nagian_hunter).toBe('Cazador Nagiano');
+    expect(es.enemies.hellspawn_brute).toBe('Bruto Infernal');
+    expect(es.enemies.fell_asteris).toBe('Aestris Letal');
   });
 
   it('traduce sus comandantes', () => {
@@ -15,7 +17,11 @@ describe('traducciones de enemigos de Despertar', () => {
     expect(es.enemies.gremlin_horde_com).toBe('Comandante Horda');
     expect(es.enemies.grim_doctor_com).toBe('Comandante Doctor');
     expect(es.enemies.nagian_hunter_com).toBe('Comandante Cazador');
+    expect(es.enemies.hellspawn_brute_com).toBe('Comandante Vástago');
+    expect(es.enemies.fell_asteris_com).toBe('Comandante Buey');
     expect(en.enemies.gorgoness_witch_com).toBe('Witch Commander');
+    expect(en.enemies.hellspawn_brute_com).toBe('Brute Commander');
+    expect(en.enemies.fell_asteris_com).toBe('Ox Commander');
     expect(en.enemies.nagian_hunter_com).toBe('Hunter Commander');
   });
 });
