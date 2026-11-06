@@ -61,6 +61,8 @@ import elros from "@/assets/heroes/Elros.avif";
 import jaheen from "@/assets/heroes/Jaheen.avif";
 import maya from "@/assets/heroes/Maya.avif";
 import vorn from "@/assets/heroes/Vorn.avif";
+import minerva from '@/assets/followers/minerva_seguidor.webp';
+
 //Especiales
 import corrupted_archer from "@/assets/enemies/corrupted_archer.avif";
 import lasse from "@/assets/enemies/lasse.avif";
@@ -381,6 +383,7 @@ export const ENEMIES = [
 { id: "gorgon_hexer_com", nombre: "Hexer Commander", vida: 7, movimiento: 3, ataque: 5, color: "comandante", categoria: "comandante", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: gorgon_hexer, rune: "gris", runePosition: "arriba", inmunidad: ["GRANDE", "VENENO_I"], tipo_ataque: "distancia", capacidades: ["SOBREPRESION", ";", "ANDANADA 2", ",", "VENENO X"] },
 
 { id: "maya_ranger_com", nombre: "Maya, The Ranger", vida: 8, movimiento: 4, ataque: 5, color: "escenario", categoria: "comandante", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: maya, rune: "gris", runePosition: "arriba", inmunidad: ["SIGILO_I", "ATURDIMIENTO_I"], tipo_ataque: "distancia", capacidades: ["DESAFIO", ";", "ATAQUE DOBLE", ";", "HEMORRAGIA X"] },
+{ id: "cursed_minerva_com", nombre: "Crused Minerva", vida: 8, movimiento: 5, ataque: "X", color: "escenario", categoria: "comandante", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: minerva, rune: "gris", runePosition: "arriba", inmunidad: ["GRANDE", "INTIMIDAR_I", "SIGILO_I"], tipo_ataque: "cuerpo", capacidades: ["IMPLACABLE", ";", "HENDEDURA 2", ",", "HEMORRAGIA 2", "Y", "INTIMIDAR 2"] },
 
 { id: "fallen_woodcutter", nombre: "Fallen Woodcutter", vida: 9, movimiento: 5, ataque: 3, color: "escenario", categoria: "esbirro", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: hellspawn_brute, rune: "rojo", runePosition: "arriba", inmunidad: [], tipo_ataque: "cuerpo", capacidades: ["SEMILLA_DEL_CAOS 1"] },
 { id: "nightmare", nombre: "Nightmare", vida: 6, movimiento: 4, ataque: 2, color: "escenario", categoria: "esbirro", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: night_stalker, rune: "gris", runePosition: "arriba", inmunidad: [], tipo_ataque: "cuerpo", capacidades: ["VENGATIVO", ";", "PENITENCIA"] },

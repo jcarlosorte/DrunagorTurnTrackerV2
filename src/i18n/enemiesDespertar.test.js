@@ -39,6 +39,7 @@ describe('traducciones de enemigos de Despertar', () => {
     expect(es.enemies.gorgon_hexer_com).toBe('Comandante Hechicero');
     expect(es.enemies.night_stalker_com).toBe('Comandante Espantoso');
     expect(es.enemies.maya_ranger_com).toBe('Maya, La Montaraz');
+    expect(es.enemies.cursed_minerva_com).toBe('Minerva Maldita');
     expect(en.enemies.maya_ranger_com).toBe('Commander Maya');
     expect(en.enemies.gorgoness_witch_com).toBe('Witch Commander');
     expect(en.enemies.hellspawn_brute_com).toBe('Brute Commander');
@@ -46,6 +47,6 @@ describe('traducciones de enemigos de Despertar', () => {
     expect(en.enemies.nagian_hunter_com).toBe('Hunter Commander');
     expect(en.enemies.gorgon_hexer_com).toBe('Hexer Commander');
     expect(en.enemies.night_stalker_com).toBe('Stalker Commander');
-    expect(en.enemies.maya_ranger_com).toBe('Commander Maya');
+    expect(en.enemies.cursed_minerva_com).toBe('Crused Minerva');
   });
 });

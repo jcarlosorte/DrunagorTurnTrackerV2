@@ -2327,6 +2327,20 @@ Unit       173 tests
 E2E        60/60
 ```
 
+### 117.ª tanda — Traducción de Minerva Maldita
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **i18n** | Crused Minerva → Minerva Maldita | `es.json`, `en.json` |
+| **Pruebas** | 173 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       173 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
