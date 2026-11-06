@@ -2454,6 +2454,20 @@ Unit       178 tests
 E2E        62/62
 ```
 
+### 126.ª tanda — Barajas de comandante y detalles del track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Comandantes** | Ventana de PC con baraja estándar, aleatoria o manual (10 cartas, una por color y posición); textos de pasivas sin corchetes; Tirano muestra ataque normal y modificado; clic en toda la carta del enemigo; Hilo de Vida cura al retirar monstruos | `ModalCommanderPC`, `CommanderCardModal`, `CommanderCard`, `EnemyCard`, `InitTracker`, `commanderDeck`, `cardText` |
+| **Pruebas** | 183 unitarios · 63 E2E | tests |
+
+**Medición**
+
+```text
+Unit       183 tests
+E2E        63/63
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

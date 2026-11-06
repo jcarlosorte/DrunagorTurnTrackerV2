@@ -4,7 +4,9 @@ import { createPortal } from 'react-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import { useGame } from '@/context/GameContext';
 import { useTracker } from '@/context/TrackerContext';
+import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { CARTAS_COMANDANTE } from '@/data/cartasEspeciales';
+import { formatCardText } from '@/utils/cardText';
 
 const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   const { translations } = useLanguage();
@@ -25,17 +27,12 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   }, [onClose]);
   const ta = translations.cartas_ataque || {};
   const ttr = translations.defensaCard.cartas_trad || {};
+  const { placedEnemies } = useInitEnemies();
+  const commander = placedEnemies.find((entry) => entry.enemy.uuid === carta.sourceEnemyUUID)?.enemy;
+  const baseAttack = Number(commander?.ataque) || 0;
   const selectedHeroes = trackerData.heroes;
   const numHeroes = Math.min(selectedHeroes.length, 4);
   const numRunasColor = getRuneCount(carta.id === 'cmd_12' ? 'azul' : carta.rune);
-  const formatDrawnText = (text) => String(text || '')
-    .replaceAll('{X_H}', numHeroes)
-    .replaceAll('{X+2}', numRunasColor + 2)
-    .replaceAll('{X}', numRunasColor)
-    .replaceAll('{2*X}', numRunasColor * 2)
-    .replaceAll('{3*X}', numRunasColor * 3)
-    .replaceAll('{4*X}', numRunasColor * 4)
-    .replace(/\{([^}]+)\}/g, (_, key) => ttr[key] || key);
   const nombre = ta.nombre?.[carta.id] || carta.nombre;
   const nombreEnemy = carta.nombreEnemy;
   
@@ -194,6 +191,16 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
               </p>
             </div>
           )}
+          {carta.id === 'cmd_4' && (
+            <div className="mt-3 rounded-lg border border-amber-700/50 bg-amber-950/30 p-3 text-xs text-amber-100">
+              <p className="font-semibold">Ataque del comandante</p>
+              <p className="mt-1">Sin modificador: {baseAttack}</p>
+              <p>Con Tirano (+{numRunasColor}): {baseAttack + numRunasColor}</p>
+              <p className="mt-1 text-amber-200/80">
+                El modificador es opcional: solo se aplica si no hay otro monstruo adyacente.
+              </p>
+            </div>
+          )}
           {carta.id === 'cmd_16' && (
             <p className="mt-3 rounded-lg border border-red-700/50 bg-red-950/30 p-3 text-xs text-red-100">
               Pierde {numRunasColor} de vida y gana {numRunasColor * 2} de escudo (puede superar 4). Después, Evolución.
@@ -217,7 +224,11 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
                 <div className="mt-2 rounded border border-violet-700/60 bg-slate-950/60 p-2">
                   <p className="font-bold">{ta.nombre?.[drawnCard.id] || drawnCard.id}</p>
                   <p className="mt-1 text-violet-100">
-                    {formatDrawnText(ta.capacidad?.[drawnCard.id] || '')}
+                    {formatCardText(ta.capacidad?.[drawnCard.id] || '', {
+                      x: numRunasColor,
+                      heroes: numHeroes,
+                      ttr,
+                    })}
                   </p>
                   <button
                     type="button"

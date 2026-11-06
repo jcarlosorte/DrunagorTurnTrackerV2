@@ -813,6 +813,17 @@
     "resizeTrack": "Ajustar altura del tablero",
     "resizeTrackHint": "Arrastra para ampliar. Doble clic para ajustar.",
     "activePassives": "Pasivas activas",
+    "commanderDeck": "Baraja de comandante",
+    "deckType": "Tipo de baraja",
+    "deckStandard": "Estandar (recomendada)",
+    "deckRandom": "Aleatoria",
+    "deckManual": "Manual",
+    "deckStandardHelp": "Usa la baraja de la expansión del comandante.",
+    "deckRandomHelp": "Mezcla todas las cartas disponibles: una por color y posición.",
+    "deckManualHelp": "Elige una carta por color y posición. Deben ser 10 en total.",
+    "deckIncomplete": "Completa una carta por cada color y posición (10 en total).",
+    "deckAbove": "Arriba",
+    "deckBelow": "Abajo",
     "panels": "Paneles"
   },
   "scenarioCard": {

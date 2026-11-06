@@ -49,6 +49,7 @@ import CommanderCardModal from '@/components/CommanderCardModal';
 import { createId } from '@/utils/id';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { healSurvivors } from '@/utils/hiloDeVida';
+import { formatCardText } from '@/utils/cardText';
 import { appendGameLog, clearGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
@@ -226,6 +227,7 @@ const InitTracker = () => {
   const [scenarioToasts, setScenarioToasts] = useState([]);
   const [showPCModal, setShowPCModal] = useState(false);
   const [onPCConfirm, setOnPCConfirm] = useState(null);
+  const [pcCommander, setPcCommander] = useState(null);
   const [enemyEvolutions, setEnemyEvolutions] = useState(() => persistedSession.enemyEvolutions || []);
   const [selectedHeroId, setSelectedHeroId] = useState(null);
   const [selectedCompanionUid, setSelectedCompanionUid] = useState(null);
@@ -402,14 +404,16 @@ const InitTracker = () => {
   };
 
   
-  const openCommanderPCModal = (callback) => {
+  const openCommanderPCModal = (callback, commander = null) => {
     setOnPCConfirm(() => callback);
+    setPcCommander(commander);
     setShowPCModal(true);
   };
 
   const closePCModal = () => {
     setShowPCModal(false);
     setOnPCConfirm(null);
+    setPcCommander(null);
   };
 
   const enemiesInSelectedExpansions = ENEMIES.filter(e => selectedExpansions.includes(e.expansionId) );
@@ -824,7 +828,7 @@ const InitTracker = () => {
     const colorId = forcedColorId === 'noColor' ? undefined : assignColorToEnemy(uuid, isBig, forcedColorId);
     const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     if (selected.categoria === 'comandante') {
-      const createAndPlaceCommander = (pcValue = null) => {
+      const createAndPlaceCommander = (pcValue = null, deckOverride = null) => {
         const totalVida = commanderNoPc.includes(selected.id)
           ? selected.vida
           : selected.vida * (pcValue + numHeroes);
@@ -857,7 +861,7 @@ const InitTracker = () => {
         if (ver === 'show') showToast(selected);
         placeEnemy({ enemy });
         // 👉 Añadir cartas de ataque del comandante:
-        placeCommanderCards(selected, uuid);
+        placeCommanderCards(selected, uuid, false, deckOverride);
       };
       // ⚙️ Si está en lista de exclusión → saltamos el modal
       if (commanderNoPc.includes(selected.id)) {
@@ -869,7 +873,11 @@ const InitTracker = () => {
       }
       // ⚙️ Si no, abrir modal como antes
       else {
-        openCommanderPCModal((pcValue) => createAndPlaceCommander(pcValue));
+        openCommanderPCModal((result) => {
+          const nextPc = typeof result === 'number' ? result : result?.pcValue;
+          const deck = typeof result === 'object' ? result?.deck : null;
+          createAndPlaceCommander(nextPc, deck);
+        }, selected);
       }
       return;
     } else if (selected.categoria === 'overlord') {
@@ -1140,15 +1148,18 @@ const InitTracker = () => {
     });
   };
 
-  const placeCommanderCards = (enemy, commanderUUID, isTurnActivation = false) => {
+  const placeCommanderCards = (enemy, commanderUUID, isTurnActivation = false, deckOverride = null) => {
     const enemyId = enemy.id;
     const enemyColor = enemy.color;
     const enemyCat = enemy.categoria;
-    const deck = CARTAS_COMANDANTE.filter((card) => (
+    const defaultDeck = CARTAS_COMANDANTE.filter((card) => (
       enemy.expansionId === 'apocalypse_awakenings'
         ? card.expansionId === 'apocalypse_awakenings'
         : card.expansionId === 'base'
     ));
+    const deck = Array.isArray(deckOverride) && deckOverride.length
+      ? deckOverride
+      : (defaultDeck.length ? defaultDeck : CARTAS_COMANDANTE);
     const shuffled = [...(deck.length ? deck : CARTAS_COMANDANTE)].sort(() => 0.5 - Math.random());
     const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     const selected = shuffled.slice(0, numHeroes);
@@ -1371,16 +1382,17 @@ const InitTracker = () => {
     const sourceAlive = sourceUuid
       && placedEnemies.some((entry) => entry.enemy.uuid === sourceUuid);
 
+    removeEnemyByUUID(uuid);
+    releaseColor(uuid);
+
     if (hiloCard && sourceAlive && removed && removed.tipo !== 'especial' && removed.uuid !== sourceUuid) {
       const heal = getRuneCount('verde');
       if (heal > 0) {
+        // Después de retirar al enemigo, curamos a los que siguen en el tablero.
         setPlacedEnemies((prev) => healSurvivors(prev, uuid, heal));
         showScenarioToast(`💚 Hilo de Vida: +${heal} vida a los monstruos restantes`);
       }
     }
-
-    removeEnemyByUUID(uuid);
-    releaseColor(uuid);
   };
   
   const openEnemyModal = (uuid) => {
@@ -3986,7 +3998,14 @@ const InitTracker = () => {
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}
                   getCardName={(card) => translations.cartas_ataque?.nombre?.[card.id] || card.nombre}
-                  getCardDescription={(card) => translations.cartas_ataque?.capacidad?.[card.id] || ''}
+                  getCardDescription={(card) => formatCardText(
+                    translations.cartas_ataque?.capacidad?.[card.id] || '',
+                    {
+                      x: getRuneCount(card.rune),
+                      heroes: numHeroes,
+                      ttr: translations.defensaCard?.cartas_trad,
+                    },
+                  )}
                 />
                 <TurnTrackBoard
                   renderSlot={renderSlot}
@@ -4547,8 +4566,9 @@ const InitTracker = () => {
         />
         {showPCModal && (
           <ModalCommanderPC
-              onConfirm={(pcValue) => {
-                onPCConfirm?.(pcValue);
+              commander={pcCommander}
+              onConfirm={(result) => {
+                onPCConfirm?.(result);
                 closePCModal();
               }}
               onCancel={closePCModal}

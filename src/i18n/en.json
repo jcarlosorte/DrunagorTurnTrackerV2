@@ -812,6 +812,17 @@
     "resizeTrack": "Resize board height",
     "resizeTrackHint": "Drag to enlarge. Double-click to fit.",
     "activePassives": "Active passives",
+    "commanderDeck": "Commander deck",
+    "deckType": "Deck type",
+    "deckStandard": "Standard (recommended)",
+    "deckRandom": "Random",
+    "deckManual": "Manual",
+    "deckStandardHelp": "Use the commander expansion deck.",
+    "deckRandomHelp": "Mix all available cards: one per color and position.",
+    "deckManualHelp": "Choose one card per color and position. There must be 10.",
+    "deckIncomplete": "Fill one card for every color and position (10 total).",
+    "deckAbove": "Top",
+    "deckBelow": "Bottom",
     "panels": "Panels"
   },
   "scenarioCard": {

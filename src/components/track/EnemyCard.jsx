@@ -75,8 +75,18 @@ export default function EnemyCard({
     <div
       key={uuid}
       data-enemy-card={uuid}
+      role="button"
+      tabIndex={0}
+      aria-label={name}
+      onClick={() => openEnemyModal(uuid)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openEnemyModal(uuid);
+        }
+      }}
       className={classNames(
-        'relative mx-1 flex flex-col items-center',
+        'relative mx-1 flex cursor-pointer flex-col items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white',
         isFlipping ? 'card-flip' : '',
       )}
       style={{ perspective: '1000px' }}
