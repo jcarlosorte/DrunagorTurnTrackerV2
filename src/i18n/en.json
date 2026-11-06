@@ -1,4 +1,4 @@
-{
+33{
   "language_name": "English 🇬🇧",
   "home": {
     "title": "Drunagor Turn Tracker",
@@ -96,11 +96,11 @@
     "war_loot": "Spoils of War",
     "gencon": "GenCon Exclusive",
     "dicetower": "Dice Tower Exclusive",
-    "apocalypse_adventures": "Apocalypse Adventures",
-    "apocalypse_heroes_1": "Apocalypse - Hero Pack",
-    "apocalypse_lorien": "Apocalypse - Lorien",
-    "apocalypse_awakenings": "Apocalypse - Awakenings",
-    "apocalypse_sisters": "Apocalypse - The Fallen Sisters"
+    "apocalypse_adventures": "Apocalypse",
+    "apocalypse_heroes_1": "Hero Pack",
+    "apocalypse_lorien": "Lorien",
+    "apocalypse_awakenings": "Awakenings",
+    "apocalypse_sisters": "The Fallen Sisters"
   },
   "heroes": {
     "lorelai": "Lorelai",
