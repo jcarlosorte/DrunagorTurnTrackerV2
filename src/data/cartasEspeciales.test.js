@@ -2,9 +2,19 @@ import { describe, expect, it } from 'vitest';
 import { CARTAS_COMANDANTE, CARTAS_OVERLORD, getOverlordDeck } from '@/data/cartasEspeciales';
 
 describe('cartas de comandante', () => {
-  it('las 10 cartas actuales pertenecen al juego base', () => {
-    expect(CARTAS_COMANDANTE).toHaveLength(10);
-    expect(CARTAS_COMANDANTE.every((carta) => carta.expansionId === 'base')).toBe(true);
+  it('las 10 cartas base pertenecen al juego base', () => {
+    const base = CARTAS_COMANDANTE.filter((carta) => carta.expansionId === 'base');
+    expect(base).toHaveLength(10);
+  });
+
+  it('incluye las 10 cartas de Despertar', () => {
+    const awakenings = CARTAS_COMANDANTE.filter(
+      (carta) => carta.expansionId === 'apocalypse_awakenings',
+    );
+    expect(awakenings.map((carta) => carta.id)).toEqual([
+      'cmd_11', 'cmd_12', 'cmd_13', 'cmd_14', 'cmd_15',
+      'cmd_16', 'cmd_17', 'cmd_18', 'cmd_19', 'cmd_20',
+    ]);
   });
 });
 

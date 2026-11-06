@@ -1,5 +1,5 @@
 // src/components/CommanderCardModal.jsx
-import React, { useEffect, useId, useRef } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import { useGame } from '@/context/GameContext';
@@ -11,6 +11,8 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   const { trackerData } = useTracker();
   const closeRef = useRef(null);
   const titleId = useId();
+  const [wisdomCubes, setWisdomCubes] = useState(0);
+  const [overDarkness, setOverDarkness] = useState(true);
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -135,6 +137,16 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
                 Base
               </span>
             )}
+            {carta.expansionId === 'apocalypse_awakenings' && (
+              <span className="mt-1 inline-flex rounded-full bg-violet-400 px-2 py-0.5 text-[0.6rem] font-black uppercase tracking-wide text-slate-950">
+                Despertar
+              </span>
+            )}
+            {carta.lista_capacidad?.includes('PASIVA') && (
+              <span className="mt-1 ml-1 inline-flex rounded-full bg-violet-700 px-2 py-0.5 text-[0.6rem] font-black uppercase tracking-wide text-white">
+                Pasiva
+              </span>
+            )}
             <p className="mt-0.5 truncate text-xs text-slate-400">
               {nombreEnemy || ''}
               {carta.rune ? ` · ${carta.rune}` : ''}
@@ -155,6 +167,51 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
           <div className="rounded-xl border border-slate-700/80 bg-slate-950/60 p-4 text-sm leading-relaxed text-slate-200">
             {capacidad}
           </div>
+          {ta.nota?.[carta.id] && (
+            <p className="mt-3 rounded-lg border border-amber-700/50 bg-amber-950/30 p-3 text-xs text-amber-100">
+              {ta.nota[carta.id]}
+            </p>
+          )}
+          {carta.id === 'cmd_12' && (
+            <div className="mt-3 rounded-lg border border-sky-700/50 bg-sky-950/30 p-3 text-xs text-sky-100">
+              <label htmlFor="commander-wisdom-cubes" className="block font-semibold">
+                Cubos de Sabiduría descartados
+              </label>
+              <input
+                id="commander-wisdom-cubes"
+                type="number"
+                min="0"
+                value={wisdomCubes}
+                onChange={(event) => setWisdomCubes(Math.max(0, Number(event.target.value) || 0))}
+                className="mt-1 min-h-8 w-24 rounded border border-slate-600 bg-slate-900 px-2 text-white"
+              />
+              <p className="mt-1">
+                Daño final: {numRunasColor} × {wisdomCubes} = {numRunasColor * wisdomCubes}
+              </p>
+            </div>
+          )}
+          {carta.id === 'cmd_17' && (
+            <div className="mt-3 rounded-lg border border-emerald-700/50 bg-emerald-950/30 p-3 text-xs text-emerald-100">
+              <label className="flex items-center gap-2 font-semibold">
+                <input
+                  type="checkbox"
+                  checked={overDarkness}
+                  onChange={(event) => setOverDarkness(event.target.checked)}
+                />
+                Hay héroes sobre Oscuridad
+              </label>
+              <p className="mt-1">
+                {overDarkness
+                  ? `Veneno ${numRunasColor} a cada héroe sobre Oscuridad.`
+                  : `No hay héroes sobre Oscuridad: sanar ${numRunasColor} al Comandante.`}
+              </p>
+            </div>
+          )}
+          {carta.id === 'cmd_16' && (
+            <p className="mt-3 rounded-lg border border-red-700/50 bg-red-950/30 p-3 text-xs text-red-100">
+              Pierde {numRunasColor} de vida y gana {numRunasColor * 2} de escudo (puede superar 4). Después, Evolución.
+            </p>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-700/80 px-5 py-3">

@@ -2398,6 +2398,20 @@ Unit       175 tests
 E2E        61/61
 ```
 
+### 122.ª tanda — Cartas de comandante de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Comandantes** | 10 cartas nuevas (cmd_11–cmd_20), mazo según la expansión, etiquetas Despertar/Pasiva, notas y ayudas de resolución | `cartasEspeciales`, i18n, `CommanderCard`, `CommanderCardModal`, `InitTracker` |
+| **Pruebas** | 176 unitarios · 61 E2E | tests |
+
+**Medición**
+
+```text
+Unit       176 tests
+E2E        61/61
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

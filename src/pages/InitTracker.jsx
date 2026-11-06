@@ -1139,7 +1139,12 @@ const InitTracker = () => {
     const enemyId = enemy.id;
     const enemyColor = enemy.color;
     const enemyCat = enemy.categoria;
-    const shuffled = [...CARTAS_COMANDANTE].sort(() => 0.5 - Math.random());
+    const deck = CARTAS_COMANDANTE.filter((card) => (
+      enemy.expansionId === 'apocalypse_awakenings'
+        ? card.expansionId === 'apocalypse_awakenings'
+        : card.expansionId === 'base'
+    ));
+    const shuffled = [...(deck.length ? deck : CARTAS_COMANDANTE)].sort(() => 0.5 - Math.random());
     const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     const selected = shuffled.slice(0, numHeroes);
     const nombreCommander = getEnemyName(enemyId, enemyColor);
@@ -1154,7 +1159,7 @@ const InitTracker = () => {
         rune: carta.rune,
         runePosition: carta.runePosition,
         categoria: enemyCat,
-        position: runesColorMap[carta.rune],
+        position: runesColorMap[carta.rune] ?? runesColorMap.gris,
         tipo: 'especial',
         sourceEnemyUUID: commanderUUID,
         nombreEnemy: nombreCommander,

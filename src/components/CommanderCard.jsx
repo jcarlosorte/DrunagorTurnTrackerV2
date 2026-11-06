@@ -81,6 +81,16 @@ const CommanderCard = ({ carta }) => {
                 Base
               </span>
             )}
+            {carta.expansionId === 'apocalypse_awakenings' && (
+              <span className="absolute right-1 top-1 z-20 rounded bg-violet-400 px-1 py-0.5 text-[0.5rem] font-black uppercase tracking-wide text-slate-950 shadow">
+                Despertar
+              </span>
+            )}
+            {carta.lista_capacidad?.includes('PASIVA') && (
+              <span className="absolute bottom-1 left-1 z-20 rounded bg-violet-600 px-1 py-0.5 text-[0.5rem] font-black uppercase tracking-wide text-white shadow">
+                Pasiva
+              </span>
+            )}
     
             <div className="absolute top-1 left-1 grid grid-rows-4 grid-flow-col gap-1">
             {estadosLocal
