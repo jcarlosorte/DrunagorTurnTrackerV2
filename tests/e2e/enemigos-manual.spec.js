@@ -101,7 +101,9 @@ test.describe('Selector manual de enemigos', () => {
     await dialog.getByRole('searchbox').fill('skeleton');
     await expect(dialog.getByText('Arquero Esqueleto')).toBeVisible();
 
-    await dialog.getByRole('button', { name: /estándar/i }).first().click();
+    const behaviorSelect = dialog.getByRole('combobox', { name: 'Comportamiento' }).first();
+    await behaviorSelect.selectOption('estandar');
+    await dialog.getByRole('button', { name: 'Añadir', exact: true }).first().click();
     await expect(page.getByRole('dialog', { name: MODAL })).toHaveCount(0);
 
     await expect.poll(async () => page.evaluate(() => {
@@ -109,6 +111,21 @@ test.describe('Selector manual de enemigos', () => {
       return (state.placedEnemies || []).some(
         (entry) => entry.enemy.id === 'skeleton_archer' && entry.enemy.comportamiento === 'estandar',
       );
+    })).toBe(true);
+  });
+
+  test('añade un comportamiento aleatorio', async ({ page }) => {
+    const dialog = await openManualSelector(page, 'Blanco');
+    await dialog.getByRole('searchbox').fill('skeleton');
+    await expect(dialog.getByText('Arquero Esqueleto')).toBeVisible();
+
+    const card = dialog.locator('.state-chip').filter({ hasText: 'Arquero Esqueleto' }).first();
+    await card.getByRole('button', { name: 'Aleatorio' }).first().click();
+    await expect(page.getByRole('dialog', { name: MODAL })).toHaveCount(0);
+
+    await expect.poll(async () => page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('initEnemiesState') || '{}');
+      return (state.placedEnemies || []).some((entry) => entry.enemy.id === 'skeleton_archer');
     })).toBe(true);
   });
 

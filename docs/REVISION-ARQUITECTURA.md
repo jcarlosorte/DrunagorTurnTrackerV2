@@ -2384,6 +2384,20 @@ Unit       175 tests
 E2E        60/60
 ```
 
+### 121.ª tanda — Selector manual compacto y comportamiento aleatorio
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Manual** | Los enemigos blancos, grises y negros usan un selector compacto de comportamiento, con botón de comportamiento aleatorio | `InitTracker`, i18n |
+| **Pruebas** | 175 unitarios · 61 E2E | tests |
+
+**Medición**
+
+```text
+Unit       175 tests
+E2E        61/61
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

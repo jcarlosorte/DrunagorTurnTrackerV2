@@ -108,6 +108,69 @@ const commanderNoPc = ['dark_vampire_scenario_com'];
 
 const toSet = (value) => new Set(Array.isArray(value) ? value : []);
 
+function ManualEnemyBehaviorPicker({
+  variants,
+  labels,
+  categoryLabel,
+  addLabel,
+  randomLabel,
+  behaviorLabel,
+  onAdd,
+}) {
+  const uniqueVariants = variants.filter((variant, index, self) => (
+    index === self.findIndex((item) => (
+      (item.comportamiento || 'estandar') === (variant.comportamiento || 'estandar')
+    ))
+  ));
+  const [behavior, setBehavior] = useState(uniqueVariants[0]?.comportamiento || 'estandar');
+  if (uniqueVariants.length === 0) return null;
+
+  const selected = uniqueVariants.find(
+    (variant) => (variant.comportamiento || 'estandar') === behavior,
+  ) || uniqueVariants[0];
+
+  const addBehavior = (variant) => {
+    onAdd({
+      ...variant,
+      comportamiento: variant.comportamiento || 'estandar',
+    });
+  };
+
+  return (
+    <div className="flex items-center gap-1">
+      <span className="min-w-0 shrink-0 text-xs font-semibold text-yellow-300">{categoryLabel}</span>
+      <select
+        value={behavior}
+        onChange={(event) => setBehavior(event.target.value)}
+        aria-label={behaviorLabel}
+        className="min-h-8 min-w-0 flex-1 rounded border border-slate-600 bg-slate-900 px-1 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+      >
+        {uniqueVariants.map((variant) => (
+          <option key={variant.comportamiento || 'estandar'} value={variant.comportamiento || 'estandar'}>
+            {labels?.[variant.comportamiento] || variant.comportamiento || 'estandar'}
+          </option>
+        ))}
+      </select>
+      <button
+        type="button"
+        onClick={() => addBehavior(selected)}
+        className="min-h-8 shrink-0 rounded bg-blue-600 px-2 text-xs font-semibold text-white hover:bg-blue-500"
+      >
+        {addLabel}
+      </button>
+      <button
+        type="button"
+        aria-label={randomLabel}
+        title={randomLabel}
+        onClick={() => addBehavior(uniqueVariants[Math.floor(Math.random() * uniqueVariants.length)])}
+        className="min-h-8 shrink-0 rounded border border-cyan-600 bg-cyan-900/60 px-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-800"
+      >
+        🎲
+      </button>
+    </div>
+  );
+}
+
 const InitTracker = () => {
   const { trackerData, setTrackerData } = useTracker();
   const effectiveTurnOrder = useMemo(
@@ -4238,30 +4301,28 @@ const InitTracker = () => {
                                     ))}
                                 </div>
                               ) : (
-                                <>
-                                  <div className="text-xs text-yellow-300 mb-1 text-center">{tc?.[categoria] || categoria}</div>
-                                  <div className="flex flex-wrap justify-center gap-1">
-                                    {variants
-                                      .filter((variant, index, self) =>
-                                        index === self.findIndex(v =>
-                                          v.id === variant.id &&
-                                          v.categoria === variant.categoria &&
-                                          v.comportamiento === variant.comportamiento &&
-                                          (v.cara === 'A' || !v.cara) // si tiene cara, preferimos la A
-                                        )
+                                <ManualEnemyBehaviorPicker
+                                  variants={variants
+                                    .filter((variant, index, self) =>
+                                      index === self.findIndex(v =>
+                                        v.id === variant.id &&
+                                        v.categoria === variant.categoria &&
+                                        (v.comportamiento || 'estandar') === (variant.comportamiento || 'estandar') &&
+                                        (v.cara === 'A' || !v.cara)
                                       )
-                                      .filter(v => v.cara === 'A' || !v.cara) // segunda seguridad: solo mostramos cara A o sin cara
-                                      .map(variant => (
-                                        <button
-                                          key={`${variant.id}-${variant.categoria}-${variant.comportamiento}`}
-                                          className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded"
-                                          onClick={() => handleManualEnemyAdd(variant.id, variant.comportamiento, variant.categoria)}
-                                        >
-                                          {tb?.[variant.comportamiento] || variant.comportamiento}
-                                        </button>
-                                    ))}
-                                  </div>
-                                </>
+                                    )
+                                    .filter(v => v.cara === 'A' || !v.cara)}
+                                  labels={tb}
+                                  categoryLabel={tc?.[categoria] || categoria}
+                                  addLabel={ti.addEnemy || 'Añadir'}
+                                  randomLabel={ti.randomBehavior || 'Aleatorio'}
+                                  behaviorLabel={ti.behavior || 'Comportamiento'}
+                                  onAdd={(variant) => handleManualEnemyAdd(
+                                    variant.id,
+                                    variant.comportamiento,
+                                    variant.categoria,
+                                  )}
+                                />
                               )}
                             </div>
                           ))}
