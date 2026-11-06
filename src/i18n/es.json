@@ -96,11 +96,11 @@
     "war_loot": "Botines de Guerra",
     "gencon": "GenCon Exclusive",
     "dicetower": "Dice Tower Exclusive",
-    "apocalypse_adventures": "Apocalipsis - Aventuras",
-    "apocalypse_heroes_1": "Apocalipsis - Pack de Héroe #1",
-    "apocalypse_lorien": "Apocalipsis - Lorien",
-    "apocalypse_awakenings": "Apocalipsis - Despertar",
-    "apocalypse_sisters": "Apocalipsis - Hermanas Fatídicas"
+    "apocalypse_adventures": "Apocalipsis",
+    "apocalypse_heroes_1": "Pack de Héroe #1",
+    "apocalypse_lorien": "Lorien",
+    "apocalypse_awakenings": "Despertar",
+    "apocalypse_sisters": "Hermanas Fatídicas"
   },
   "heroes": {
     "lorelai": "Lorelai",
