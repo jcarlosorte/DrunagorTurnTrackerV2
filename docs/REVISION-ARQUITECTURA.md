@@ -2356,6 +2356,20 @@ Unit       173 tests
 E2E        60/60
 ```
 
+### 119.ª tanda — Traducciones de los nuevos enemigos de escenario
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **i18n** | Los esbirros, comandantes y monstruos nuevos añadidos al bloque `enemies.escenario` para que los menús superiores los muestren traducidos | `es.json`, `en.json` |
+| **Pruebas** | 174 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       174 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

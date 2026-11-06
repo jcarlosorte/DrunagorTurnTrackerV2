@@ -32,6 +32,21 @@ describe('traducciones de enemigos de Despertar', () => {
     expect(en.enemies.infamous_striker).toBe('Foul Shooter');
   });
 
+  it('traduce los enemigos de escenario', () => {
+    expect(es.enemies.escenario.fallen_woodcutter).toBe('Leñador Caído');
+    expect(es.enemies.escenario.nightmare).toBe('Pesadilla');
+    expect(es.enemies.escenario.boatswain).toBe('Contramaestre');
+    expect(es.enemies.escenario.tide_hunter).toBe('Cazamareas');
+    expect(es.enemies.escenario.skeleton_guard).toBe('Guardia Esqueleto');
+    expect(es.enemies.escenario.violent_bully).toBe('Matón Violento');
+    expect(es.enemies.escenario.tangled_witch).toBe('Bruja Enredada');
+    expect(es.enemies.escenario.infamous_monster).toBe('Engendro Infame');
+    expect(es.enemies.escenario.infamous_striker).toBe('Artillero Infame');
+    expect(es.enemies.escenario.maya_ranger_com).toBe('Maya, La Montaraz');
+    expect(es.enemies.escenario.cursed_minerva_com).toBe('Minerva Maldita');
+    expect(es.enemies.escenario.soul_harvester).toBe('Cosechador de Almas');
+  });
+
   it('traduce sus comandantes', () => {
     expect(es.enemies.gorgoness_witch_com).toBe('Comandante Bruja');
     expect(es.enemies.gremlin_horde_com).toBe('Comandante Horda');
