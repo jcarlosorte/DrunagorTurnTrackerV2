@@ -128,6 +128,7 @@ export const CARTAS_COMANDANTE = [
     runePosition: 'abajo',
     capacidades: 'cmd_14',
     lista_capacidad: ['SANA_X_SI', ';', 'QUEMADURA_X'],
+    maxHeal: true,
     special: 'burnNotCollateral',
   },
   {

@@ -811,6 +811,7 @@
     "boardGroup": "Board view",
     "resizeTrack": "Resize board height",
     "resizeTrackHint": "Drag to enlarge. Double-click to fit.",
+    "activePassives": "Active passives",
     "panels": "Panels"
   },
   "scenarioCard": {

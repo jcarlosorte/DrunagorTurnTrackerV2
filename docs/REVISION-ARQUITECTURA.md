@@ -2440,6 +2440,20 @@ Unit       176 tests
 E2E        62/62
 ```
 
+### 125.ª tanda — Correcciones de las cartas de comandante
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Comandantes** | Calor Vital respeta el máximo; SILENCIO calcula X con runas azules; Aluvión roba del mazo de comandante; Brebaje pregunta con ventana propia; pasivas en panel superior; Hilo de Vida cura al derrotar monstruos | `CommanderCardModal`, `InitTracker`, `PassiveCardsPanel`, `hiloDeVida` |
+| **Pruebas** | 178 unitarios · 62 E2E | tests |
+
+**Medición**
+
+```text
+Unit       178 tests
+E2E        62/62
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

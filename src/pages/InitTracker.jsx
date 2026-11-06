@@ -43,9 +43,11 @@ import ModalCompanionCard from '@/components/track/ModalCompanionCard';
 import FollowerModal from '@/components/track/FollowerModal';
 import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
+import PassiveCardsPanel from '@/components/track/PassiveCardsPanel';
 
 import { createId } from '@/utils/id';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
+import { healSurvivors } from '@/utils/hiloDeVida';
 import { appendGameLog, clearGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
@@ -1156,6 +1158,7 @@ const InitTracker = () => {
         expansionId: carta.expansionId,
         capacidades: carta.capacidades,
         lista_capacidad: carta.lista_capacidad,
+        maxHeal: carta.maxHeal,
         rune: carta.rune,
         runePosition: carta.runePosition,
         categoria: enemyCat,
@@ -1193,6 +1196,7 @@ const InitTracker = () => {
         nombre: carta.nombre,
         capacidades: carta.capacidades,
         lista_capacidad: carta.lista_capacidad,
+        maxHeal: carta.maxHeal,
         rune: carta.rune,
         runePosition: carta.runePosition,
         categoria: enemyCat,
@@ -1288,6 +1292,7 @@ const InitTracker = () => {
         nombre: carta.nombre,
         capacidades: carta.capacidades,
         lista_capacidad: carta.lista_capacidad,
+        maxHeal: carta.maxHeal,
         rune: carta.rune,
         runePosition: carta.runePosition,
         categoria: enemyCat,
@@ -1352,6 +1357,22 @@ const InitTracker = () => {
   };
 
   const onRemove = (uuid) => {
+    const removed = placedEnemies.find((entry) => entry.enemy.uuid === uuid)?.enemy;
+    const hiloCard = placedEnemies.find(
+      (entry) => entry.enemy.id === 'cmd_18' && entry.enemy.tipo === 'especial',
+    );
+    const sourceUuid = hiloCard?.enemy.sourceEnemyUUID;
+    const sourceAlive = sourceUuid
+      && placedEnemies.some((entry) => entry.enemy.uuid === sourceUuid);
+
+    if (hiloCard && sourceAlive && removed && removed.tipo !== 'especial' && removed.uuid !== sourceUuid) {
+      const heal = getRuneCount('verde');
+      if (heal > 0) {
+        setPlacedEnemies((prev) => healSurvivors(prev, uuid, heal));
+        showScenarioToast(`💚 Hilo de Vida: +${heal} vida a los monstruos restantes`);
+      }
+    }
+
     removeEnemyByUUID(uuid);
     releaseColor(uuid);
   };
@@ -1618,7 +1639,8 @@ const InitTracker = () => {
   const aplicarCapacidadesCartaEspecial = (cartaEspecial) => {
     const logs = [];
     const capacidades = cartaEspecial.lista_capacidad || [];
-    const runeCount = getRuneCount(cartaEspecial.rune);
+    const runeColor = cartaEspecial.id === 'cmd_12' ? 'azul' : cartaEspecial.rune;
+    const runeCount = getRuneCount(runeColor);
     const heroCount = numHeroes;
     let tile = null;
     const targetUUID = cartaEspecial.sourceEnemyUUID;
@@ -1674,7 +1696,7 @@ const InitTracker = () => {
         let nuevaVida = enemigo.vida + curacion;
         let nuevoMax = enemigo.vidaMax;
   
-        if (puedeSobrepasar && nuevaVida > enemigo.vidaMax) {
+        if (puedeSobrepasar && !cartaEspecial.maxHeal && nuevaVida > enemigo.vidaMax) {
           nuevoMax = nuevaVida;
         } else {
           nuevaVida = Math.min(nuevaVida, enemigo.vidaMax);
@@ -1840,7 +1862,7 @@ const InitTracker = () => {
         let nuevaVida = enemigo.vida + curacion;
         let nuevoMax = enemigo.vidaMax;
   
-        if (puedeSobrepasar && nuevaVida > enemigo.vidaMax) {
+        if (puedeSobrepasar && !cartaEspecial.maxHeal && nuevaVida > enemigo.vidaMax) {
           nuevoMax = nuevaVida;
         } else {
           nuevaVida = Math.min(nuevaVida, enemigo.vidaMax);
@@ -3557,6 +3579,13 @@ const InitTracker = () => {
     toast.success(ti.restartDone || 'Partida reiniciada.');
   };
 
+  const passiveCards = placedEnemies
+    .filter((entry) => entry.enemy.lista_capacidad?.includes('PASIVA'))
+    .filter((entry) => placedEnemies.some(
+      (other) => other.enemy.uuid === entry.enemy.sourceEnemyUUID,
+    ))
+    .map((entry) => entry.enemy);
+
   return ( 
       <PageTransition>
        
@@ -3926,6 +3955,12 @@ const InitTracker = () => {
             
             <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 lg:flex-row">
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                <PassiveCardsPanel
+                  cards={passiveCards}
+                  labels={{ title: ti.activePassives || 'Pasivas activas' }}
+                  getCardName={(card) => translations.cartas_ataque?.nombre?.[card.id] || card.nombre}
+                  getCardDescription={(card) => translations.cartas_ataque?.capacidad?.[card.id] || ''}
+                />
                 <TurnTrackBoard
                   renderSlot={renderSlot}
                   summaries={slotSummaries}
