@@ -2482,6 +2482,20 @@ Unit       184 tests
 E2E        63/63
 ```
 
+### 128.ª tanda — Auditoría de etiquetas de capacidades
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Traducciones** | Resolución única para todas las capacidades de enemigo; cubiertas VUDÚ, ALIVIAR, CONTRAATAQUE y variantes `X-N`; prueba que exige etiqueta en español e inglés para todas las capacidades | `enemyCapability`, `ModalEnemyCard`, i18n |
+| **Pruebas** | 187 unitarios · 63 E2E | tests |
+
+**Medición**
+
+```text
+Unit       187 tests
+E2E        63/63
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

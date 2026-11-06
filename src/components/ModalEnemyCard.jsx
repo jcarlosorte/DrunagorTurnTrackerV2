@@ -7,6 +7,7 @@ import { useRules } from '@/context/RulesContext';
 import { getEstadoLogo2 } from '@/data/estados2';
 import { ESTADOS_ALTERADOS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRunes';
+import { resolveCapabilityLabel } from '@/utils/enemyCapability';
 import { getAbilityColor } from '@/components/track/enemyVisuals';
 import { useGame } from '@/context/GameContext';
 import { GiHealthPotion, GiRunningNinja, GiSwordClash, GiShieldReflect, GiSteeltoeBoots, GiBloodySword, GiArcheryTarget, GiMoebiusTrefoil } from "react-icons/gi";
@@ -234,19 +235,9 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
     "magia": "bg-blue-600"
   };
 
-  const traducirClaveConNumero = (clave, base, detalles) => {
-    const match = clave.match(/^([A-Z_ ]+?)\s+(\d+)$/);
-    if (match) {
-      const nombre = match[1].trim().replace(/\s+/g, '_');
-      const numero = match[2];
-      const claveGeneral = `${nombre}_X`;
-      const texto = base[claveGeneral]?.replace('{x}', numero) || clave;
-      const detalle = detalles[claveGeneral]?.replace('{x}', numero) || '';
-      return { claveGeneral, texto, detalle };
-    }
-  
-    return { claveGeneral: clave, texto: base[clave] || clave, detalle: detalles[clave] || '' };
-  };
+  const traducirClaveConNumero = (clave, base, detalles) => (
+    resolveCapabilityLabel(clave, base, detalles)
+  );
 
   const mostrarAccionesCapacidad = (capacidadesAjustadas, tt, tte, ti) => {
     if (!Array.isArray(capacidadesAjustadas) || capacidadesAjustadas.length === 0) return null;
