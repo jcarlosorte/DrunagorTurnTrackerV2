@@ -12,6 +12,9 @@ describe('traducciones de enemigos de Despertar', () => {
     expect(es.enemies.fell_asteris).toBe('Aestris Letal');
     expect(es.enemies.gorgon_hexer).toBe('Hechicero Gorgona');
     expect(es.enemies.night_stalker).toBe('Acechador Nocturno');
+    expect(es.enemies.soul_harvester).toBe('Cosechador de Almas');
+    expect(en.enemies.soul_harvester).toBe('Soul Harvester');
+    expect(es.enemies.escenario.soul_harvester).toBe('Cosechador de Almas');
     expect(es.enemies.fallen_woodcutter).toBe('Leñador Caído');
     expect(es.enemies.nightmare).toBe('Pesadilla');
     expect(es.enemies.boatswain).toBe('Contramaestre');

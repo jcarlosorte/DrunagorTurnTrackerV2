@@ -51,6 +51,7 @@ import night_stalker from "@/assets/enemies/night_stalker.avif";
 import gorgon_hexer from "@/assets/enemies/gorgon_hexer.avif";
 import soul_harvester from "@/assets/enemies/soul_harvester.avif";
 import fell_asteris from "@/assets/enemies/FellAsteris.avif";
+import minerva from '@/assets/followers/minerva_seguidor.webp';
 
 // Hermanas caidas
 import fallen_sisters from "@/assets/enemies/fallen_sister.png";
@@ -61,7 +62,7 @@ import elros from "@/assets/heroes/Elros.avif";
 import jaheen from "@/assets/heroes/Jaheen.avif";
 import maya from "@/assets/heroes/Maya.avif";
 import vorn from "@/assets/heroes/Vorn.avif";
-import minerva from '@/assets/followers/minerva_seguidor.webp';
+
 
 //Especiales
 import corrupted_archer from "@/assets/enemies/corrupted_archer.avif";
@@ -290,17 +291,6 @@ export const ENEMIES = [
   { id: "commander_twins", nombre: "Commander Twins", vida: 8, movimiento: 5, ataque: 4, color: "comandante", categoria: "comandante", tipo: "enemigo", expansionId: "war_loot", imagen: commander_twins, rune: "gris", runePosition: "arriba", inmunidad: ["INTIMIDAR_I", "DERRIBO_I", "SIGILO_I"], tipo_ataque: "cuerpo", capacidades: ["DESAFIO", ";", "ATAQUE_DOBLE", ",", "FATIGA X"] },
   { id: "commander_thern", nombre: "Commander Thern", vida: 8, movimiento: 4, ataque: 5, color: "comandante", categoria: "comandante", tipo: "enemigo", expansionId: "war_loot", imagen: commander_thern, rune: "verde", runePosition: "arriba", inmunidad: ["DERRIBO_I", "SIGILO_I", "ATURDIMIENTO_I"], tipo_ataque: "distancia", capacidades: ["SANGUINARIO", ";", "HEMORRAGIA X", ",", "ATURDIMIENTO"] },
 
-// Apocalipsis
-  { id: "dream_titan", nombre: "Dream Titan", vida: 0, movimiento: 0, color: "shadow", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: dream_titan, rune: "naranja", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
-  { id: "chain_master", nombre: "Chain Master", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: chain_master, rune: "verde", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
-  { id: "the_witch", nombre: "The Witch", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: the_witch, rune: "azul", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
-  { id: "skeleton_knight", nombre: "Skeleton Knight", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: skeleton_knight, rune: "rojo", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
-  { id: "larua_mage", nombre: "Larua Mage", vida: 0, movimiento: 0, color: "shadow", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: larua_mage, rune: "gris", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
-  { id: "war_horsemen", nombre: "War Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: war_horsemen, rune: "rojo", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
-{ id: "death_horsemen", nombre: "Death Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: death_horsemen, rune: "gris", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
-{ id: "plague_horsemen", nombre: "Plague Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: plague_horsemen, rune: "verde", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
-{ id: "famine_horsemen", nombre: "Famine Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: famine_horsemen, rune: "naranja", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
-
 
 // Despertar
 { id: "gorgoness_witch", nombre: "Gorgoness Witch", vida: 9, movimiento: 3, ataque: 3, color: "blanco", categoria: "bisoño", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: gorgoness_witch, rune: "verde", runePosition: "abajo", comportamiento: "estandar", inmunidad: ["DERRIBO_I"], tipo_ataque: "distancia", capacidades: ["ALIVIAR 1", ";", "EMBATE 1", ",", "VENENO 1", "Y", "ESPARCIR"]  },
@@ -384,6 +374,7 @@ export const ENEMIES = [
 
 { id: "maya_ranger_com", nombre: "Maya, The Ranger", vida: 8, movimiento: 4, ataque: 5, color: "escenario", categoria: "comandante", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: maya, rune: "gris", runePosition: "arriba", inmunidad: ["SIGILO_I", "ATURDIMIENTO_I"], tipo_ataque: "distancia", capacidades: ["DESAFIO", ";", "ATAQUE DOBLE", ";", "HEMORRAGIA X"] },
 { id: "cursed_minerva_com", nombre: "Crused Minerva", vida: 8, movimiento: 5, ataque: "X", color: "escenario", categoria: "comandante", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: minerva, rune: "gris", runePosition: "arriba", inmunidad: ["GRANDE", "INTIMIDAR_I", "SIGILO_I"], tipo_ataque: "cuerpo", capacidades: ["IMPLACABLE", ";", "HENDEDURA 2", ",", "HEMORRAGIA 2", "Y", "INTIMIDAR 2"] },
+{ id: "soul_harvester", nombre: "Soul Harvester", vida: 10, movimiento: 3, ataque: "X", color: "escenario", categoria: "comandante", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: soul_harvester, rune: "naranja", runePosition: "arriba", inmunidad: ["GRANDE", "INTIMIDAR_I", "SIGILO_I"], tipo_ataque: "cuerpo", capacidades: ["EMBATE 2", ",", "VENENO 2"] },
 
 { id: "fallen_woodcutter", nombre: "Fallen Woodcutter", vida: 9, movimiento: 5, ataque: 3, color: "escenario", categoria: "esbirro", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: hellspawn_brute, rune: "rojo", runePosition: "arriba", inmunidad: [], tipo_ataque: "cuerpo", capacidades: ["SEMILLA_DEL_CAOS 1"] },
 { id: "nightmare", nombre: "Nightmare", vida: 6, movimiento: 4, ataque: 2, color: "escenario", categoria: "esbirro", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: night_stalker, rune: "gris", runePosition: "arriba", inmunidad: [], tipo_ataque: "cuerpo", capacidades: ["VENGATIVO", ";", "PENITENCIA"] },
@@ -396,10 +387,18 @@ export const ENEMIES = [
 { id: "violent_bully", nombre: "Violent Bully", scenario: "escenario", vida: 25, movimiento: 2, ataque: 0, color: "escenario", categoria: "escenario", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: abomination, rune: "gris", runePosition: "abajo", inmunidad: ["GRANDE", "LENTITUD_I"], tipo_ataque: "", capacidades: ["ARMADURA_DE_ASALTO", ";", "GIGANTE"] },
 { id: "skeleton_guard", nombre: "Skeleton Guard", scenario: "escenario", vida: 6, movimiento: 0, ataque: 2, color: "escenario", categoria: "escenario", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: skeleton_archer, rune: "naranja", runePosition: "arriba", inmunidad: ["HEMORRAGIA_I", "SIGILO_I"], tipo_ataque: "magia", capacidades: ["ANDANADA 2"] },
 
-{ id: "soul_harvester", nombre: "Soul Harvester", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: soul_harvester, rune: "azul", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
+// Apocalipsis
+  { id: "dream_titan", nombre: "Dream Titan", vida: 0, movimiento: 0, color: "shadow", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: dream_titan, rune: "naranja", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
+  { id: "chain_master", nombre: "Chain Master", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: chain_master, rune: "verde", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
+  { id: "the_witch", nombre: "The Witch", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: the_witch, rune: "azul", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
+  { id: "skeleton_knight", nombre: "Skeleton Knight", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: skeleton_knight, rune: "rojo", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
+  { id: "larua_mage", nombre: "Larua Mage", vida: 0, movimiento: 0, color: "shadow", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: larua_mage, rune: "gris", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
+  { id: "war_horsemen", nombre: "War Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: war_horsemen, rune: "rojo", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
+{ id: "death_horsemen", nombre: "Death Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: death_horsemen, rune: "gris", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
+{ id: "plague_horsemen", nombre: "Plague Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: plague_horsemen, rune: "verde", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
+{ id: "famine_horsemen", nombre: "Famine Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: famine_horsemen, rune: "naranja", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
 
-
-
+// Hermanas Caidas
 { id: "fallen_sisters", nombre: "Fallen Sisters", vida: 8, movimiento: 3, ataque: 5, color: "overlord", categoria: "overlord", tipo: "enemigo", expansionId: "apocalypse_sisters", imagen: fallen_sisters, rune: "rojo", runePosition: "arriba", inmunidad: ["GRANDE", "QUEMADURA_I", "INTIMIDAR_I"], tipo_ataque: "cuerpo", capacidades: ["VORAGINE", ";", "EMBATE 1", ",", "HEMORRAGIA X", "Y", "INTIMIDAR X"] }
 ];
 

@@ -345,6 +345,7 @@
       "escenario": "Scenario"
     },
     "escenario": {
+      "soul_harvester": "Soul Harvester",
       "dark_vampire": "Shadow Vampire Spawn",
       "dark_vampire_scenario": "Murderous Apparition",
       "dark_vampire_scenario_com": "Commander Murderous Apparition",

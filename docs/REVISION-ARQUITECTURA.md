@@ -2341,6 +2341,21 @@ Unit       173 tests
 E2E        60/60
 ```
 
+### 118.ª tanda — Nueva imagen de Soul Harvester
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Assets** | Nueva ilustración convertida a AVIF/WebP y variantes 320/640; el comandante usa la nueva imagen | `soul_harvester.png`, `soul_harvester.avif`, variantes |
+| **i18n** | Cosechador de Almas añadido también al bloque de enemigos de escenario | `es.json`, `en.json` |
+| **Pruebas** | 173 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       173 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

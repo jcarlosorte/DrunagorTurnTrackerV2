@@ -345,6 +345,7 @@
       "escenario": "Escenario"
     },
     "escenario": {
+      "soul_harvester": "Cosechador de Almas",
       "dark_vampire": "Vástago de Vampiro Sombrío",
       "dark_vampire_scenario": "Aparición Asesina",
       "dark_vampire_scenario_com": "Comandante Aparición Asesina",
