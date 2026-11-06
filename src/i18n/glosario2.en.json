@@ -77,6 +77,7 @@
   "ESTE MONSTRUO SE MUEVE HACIA EL CAÑON TERRORÍFICO MÁS CERCANO Y LO DISPARA": "This monster moves toward the nearest terrifying cannon and fires it",
   "ESTADO": "Campaign log story status or condition cleared during the Camp Phase.",
   "EVOLUCION": "Monster permanently gains +2 DMG and +1 MOVE tokens on the Monster Status board.",
+  "GIGANTE": "The Juggernaut ability causes these Monsters to pass through spaces occupied by any Small Characters. They even inflict 2 nonpreventable damage to them (similarly to a Trample ability, for example).",
   "FATIGA_X": "Hero immediately Expends X available Action Cubes without effect.",
   "FIRMEZA": "Companion damage threshold. Single hits equal to or less than Sturdiness are completely ignored.",
   "FRAGIL": "Next damage suffered is doubled (or turns hit into a Critical Hit for Monsters) and removes the token.",

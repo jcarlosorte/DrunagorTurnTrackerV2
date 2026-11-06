@@ -77,6 +77,7 @@
   "ESTE MONSTRUO SE MUEVE HACIA EL CAÑON TERRORÍFICO MÁS CERCANO Y LO DISPARA": "este monstruo se mueve hacia el cañon terrorífico más cercano y lo dispara",
   "ESTADO": "Recompensa de historia o efecto temporal grabado en el diario de campaña que se borra durante la Fase de Campamento.",
   "EVOLUCION": "El Monstruo gana 1 ficha de DAÑO +2 y 1 de MOVER +1 de forma permanente y acumulativa.",
+  "GIGANTE": "La capacidad Gigante causa que estos Monstruos pasen a través de casillas ocupadas por cualquier personaje pequeño. Incluso les infligen 2 de daño no prevenible (del mismo modo que una capacidad de Arrollar, por ejemplo).",
   "FATIGA_X": "El Héroe debe CONSUMIR de inmediato {x} de sus cubos de acción disponibles sin aplicar otro efecto.",
   "FIRMEZA": "Valor de resistencia de los Compañeros. Ignoran cualquier daño de un solo golpe que no supere este valor.",
   "FRAGIL": "El próximo impacto sufrido se convierte en crítico o sufre el doble de daño. Tras activarse se retira la ficha.",

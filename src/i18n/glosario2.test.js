@@ -43,6 +43,13 @@ describe('glosario 2.0', () => {
     expect(en.condiciones_t[key]).toBe('SIEGE ARMOR');
   });
 
+  it('incluye GIGANTE y JUGGERNAUT', () => {
+    expect(glosarioEs.GIGANTE).toContain('Monstruos');
+    expect(glosarioEn.GIGANTE).toContain('Juggernaut');
+    expect(es.condiciones_t.GIGANTE).toBe('GIGANTE');
+    expect(en.condiciones_t.GIGANTE).toBe('JUGGERNAUT');
+  });
+
   it('no conserva caracteres mal codificados en español', () => {
     expect(JSON.stringify(glosarioEs)).not.toMatch(/[ÃÂ]/);
     expect(glosarioEs.CODICIA).toContain('CONCENTRACIÓN');

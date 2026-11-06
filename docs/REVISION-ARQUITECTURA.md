@@ -2313,6 +2313,20 @@ Unit       172 tests
 E2E        60/60
 ```
 
+### 116.ª tanda — GIGANTE / JUGGERNAUT
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Glosario** | Se añade GIGANTE / JUGGERNAUT con su descripción en español e inglés | `glosario2.es.json`, `glosario2.en.json`, `es.json`, `en.json` |
+| **Pruebas** | 173 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       173 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
