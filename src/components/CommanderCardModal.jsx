@@ -13,8 +13,6 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   const closeRef = useRef(null);
   const titleId = useId();
   const [wisdomCubes, setWisdomCubes] = useState(0);
-  const [overDarkness, setOverDarkness] = useState(null);
-  const [showDarknessQuestion, setShowDarknessQuestion] = useState(carta.id === 'cmd_17');
   const [drawnCard, setDrawnCard] = useState(null);
 
   useEffect(() => {
@@ -30,6 +28,14 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   const selectedHeroes = trackerData.heroes;
   const numHeroes = Math.min(selectedHeroes.length, 4);
   const numRunasColor = getRuneCount(carta.id === 'cmd_12' ? 'azul' : carta.rune);
+  const formatDrawnText = (text) => String(text || '')
+    .replaceAll('{X_H}', numHeroes)
+    .replaceAll('{X+2}', numRunasColor + 2)
+    .replaceAll('{X}', numRunasColor)
+    .replaceAll('{2*X}', numRunasColor * 2)
+    .replaceAll('{3*X}', numRunasColor * 3)
+    .replaceAll('{4*X}', numRunasColor * 4)
+    .replace(/\{([^}]+)\}/g, (_, key) => ttr[key] || key);
   const nombre = ta.nombre?.[carta.id] || carta.nombre;
   const nombreEnemy = carta.nombreEnemy;
   
@@ -188,22 +194,6 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
               </p>
             </div>
           )}
-          {carta.id === 'cmd_17' && overDarkness !== null && (
-            <div className="mt-3 rounded-lg border border-emerald-700/50 bg-emerald-950/30 p-3 text-xs text-emerald-100">
-              <p>
-                {overDarkness
-                  ? `Veneno ${numRunasColor} a cada héroe sobre Oscuridad.`
-                  : `No hay héroes sobre Oscuridad: sanar ${numRunasColor} al Comandante.`}
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowDarknessQuestion(true)}
-                className="mt-1 rounded border border-emerald-600 px-2 py-1 text-[0.65rem] font-semibold text-emerald-100"
-              >
-                Cambiar respuesta
-              </button>
-            </div>
-          )}
           {carta.id === 'cmd_16' && (
             <p className="mt-3 rounded-lg border border-red-700/50 bg-red-950/30 p-3 text-xs text-red-100">
               Pierde {numRunasColor} de vida y gana {numRunasColor * 2} de escudo (puede superar 4). Después, Evolución.
@@ -227,9 +217,7 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
                 <div className="mt-2 rounded border border-violet-700/60 bg-slate-950/60 p-2">
                   <p className="font-bold">{ta.nombre?.[drawnCard.id] || drawnCard.id}</p>
                   <p className="mt-1 text-violet-100">
-                    {(ta.capacidad?.[drawnCard.id] || '')
-                      .replaceAll('{X}', numRunasColor)
-                      .replaceAll('{2*X}', numRunasColor * 2)}
+                    {formatDrawnText(ta.capacidad?.[drawnCard.id] || '')}
                   </p>
                   <button
                     type="button"
@@ -264,43 +252,6 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
         </div>
       </div>
 
-      {showDarknessQuestion && (
-        <div
-          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="darkness-question-title"
-        >
-          <div className="w-full max-w-sm rounded-2xl border border-emerald-700/70 bg-slate-900 p-4 text-slate-100 shadow-2xl">
-            <h3 id="darkness-question-title" className="text-base font-black text-emerald-200">
-              Brebaje Esmeralda
-            </h3>
-            <p className="mt-2 text-sm text-slate-200">¿Hay héroes sobre Oscuridad?</p>
-            <div className="mt-4 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setOverDarkness(false);
-                  setShowDarknessQuestion(false);
-                }}
-                className="min-h-9 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm font-semibold text-slate-100"
-              >
-                No hay
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setOverDarkness(true);
-                  setShowDarknessQuestion(false);
-                }}
-                className="min-h-9 rounded-lg bg-emerald-600 px-3 text-sm font-bold text-white"
-              >
-                Sí hay
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>,
     document.body
   );

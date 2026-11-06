@@ -63,15 +63,11 @@ export default function TurnTrackBoard({
     const viewport = viewportRef.current;
     if (!viewport) return;
     const width = viewport.clientWidth;
-    const height = viewport.clientHeight;
-    if (!width || !height) return;
-    const naturalHeight = gridRef.current?.offsetHeight || 0;
-    const widthScale = (width - 16) / BASE_WIDTH;
-    const heightScale = naturalHeight > 0 ? (height - 16) / naturalHeight : widthScale;
-    setScale(clamp(Math.min(widthScale, heightScale)));
+    if (!width) return;
+    setScale(clamp((width - 16) / BASE_WIDTH));
   }, []);
 
-  // Ajuste inicial para que el tablero quepa al entrar, tanto a lo ancho como a lo alto.
+  // Ajuste inicial para que el tablero quepa al entrar.
   useEffect(() => {
     if (view === 'board') fitToViewport();
   }, [view, fitToViewport]);

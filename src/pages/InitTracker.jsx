@@ -44,6 +44,7 @@ import FollowerModal from '@/components/track/FollowerModal';
 import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import PassiveCardsPanel from '@/components/track/PassiveCardsPanel';
+import CommanderCardModal from '@/components/CommanderCardModal';
 
 import { createId } from '@/utils/id';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
@@ -208,6 +209,8 @@ const InitTracker = () => {
   const [showAllScenario, setShowAllScenario] = useState(false);
 
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
+  const [pendingResolutionCard, setPendingResolutionCard] = useState(null);
+  const [pendingResolutionQuestion, setPendingResolutionQuestion] = useState(false);
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
@@ -1159,6 +1162,7 @@ const InitTracker = () => {
         capacidades: carta.capacidades,
         lista_capacidad: carta.lista_capacidad,
         maxHeal: carta.maxHeal,
+        shieldOverMax: carta.shieldOverMax,
         rune: carta.rune,
         runePosition: carta.runePosition,
         categoria: enemyCat,
@@ -1197,6 +1201,7 @@ const InitTracker = () => {
         capacidades: carta.capacidades,
         lista_capacidad: carta.lista_capacidad,
         maxHeal: carta.maxHeal,
+        shieldOverMax: carta.shieldOverMax,
         rune: carta.rune,
         runePosition: carta.runePosition,
         categoria: enemyCat,
@@ -1293,6 +1298,7 @@ const InitTracker = () => {
         capacidades: carta.capacidades,
         lista_capacidad: carta.lista_capacidad,
         maxHeal: carta.maxHeal,
+        shieldOverMax: carta.shieldOverMax,
         rune: carta.rune,
         runePosition: carta.runePosition,
         categoria: enemyCat,
@@ -1636,7 +1642,8 @@ const InitTracker = () => {
     };
   };
 
-  const aplicarCapacidadesCartaEspecial = (cartaEspecial) => {
+  const aplicarCapacidadesCartaEspecial = (cartaEspecial, options = {}) => {
+    const { applyConditional = true } = options;
     const logs = [];
     const capacidades = cartaEspecial.lista_capacidad || [];
     const runeColor = cartaEspecial.id === 'cmd_12' ? 'azul' : cartaEspecial.rune;
@@ -1704,9 +1711,8 @@ const InitTracker = () => {
         
         const curacionReal = nuevaVida - enemigo.vida
         
-        if (tieneCondicion && curacion > 0) {
-          const confirmar = window.confirm(`${ti.sanaPreg} ${curacionReal} ${ti.preg}`);
-          if (!confirmar) return;
+        if (tieneCondicion && curacion > 0 && !applyConditional) {
+          return;
         }
         
         updateEnemyVida(targetUUID, nuevaVida, nuevoMax);
@@ -1736,6 +1742,14 @@ const InitTracker = () => {
         logs.push(`🛡 ${nombreCarta} ${ti.gana || 'gana'} ${escudos} ${ti.escudos || 'escudos'} (${cartasOverlord.length} cartas)`);
       }
 
+      // ✅ --- PIERDE VIDA ---
+      else if (cap === "PIERDE_X") {
+        const nuevaVida = Math.max(0, enemigo.vida - runeCount);
+        updateEnemyVida(targetUUID, nuevaVida, enemigo.vidaMax);
+        const nombreCarta = ta?.nombre?.[cartaEspecial.id] || cartaEspecial.nombre || cartaEspecial.id;
+        logs.push(`💔 ${nombreCarta} ${ti.pierde || 'pierde'} ${runeCount} ${ti.vida_i || 'vida'}`);
+      }
+
       // ✅ --- ESCUDO ---
       else if (cap.startsWith("ESCUDO")) {
         const partes = cap.split("_");
@@ -1745,9 +1759,11 @@ const InitTracker = () => {
         const maxEscudo = configEscudo?.max || Infinity;
   
         let escudosAgregar = 0;
+        const idxNumero = partes.findIndex(p => !isNaN(p));
+        const multiplicador = idxNumero !== -1 ? parseInt(partes[idxNumero], 10) : 1;
   
         if (partes.includes("X")) {
-          escudosAgregar = runeCount;
+          escudosAgregar = runeCount * multiplicador;
         } else if (tieneCondicion) {
           const cantidad = parseInt(prompt(ti.cuantosEscudos), 10);
           if (!isNaN(cantidad) && cantidad > 0) escudosAgregar = cantidad;
@@ -1755,17 +1771,18 @@ const InitTracker = () => {
   
         if (escudosAgregar <= 0) return;
   
+        const puedeSobrepasarMax = puedeSobrepasar || Boolean(cartaEspecial.shieldOverMax);
         const estados = [...enemigo.estadosAlterados];
         const idx = estados.findIndex(e => e.id === "ESCUDO");
   
         if (idx >= 0) {
           let actual = estados[idx].count;
           let nuevo = actual + escudosAgregar;
-          if (!puedeSobrepasar) nuevo = Math.min(nuevo, maxEscudo);
+          if (!puedeSobrepasarMax) nuevo = Math.min(nuevo, maxEscudo);
           estados[idx] = { ...estados[idx], count: nuevo };
         } else {
           let nuevo = escudosAgregar;
-          if (!puedeSobrepasar) nuevo = Math.min(nuevo, maxEscudo);
+          if (!puedeSobrepasarMax) nuevo = Math.min(nuevo, maxEscudo);
           estados.push({ id: "ESCUDO", count: nuevo });
         }
   
@@ -1777,6 +1794,9 @@ const InitTracker = () => {
   
       // ✅ --- ESTADOS QUE SUFRE EL PROPIO SEÑOR SUPREMO ---
       else if (/^(HEMORRAGIA|VENENO|QUEMADURA)_(\d+)$/.test(cap)) {
+        // En las cartas de comandante estos estados se aplican a los héroes objetivo,
+        // nunca al propio comandante.
+        if (String(cartaEspecial.id).startsWith('cmd_')) return;
         const [, tipo, cantidad] = cap.match(/^(HEMORRAGIA|VENENO|QUEMADURA)_(\d+)$/);
         const estadoId = `${tipo}_I`;
         const nombreCarta = ta?.nombre?.[cartaEspecial.id] || cartaEspecial.nombre || cartaEspecial.id;
@@ -1887,6 +1907,8 @@ const InitTracker = () => {
 
       // ✅ --- ROBA RUNA ---
       else if (cap.startsWith("ROBA")) {
+        // Aluvión Caótico roba del mazo de comandante desde la ventana de la carta.
+        if (cartaEspecial.id === 'cmd_19') return;
         const partes = cap.split("_");
         const cantidad = parseInt(partes[1], 10) || 0;
         if (cantidad <= 0) return;
@@ -2638,6 +2660,11 @@ const InitTracker = () => {
           if (current.tipo === 'especial' || current.tipo === 'fallenHero') {
             if (!processedCardsRef.current.has(current.uuid)) {
               processedCardsRef.current.add(current.uuid);
+              if (current.id === 'cmd_17') {
+                setPendingResolutionCard(current);
+                setPendingResolutionQuestion(true);
+                return;
+              }
               const { logs } = aplicarCapacidadesCartaEspecial(current);
         
               logs.forEach(log =>
@@ -4388,6 +4415,47 @@ const InitTracker = () => {
           </div>
         </div>
         <ToastContainer toastClassName="toast-expand" bodyClassName="" />
+        {pendingResolutionCard && (
+          <CommanderCardModal
+            carta={pendingResolutionCard}
+            onClose={() => {
+              setPendingResolutionCard(null);
+              setPendingResolutionQuestion(false);
+            }}
+          />
+        )}
+        {pendingResolutionCard && pendingResolutionQuestion && (
+          <div className="layer-dialog fixed inset-0 z-[130] flex items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-labelledby="brebaje-question-title">
+            <div className="w-full max-w-sm rounded-2xl border border-emerald-700/70 bg-slate-900 p-4 text-slate-100 shadow-2xl">
+              <h3 id="brebaje-question-title" className="text-base font-black text-emerald-200">Brebaje Esmeralda</h3>
+              <p className="mt-2 text-sm text-slate-200">¿Aplicar el efecto de la carta?</p>
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPendingResolutionCard(null);
+                    setPendingResolutionQuestion(false);
+                  }}
+                  className="min-h-9 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm font-semibold text-slate-100"
+                >
+                  No aplicar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const { logs } = aplicarCapacidadesCartaEspecial(pendingResolutionCard, { applyConditional: true });
+                    logs.forEach((log) => showScenarioToast(`🃏 ${pendingResolutionCard.nombreEnemy || pendingResolutionCard.nombre}: ${log}`));
+                    setPendingResolutionCard(null);
+                    setPendingResolutionQuestion(false);
+                  }}
+                  className="min-h-9 rounded-lg bg-emerald-600 px-3 text-sm font-bold text-white"
+                >
+                  Sí, aplicar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {selectedEnemyUuid && (
           <ModalEnemyCard
             key={selectedEnemyUuid}

@@ -99,6 +99,7 @@ export const CARTAS_COMANDANTE = [
     capacidades: 'cmd_11',
     lista_capacidad: ['ESCUDO_X', ';', 'DAÑO_X', ',', 'LENTITUD'],
     special: 'shieldOverMax',
+    shieldOverMax: true,
   },
   {
     id: 'cmd_12',
@@ -150,6 +151,7 @@ export const CARTAS_COMANDANTE = [
     capacidades: 'cmd_16',
     lista_capacidad: ['PIERDE_X', ';', 'ESCUDO_2_X', ';', 'EVOLUCIONA'],
     special: 'loseAndShield',
+    shieldOverMax: true,
   },
   {
     id: 'cmd_17',
