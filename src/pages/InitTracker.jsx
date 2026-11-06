@@ -4024,6 +4024,8 @@ const InitTracker = () => {
                     carousel: ti.carousel || 'Turnos',
                     panels: ti.panels || 'Paneles',
                     boardGroup: ti.boardGroup || 'Vista del tablero',
+                    resizeTrack: ti.resizeTrack || 'Ajustar altura del tablero',
+                    resizeTrackHint: ti.resizeTrackHint || 'Arrastra para ampliar. Doble clic para ajustar.',
                   }}
                 />
               </div>

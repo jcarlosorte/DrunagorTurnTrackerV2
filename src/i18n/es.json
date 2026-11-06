@@ -810,6 +810,8 @@
     "overlapCompact": "Superponer más las cartas",
     "overlapNormal": "Separar cartas",
     "boardGroup": "Vista del tablero",
+    "resizeTrack": "Ajustar altura del tablero",
+    "resizeTrackHint": "Arrastra para ampliar. Doble clic para ajustar.",
     "panels": "Paneles"
   },
   "scenarioCard": {

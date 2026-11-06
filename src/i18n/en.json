@@ -809,6 +809,8 @@
     "overlapCompact": "Overlap cards more",
     "overlapNormal": "Separate cards",
     "boardGroup": "Board view",
+    "resizeTrack": "Resize board height",
+    "resizeTrackHint": "Drag to enlarge. Double-click to fit.",
     "panels": "Panels"
   },
   "scenarioCard": {

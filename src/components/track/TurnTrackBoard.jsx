@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import HeroPortrait from '@/components/HeroPortrait';
+import { readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import trackBackground from '@/assets/backgrounds/track.avif';
 
 const BASE_WIDTH = 1100;
@@ -35,8 +36,19 @@ export default function TurnTrackBoard({
   labels = {},
 }) {
   const viewportRef = useRef(null);
+  const gridRef = useRef(null);
+  const sectionRef = useRef(null);
   const pinchRef = useRef({ distance: 0, scale: 1 });
   const [scale, setScale] = useState(1);
+  const [manualHeight, setManualHeight] = useState(() => {
+    if (typeof window === 'undefined') return null;
+    const stored = readJsonStorage(
+      'trackBoardHeight',
+      0,
+      (value) => typeof value === 'number' && value >= 360 && value <= 2400,
+    );
+    return stored || null;
+  });
   const [view, setView] = useState(() => {
     if (typeof window === 'undefined') return 'board';
     return window.matchMedia('(max-width: 767px)').matches ? 'list' : 'board';
@@ -47,26 +59,57 @@ export default function TurnTrackBoard({
     if (currentSlotIndex >= 0) setExpandedIndex(currentSlotIndex);
   }, [currentSlotIndex]);
 
-  const fitToWidth = useCallback(() => {
-    const width = viewportRef.current?.clientWidth;
-    if (!width) return;
-    setScale(clamp((width - 16) / BASE_WIDTH));
+  const fitToViewport = useCallback(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const width = viewport.clientWidth;
+    const height = viewport.clientHeight;
+    if (!width || !height) return;
+    const naturalHeight = gridRef.current?.offsetHeight || 0;
+    const widthScale = (width - 16) / BASE_WIDTH;
+    const heightScale = naturalHeight > 0 ? (height - 16) / naturalHeight : widthScale;
+    setScale(clamp(Math.min(widthScale, heightScale)));
   }, []);
 
-  // Ajuste inicial para que el tablero quepa al entrar.
+  // Ajuste inicial para que el tablero quepa al entrar, tanto a lo ancho como a lo alto.
   useEffect(() => {
-    if (view === 'board') fitToWidth();
-  }, [view, fitToWidth]);
+    if (view === 'board') fitToViewport();
+  }, [view, fitToViewport]);
 
-  // El panel lateral cambia el ancho disponible: reajustamos el zoom automáticamente.
+  // El panel lateral o la altura de la ventana cambian el espacio disponible.
   useEffect(() => {
     if (view !== 'board') return undefined;
     const element = viewportRef.current;
     if (!element || typeof ResizeObserver === 'undefined') return undefined;
-    const observer = new ResizeObserver(() => fitToWidth());
+    const observer = new ResizeObserver(() => fitToViewport());
     observer.observe(element);
+    if (gridRef.current) observer.observe(gridRef.current);
     return () => observer.disconnect();
-  }, [view, fitToWidth]);
+  }, [view, fitToViewport]);
+
+  const startResize = (event) => {
+    const section = sectionRef.current;
+    if (!section) return;
+    event.preventDefault();
+    const startY = event.clientY;
+    const startHeight = section.getBoundingClientRect().height;
+    const handleMove = (moveEvent) => {
+      const next = Math.max(360, Math.min(2400, startHeight + moveEvent.clientY - startY));
+      setManualHeight(next);
+      writeJsonStorage('trackBoardHeight', next);
+    };
+    const handleUp = () => {
+      window.removeEventListener('pointermove', handleMove);
+      window.removeEventListener('pointerup', handleUp);
+    };
+    window.addEventListener('pointermove', handleMove);
+    window.addEventListener('pointerup', handleUp);
+  };
+
+  const resetHeight = () => {
+    setManualHeight(null);
+    writeJsonStorage('trackBoardHeight', 0);
+  };
 
   const handleTouchStart = (event) => {
     if (event.touches.length !== 2) return;
@@ -187,7 +230,7 @@ export default function TurnTrackBoard({
               </button>
               <button
                 type="button"
-                onClick={fitToWidth}
+                onClick={fitToViewport}
                 title={labels.fit || 'Ajustar'}
                 className="min-h-9 rounded-lg px-1.5 text-[0.7rem] font-semibold tabular-nums text-sky-200 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
               >
@@ -296,7 +339,7 @@ export default function TurnTrackBoard({
   const boardView = (
     <div
       ref={viewportRef}
-      className="min-h-0 overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
+      className="min-h-0 flex-1 overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       role="region"
@@ -306,6 +349,7 @@ export default function TurnTrackBoard({
       <div style={{ width: `${BASE_WIDTH * scale}px` }}>
         <div style={{ width: `${BASE_WIDTH}px`, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
           <div
+            ref={gridRef}
             className="grid snap-x snap-mandatory grid-cols-11 auto-rows-auto items-start gap-0 p-2"
             style={{
               backgroundImage: `linear-gradient(rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.35)), url(${trackBackground})`,
@@ -324,6 +368,7 @@ export default function TurnTrackBoard({
   );
 
   const listView = (
+    <div className="min-h-0 flex-1 overflow-y-auto">
     <ul className="space-y-2">
       {summaries.map(({ index, label, count, names, entities = [], slotColor = null }) => {
         const isOpen = expandedIndex === index;
@@ -413,14 +458,17 @@ export default function TurnTrackBoard({
         );
       })}
     </ul>
+    </div>
   );
 
   const content = view === 'board' ? boardView : listView;
 
   return (
     <section
+      ref={sectionRef}
       aria-label={labels.section || 'Tablero de iniciativa'}
       className={`flex h-full min-h-0 flex-col ${presentation ? 'text-base' : ''}`}
+      style={manualHeight ? { height: `${manualHeight}px` } : undefined}
     >
       {presentation ? (
         <div className="mb-2 flex justify-end">
@@ -448,6 +496,19 @@ export default function TurnTrackBoard({
       )}
       {bossBanner}
       {content}
+      {!presentation && (
+        <div
+          role="separator"
+          aria-orientation="horizontal"
+          aria-label={labels.resizeTrack || 'Ajustar altura del tablero'}
+          title={labels.resizeTrackHint || 'Arrastra para ampliar. Doble clic para ajustar.'}
+          onPointerDown={startResize}
+          onDoubleClick={resetHeight}
+          className="mt-1 flex h-4 shrink-0 cursor-ns-resize touch-none items-center justify-center rounded bg-slate-800/70 hover:bg-slate-700"
+        >
+          <span className="h-0.5 w-12 rounded bg-slate-500" aria-hidden="true" />
+        </div>
+      )}
       {carouselOpen && carousel && (
         <div className="mt-2 shrink-0">{carousel}</div>
       )}

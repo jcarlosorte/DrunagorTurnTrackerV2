@@ -2426,6 +2426,20 @@ Unit       176 tests
 E2E        61/61
 ```
 
+### 124.ª tanda — Tablero adaptable y redimensionable
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Tablero** | Ajuste automático a ancho y alto de la ventana; panel ampliable arrastrando el tirador inferior y altura recordada | `TurnTrackBoard`, i18n |
+| **Pruebas** | 176 unitarios · 63 E2E | tests |
+
+**Medición**
+
+```text
+Unit       176 tests
+E2E        63/63
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
