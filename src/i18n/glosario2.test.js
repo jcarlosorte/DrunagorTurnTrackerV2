@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import glosarioEs from '@/i18n/glosario2.es.json';
 import glosarioEn from '@/i18n/glosario2.en.json';
+import es from '@/i18n/es.json';
+import en from '@/i18n/en.json';
 
 describe('glosario 2.0', () => {
   it('incluye las descripciones nuevas en ambos idiomas', () => {
@@ -31,6 +33,14 @@ describe('glosario 2.0', () => {
     const key = 'ESTE MONSTRUO SE MUEVE HACIA EL CAÑON TERRORÍFICO MÁS CERCANO Y LO DISPARA';
     expect(glosarioEs[key]).toBe('este monstruo se mueve hacia el cañon terrorífico más cercano y lo dispara');
     expect(glosarioEn[key]).toBe('This monster moves toward the nearest terrifying cannon and fires it');
+  });
+
+  it('incluye ARMADURA DE ASALTO y SIEGE ARMOR', () => {
+    const key = 'ARMADURA DE ASALTO';
+    expect(glosarioEs[key]).toContain('Matones Violentos');
+    expect(glosarioEn[key]).toContain('Vicious maulers');
+    expect(es.condiciones_t[key]).toBe('ARMADURA DE ASALTO');
+    expect(en.condiciones_t[key]).toBe('SIEGE ARMOR');
   });
 
   it('no conserva caracteres mal codificados en español', () => {

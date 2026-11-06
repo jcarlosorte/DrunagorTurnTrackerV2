@@ -2285,6 +2285,20 @@ Unit       171 tests
 E2E        60/60
 ```
 
+### 114.ª tanda — ARMADURA DE ASALTO / SIEGE ARMOR
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Glosario** | Se añade ARMADURA DE ASALTO / SIEGE ARMOR con su descripción en español e inglés | `glosario2.es.json`, `glosario2.en.json`, `es.json`, `en.json` |
+| **Pruebas** | 172 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       172 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

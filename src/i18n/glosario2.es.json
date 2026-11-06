@@ -73,6 +73,7 @@
   "EOT": "Momento final del turno de un personaje donde expiran los efectos temporales, justo antes de avanzar el marcador de Iniciativa.",
   "ESCUDO_X": "El objetivo gana {x} fichas de ESCUDO. Cada ficha absorbe 1 punto de daño. Se deben usar antes de perder Salud o usar PREVENIR. Es acumulable.",
   "ESPARCIR": "Cuando un Héroe sufre daño por un ataque con ESPARCIR (tras aplicar escudos y defensas), cada uno de los héroes adyacentes a él recibe la misma cantidad de daño no prevenible.",
+  "ARMADURA DE ASALTO": "Los Matones Violentos están hechos de repugnantes restos de cadáveres. Esto los hace resistentes a los impactos. Por lo tanto, cada vez que un Matón Violento recibe 9 o más de daño en un único ataque con arma o hechizo, previene cualquier daño que exceda este valor. De esta forma, el daño máximo que un Matón Violento puede recibir en cada ataque es 9, pero puede recibir más de 1 vez en cada turno.",
   "ESTE MONSTRUO SE MUEVE HACIA EL CAÑON TERRORÍFICO MÁS CERCANO Y LO DISPARA": "este monstruo se mueve hacia el cañon terrorífico más cercano y lo dispara",
   "ESTADO": "Recompensa de historia o efecto temporal grabado en el diario de campaña que se borra durante la Fase de Campamento.",
   "EVOLUCION": "El Monstruo gana 1 ficha de DAÑO +2 y 1 de MOVER +1 de forma permanente y acumulativa.",
