@@ -2412,6 +2412,20 @@ Unit       176 tests
 E2E        61/61
 ```
 
+### 123.ª tanda — SILENCIO con runa azul
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Comandantes** | La carta SILENCIO (`cmd_12`) pasa de runa Morado a runa Azul | `cartasEspeciales` |
+| **Pruebas** | 176 unitarios · 61 E2E | tests |
+
+**Medición**
+
+```text
+Unit       176 tests
+E2E        61/61
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

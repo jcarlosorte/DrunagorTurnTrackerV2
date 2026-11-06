@@ -15,6 +15,7 @@ describe('cartas de comandante', () => {
       'cmd_11', 'cmd_12', 'cmd_13', 'cmd_14', 'cmd_15',
       'cmd_16', 'cmd_17', 'cmd_18', 'cmd_19', 'cmd_20',
     ]);
+    expect(awakenings.find((carta) => carta.id === 'cmd_12')?.rune).toBe('azul');
   });
 });
 

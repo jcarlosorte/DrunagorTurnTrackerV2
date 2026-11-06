@@ -104,7 +104,7 @@ export const CARTAS_COMANDANTE = [
     id: 'cmd_12',
     expansionId: 'apocalypse_awakenings',
     nombre: 'cmd_12',
-    rune: 'morado',
+    rune: 'azul',
     runePosition: 'abajo',
     capacidades: 'cmd_12',
     lista_capacidad: ['SILENCIO', ';', 'DAÑO_?_X'],
