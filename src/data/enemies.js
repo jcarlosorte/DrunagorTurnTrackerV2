@@ -388,6 +388,8 @@ export const ENEMIES = [
 { id: "violent_bully", nombre: "Violent Bully", scenario: "escenario", vida: 25, movimiento: 2, ataque: 0, color: "escenario", categoria: "escenario", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: abomination, rune: "gris", runePosition: "abajo", inmunidad: ["GRANDE", "LENTITUD_I"], tipo_ataque: "", capacidades: ["ARMADURA_DE_ASALTO", ";", "GIGANTE"] },
 { id: "skeleton_guard", nombre: "Skeleton Guard", scenario: "escenario", vida: 6, movimiento: 0, ataque: 2, color: "escenario", categoria: "escenario", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: skeleton_archer, rune: "naranja", runePosition: "arriba", inmunidad: ["HEMORRAGIA_I", "SIGILO_I"], tipo_ataque: "magia", capacidades: ["ANDANADA 2"] },
 
+{ id: "soul_harvester_boss", nombre: "Soul Harvester Boss", invoca: "fallen_woodcutter", numInvoca: 0, catInvoca: "", robaRunas: 0, vida: 40, ataque: 0, movimiento: 0, color: "jefe", categoria: "jefe", tipo: "enemigo", expansionId: "apocalypse_awakenings", imagen: soul_harvester, rune: "jefe", runePosition: "jefe", inmunidad: ["GRANDE", "INTIMIDAR_I", "SIGILO_I", "HEMORRAGIA_I", "VENENO_I", "QUEMADURA_I"], tipo_ataque: "cuerpo", capacidades: ["ARMADURA"] },
+
 // Apocalipsis
   { id: "dream_titan", nombre: "Dream Titan", vida: 0, movimiento: 0, color: "shadow", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: dream_titan, rune: "naranja", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
   { id: "chain_master", nombre: "Chain Master", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: chain_master, rune: "verde", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },

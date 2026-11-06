@@ -2496,6 +2496,20 @@ Unit       187 tests
 E2E        63/63
 ```
 
+### 129.ª tanda — Escenario filtrado por campaña
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escenario** | «Oscuridad de Caza» e «Incursión» solo aparecen en la campaña Core; los monstruos de escenario se filtran por las expansiones de la campaña activa y se limpia la selección al cambiar de campaña | `TopMenu`, `scenarioCampaign` |
+| **Pruebas** | 190 unitarios · 63 E2E | tests |
+
+**Medición**
+
+```text
+Unit       190 tests
+E2E        63/63
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

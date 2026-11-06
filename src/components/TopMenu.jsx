@@ -7,9 +7,9 @@ import { useSavesUi } from '@/context/SavesUiContext';
 import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker, GiWoodenCrate, GiPawPrint } from 'react-icons/gi';
 import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
-import { ENEMIES } from '@/data/enemies';
 import { INCURSION } from '@/data/incursion';
 import { DEFENSA } from '@/data/defensa';
+import { canUseBaseScenarioCards, getScenarioMonstersForCampaign } from '@/utils/scenarioCampaign';
 import { } from '@/data/estadosAlterados';
 import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -124,11 +124,18 @@ const TopMenu = ({
 
   const monstruosUnicos = Array.from(
     new Map(
-      ENEMIES
-        .filter(e => e.scenario === "escenario")
+      getScenarioMonstersForCampaign(mainBox)
         .map(m => [m.id, m])
     ).values()
   );
+  const isBaseCampaign = canUseBaseScenarioCards(mainBox);
+
+  useEffect(() => {
+    if (!scenarioMonster) return;
+    const stillAvailable = getScenarioMonstersForCampaign(mainBox)
+      .some((monster) => monster.id === scenarioMonster.id);
+    if (!stillAvailable) setScenarioMonster(null);
+  }, [mainBox, scenarioMonster, setScenarioMonster]);
 
   const handleSelectUniqueCard = (card, timeToken = false) => {
     const tipo = card.tipo;
@@ -550,6 +557,7 @@ const TopMenu = ({
                 <div className="flex flex-col gap-2">
 
                   {/* --- Bloque 1: OSCURIDAD DE CAZA --- */}
+                  {isBaseCampaign && (
                   <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
                     <div className="flex flex-wrap gap-2 justify-center items-center">
                       <GiRuneStone className="text-indigo-300 text-xl" />
@@ -615,7 +623,8 @@ const TopMenu = ({
                       )}
                     </div>
                   </div>
-                  
+                  )}
+
                   {/* --- Bloque 2: ASALTO (solo si expansión activa) --- */}
                   {showCoreContent && selectedExpansions.includes("infernal_desert") && (
                     <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
@@ -1164,6 +1173,7 @@ const TopMenu = ({
 
                 <div className="grid gap-2">
                   {/* Incursión */}
+                  {isBaseCampaign && (
                   <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
                     <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-orange-200">
                       <GiUprising className="text-sky-300 text-xl" />
@@ -1207,6 +1217,7 @@ const TopMenu = ({
                       </div>
                     )}
                   </div>
+                  )}
 
                   {/* Defensa */}
                   {showCoreContent && (

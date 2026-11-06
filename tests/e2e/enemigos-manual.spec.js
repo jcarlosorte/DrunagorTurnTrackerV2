@@ -134,8 +134,9 @@ test.describe('Selector manual de enemigos', () => {
     const campaigns = dialog.getByRole('group', { name: 'Campaña' });
 
     await expect(campaigns.getByRole('button', { name: 'Todas' })).toHaveAttribute('aria-pressed', 'true');
-    await campaigns.getByRole('button', { name: 'Core' }).click();
-    await expect(campaigns.getByRole('button', { name: 'Core' })).toHaveAttribute('aria-pressed', 'true');
+    const coreCampaign = campaigns.getByRole('button', { name: /Juego Base|Core/ });
+    await coreCampaign.click();
+    await expect(coreCampaign).toHaveAttribute('aria-pressed', 'true');
     await expect(dialog.getByText('Arquero Esqueleto', { exact: true })).toBeVisible();
 
     await campaigns.getByRole('button', { name: 'Todas' }).click();
