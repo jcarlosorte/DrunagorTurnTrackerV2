@@ -2431,13 +2431,13 @@ E2E        61/61
 | Cambio | Detalle | Archivos |
 |---|---|---|
 | **Tablero** | Ajuste automático a ancho y alto de la ventana; panel ampliable arrastrando el tirador inferior y altura recordada | `TurnTrackBoard`, i18n |
-| **Pruebas** | 176 unitarios · 63 E2E | tests |
+| **Pruebas** | 176 unitarios · 62 E2E | tests |
 
 **Medición**
 
 ```text
 Unit       176 tests
-E2E        63/63
+E2E        62/62
 ```
 
 ### Pendiente / pospuesto
