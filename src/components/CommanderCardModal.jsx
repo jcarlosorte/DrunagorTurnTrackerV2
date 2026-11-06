@@ -130,6 +130,11 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
             <h2 id={titleId} className="mt-1 truncate text-lg font-black text-slate-50 sm:text-xl">
               {nombre}
             </h2>
+            {carta.expansionId === 'base' && (
+              <span className="mt-1 inline-flex rounded-full bg-amber-400 px-2 py-0.5 text-[0.6rem] font-black uppercase tracking-wide text-slate-950">
+                Base
+              </span>
+            )}
             <p className="mt-0.5 truncate text-xs text-slate-400">
               {nombreEnemy || ''}
               {carta.rune ? ` · ${carta.rune}` : ''}

@@ -1085,6 +1085,7 @@ const InitTracker = () => {
         uuid: createId(),
         id: carta.id,
         nombre: carta.nombre,
+        expansionId: carta.expansionId,
         capacidades: carta.capacidades,
         lista_capacidad: carta.lista_capacidad,
         rune: carta.rune,

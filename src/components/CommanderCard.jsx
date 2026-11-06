@@ -76,6 +76,11 @@ const CommanderCard = ({ carta }) => {
 
           {/* Contenido de la carta (siempre por encima) */}
           <div className="absolute inset-0 flex flex-col items-center justify-between z-10 p-2">
+            {carta.expansionId === 'base' && (
+              <span className="absolute right-1 top-1 z-20 rounded bg-amber-400 px-1 py-0.5 text-[0.5rem] font-black uppercase tracking-wide text-slate-950 shadow">
+                Base
+              </span>
+            )}
     
             <div className="absolute top-1 left-1 grid grid-rows-4 grid-flow-col gap-1">
             {estadosLocal

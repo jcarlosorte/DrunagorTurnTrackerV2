@@ -1,6 +1,7 @@
 export const CARTAS_COMANDANTE = [
   {
     id: 'cmd_1',
+    expansionId: 'base',
     nombre: 'cmd_1',
     rune: 'azul',
     runePosition: 'arriba',
@@ -9,6 +10,7 @@ export const CARTAS_COMANDANTE = [
   },
   {
     id: 'cmd_2',
+    expansionId: 'base',
     nombre: 'cmd_2',
     rune: 'verde',
     runePosition: 'arriba',
@@ -17,6 +19,7 @@ export const CARTAS_COMANDANTE = [
   },
   {
     id: 'cmd_3',
+    expansionId: 'base',
     nombre: 'cmd_3',
     rune: 'gris',
     runePosition: 'arriba',
@@ -25,6 +28,7 @@ export const CARTAS_COMANDANTE = [
   },
    {
     id: 'cmd_4',
+    expansionId: 'base',
     nombre: 'cmd_4',
     rune: 'gris',
     runePosition: 'abajo',
@@ -33,6 +37,7 @@ export const CARTAS_COMANDANTE = [
   },
    {
     id: 'cmd_5',
+    expansionId: 'base',
     nombre: 'cmd_5',
     rune: 'rojo',
     runePosition: 'abajo',
@@ -41,6 +46,7 @@ export const CARTAS_COMANDANTE = [
   },
    {
     id: 'cmd_6',
+    expansionId: 'base',
     nombre: 'cmd_6',
     rune: 'naranja',
     runePosition: 'arriba',
@@ -49,6 +55,7 @@ export const CARTAS_COMANDANTE = [
   },
   {
     id: 'cmd_7',
+    expansionId: 'base',
     nombre: 'cmd_7',
     rune: 'azul',
     runePosition: 'abajo',
@@ -57,6 +64,7 @@ export const CARTAS_COMANDANTE = [
   },
    {
     id: 'cmd_8',
+    expansionId: 'base',
     nombre: 'cmd_8',
     rune: 'verde',
     runePosition: 'abajo',
@@ -65,6 +73,7 @@ export const CARTAS_COMANDANTE = [
   },
    {
     id: 'cmd_9',
+    expansionId: 'base',
     nombre: 'cmd_9',
     rune: 'naranja',
     runePosition: 'abajo',
@@ -73,6 +82,7 @@ export const CARTAS_COMANDANTE = [
   },
    {
     id: 'cmd_10',
+    expansionId: 'base',
     nombre: 'cmd_10',
     rune: 'rojo',
     runePosition: 'arriba',

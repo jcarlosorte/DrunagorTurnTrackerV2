@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { CARTAS_OVERLORD, getOverlordDeck } from '@/data/cartasEspeciales';
+import { CARTAS_COMANDANTE, CARTAS_OVERLORD, getOverlordDeck } from '@/data/cartasEspeciales';
+
+describe('cartas de comandante', () => {
+  it('las 10 cartas actuales pertenecen al juego base', () => {
+    expect(CARTAS_COMANDANTE).toHaveLength(10);
+    expect(CARTAS_COMANDANTE.every((carta) => carta.expansionId === 'base')).toBe(true);
+  });
+});
 
 describe('cartas de Señor Supremo', () => {
   it('incluye las 10 cartas de las Hermanas Fatídicas', () => {

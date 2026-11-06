@@ -2370,6 +2370,20 @@ Unit       174 tests
 E2E        60/60
 ```
 
+### 120.ª tanda — Etiqueta Base en las cartas de comandante
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Comandantes** | Las 10 cartas actuales llevan `expansionId: 'base'` y muestran la etiqueta «Base» en la carta y en el detalle | `cartasEspeciales`, `InitTracker`, `CommanderCard`, `CommanderCardModal` |
+| **Pruebas** | 175 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       175 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
