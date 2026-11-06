@@ -2299,6 +2299,20 @@ Unit       172 tests
 E2E        60/60
 ```
 
+### 115.ª tanda — Nombres ingleses de enemigos de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **i18n** | Maya, The Ranger → Commander Maya; Violent Bully → Vicious Mauler; Tangled Witch → Coiled Harridan; Infamous Monster → Vile Spawn; Infamous Striker → Foul Shooter; Tide Hunter → Tidehunter; Fallen Woodcutter → Fell Woodman | `en.json` |
+| **Pruebas** | 172 unitarios · 60 E2E | tests |
+
+**Medición**
+
+```text
+Unit       172 tests
+E2E        60/60
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
