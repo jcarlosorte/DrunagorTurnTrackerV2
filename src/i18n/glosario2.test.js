@@ -35,6 +35,16 @@ describe('glosario 2.0', () => {
     expect(glosarioEn[key]).toBe('This monster moves toward the nearest terrifying cannon and fires it');
   });
 
+  it('tiene etiquetas para ENJAMBRE, CARGA, RETROCEDER, COLERA y ENCADENAR', () => {
+    for (const key of ['ENJAMBRE', 'CARGA', 'RETROCEDER', 'COLERA', 'ENCADENAR']) {
+      expect(es.condiciones_t[key], key).toBeTruthy();
+      expect(en.condiciones_t[key], key).toBeTruthy();
+    }
+    expect(en.condiciones_t.ENJAMBRE).toBe('SWARM');
+    expect(en.condiciones_t.CARGA).toBe('CHARGE');
+    expect(en.condiciones_t.RETROCEDER).toBe('PUSH BACK');
+  });
+
   it('incluye ARMADURA DE ASALTO y SIEGE ARMOR', () => {
     const key = 'ARMADURA DE ASALTO';
     expect(glosarioEs[key]).toContain('Matones Violentos');

@@ -2468,6 +2468,20 @@ Unit       183 tests
 E2E        63/63
 ```
 
+### 127.ª tanda — Etiquetas de capacidades de enemigo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Traducciones** | Añadidas las etiquetas que faltaban para ENJAMBRE, CARGA, RETROCEDER, CÓLERA, ENCADENAR y otras capacidades presentes en el glosario | `es.json`, `en.json` |
+| **Pruebas** | 184 unitarios · 63 E2E | tests |
+
+**Medición**
+
+```text
+Unit       184 tests
+E2E        63/63
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
