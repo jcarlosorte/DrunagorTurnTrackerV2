@@ -2,6 +2,7 @@ import { GiCardDraw, GiRuneStone } from 'react-icons/gi';
 import { useState } from 'react';
 import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useExpansions } from '@/context/ExpansionContext';
 import { OTROS } from '@/data/estadosAlterados';
 
 /**
@@ -14,6 +15,8 @@ import { OTROS } from '@/data/estadosAlterados';
 export default function ScenarioPanels() {
   const { translations } = useLanguage();
   const t = translations?.trackerInit || {};
+  const { mainBox } = useExpansions();
+  const isBaseCampaign = mainBox === 'core';
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
 
   const {
@@ -60,9 +63,9 @@ export default function ScenarioPanels() {
   };
 
   return (
-                <div className="flex flex-col md:flex-row gap-4 mt-4">
+                <div className="grid gap-4 mt-4 xl:grid-cols-2">
                   {/* Sub-bloque: Pilas */}
-                  <div className="track-surface-raised flex-1 p-3 shadow-md">
+                  <div className={`track-surface-raised min-w-0 p-3 shadow-md ${isBaseCampaign ? '' : 'xl:col-span-2'}`}>
                     <div className="flex items-center gap-2 mb-2 justify-center">
                       <GiCardDraw className="text-purple-500 text-xl" />
                       <span className="font-semibold text-white">{t.gestionPila}</span>
@@ -301,7 +304,8 @@ export default function ScenarioPanels() {
                   </div>
                 
                   {/* Bloque 2: Control de áreas y puntos de aparición */}
-                  <div className="track-surface-raised flex-1 p-3 shadow-md">
+                  {isBaseCampaign && (
+                  <div className="track-surface-raised min-w-0 p-3 shadow-md">
                     <div className="flex items-center gap-2 mb-2 justify-center">
                       <GiRuneStone className="text-cyan-500 text-xl" />
                       <span className="font-semibold">{t.controlAreas}</span>
@@ -532,6 +536,7 @@ export default function ScenarioPanels() {
                     </div>
   
                   </div>
+                  )}
                 {/* FIN BLOQUE */}
                 </div>
   );

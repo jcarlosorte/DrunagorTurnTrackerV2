@@ -632,7 +632,7 @@ const TopMenu = ({
                   )}
 
                   {mainBox === 'awakenings' && (
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {RUNAS_DESPERTAR.filter((card) => card.cara === 'A').map((cardA) => {
                       const cardB = RUNAS_DESPERTAR.find((card) => card.id === cardA.id && card.cara === 'B');
                       const already = placedRunes.some((entry) => entry.rune.tipo === 'runa');
@@ -1202,7 +1202,7 @@ const TopMenu = ({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 lg:grid-cols-6">
                   {monstruosUnicos.map(monstruo => {
                     const selected = scenarioMonster?.id === monstruo.id;
                     const nombre = translations.enemies.escenario?.[monstruo.id] || monstruo.id;
@@ -1301,7 +1301,7 @@ const TopMenu = ({
                   )}
 
                   {mainBox === 'awakenings' && (
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {INCURSION_DESPERTAR.filter((card) => card.cara === 'A').map((cardA) => {
                       const cardB = INCURSION_DESPERTAR.find((card) => card.id === cardA.id && card.cara === 'B');
                       const already = placedRunes.some((entry) => entry.rune.tipo === 'incursion');

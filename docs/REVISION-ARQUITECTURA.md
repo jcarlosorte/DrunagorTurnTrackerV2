@@ -2583,6 +2583,20 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 135.ª tanda — Animación y compactación visual
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Visualización** | Volteo animado en cartas de runa e incursión; monstruos de escenario en 3/4/6 columnas; cartas de los menús en dos columnas; control de áreas solo en Core y paneles de pilas/áreas separados | `RuneCard`, `TopMenu`, `ScenarioPanels` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

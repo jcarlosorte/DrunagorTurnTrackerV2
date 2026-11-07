@@ -31,7 +31,7 @@ const TONES = {
  * Carta de runa del track: solo título y cara. El resto de mecánicas se
  * resuelven en la vista ampliada.
  */
-export default function RuneCard({ rune, onRemove }) {
+export default function RuneCard({ rune, onRemove, flipped = false }) {
   const { translations } = useLanguage();
   const { trackerData } = useTracker();
   const { toggleRuneEffect } = useInitRunes();
@@ -98,7 +98,7 @@ export default function RuneCard({ rune, onRemove }) {
       <button
         type="button"
         onClick={() => setExpanded(true)}
-        className="relative block w-full overflow-hidden rounded-xl border border-black/40 text-left shadow-md transition hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
+        className={`relative block w-full overflow-hidden rounded-xl border border-black/40 text-left shadow-md transition hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200 ${flipped ? 'card-flip' : ''}`}
         style={{ aspectRatio: '756 / 1087' }}
         aria-label={`${title}${rune.cara ? ` · ${ti.cara || 'Cara'} ${rune.cara}` : ''}`}
       >
