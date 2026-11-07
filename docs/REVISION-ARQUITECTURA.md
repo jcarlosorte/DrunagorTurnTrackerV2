@@ -2553,6 +2553,21 @@ Unit       192 tests
 E2E        64/64
 ```
 
+### 133.ª tanda — Refinado de cartas y menú Nodos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cartas** | Los menús muestran solo el nombre y los botones; la vista ampliada muestra los pasos sin etiquetas y el pie con Eliminar, Aplicar efecto y Cerrar; se elimina el aspa superior | `TopMenu`, `RuneCard`, `runasDespertar`, `incursionDespertar` |
+| **Nodos** | La sección de Nodos vuelve a mostrarse en todas las campañas, con pilas de runas y fichas de generación | `TopMenu` |
+| **Pruebas** | 192 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       192 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -112,6 +112,11 @@ const PASOS = {
 };
 
 INCURSION_DESPERTAR.forEach((card) => {
-  card.pasos = PASOS[`${card.id}_${card.cara}`] || [];
+  card.pasos = (PASOS[`${card.id}_${card.cara}`] || []).map((step) => (
+    step
+      .replace(/^(Acción|Descripción|Chequeo previo|Primero):\s*/i, '')
+      .replace(/^Voltea (esta|la) carta\.$/i, 'Luego, voltea esta carta.')
+      .replace(/^./, (char) => char.toUpperCase())
+  ));
 });
 

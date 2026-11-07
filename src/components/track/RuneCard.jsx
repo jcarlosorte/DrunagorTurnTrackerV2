@@ -5,8 +5,6 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { useInitRunes } from '@/context/initRunesContext';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
-import { ACLARACIONES_RUNAS_DESPERTAR } from '@/data/runasDespertar';
-import { ACLARACIONES_INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import runeRed from '@/assets/runes/card.png';
 import runeIndigo from '@/assets/runes/card-indigo.webp';
 import runeBlue from '@/assets/runes/card-blue.webp';
@@ -57,10 +55,6 @@ export default function RuneCard({ rune, onRemove }) {
   const accion2 = ts[rune.accion2];
   const y = ts.Y || 'Y';
   const nombre = ts[rune.nombre]?.replace('{x}', replacementValue) || rune.nombre;
-  const descripcion = ts[rune.descripcionKey] || rune.descripcion || '';
-  const aclaracion = ACLARACIONES_RUNAS_DESPERTAR[rune.id]
-    || ACLARACIONES_INCURSION_DESPERTAR[rune.id]
-    || '';
   const actionLine = tipo === 'asalto'
     ? `${(isCaraB ? accion2 : accion) || ''} ${y}`.trim()
     : `${accion || ''} ${rune.numRunas || ''}`.trim();
@@ -78,31 +72,23 @@ export default function RuneCard({ rune, onRemove }) {
         </div>
       );
     }
+
+    if (rune.pasos?.length) {
+      return (
+        <div className="space-y-2 text-left">
+          {rune.pasos.map((paso, index) => (
+            <p key={`${rune.id}-${index}`} className="text-sm leading-relaxed text-slate-200">
+              {paso}
+            </p>
+          ))}
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-1 text-center">
         <div className="font-bold">{accion} {rune.numRunas || ''}</div>
         <div>{nombre}</div>
-        {rune.pasos?.length ? (
-          <div className="text-left">
-            <p className="mb-1 text-[0.6rem] font-bold uppercase tracking-wide text-slate-400">
-              Pasos
-            </p>
-            <ol className="list-decimal space-y-1 pl-4 text-xs leading-relaxed text-slate-200">
-              {rune.pasos.map((paso, index) => (
-                <li key={`${rune.id}-${index}`}>{paso}</li>
-              ))}
-            </ol>
-          </div>
-        ) : descripcion && (
-          <p className="whitespace-pre-line text-left text-xs leading-relaxed text-slate-300">
-            {descripcion}
-          </p>
-        )}
-        {aclaracion && (
-          <p className="text-left text-[0.65rem] italic text-amber-200/90">
-            {aclaracion}
-          </p>
-        )}
       </div>
     );
   };
@@ -144,7 +130,7 @@ export default function RuneCard({ rune, onRemove }) {
             aria-labelledby={`rune-title-${rune.uuid}`}
             className={`relative flex max-h-[86vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border bg-slate-900/95 text-slate-100 shadow-2xl ${tone.border}`}
           >
-            <div className={`flex items-start justify-between gap-3 border-b border-slate-700/80 px-5 py-4 ${tone.header}`}>
+            <div className={`flex items-start gap-3 border-b border-slate-700/80 px-5 py-4 ${tone.header}`}>
               <div className="min-w-0">
                 <p className="text-[0.6rem] font-bold uppercase tracking-[0.25em] text-emerald-300">
                   {ti.runeCard || 'Carta de runa'}
@@ -157,14 +143,6 @@ export default function RuneCard({ rune, onRemove }) {
                   {rune.cara ? ` · ${ti.cara || 'Cara'} ${rune.cara}` : ''}
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => setExpanded(false)}
-                aria-label={translations.trackerSelect?.close || 'Cerrar'}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-sm text-slate-200 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-              >
-                ✕
-              </button>
             </div>
 
             <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
@@ -186,32 +164,30 @@ export default function RuneCard({ rune, onRemove }) {
                   })}
                 </div>
               )}
-
-              <button
-                type="button"
-                onClick={() => toggleRuneEffect(rune.uuid)}
-                className={`flex w-full items-center justify-between gap-2 rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-bold transition hover:bg-slate-700/70 ${tone.text}`}
-              >
-                <span>{ti.applyEffect || 'Aplicar efecto'}</span>
-                <span>{applyEffect ? 'Sí' : 'No'}</span>
-              </button>
             </div>
 
-            <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-700/80 px-5 py-3">
+            <div className="grid grid-cols-3 items-center gap-2 border-t border-slate-700/80 px-5 py-3">
               <button
                 type="button"
                 onClick={() => {
                   onRemove(rune.uuid);
                   setExpanded(false);
                 }}
-                className="min-h-9 rounded-lg border border-red-500/40 bg-red-950/40 px-3 text-xs font-bold text-red-200 transition hover:bg-red-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
+                className="justify-self-start min-h-9 rounded-lg border border-red-500/40 bg-red-950/40 px-3 text-xs font-bold text-red-200 transition hover:bg-red-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
               >
                 {ti.eliminarRuna || 'Eliminar'}
               </button>
               <button
                 type="button"
+                onClick={() => toggleRuneEffect(rune.uuid)}
+                className={`justify-self-center min-h-9 rounded-lg border border-slate-600 bg-slate-800 px-3 text-xs font-bold transition hover:bg-slate-700 ${tone.text}`}
+              >
+                {ti.applyEffect || 'Aplicar efecto'}: {applyEffect ? 'Sí' : 'No'}
+              </button>
+              <button
+                type="button"
                 onClick={() => setExpanded(false)}
-                className="min-h-9 rounded-lg bg-emerald-600 px-4 text-xs font-bold text-white transition hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
+                className="justify-self-end min-h-9 rounded-lg bg-emerald-600 px-4 text-xs font-bold text-white transition hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
               >
                 Cerrar
               </button>

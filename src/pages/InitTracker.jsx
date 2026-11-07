@@ -1358,6 +1358,9 @@ const InitTracker = () => {
       posicion: runeCard.posicion, // 'arriba' o 'abajo'
       accion: runeCard.accion,
       numRunas: runeCard.numRunas,
+      pasos: runeCard.pasos,
+      descripcion: runeCard.descripcion,
+      descripcionKey: runeCard.descripcionKey,
       tipo: runeCard.tipo,
       carta: runeCard.carta,
       colorIndex: 10,

@@ -7,9 +7,9 @@ import { useSavesUi } from '@/context/SavesUiContext';
 import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker, GiWoodenCrate, GiPawPrint } from 'react-icons/gi';
 import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
-import { RUNAS_DESPERTAR, ACLARACIONES_RUNAS_DESPERTAR } from '@/data/runasDespertar';
+import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
 import { INCURSION } from '@/data/incursion';
-import { INCURSION_DESPERTAR, ACLARACIONES_INCURSION_DESPERTAR } from '@/data/incursionDespertar';
+import { INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import { DEFENSA } from '@/data/defensa';
 import { canUseBaseScenarioCards, getScenarioMonstersForCampaign } from '@/utils/scenarioCampaign';
 import { GENERATION_COLORS, GENERATION_IMAGES } from '@/components/track/GenerationPointsBar';
@@ -633,9 +633,6 @@ const TopMenu = ({
 
                   {mainBox === 'awakenings' && (
                   <div className="space-y-2">
-                    <div className="px-1 text-xs font-bold uppercase tracking-wide text-violet-200">
-                      Runas de Despertar
-                    </div>
                     {RUNAS_DESPERTAR.filter((card) => card.cara === 'A').map((cardA) => {
                       const cardB = RUNAS_DESPERTAR.find((card) => card.id === cardA.id && card.cara === 'B');
                       const already = placedRunes.some((entry) => entry.rune.tipo === 'runa');
@@ -648,12 +645,6 @@ const TopMenu = ({
                           <h4 className="text-xs font-bold text-violet-100">
                             {translations.scenarioCard?.[cardA.id] || cardA.nombre}
                           </h4>
-                          <p className="mt-1 text-[0.65rem] leading-relaxed text-violet-100/80">
-                            {translations.scenarioCard?.[cardA.descripcionKey] || cardA.descripcion}
-                          </p>
-                          <p className="mt-1 text-[0.65rem] italic text-amber-200/90">
-                            {ACLARACIONES_RUNAS_DESPERTAR[cardA.id]}
-                          </p>
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             <button
                               type="button"
@@ -1112,7 +1103,6 @@ const TopMenu = ({
                 </button>
               </div>
 
-              {showCoreContent && (
               <section aria-labelledby="nodes-section" className="track-surface-raised p-2.5 shadow-md">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
@@ -1158,7 +1148,6 @@ const TopMenu = ({
                   </div>
                 )}
               </section>
-              )}
             </div>
           </motion.div>
         )}
@@ -1312,9 +1301,6 @@ const TopMenu = ({
 
                   {mainBox === 'awakenings' && (
                   <div className="space-y-2">
-                    <div className="px-1 text-xs font-bold uppercase tracking-wide text-violet-200">
-                      Incursiones de Despertar
-                    </div>
                     {INCURSION_DESPERTAR.filter((card) => card.cara === 'A').map((cardA) => {
                       const cardB = INCURSION_DESPERTAR.find((card) => card.id === cardA.id && card.cara === 'B');
                       const already = placedRunes.some((entry) => entry.rune.tipo === 'incursion');
@@ -1329,12 +1315,6 @@ const TopMenu = ({
                           <h4 className="text-xs font-bold text-violet-100">
                             {translations.scenarioCard?.[cardA.id] || cardA.nombre}
                           </h4>
-                          <p className="mt-1 text-[0.65rem] leading-relaxed text-violet-100/80">
-                            {translations.scenarioCard?.[cardA.descripcionKey] || cardA.descripcion}
-                          </p>
-                          <p className="mt-1 text-[0.65rem] italic text-amber-200/90">
-                            {ACLARACIONES_INCURSION_DESPERTAR[cardA.id]}
-                          </p>
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             <button
                               type="button"
