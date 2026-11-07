@@ -47,6 +47,7 @@ import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import PassiveCardsPanel from '@/components/track/PassiveCardsPanel';
 import GenerationPointsBar from '@/components/track/GenerationPointsBar';
+import MagicCannonsBar from '@/components/track/MagicCannonsBar';
 import CommanderCardModal from '@/components/CommanderCardModal';
 
 import { createId } from '@/utils/id';
@@ -219,7 +220,7 @@ const InitTracker = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, removeSpawnPoint, controlPoints, removeControlPoint, runeKeys, removeRuneKey, rescue, removeRescue, pilas, pilasConcentrada, activarPilaConcentrada, activarPila, codigosPilas, handleCodigoChange, addTileToPila, addTileToPilaConcentrada, initializeDecks, drawCardFromDeck, removeTileFromPila, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack, resetGameState, resetGenerationPoints } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, removeSpawnPoint, controlPoints, removeControlPoint, runeKeys, removeRuneKey, rescue, removeRescue, pilas, pilasConcentrada, activarPilaConcentrada, activarPila, codigosPilas, handleCodigoChange, addTileToPila, addTileToPilaConcentrada, initializeDecks, drawCardFromDeck, removeTileFromPila, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -792,8 +793,8 @@ const InitTracker = () => {
         position: runeIndex,
         categoria: selected.categoria,
         comportamiento: selected.comportamiento,
-        vida: selected.vida,
-        vidaMax: selected.vida,
+        vida: resolveEnemyVida(selected.vida),
+        vidaMax: resolveEnemyVida(selected.vida),
         movimiento: selected.movimiento, 
         ataque: selected.ataque,
         color: selected.color,
@@ -809,6 +810,15 @@ const InitTracker = () => {
   };
 
   
+  const resolveEnemyVida = (value) => {
+    if (typeof value === 'number') return value;
+    const text = String(value ?? '0').trim();
+    const match = text.match(/^(\d+)\s*\+\s*j$/i);
+    if (match) return Number(match[1]) + numHeroes;
+    const parsed = Number(text);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
   const handleManualEnemyAdd = (enemyId, behaviorType, category, ver = 'show', forcedColorId = null, forcedUUID = null, forcedPcValue = null ) => {
     setManualSelector({ open: false, color: null });
     // Reglas comunes en `findEnemyVariant`: tolera `comportamiento` ausente y
@@ -1086,8 +1096,8 @@ const InitTracker = () => {
         position: runeIndex,
         categoria: category,
         comportamiento: behaviorType,
-        vida: selected.vida,
-        vidaMax: selected.vida,
+        vida: resolveEnemyVida(selected.vida),
+        vidaMax: resolveEnemyVida(selected.vida),
         movimiento: selected.movimiento,
         ataque: selected.ataque,
         color: selected.color,
@@ -2811,8 +2821,25 @@ const InitTracker = () => {
           if (currentRune.applyEffect !== false && !executedRunes.includes(currentRune.uuid)) {
       
             if (currentRune.tipo === 'runa') {
-              // 🔹 Lógica clásica de runa: roba fichas de runa
-              if (currentRune.numRunas) {
+              if (currentRune.id === 'runa_despertar_caza') {
+                const draws = currentRune.cara === 'B' ? 2 : 1;
+                const drawnByColor = {};
+                for (let i = 0; i < draws; i += 1) {
+                  const drawnTiles = drawMultipleTiles(1);
+                  const tile = drawnTiles?.[0];
+                  if (!tile) {
+                    setTileWarning(ti.aviso);
+                    break;
+                  }
+                  handleTileDraw(tile);
+                  drawnByColor[tile.runa] = (drawnByColor[tile.runa] || 0) + 1;
+                  const x = getRuneCount(tile.runa) + drawnByColor[tile.runa];
+                  const message = `🩸 Caza del Cosechador (${currentRune.cara}, ${i + 1}/${draws}): ${ti.colores?.[tile.runa] || tile.runa} → X = ${x}`;
+                  showScenarioToast(message);
+                  appendGameLog('event', message);
+                }
+              } else if (currentRune.numRunas) {
+                // 🔹 Lógica clásica de runa: roba fichas de runa
                 const isCaraB = currentRune.cara === 'B';
                 const tiles = drawMultipleTiles(currentRune.numRunas);
                 tiles?.forEach(tile => handleTileDraw(tile));
@@ -2831,12 +2858,29 @@ const InitTracker = () => {
                     const existing = placedEnemies.filter((entry) => entry.enemy.id === target?.id).length;
                     const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
                     const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
-                    if (target && capacity > 0 && window.confirm(`${ti.incursionConfirm || '¿Colocar'} ${target.nombre}?`)) {
+                    if (target && capacity > 0) {
                       spawnBatchEnemies(1, target);
                       showScenarioToast(`${ti.added} 1 ${ti.Enemies}: ${ti.colores[tile.runa]}`);
                     } else {
                       showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
                     }
+                  }
+                }
+                if (currentRune.id === 'runa_despertar_naval' && isCaraB && tiles?.length) {
+                  const loadedColors = [];
+                  tiles.forEach((tile) => {
+                    const cannon = magicCannons.find((entry) => entry.color === tile.runa);
+                    if (cannon) {
+                      setMagicCannonLoaded(cannon.id, true);
+                      loadedColors.push(ti.colores?.[tile.runa] || tile.runa);
+                    } else {
+                      showScenarioToast(ti.noMagicCannon || `No hay Cañón Mágico de color ${ti.colores?.[tile.runa] || tile.runa}.`);
+                    }
+                  });
+                  if (loadedColors.length > 0) {
+                    const message = `Carga de cañones mágicos: ${loadedColors.join(', ')}`;
+                    showScenarioToast(message);
+                    appendGameLog('event', message);
                   }
                 }
               }
@@ -3666,6 +3710,7 @@ const InitTracker = () => {
     clearGameLog();
     resetEnemySession();
     resetGenerationPoints();
+    resetMagicCannons();
 
     if (runas) {
       resetPlacedRunes();
@@ -4071,6 +4116,7 @@ const InitTracker = () => {
             <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 lg:flex-row">
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
                 <GenerationPointsBar />
+                <MagicCannonsBar />
                 <PassiveCardsPanel
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}

@@ -13,6 +13,7 @@ import { INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import { DEFENSA } from '@/data/defensa';
 import { canUseBaseScenarioCards, getScenarioMonstersForCampaign } from '@/utils/scenarioCampaign';
 import { GENERATION_COLORS, GENERATION_IMAGES } from '@/components/track/GenerationPointsBar';
+import { MAGIC_CANNON_COLORS, MAGIC_CANNON_IMAGES } from '@/components/track/MagicCannonsBar';
 import { } from '@/data/estadosAlterados';
 import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -53,7 +54,7 @@ const TopMenu = ({
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
-  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, controlPoints, runeKeys, rescue } = useGame();
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue } = useGame();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const gameMenuRef = useRef(null);
@@ -1147,6 +1148,61 @@ const TopMenu = ({
                       </div>
                     )}
                   </div>
+                )}
+                {mainBox === 'awakenings' && (
+                <div className="mt-3 rounded-xl border border-orange-700/60 bg-orange-950/30 p-2">
+                  <div className="mb-2 text-xs font-bold uppercase tracking-wide text-orange-200">
+                    {t.magicCannons || 'Cañones Mágicos'}
+                  </div>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {MAGIC_CANNON_COLORS.map((color) => {
+                      const cannon = magicCannons.find((entry) => entry.color === color);
+                      return (
+                        <div key={color} data-testid={`magic-cannon-${color}`} className="flex items-center gap-2 rounded-lg bg-slate-950/50 p-1.5">
+                          <img src={MAGIC_CANNON_IMAGES[color]} alt="" className="h-8 w-8 rounded-full" />
+                          <span className="min-w-0 flex-1 text-[0.65rem] font-semibold text-orange-100">
+                            {t.colores?.[color] || color}
+                          </span>
+                          {!cannon ? (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => addMagicCannon(color, true)}
+                                className="rounded bg-emerald-700 px-1.5 py-0.5 text-[0.6rem] font-bold text-white"
+                              >
+                                {t.loaded || 'Cargado'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => addMagicCannon(color, false)}
+                                className="rounded bg-slate-700 px-1.5 py-0.5 text-[0.6rem] font-bold text-white"
+                              >
+                                {t.unloaded || 'Descargado'}
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => toggleMagicCannon(cannon.id)}
+                                className={`rounded px-1.5 py-0.5 text-[0.6rem] font-bold text-white ${cannon.loaded ? 'bg-emerald-700' : 'bg-slate-700'}`}
+                              >
+                                {cannon.loaded ? (t.loaded || 'Cargado') : (t.unloaded || 'Descargado')}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => removeMagicCannon(cannon.id)}
+                                className="rounded bg-red-900 px-1.5 py-0.5 text-[0.6rem] font-bold text-red-100"
+                              >
+                                {t.removeMagicCannon || t.remove || 'Quitar'}
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
                 )}
               </section>
             </div>

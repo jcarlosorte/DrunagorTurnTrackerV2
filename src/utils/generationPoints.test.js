@@ -6,6 +6,7 @@ describe('fichas de generación', () => {
     const first = appendGenerationPoint([], 'naranja', 'a');
     expect(first).toHaveLength(1);
     expect(appendGenerationPoint(first, 'naranja', 'b')).toBe(first);
-    expect(appendGenerationPoint(first, 'azul', 'c')).toHaveLength(2);
+    expect(appendGenerationPoint(first, 'verde', 'c')).toHaveLength(2);
+    expect(appendGenerationPoint(first, 'azul', 'd')).toBe(first);
   });
 });

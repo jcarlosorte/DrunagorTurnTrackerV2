@@ -49,4 +49,16 @@ test('añade una carta de runa y una de incursión de Despertar', async ({ page 
     const state = JSON.parse(localStorage.getItem('gameState') || '{}');
     return (state.generationPoints || []).filter((point) => point.color === 'naranja').length;
   })).toBe(1);
+
+  const cannonRow = page.locator('[data-testid="magic-cannon-naranja"]');
+  await cannonRow.getByRole('button', { name: 'Cargado', exact: true }).click();
+  await expect.poll(async () => page.evaluate(() => {
+    const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+    return (state.magicCannons || []).filter((cannon) => cannon.color === 'naranja').length;
+  })).toBe(1);
+  await cannonRow.getByRole('button', { name: 'Cargado', exact: true }).click();
+  await expect.poll(async () => page.evaluate(() => {
+    const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+    return (state.magicCannons || []).find((cannon) => cannon.color === 'naranja')?.loaded;
+  })).toBe(false);
 });

@@ -2597,6 +2597,21 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 136.ª tanda — Cañones mágicos y ajustes de cartas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cañones** | Fichas de cañón por color, cargadas/descargadas, panel en Nodos, barra sobre el track y persistencia; carga automática en Batalla Naval B | `GameContext`, `TopMenu`, `MagicCannonsBar`, assets |
+| **Cartas** | Caza del Cosechador calcula y registra X por cada robo; Batalla Naval A invoca sin confirmación y calcula la vida `4+j`; se elimina la ficha de generación azul | `InitTracker`, `GenerationPointsBar` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

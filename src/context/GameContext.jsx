@@ -33,7 +33,10 @@ export const GameProvider = ({ children }) => {
   const [usedTiles, setUsedTiles] = useState(() => persisted.usedTiles || []);
   const [scenarioMonster, setScenarioMonster] = useState(() => persisted.scenarioMonster || null);
   const [spawnPoints, setSpawnPoints] = useState(() => persisted.spawnPoints || []);
-  const [generationPoints, setGenerationPoints] = useState(() => persisted.generationPoints || []);
+  const [generationPoints, setGenerationPoints] = useState(() => (
+    (persisted.generationPoints || []).filter((point) => point.color !== 'azul')
+  ));
+  const [magicCannons, setMagicCannons] = useState(() => persisted.magicCannons || []);
   const [controlPoints, setControlPoints] = useState(() => persisted.controlPoints || []);
   const [runeKeys, setRuneKeys] = useState(() => persisted.runeKeys || []);
   const [rescue, setRescue] = useState(() => persisted.rescue || []);
@@ -65,6 +68,7 @@ export const GameProvider = ({ children }) => {
       scenarioMonster,
       spawnPoints,
       generationPoints,
+      magicCannons,
       controlPoints,
       runeKeys,
       rescue,
@@ -76,7 +80,7 @@ export const GameProvider = ({ children }) => {
   }, [
     runes, discardedTiles, pilaDeRunas, pilas, pilasConcentrada,
     contadorPilas, contadorPilasConcentradas, availableTiles, usedTiles,
-    scenarioMonster, spawnPoints, generationPoints, controlPoints, runeKeys, rescue,
+    scenarioMonster, spawnPoints, generationPoints, magicCannons, controlPoints, runeKeys, rescue,
     aldeanoDeck, errantesDeck, codigosPilas, campamento,
   ]);
 
@@ -215,6 +219,7 @@ export const GameProvider = ({ children }) => {
     setScenarioMonster(null);
     setSpawnPoints([]);
     setGenerationPoints([]);
+    setMagicCannons([]);
     setControlPoints([]);
     setRuneKeys([]);
     setRescue([]);
@@ -858,6 +863,22 @@ export const GameProvider = ({ children }) => {
         },
         removeGenerationPoint: (id) => setGenerationPoints((prev) => prev.filter((point) => point.id !== id)),
         resetGenerationPoints: () => setGenerationPoints([]),
+        magicCannons,
+        addMagicCannon: (color, loaded = true) => {
+          setMagicCannons((prev) => (
+            prev.some((cannon) => cannon.color === color)
+              ? prev
+              : [...prev, { id: createId(), color, loaded }]
+          ));
+        },
+        toggleMagicCannon: (id) => setMagicCannons((prev) => prev.map((cannon) => (
+          cannon.id === id ? { ...cannon, loaded: !cannon.loaded } : cannon
+        ))),
+        setMagicCannonLoaded: (id, loaded) => setMagicCannons((prev) => prev.map((cannon) => (
+          cannon.id === id ? { ...cannon, loaded } : cannon
+        ))),
+        removeMagicCannon: (id) => setMagicCannons((prev) => prev.filter((cannon) => cannon.id !== id)),
+        resetMagicCannons: () => setMagicCannons([]),
         initializeSpawnPoints,
         removeSpawnPoint,
         controlPoints, 
