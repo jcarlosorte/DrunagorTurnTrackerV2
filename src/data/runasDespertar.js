@@ -3,7 +3,6 @@ const base = {
   posicion: 'abajo',
   tipo: 'runa',
   accion: 'Roba',
-  unique: 'id',
 };
 
 export const RUNAS_DESPERTAR = [
@@ -98,3 +97,11 @@ export const RUNAS_DESPERTAR = [
     descripcion: 'Primero: Avanza las Naves. Roba 2 runas. Carga todos los cañones mágicos del Buque Cisne que coincidan con el color de las Runas Robadas de esta forma. Por último, voltea esta carta.',
   },
 ];
+
+export const ACLARACIONES_RUNAS_DESPERTAR = {
+  runa_despertar_influencia: 'Funciona igual que la antigua carta de Oscuridad de Caza; solo cambia el texto de la descripción.',
+  runa_despertar_oscuridad: 'La cara B termina robando 2 runas: una para generar Oscuridad y otra para el Cofre.',
+  runa_despertar_furia: 'Va junto al jefe soul_harvester_boss; retira fichas de tiempo de esta carta y de su hoja de monstruo.',
+  runa_despertar_caza: 'La X se calcula con las runas del color robado después de colocar la robada. En la cara B se roba, se calcula, se vuelve a robar y se vuelve a calcular.',
+  runa_despertar_naval: 'El monstruo es infamous_striker. Debe colocarse en una Ficha de Generación del color robado. Máximo 4 copias o 12 enemigos; si no se puede, se activa el monstruo no Jefe de mayor jerarquía.',
+};

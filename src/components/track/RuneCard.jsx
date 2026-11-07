@@ -5,6 +5,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { useInitRunes } from '@/context/initRunesContext';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
+import { ACLARACIONES_RUNAS_DESPERTAR } from '@/data/runasDespertar';
+import { ACLARACIONES_INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import runeRed from '@/assets/runes/card.png';
 import runeIndigo from '@/assets/runes/card-indigo.webp';
 import runeBlue from '@/assets/runes/card-blue.webp';
@@ -56,6 +58,9 @@ export default function RuneCard({ rune, onRemove }) {
   const y = ts.Y || 'Y';
   const nombre = ts[rune.nombre]?.replace('{x}', replacementValue) || rune.nombre;
   const descripcion = ts[rune.descripcionKey] || rune.descripcion || '';
+  const aclaracion = ACLARACIONES_RUNAS_DESPERTAR[rune.id]
+    || ACLARACIONES_INCURSION_DESPERTAR[rune.id]
+    || '';
   const actionLine = tipo === 'asalto'
     ? `${(isCaraB ? accion2 : accion) || ''} ${y}`.trim()
     : `${accion || ''} ${rune.numRunas || ''}`.trim();
@@ -80,6 +85,11 @@ export default function RuneCard({ rune, onRemove }) {
         {descripcion && (
           <p className="whitespace-pre-line text-left text-xs leading-relaxed text-slate-300">
             {descripcion}
+          </p>
+        )}
+        {aclaracion && (
+          <p className="text-left text-[0.65rem] italic text-amber-200/90">
+            {aclaracion}
           </p>
         )}
       </div>

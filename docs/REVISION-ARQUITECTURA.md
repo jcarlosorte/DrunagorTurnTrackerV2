@@ -2525,6 +2525,20 @@ Unit       192 tests
 E2E        64/64
 ```
 
+### 131.ª tanda — Cartas de Despertar independientes
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Runas e incursiones** | Eliminada la colocación conjunta; cada carta tiene su propio apartado con descripción, aclaración y caras A/B; solo puede haber una carta de runa y una de incursión en juego | `TopMenu`, `runasDespertar`, `incursionDespertar`, `RuneCard` |
+| **Pruebas** | 192 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       192 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -4,7 +4,6 @@ const base = {
   tipo: 'incursion',
   accion: 'Manifiesta',
   numRunas: 1,
-  unique: 'id',
 };
 
 const counts = {
@@ -68,3 +67,9 @@ export const INCURSION_DESPERTAR = [
     incursion: { counts, fixedMonsterId: 'tide_hunter' },
   },
 ];
+
+export const ACLARACIONES_INCURSION_DESPERTAR = {
+  incursion_despertar_incansable: 'Selecciona previamente el monstruo de escenario. Comprueba las pilas de runas activas y coloca los esbirros adyacentes a una pila con el color manifestado.',
+  incursion_despertar_atroz: 'Chequeo previo: si hay Monstruos en el tablero, la carta no tiene efecto este turno y se voltea. Si no, resuelve la invocación.',
+  incursion_despertar_naval: 'Invoca siempre Cazamareas (tide_hunter) junto al Cañón del Buque Cisne del color manifestado. Máximo 4 copias o 12 enemigos; pregunta por cada colocación.',
+};

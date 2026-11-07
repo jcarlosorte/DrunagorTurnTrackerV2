@@ -7,9 +7,9 @@ import { useSavesUi } from '@/context/SavesUiContext';
 import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker, GiWoodenCrate, GiPawPrint } from 'react-icons/gi';
 import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
-import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
+import { RUNAS_DESPERTAR, ACLARACIONES_RUNAS_DESPERTAR } from '@/data/runasDespertar';
 import { INCURSION } from '@/data/incursion';
-import { INCURSION_DESPERTAR } from '@/data/incursionDespertar';
+import { INCURSION_DESPERTAR, ACLARACIONES_INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import { DEFENSA } from '@/data/defensa';
 import { canUseBaseScenarioCards, getScenarioMonstersForCampaign } from '@/utils/scenarioCampaign';
 import { GENERATION_COLORS, GENERATION_IMAGES } from '@/components/track/GenerationPointsBar';
@@ -48,8 +48,6 @@ const TopMenu = ({
   const [manualSelect, setManualSelect] = useState('');
   const [showRuneFaceOptions, setShowRuneFaceOptions] = useState(false);
   const [showAssaultFaceOptions, setshowAssaultFaceOptions] = useState(false);
-  const [showDespertarRuneFaces, setShowDespertarRuneFaces] = useState(false);
-  const [showDespertarIncursionFaces, setShowDespertarIncursionFaces] = useState(false);
 
 
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
@@ -634,42 +632,51 @@ const TopMenu = ({
                   )}
 
                   {mainBox === 'awakenings' && (
-                  <div className="rounded-xl border border-violet-700/60 bg-violet-950/30 p-2">
-                    <div className="mb-2 text-xs font-bold uppercase tracking-wide text-violet-200">
+                  <div className="space-y-2">
+                    <div className="px-1 text-xs font-bold uppercase tracking-wide text-violet-200">
                       Runas de Despertar
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        onClick={() => RUNAS_DESPERTAR
-                          .filter((card) => card.cara === 'A')
-                          .forEach((card) => handleSelectUniqueCard(card))}
-                        className="state-btn-add text-white text-xs px-2 py-1 rounded"
-                      >
-                        Añadir (A)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowDespertarRuneFaces((prev) => !prev)}
-                        className="bg-blue-700 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded"
-                      >
-                        Caras
-                      </button>
-                    </div>
-                    {showDespertarRuneFaces && (
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {RUNAS_DESPERTAR.map((card, index) => (
-                          <button
-                            key={`${card.id}-${card.cara}-${index}`}
-                            type="button"
-                            onClick={() => handleSelectUniqueCard(card)}
-                            className="bg-indigo-800 hover:bg-indigo-600 text-white text-[0.65rem] px-2 py-1 rounded"
-                          >
-                            {translations.scenarioCard?.[card.id] || card.nombre} ({card.cara})
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    {RUNAS_DESPERTAR.filter((card) => card.cara === 'A').map((cardA) => {
+                      const cardB = RUNAS_DESPERTAR.find((card) => card.id === cardA.id && card.cara === 'B');
+                      const already = placedRunes.some((entry) => entry.rune.tipo === 'runa');
+                      return (
+                        <div
+                          key={cardA.id}
+                          data-testid={`despertar-rune-${cardA.id}`}
+                          className="rounded-xl border border-violet-700/60 bg-violet-950/30 p-2"
+                        >
+                          <h4 className="text-xs font-bold text-violet-100">
+                            {translations.scenarioCard?.[cardA.id] || cardA.nombre}
+                          </h4>
+                          <p className="mt-1 text-[0.65rem] leading-relaxed text-violet-100/80">
+                            {translations.scenarioCard?.[cardA.descripcionKey] || cardA.descripcion}
+                          </p>
+                          <p className="mt-1 text-[0.65rem] italic text-amber-200/90">
+                            {ACLARACIONES_RUNAS_DESPERTAR[cardA.id]}
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            <button
+                              type="button"
+                              disabled={already}
+                              onClick={() => handleSelectUniqueCard(cardA)}
+                              className={`state-btn-add text-white text-xs px-2 py-1 rounded ${already ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                              Añadir (A)
+                            </button>
+                            {cardB && (
+                              <button
+                                type="button"
+                                disabled={already}
+                                onClick={() => handleSelectUniqueCard(cardB)}
+                                className={`bg-indigo-800 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded ${already ? 'opacity-50 cursor-not-allowed' : ''}`}
+                              >
+                                Cara B
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                   )}
 
@@ -1304,45 +1311,53 @@ const TopMenu = ({
                   )}
 
                   {mainBox === 'awakenings' && (
-                  <div className="rounded-xl border border-violet-700/60 bg-violet-950/30 p-2">
-                    <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-violet-200">
-                      <GiUprising className="text-violet-300 text-xl" />
-                      <span>Incursiones de Despertar</span>
+                  <div className="space-y-2">
+                    <div className="px-1 text-xs font-bold uppercase tracking-wide text-violet-200">
+                      Incursiones de Despertar
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        disabled={!scenarioMonster}
-                        onClick={() => INCURSION_DESPERTAR
-                          .filter((card) => card.cara === 'A')
-                          .forEach((card) => handleSelectUniqueCard(card))}
-                        className={`state-btn-add text-white text-xs px-2 py-1 rounded ${!scenarioMonster ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        Añadir (A)
-                      </button>
-                      <button
-                        type="button"
-                        disabled={!scenarioMonster}
-                        onClick={() => setShowDespertarIncursionFaces((prev) => !prev)}
-                        className={`bg-blue-700 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded ${!scenarioMonster ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        Caras
-                      </button>
-                    </div>
-                    {showDespertarIncursionFaces && (
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {INCURSION_DESPERTAR.map((card, index) => (
-                          <button
-                            key={`${card.id}-${card.cara}-${index}`}
-                            type="button"
-                            onClick={() => handleSelectUniqueCard(card)}
-                            className="bg-indigo-800 hover:bg-indigo-600 text-white text-[0.65rem] px-2 py-1 rounded"
-                          >
-                            {translations.scenarioCard?.[card.id] || card.nombre} ({card.cara})
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    {INCURSION_DESPERTAR.filter((card) => card.cara === 'A').map((cardA) => {
+                      const cardB = INCURSION_DESPERTAR.find((card) => card.id === cardA.id && card.cara === 'B');
+                      const already = placedRunes.some((entry) => entry.rune.tipo === 'incursion');
+                      const needsScenario = !cardA.incursion?.fixedMonsterId;
+                      const disabled = already || (needsScenario && !scenarioMonster);
+                      return (
+                        <div
+                          key={cardA.id}
+                          data-testid={`despertar-incursion-${cardA.id}`}
+                          className="rounded-xl border border-violet-700/60 bg-violet-950/30 p-2"
+                        >
+                          <h4 className="text-xs font-bold text-violet-100">
+                            {translations.scenarioCard?.[cardA.id] || cardA.nombre}
+                          </h4>
+                          <p className="mt-1 text-[0.65rem] leading-relaxed text-violet-100/80">
+                            {translations.scenarioCard?.[cardA.descripcionKey] || cardA.descripcion}
+                          </p>
+                          <p className="mt-1 text-[0.65rem] italic text-amber-200/90">
+                            {ACLARACIONES_INCURSION_DESPERTAR[cardA.id]}
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            <button
+                              type="button"
+                              disabled={disabled}
+                              onClick={() => handleSelectUniqueCard(cardA)}
+                              className={`state-btn-add text-white text-xs px-2 py-1 rounded ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                              Añadir (A)
+                            </button>
+                            {cardB && (
+                              <button
+                                type="button"
+                                disabled={disabled}
+                                onClick={() => handleSelectUniqueCard(cardB)}
+                                className={`bg-indigo-800 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                              >
+                                Cara B
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                   )}
 
