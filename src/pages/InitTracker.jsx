@@ -49,6 +49,7 @@ import PassiveCardsPanel from '@/components/track/PassiveCardsPanel';
 import GenerationPointsBar from '@/components/track/GenerationPointsBar';
 import MagicCannonsBar from '@/components/track/MagicCannonsBar';
 import CommanderCardModal from '@/components/CommanderCardModal';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 import { createId } from '@/utils/id';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
@@ -216,6 +217,7 @@ const InitTracker = () => {
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
   const [pendingResolutionCard, setPendingResolutionCard] = useState(null);
   const [pendingResolutionQuestion, setPendingResolutionQuestion] = useState(false);
+  const [incursionPlacement, setIncursionPlacement] = useState(null);
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
@@ -534,6 +536,39 @@ const InitTracker = () => {
       showScenarioToast(`${ti.invoca} ${tee[scenarioMonster.id]}`);
     }
 
+  };
+
+  const finalizeIncursionPlacement = (placement) => {
+    if (!placement) return;
+    if (placement.placed > 0) {
+      spawnBatchEnemies(placement.placed, placement.target);
+      showScenarioToast(`${ti.added} ${placement.placed} ${ti.Enemies} ${ti.invocaran}: ${ti.colores?.[placement.color] || placement.color}`);
+    }
+    const failed = Math.max(0, placement.requested - placement.placed);
+    if (failed > 0) {
+      showScenarioToast(`${failed} × ${ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.'}`);
+    }
+  };
+
+  const confirmIncursionPlacement = () => {
+    setIncursionPlacement((current) => {
+      if (!current) return null;
+      const next = {
+        ...current,
+        placed: current.placed + 1,
+        remaining: current.remaining - 1,
+      };
+      if (next.remaining > 0) return next;
+      finalizeIncursionPlacement(next);
+      return null;
+    });
+  };
+
+  const cancelIncursionPlacement = () => {
+    setIncursionPlacement((current) => {
+      if (current) finalizeIncursionPlacement(current);
+      return null;
+    });
   };
 
   const spawnBossEnemies = (maxMonstruos, enemiesId, enemiesCat) => {
@@ -1369,6 +1404,7 @@ const InitTracker = () => {
       accion: runeCard.accion,
       numRunas: runeCard.numRunas,
       pasos: runeCard.pasos,
+      incursion: runeCard.incursion,
       descripcion: runeCard.descripcion,
       descripcionKey: runeCard.descripcionKey,
       tipo: runeCard.tipo,
@@ -2849,20 +2885,29 @@ const InitTracker = () => {
                   handleInvadidosEffect();
                 }
                 if (currentRune.id === 'runa_despertar_naval' && !isCaraB && tiles?.length) {
+                  const placedNavalRune = placedRunes.find((entry) => entry.rune.uuid === currentRune.uuid)?.rune;
+                  const alreadySummoned = Boolean(placedNavalRune?.navalASummoned);
                   const tile = tiles[0];
-                  const point = generationPoints.find((entry) => entry.color === tile.runa);
-                  if (!point) {
-                    showScenarioToast(ti.generationNoPoint || 'No hay una Ficha de Generación activa del color de la runa robada.');
-                  } else {
-                    const target = ENEMIES.find((enemy) => enemy.id === 'infamous_striker');
-                    const existing = placedEnemies.filter((entry) => entry.enemy.id === target?.id).length;
-                    const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
-                    const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
-                    if (target && capacity > 0) {
-                      spawnBatchEnemies(1, target);
-                      showScenarioToast(`${ti.added} 1 ${ti.Enemies}: ${ti.colores[tile.runa]}`);
+                  if (!alreadySummoned) {
+                    const point = generationPoints.find((entry) => entry.color === tile.runa);
+                    if (!point) {
+                      showScenarioToast(ti.generationNoPoint || 'No hay una Ficha de Generación activa del color de la runa robada.');
                     } else {
-                      showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
+                      const target = ENEMIES.find((enemy) => enemy.id === 'infamous_striker');
+                      const existing = placedEnemies.filter((entry) => entry.enemy.id === target?.id).length;
+                      const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
+                      const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
+                      if (target && capacity > 0) {
+                        spawnBatchEnemies(1, target);
+                        setPlacedRunes((prev) => prev.map((entry) => (
+                          entry.rune.uuid === currentRune.uuid
+                            ? { ...entry, rune: { ...entry.rune, navalASummoned: true } }
+                            : entry
+                        )));
+                        showScenarioToast(`${ti.added} 1 ${ti.Enemies}: ${ti.colores[tile.runa]}`);
+                      } else {
+                        showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
+                      }
                     }
                   }
                 }
@@ -2948,31 +2993,36 @@ const InitTracker = () => {
                     if (!tile) {
                       showScenarioToast(ti.aviso4 || 'No se ha podido manifestar la runa.');
                     } else {
-                      const pilasActivas = [
-                        ...pilas.filter((pila) => pila.estado === 'activa'),
-                        ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
-                      ];
-                      const pilasQueContienen = pilasActivas.filter((pila) => (
-                        pila.tiles.some((tileEntry) => tileEntry.runa === tile.runa)
-                      ));
-                      if (pilasQueContienen.length === 0) {
+                      const usesCannons = Boolean(config.fixedMonsterId);
+                      let canSpawn = false;
+                      if (usesCannons) {
+                        canSpawn = magicCannons.some((cannon) => cannon.color === tile.runa);
+                      } else {
+                        const pilasActivas = [
+                          ...pilas.filter((pila) => pila.estado === 'activa'),
+                          ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
+                        ];
+                        canSpawn = pilasActivas.some((pila) => (
+                          pila.tiles.some((tileEntry) => tileEntry.runa === tile.runa)
+                        ));
+                      }
+                      if (!canSpawn) {
                         showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
                       } else {
                         const existing = placedEnemies.filter((entry) => entry.enemy.id === target.id).length;
                         const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
                         const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
-                        let placed = 0;
-                        for (let i = 0; i < requested && i < capacity; i += 1) {
-                          const confirmed = window.confirm(`${ti.incursionConfirm || '¿Colocar'} ${target.nombre}?`);
-                          if (!confirmed) break;
-                          spawnBatchEnemies(1, target);
-                          placed += 1;
-                        }
-                        if (placed > 0) {
-                          showScenarioToast(`${ti.added} ${placed} ${ti.Enemies} ${ti.invocaran}: ${ti.colores[tile.runa]}`);
-                        }
-                        if (placed < requested) {
+                        if (capacity <= 0) {
                           showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
+                        } else {
+                          setIncursionPlacement({
+                            target,
+                            requested,
+                            remaining: Math.min(requested, capacity),
+                            placed: 0,
+                            color: tile.runa,
+                            usesCannons,
+                          });
                         }
                       }
                     }
@@ -4598,6 +4648,15 @@ const InitTracker = () => {
             </div>
           </div>
         )}
+        <ConfirmDialog
+          open={Boolean(incursionPlacement)}
+          title={ti.incursionPlacementTitle || 'Invocar monstruo'}
+          description={incursionPlacement ? `${ti.incursionConfirm || '¿Colocar'} ${incursionPlacement.target.nombre}? Quedan ${incursionPlacement.remaining} por resolver en ${ti.colores?.[incursionPlacement.color] || incursionPlacement.color}.` : ''}
+          confirmLabel={ti.incursionPlace || 'Colocar'}
+          cancelLabel={ti.incursionSkip || 'No colocar'}
+          onConfirm={confirmIncursionPlacement}
+          onCancel={cancelIncursionPlacement}
+        />
         {selectedEnemyUuid && (
           <ModalEnemyCard
             key={selectedEnemyUuid}

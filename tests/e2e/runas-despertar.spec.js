@@ -37,6 +37,8 @@ test('añade una carta de runa y una de incursión de Despertar', async ({ page 
 
   state = await page.evaluate(() => JSON.parse(localStorage.getItem('initRunesState') || '{}'));
   expect(state.placedRunes.filter((entry) => entry.rune.tipo === 'incursion')).toHaveLength(1);
+  expect(state.placedRunes.find((entry) => entry.rune.tipo === 'incursion')?.rune.incursion?.counts?.A)
+    .toEqual([1, 2, 3]);
 
   await page.getByRole('button', { name: 'Nodos', exact: true }).click();
   await expect(page.getByText('Fichas de Generación')).toBeVisible();

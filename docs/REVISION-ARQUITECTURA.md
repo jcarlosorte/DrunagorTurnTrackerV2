@@ -2612,6 +2612,21 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 137.ª tanda — Incursiones, cañones y confirmaciones
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Incursiones** | Configuración copiada al colocar la carta; Incursión Incansable sin chequeo de enemigos y con recuentos correctos; Incursión Naval comprueba cañones; confirmaciones propias por colocación y aviso final de fallos | `InitTracker`, `incursionDespertar` |
+| **Invocaciones** | Los lotes se lanzan juntos para conservar anillos de color distintos; Batalla Naval A evita repetir la invocación y calcula la vida `4+j` | `InitTracker` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
