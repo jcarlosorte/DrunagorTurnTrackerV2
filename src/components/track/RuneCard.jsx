@@ -55,6 +55,7 @@ export default function RuneCard({ rune, onRemove }) {
   const accion2 = ts[rune.accion2];
   const y = ts.Y || 'Y';
   const nombre = ts[rune.nombre]?.replace('{x}', replacementValue) || rune.nombre;
+  const descripcion = ts[rune.descripcionKey] || rune.descripcion || '';
   const actionLine = tipo === 'asalto'
     ? `${(isCaraB ? accion2 : accion) || ''} ${y}`.trim()
     : `${accion || ''} ${rune.numRunas || ''}`.trim();
@@ -76,6 +77,11 @@ export default function RuneCard({ rune, onRemove }) {
       <div className="space-y-1 text-center">
         <div className="font-bold">{accion} {rune.numRunas || ''}</div>
         <div>{nombre}</div>
+        {descripcion && (
+          <p className="whitespace-pre-line text-left text-xs leading-relaxed text-slate-300">
+            {descripcion}
+          </p>
+        )}
       </div>
     );
   };

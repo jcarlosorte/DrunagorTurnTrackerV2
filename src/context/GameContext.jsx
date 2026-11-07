@@ -32,6 +32,7 @@ export const GameProvider = ({ children }) => {
   const [usedTiles, setUsedTiles] = useState(() => persisted.usedTiles || []);
   const [scenarioMonster, setScenarioMonster] = useState(() => persisted.scenarioMonster || null);
   const [spawnPoints, setSpawnPoints] = useState(() => persisted.spawnPoints || []);
+  const [generationPoints, setGenerationPoints] = useState(() => persisted.generationPoints || []);
   const [controlPoints, setControlPoints] = useState(() => persisted.controlPoints || []);
   const [runeKeys, setRuneKeys] = useState(() => persisted.runeKeys || []);
   const [rescue, setRescue] = useState(() => persisted.rescue || []);
@@ -62,6 +63,7 @@ export const GameProvider = ({ children }) => {
       usedTiles,
       scenarioMonster,
       spawnPoints,
+      generationPoints,
       controlPoints,
       runeKeys,
       rescue,
@@ -73,7 +75,7 @@ export const GameProvider = ({ children }) => {
   }, [
     runes, discardedTiles, pilaDeRunas, pilas, pilasConcentrada,
     contadorPilas, contadorPilasConcentradas, availableTiles, usedTiles,
-    scenarioMonster, spawnPoints, controlPoints, runeKeys, rescue,
+    scenarioMonster, spawnPoints, generationPoints, controlPoints, runeKeys, rescue,
     aldeanoDeck, errantesDeck, codigosPilas, campamento,
   ]);
 
@@ -848,6 +850,13 @@ export const GameProvider = ({ children }) => {
         tileToasts,
         setSpawnPoints,
         spawnPoints,
+        generationPoints,
+        addGenerationPoint: (color) => {
+          const next = { id: createId(), color };
+          setGenerationPoints((prev) => [...prev, next]);
+          return next;
+        },
+        removeGenerationPoint: (id) => setGenerationPoints((prev) => prev.filter((point) => point.id !== id)),
         initializeSpawnPoints,
         removeSpawnPoint,
         controlPoints, 

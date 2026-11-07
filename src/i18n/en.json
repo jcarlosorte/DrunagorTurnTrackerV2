@@ -812,6 +812,11 @@
     "resizeTrack": "Resize board height",
     "resizeTrackHint": "Drag to enlarge. Double-click to fit.",
     "activePassives": "Active passives",
+    "generationPoints": "Generation tokens",
+    "generationNoPoint": "There is no active Generation token matching the drawn rune color.",
+    "incursionNoSpawn": "The Monster could not be summoned, so activate the highest-ranking non-Boss Monster. If two or more share the same category, activate the one higher on the Monster Status sheet.",
+    "incursionNoTarget": "Select a scenario monster before resolving this incursion.",
+    "incursionConfirm": "Place",
     "commanderDeck": "Commander deck",
     "deckType": "Deck type",
     "deckStandard": "Standard (recommended)",
@@ -841,7 +846,15 @@
     "Defen_2": "Event Card <<Wandering Monsters>> and Resolve it.",
     "incru1": "Monster Raid",
     "Incru_1": "Rune and summon the {x} minions. Use the revealed Rune as a Spawning Point.",
-    "Incru_2": "Rune and summon the {x} minions. Use the revealed Rune as a Spawning Point."
+    "Incru_2": "Rune and summon the {x} minions. Use the revealed Rune as a Spawning Point.",
+    "runa_despertar_influencia": "Growing Influence",
+    "runa_despertar_oscuridad": "Awakening of Darkness",
+    "runa_despertar_furia": "Harvester's Fury",
+    "runa_despertar_caza": "Harvester's Hunt",
+    "runa_despertar_naval": "Naval Battle",
+    "incursion_despertar_incansable": "Relentless Incursion",
+    "incursion_despertar_atroz": "Atrocious Incursion",
+    "incursion_despertar_naval": "Naval Incursion"
   },
   "condiciones_t": {
     "none": "",

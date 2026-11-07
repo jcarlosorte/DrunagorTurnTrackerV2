@@ -7,9 +7,12 @@ import { useSavesUi } from '@/context/SavesUiContext';
 import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker, GiWoodenCrate, GiPawPrint } from 'react-icons/gi';
 import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
+import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
 import { INCURSION } from '@/data/incursion';
+import { INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import { DEFENSA } from '@/data/defensa';
 import { canUseBaseScenarioCards, getScenarioMonstersForCampaign } from '@/utils/scenarioCampaign';
+import { GENERATION_COLORS, GENERATION_IMAGES } from '@/components/track/GenerationPointsBar';
 import { } from '@/data/estadosAlterados';
 import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -45,12 +48,14 @@ const TopMenu = ({
   const [manualSelect, setManualSelect] = useState('');
   const [showRuneFaceOptions, setShowRuneFaceOptions] = useState(false);
   const [showAssaultFaceOptions, setshowAssaultFaceOptions] = useState(false);
+  const [showDespertarRuneFaces, setShowDespertarRuneFaces] = useState(false);
+  const [showDespertarIncursionFaces, setShowDespertarIncursionFaces] = useState(false);
 
 
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
-  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, controlPoints, runeKeys, rescue } = useGame();
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, controlPoints, runeKeys, rescue } = useGame();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const gameMenuRef = useRef(null);
@@ -140,7 +145,9 @@ const TopMenu = ({
   const handleSelectUniqueCard = (card, timeToken = false) => {
     const tipo = card.tipo;
     // ✅ Comprobar si ya existe una carta de este tipo
-    const yaEx = placedRunes.some(r => r.rune.tipo === tipo);
+    const yaEx = card.unique === 'id'
+      ? placedRunes.some(r => r.rune.id === card.id)
+      : placedRunes.some(r => r.rune.tipo === tipo);
   
     if (yaEx) {
       alert(t.yaExiste);
@@ -227,6 +234,7 @@ const TopMenu = ({
   })();
 
   const scenarioCards = placedRunes.filter((entry) => ['incursion', 'defensa'].includes(entry.rune?.tipo)).length;
+  const maxScenarioCards = mainBox === 'awakenings' ? 3 : 2;
   const activeNodes = spawnPoints.length + controlPoints.length + runeKeys.length + rescue.length + pilas.length + pilasConcentrada.length;
   
   return (
@@ -622,6 +630,46 @@ const TopMenu = ({
                         </button>
                       )}
                     </div>
+                  </div>
+                  )}
+
+                  {mainBox === 'awakenings' && (
+                  <div className="rounded-xl border border-violet-700/60 bg-violet-950/30 p-2">
+                    <div className="mb-2 text-xs font-bold uppercase tracking-wide text-violet-200">
+                      Runas de Despertar
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => RUNAS_DESPERTAR
+                          .filter((card) => card.cara === 'A')
+                          .forEach((card) => handleSelectUniqueCard(card))}
+                        className="state-btn-add text-white text-xs px-2 py-1 rounded"
+                      >
+                        Añadir (A)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowDespertarRuneFaces((prev) => !prev)}
+                        className="bg-blue-700 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded"
+                      >
+                        Caras
+                      </button>
+                    </div>
+                    {showDespertarRuneFaces && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {RUNAS_DESPERTAR.map((card, index) => (
+                          <button
+                            key={`${card.id}-${card.cara}-${index}`}
+                            type="button"
+                            onClick={() => handleSelectUniqueCard(card)}
+                            className="bg-indigo-800 hover:bg-indigo-600 text-white text-[0.65rem] px-2 py-1 rounded"
+                          >
+                            {translations.scenarioCard?.[card.id] || card.nombre} ({card.cara})
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   )}
 
@@ -1066,6 +1114,42 @@ const TopMenu = ({
                   <h3 id="nodes-section" className="min-w-0 flex-1 text-sm font-semibold">{t.nodesSection || 'Nodos y áreas'}</h3>
                 </div>
                 <ScenarioPanels />
+                {mainBox === 'awakenings' && (
+                  <div className="mt-3 rounded-xl border border-cyan-700/60 bg-cyan-950/30 p-2">
+                    <div className="mb-2 text-xs font-bold uppercase tracking-wide text-cyan-200">
+                      {t.generationPoints || 'Fichas de Generación'}
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {GENERATION_COLORS.map((color) => (
+                        <button
+                          key={color}
+                          type="button"
+                          onClick={() => addGenerationPoint(color)}
+                          className="flex items-center gap-1 rounded-full border border-cyan-700/60 bg-slate-950/60 px-2 py-1 text-[0.65rem] font-semibold text-cyan-100 hover:border-cyan-300"
+                        >
+                          <img src={GENERATION_IMAGES[color]} alt="" className="h-5 w-5 rounded-full" />
+                          + {t.colores?.[color] || color}
+                        </button>
+                      ))}
+                    </div>
+                    {generationPoints.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {generationPoints.map((point) => (
+                          <button
+                            key={point.id}
+                            type="button"
+                            onClick={() => removeGenerationPoint(point.id)}
+                            title={t.remove || 'Quitar'}
+                            className="flex items-center gap-1 rounded-full border border-slate-600 bg-slate-900 px-2 py-1 text-[0.65rem] text-slate-200 hover:border-red-400"
+                          >
+                            <img src={GENERATION_IMAGES[point.color]} alt="" className="h-5 w-5 rounded-full" />
+                            {t.colores?.[point.color] || point.color}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </section>
               )}
             </div>
@@ -1096,7 +1180,7 @@ const TopMenu = ({
                   {t.scenarioMonsterChip || 'Monstruo'} {scenarioMonster ? 1 : 0}/{monstruosUnicos.length}
                 </span>
                 <span className="shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200">
-                  {t.scenarioCardsChip || 'Cartas'} {scenarioCards}/2
+                  {t.scenarioCardsChip || 'Cartas'} {scenarioCards}/{maxScenarioCards}
                 </span>
                 <button
                   type="button"
@@ -1168,7 +1252,7 @@ const TopMenu = ({
                     <GiVillage className="text-lg" />
                   </span>
                   <h3 id="scenario-cartas" className="min-w-0 flex-1 text-sm font-semibold">{t.scenarioCardsSection || 'Cartas de escenario'}</h3>
-                  <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">{scenarioCards}/2</span>
+                  <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-400">{scenarioCards}/{maxScenarioCards}</span>
                 </div>
 
                 <div className="grid gap-2">
@@ -1212,6 +1296,49 @@ const TopMenu = ({
                             className="bg-indigo-800 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded"
                           >
                             {t.cara} ({card.cara})
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  )}
+
+                  {mainBox === 'awakenings' && (
+                  <div className="rounded-xl border border-violet-700/60 bg-violet-950/30 p-2">
+                    <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-violet-200">
+                      <GiUprising className="text-violet-300 text-xl" />
+                      <span>Incursiones de Despertar</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        disabled={!scenarioMonster}
+                        onClick={() => INCURSION_DESPERTAR
+                          .filter((card) => card.cara === 'A')
+                          .forEach((card) => handleSelectUniqueCard(card))}
+                        className={`state-btn-add text-white text-xs px-2 py-1 rounded ${!scenarioMonster ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        Añadir (A)
+                      </button>
+                      <button
+                        type="button"
+                        disabled={!scenarioMonster}
+                        onClick={() => setShowDespertarIncursionFaces((prev) => !prev)}
+                        className={`bg-blue-700 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded ${!scenarioMonster ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        Caras
+                      </button>
+                    </div>
+                    {showDespertarIncursionFaces && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {INCURSION_DESPERTAR.map((card, index) => (
+                          <button
+                            key={`${card.id}-${card.cara}-${index}`}
+                            type="button"
+                            onClick={() => handleSelectUniqueCard(card)}
+                            className="bg-indigo-800 hover:bg-indigo-600 text-white text-[0.65rem] px-2 py-1 rounded"
+                          >
+                            {translations.scenarioCard?.[card.id] || card.nombre} ({card.cara})
                           </button>
                         ))}
                       </div>

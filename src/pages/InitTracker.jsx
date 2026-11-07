@@ -10,7 +10,9 @@ import { getHeroClass } from '@/data/heroClasses';
 import { ENEMIES } from '@/data/enemies';
 import { EXPANSIONS } from '@/data/expansions';
 import { RUNAS, ASALTO } from '@/data/runas';
+import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
 import { INCURSION } from '@/data/incursion';
+import { INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import { DEFENSA } from '@/data/defensa';
 import { ESTADOS_ALTERADOS, OTROS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { CARTAS_COMANDANTE, CARTAS_JEFE, CARTAS_HEROE_CAIDO, ASALTO_GUSANO, ACECHO, IRA, getOverlordDeck } from '@/data/cartasEspeciales';
@@ -44,6 +46,7 @@ import FollowerModal from '@/components/track/FollowerModal';
 import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import PassiveCardsPanel from '@/components/track/PassiveCardsPanel';
+import GenerationPointsBar from '@/components/track/GenerationPointsBar';
 import CommanderCardModal from '@/components/CommanderCardModal';
 
 import { createId } from '@/utils/id';
@@ -216,7 +219,7 @@ const InitTracker = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, removeSpawnPoint, controlPoints, removeControlPoint, runeKeys, removeRuneKey, rescue, removeRescue, pilas, pilasConcentrada, activarPilaConcentrada, activarPila, codigosPilas, handleCodigoChange, addTileToPila, addTileToPilaConcentrada, initializeDecks, drawCardFromDeck, removeTileFromPila, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack, resetGameState } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, removeSpawnPoint, controlPoints, removeControlPoint, runeKeys, removeRuneKey, rescue, removeRescue, pilas, pilasConcentrada, activarPilaConcentrada, activarPila, codigosPilas, handleCodigoChange, addTileToPila, addTileToPilaConcentrada, initializeDecks, drawCardFromDeck, removeTileFromPila, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack, resetGameState } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -2815,6 +2818,24 @@ const InitTracker = () => {
                 if (invadidosActivo && isCaraB){
                   handleInvadidosEffect();
                 }
+                if (currentRune.id === 'runa_despertar_naval' && !isCaraB && tiles?.length) {
+                  const tile = tiles[0];
+                  const point = generationPoints.find((entry) => entry.color === tile.runa);
+                  if (!point) {
+                    showScenarioToast(ti.generationNoPoint || 'No hay una Ficha de Generación activa del color de la runa robada.');
+                  } else {
+                    const target = ENEMIES.find((enemy) => enemy.id === 'infamous_striker');
+                    const existing = placedEnemies.filter((entry) => entry.enemy.id === target?.id).length;
+                    const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
+                    const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
+                    if (target && capacity > 0 && window.confirm(`${ti.incursionConfirm || '¿Colocar'} ${target.nombre}?`)) {
+                      spawnBatchEnemies(1, target);
+                      showScenarioToast(`${ti.added} 1 ${ti.Enemies}: ${ti.colores[tile.runa]}`);
+                    } else {
+                      showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
+                    }
+                  }
+                }
               }
       
             } else if (currentRune.tipo === 'asalto') {
@@ -2861,6 +2882,56 @@ const InitTracker = () => {
               }
       
             } else if (currentRune.tipo === 'incursion') {
+              if (currentRune.incursion) {
+                const config = currentRune.incursion;
+                const monsterOnBoard = placedEnemies.some((entry) => entry.enemy.tipo !== 'especial');
+                if (config.requiresNoMonsters && monsterOnBoard) {
+                  showScenarioToast(`${currentRune.nombre}: sin efecto: hay monstruos en el tablero.`);
+                } else {
+                  const totalHeroes = trackerData.placedHeroes?.length || 0;
+                  const counts = config.counts?.[currentRune.cara] || config.counts?.A || [1, 1, 1];
+                  const requested = totalHeroes <= 2 ? counts[0] : totalHeroes <= 4 ? counts[1] : counts[2];
+                  const target = config.fixedMonsterId
+                    ? ENEMIES.find((enemy) => enemy.id === config.fixedMonsterId)
+                    : scenarioMonster;
+                  if (!target) {
+                    showScenarioToast(ti.incursionNoTarget || 'Selecciona un monstruo de escenario antes de resolver esta incursión.');
+                  } else if (requested > 0) {
+                    const tile = manifestTile();
+                    if (!tile) {
+                      showScenarioToast(ti.aviso4 || 'No se ha podido manifestar la runa.');
+                    } else {
+                      const pilasActivas = [
+                        ...pilas.filter((pila) => pila.estado === 'activa'),
+                        ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
+                      ];
+                      const pilasQueContienen = pilasActivas.filter((pila) => (
+                        pila.tiles.some((tileEntry) => tileEntry.runa === tile.runa)
+                      ));
+                      if (pilasQueContienen.length === 0) {
+                        showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
+                      } else {
+                        const existing = placedEnemies.filter((entry) => entry.enemy.id === target.id).length;
+                        const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
+                        const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
+                        let placed = 0;
+                        for (let i = 0; i < requested && i < capacity; i += 1) {
+                          const confirmed = window.confirm(`${ti.incursionConfirm || '¿Colocar'} ${target.nombre}?`);
+                          if (!confirmed) break;
+                          spawnBatchEnemies(1, target);
+                          placed += 1;
+                        }
+                        if (placed > 0) {
+                          showScenarioToast(`${ti.added} ${placed} ${ti.Enemies} ${ti.invocaran}: ${ti.colores[tile.runa]}`);
+                        }
+                        if (placed < requested) {
+                          showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
+                        }
+                      }
+                    }
+                  }
+                }
+              } else {
               const isCaraB = currentRune.cara === 'B';
               const noEnemies = placedEnemies.length === 0;
               const totalHeroes = trackerData.placedHeroes?.length || 0;
@@ -2922,6 +2993,7 @@ const InitTracker = () => {
               } else {
                 showScenarioToast(`${ti.noManifestamos}`);
               }
+            }
             }
       
             // ✅ Marcar como ejecutada
@@ -3175,9 +3247,9 @@ const InitTracker = () => {
   
       if (currentTurnEntity.type === 'rune') {
         // Detectamos la lista de origen según su tipo
-        let dataSource = RUNAS;
+        let dataSource = [...RUNAS, ...RUNAS_DESPERTAR];
         if (currentTurnEntity.tipo === 'defensa') dataSource = DEFENSA;
-        if (currentTurnEntity.tipo === 'incursion') dataSource = INCURSION;
+        if (currentTurnEntity.tipo === 'incursion') dataSource = [...INCURSION, ...INCURSION_DESPERTAR];
         if (currentTurnEntity.tipo === 'asalto') dataSource = ASALTO;
         // La cara actual se toma del tablero para no repetir siempre la misma.
         const runaEnTablero = placedRunes.find(r => r.rune.uuid === currentTurnEntity.uuid)?.rune;
@@ -3994,6 +4066,7 @@ const InitTracker = () => {
             
             <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 lg:flex-row">
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                <GenerationPointsBar />
                 <PassiveCardsPanel
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}

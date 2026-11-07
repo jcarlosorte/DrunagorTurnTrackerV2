@@ -2510,6 +2510,21 @@ Unit       190 tests
 E2E        63/63
 ```
 
+### 130.ª tanda — Runas e incursiones de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Runas** | Añadidas las 5 cartas de runa de Despertar con caras A/B, textos y efecto guiado; añadidas las 3 incursiones con recuentos por héroes, chequeo previo y límites de invocación | `runasDespertar`, `incursionDespertar`, `TopMenu`, `RuneCard`, `InitTracker` |
+| **Generación** | Fichas de Generación de los 5 colores, panel en Nodos, aviso sobre el track y comprobación en Batalla Naval | `GameContext`, `GenerationPointsBar`, assets |
+| **Pruebas** | 192 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       192 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
