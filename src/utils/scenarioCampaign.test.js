@@ -19,7 +19,8 @@ describe('escenario por campaña', () => {
 
   it('Despertar muestra sus monstruos de escenario y no los base', () => {
     const ids = getScenarioMonstersForCampaign('awakenings').map((enemy) => enemy.id);
-    expect(ids).toContain('soul_harvester');
+    expect(ids).toContain('infamous_striker');
+    expect(ids).not.toContain('soul_harvester');
     expect(ids).not.toContain('dark_vampire');
   });
 });

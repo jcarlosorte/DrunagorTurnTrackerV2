@@ -6,6 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { ALDEANO, ERRANTES } from '@/data/cartasEspeciales';
 import { createId } from '@/utils/id';
+import { appendGenerationPoint } from '@/utils/generationPoints';
 
 const GameContext = createContext();
 const defaultRunes = { rojo: 0, azul: 0, verde: 0, naranja: 0, gris: 0 };
@@ -213,6 +214,7 @@ export const GameProvider = ({ children }) => {
     setTileWarning(null);
     setScenarioMonster(null);
     setSpawnPoints([]);
+    setGenerationPoints([]);
     setControlPoints([]);
     setRuneKeys([]);
     setRescue([]);
@@ -852,11 +854,10 @@ export const GameProvider = ({ children }) => {
         spawnPoints,
         generationPoints,
         addGenerationPoint: (color) => {
-          const next = { id: createId(), color };
-          setGenerationPoints((prev) => [...prev, next]);
-          return next;
+          setGenerationPoints((prev) => appendGenerationPoint(prev, color, createId()));
         },
         removeGenerationPoint: (id) => setGenerationPoints((prev) => prev.filter((point) => point.id !== id)),
+        resetGenerationPoints: () => setGenerationPoints([]),
         initializeSpawnPoints,
         removeSpawnPoint,
         controlPoints, 

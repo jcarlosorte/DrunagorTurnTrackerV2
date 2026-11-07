@@ -76,35 +76,35 @@ export const ACLARACIONES_INCURSION_DESPERTAR = {
 
 const PASOS = {
   incursion_despertar_incansable_A: [
-    'Acción: manifiesta 1 runa.',
+    'Manifiesta 1 runa.',
     'Invoca 1 esbirro con 1-2 Héroes, 2 con 3-4 Héroes o 3 con 5 Héroes, adyacente a una Pila de Runas que contenga la runa revelada.',
     'Voltea esta carta.',
   ],
   incursion_despertar_incansable_B: [
-    'Acción: manifiesta 1 runa.',
+    'Manifiesta 1 runa.',
     'Invoca 0 esbirros con 1-2 Héroes, 1 con 3-4 Héroes o 2 con 5 Héroes, adyacente a una Pila de Runas que contenga la runa revelada.',
     'Voltea esta carta.',
   ],
   incursion_despertar_atroz_A: [
-    'Chequeo previo: si hay Monstruos en el tablero, esta carta no tiene efecto este turno.',
+    'Primero, si hay Monstruos en el tablero, esta carta no tiene efecto este turno.',
     'Voltea la carta.',
-    'Si no hay Monstruos: manifiesta 1 runa.',
+    'Si no hay Monstruos: Manifiesta 1 runa.',
     'Invoca 1/2/3 esbirros (1-2/3-4/5 Héroes) adyacentes a una Pila de Runas con la runa revelada.',
     'Voltea esta carta.',
   ],
   incursion_despertar_atroz_B: [
-    'Acción: manifiesta 1 runa.',
+    'Manifiesta 1 runa.',
     'Invoca 1/2/3 esbirros (1-2/3-4/5 Héroes) adyacentes a una Pila de Runas con la runa revelada.',
     'Voltea esta carta.',
   ],
   incursion_despertar_naval_A: [
-    'Acción: manifiesta 1 runa.',
+    'Manifiesta 1 runa.',
     'Invoca 1/2/3 Cazamareas (1-2/3-4/5 Héroes) adyacentes al Cañón del Buque Cisne del color revelado.',
     'Si la runa es Azul, el líder elige el Cañón que será el Punto de Generación.',
     'Voltea esta carta.',
   ],
   incursion_despertar_naval_B: [
-    'Acción: manifiesta 1 runa.',
+    'Manifiesta 1 runa.',
     'Invoca 1/2/3 Cazamareas (1-2/3-4/5 Héroes) adyacentes al Cañón del Buque Cisne del color revelado.',
     'Si la runa es Azul, el líder elige el Cañón que será el Punto de Generación.',
     'Voltea esta carta.',

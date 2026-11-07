@@ -10,7 +10,6 @@ export function canUseBaseScenarioCards(boxId) {
 export function getScenarioMonstersForCampaign(boxId) {
   const expansionIds = new Set(getScenarioExpansionIds(boxId));
   return ENEMIES.filter((enemy) => (
-    (enemy.scenario === 'escenario' || enemy.color === 'escenario')
-    && expansionIds.has(enemy.expansionId)
+    enemy.scenario === 'escenario' && expansionIds.has(enemy.expansionId)
   ));
 }

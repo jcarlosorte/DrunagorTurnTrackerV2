@@ -2568,6 +2568,21 @@ Unit       192 tests
 E2E        64/64
 ```
 
+### 134.ª tanda — Fichas de generación y escenario
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Generación** | Las fichas se borran al reiniciar la partida y solo se permite una por color, con el botón deshabilitado | `GameContext`, `TopMenu`, `generationPoints` |
+| **Escenario** | El panel muestra únicamente enemigos con `scenario: "escenario"`, filtrados por la campaña activa | `scenarioCampaign` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

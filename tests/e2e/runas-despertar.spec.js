@@ -31,7 +31,7 @@ test('añade una carta de runa y una de incursión de Despertar', async ({ page 
     .getByRole('button', { name: 'Añadir (A)' })).toBeDisabled();
 
   await page.getByRole('button', { name: 'Escenario', exact: true }).click();
-  await page.getByRole('button', { name: 'Cosechador de Almas' }).click();
+  await page.getByRole('button', { name: 'Artillero Infame' }).click();
   const incursionCard = page.locator('[data-testid="despertar-incursion-incursion_despertar_incansable"]');
   await incursionCard.getByRole('button', { name: 'Añadir (A)' }).click();
 
@@ -41,4 +41,12 @@ test('añade una carta de runa y una de incursión de Despertar', async ({ page 
   await page.getByRole('button', { name: 'Nodos', exact: true }).click();
   await expect(page.getByText('Fichas de Generación')).toBeVisible();
   await expect(page.getByText(/Pila/i).first()).toBeVisible();
+
+  const orangeGeneration = page.getByRole('button', { name: /^\+ Naranja/ });
+  await orangeGeneration.click();
+  await expect(orangeGeneration).toBeDisabled();
+  await expect.poll(async () => page.evaluate(() => {
+    const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+    return (state.generationPoints || []).filter((point) => point.color === 'naranja').length;
+  })).toBe(1);
 });

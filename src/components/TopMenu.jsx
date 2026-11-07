@@ -1121,8 +1121,9 @@ const TopMenu = ({
                         <button
                           key={color}
                           type="button"
+                          disabled={generationPoints.some((point) => point.color === color)}
                           onClick={() => addGenerationPoint(color)}
-                          className="flex items-center gap-1 rounded-full border border-cyan-700/60 bg-slate-950/60 px-2 py-1 text-[0.65rem] font-semibold text-cyan-100 hover:border-cyan-300"
+                          className="flex items-center gap-1 rounded-full border border-cyan-700/60 bg-slate-950/60 px-2 py-1 text-[0.65rem] font-semibold text-cyan-100 hover:border-cyan-300 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           <img src={GENERATION_IMAGES[color]} alt="" className="h-5 w-5 rounded-full" />
                           + {t.colores?.[color] || color}
