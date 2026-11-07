@@ -2539,6 +2539,20 @@ Unit       192 tests
 E2E        64/64
 ```
 
+### 132.ª tanda — Pasos detallados en la vista ampliada
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cartas** | La vista ampliada de las runas e incursiones de Despertar muestra una lista ordenada con todos los pasos de ejecución, además de la aclaración | `runasDespertar`, `incursionDespertar`, `RuneCard` |
+| **Pruebas** | 192 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       192 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

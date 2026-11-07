@@ -105,3 +105,70 @@ export const ACLARACIONES_RUNAS_DESPERTAR = {
   runa_despertar_caza: 'La X se calcula con las runas del color robado después de colocar la robada. En la cara B se roba, se calcula, se vuelve a robar y se vuelve a calcular.',
   runa_despertar_naval: 'El monstruo es infamous_striker. Debe colocarse en una Ficha de Generación del color robado. Máximo 4 copias o 12 enemigos; si no se puede, se activa el monstruo no Jefe de mayor jerarquía.',
 };
+
+const PASOS = {
+  runa_despertar_influencia_A: [
+    'Acción: roba 1 runa.',
+    'Las runas robadas por esta carta no generan ninguna loseta de oscuridad.',
+    'Voltea esta carta.',
+  ],
+  runa_despertar_influencia_B: [
+    'Acción: roba 2 runas.',
+    'Las runas robadas por esta carta no generan ninguna loseta de oscuridad.',
+    'Voltea esta carta.',
+  ],
+  runa_despertar_oscuridad_A: [
+    'Acción: roba 1 runa.',
+    'Genera la Loseta de Oscuridad correspondiente usando la Ficha de Generación del color robado o una Loseta de Oscuridad conectada a ella. Si la runa es Azul, el líder elige la Ficha de Generación.',
+    'Voltea esta carta.',
+  ],
+  runa_despertar_oscuridad_B: [
+    'Acción: roba 1 runa.',
+    'Genera la Loseta de Oscuridad correspondiente usando la Ficha de Generación del color robado o una Loseta conectada. Si la runa es Azul, el líder elige la Ficha de Generación.',
+    'Acción: roba 1 runa.',
+    'Si no hay elementos sólidos en la Ficha de Generación del color robado, genera 1 Cofre encima. Si la runa es Azul, el líder elige la Ficha de Generación.',
+    'Voltea esta carta.',
+  ],
+  runa_despertar_furia_A: [
+    'Acción: roba 1 runa.',
+    'Retira 1 Ficha de Tiempo de esta carta y de la hoja de monstruo Jefe de Cosechador de Almas.',
+    'Voltea esta carta.',
+  ],
+  runa_despertar_furia_B: [
+    'Acción: roba 2 runas.',
+    'Retira 1 Ficha de Tiempo de esta carta y de la hoja de monstruo Jefe de Cosechador de Almas.',
+    'Voltea esta carta.',
+  ],
+  runa_despertar_caza_A: [
+    'Acción: roba 1 runa.',
+    'El Cosechador de Almas avanza hacia el Héroe más cercano.',
+    'Ataca el Área a Alcance 1 en la que esté el Héroe más débil e inflige DAÑO X a cada enemigo impactado.',
+    'Voltea esta carta.',
+  ],
+  runa_despertar_caza_B: [
+    'Acción: roba 1 runa.',
+    'El Cosechador de Almas avanza hacia el Héroe más cercano.',
+    'Ataca el Área a Alcance 1 en la que esté el Héroe más débil e inflige DAÑO X a cada enemigo impactado.',
+    'Acción: roba 1 runa.',
+    'El Cosechador avanza de nuevo hacia el Héroe más cercano.',
+    'Ataca de nuevo el Área a Alcance 1 del Héroe más débil con la nueva X.',
+    'Voltea esta carta.',
+  ],
+  runa_despertar_naval_A: [
+    'Primero: avanza las Naves.',
+    'Acción: roba 1 runa.',
+    'Genera 1 Monstruo de Escenario Artillero Infame en la Ficha de Generación que coincida con el color de la runa robada.',
+    'Voltea esta carta.',
+  ],
+  runa_despertar_naval_B: [
+    'Primero: avanza las Naves.',
+    'Acción: roba 2 runas.',
+    'Carga todos los cañones mágicos del Buque Cisne que coincidan con el color de las runas robadas.',
+    'Voltea esta carta.',
+  ],
+};
+
+RUNAS_DESPERTAR.forEach((card) => {
+  card.pasos = PASOS[`${card.id}_${card.cara}`] || [];
+});
+

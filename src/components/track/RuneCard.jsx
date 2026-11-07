@@ -82,7 +82,18 @@ export default function RuneCard({ rune, onRemove }) {
       <div className="space-y-1 text-center">
         <div className="font-bold">{accion} {rune.numRunas || ''}</div>
         <div>{nombre}</div>
-        {descripcion && (
+        {rune.pasos?.length ? (
+          <div className="text-left">
+            <p className="mb-1 text-[0.6rem] font-bold uppercase tracking-wide text-slate-400">
+              Pasos
+            </p>
+            <ol className="list-decimal space-y-1 pl-4 text-xs leading-relaxed text-slate-200">
+              {rune.pasos.map((paso, index) => (
+                <li key={`${rune.id}-${index}`}>{paso}</li>
+              ))}
+            </ol>
+          </div>
+        ) : descripcion && (
           <p className="whitespace-pre-line text-left text-xs leading-relaxed text-slate-300">
             {descripcion}
           </p>

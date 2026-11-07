@@ -11,6 +11,7 @@ describe('incursiones de Despertar', () => {
       expect(card.posicion).toBe('arriba');
       expect(card.expansionId).toBe('apocalypse_awakenings');
       expect(card.incursion?.counts?.A).toHaveLength(3);
+      expect(card.pasos.length).toBeGreaterThan(0);
     });
     expect(
       INCURSION_DESPERTAR.some((card) => card.incursion?.requiresNoMonsters),

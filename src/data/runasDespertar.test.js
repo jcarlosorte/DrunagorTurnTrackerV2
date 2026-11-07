@@ -13,6 +13,7 @@ describe('runas de Despertar', () => {
       expect(['A', 'B']).toContain(card.cara);
       expect(card.numRunas).toBeGreaterThan(0);
       expect(card.descripcion).toBeTruthy();
+      expect(card.pasos.length).toBeGreaterThan(0);
     });
   });
 });
