@@ -15,8 +15,8 @@ import { OTROS } from '@/data/estadosAlterados';
 export default function ScenarioPanels() {
   const { translations } = useLanguage();
   const t = translations?.trackerInit || {};
-  const { mainBox } = useExpansions();
-  const isBaseCampaign = mainBox === 'core';
+  const { mainBox, previewOtherBoxes } = useExpansions();
+  const showCoreContent = mainBox === 'core' || previewOtherBoxes;
   const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
 
   const {
@@ -65,7 +65,7 @@ export default function ScenarioPanels() {
   return (
                 <div className="grid gap-4 mt-4 xl:grid-cols-2">
                   {/* Sub-bloque: Pilas */}
-                  <div className={`track-surface-raised min-w-0 p-3 shadow-md ${isBaseCampaign ? '' : 'xl:col-span-2'}`}>
+                  <div className={`track-surface-raised min-w-0 p-3 shadow-md ${showCoreContent ? '' : 'xl:col-span-2'}`}>
                     <div className="flex items-center gap-2 mb-2 justify-center">
                       <GiCardDraw className="text-purple-500 text-xl" />
                       <span className="font-semibold text-white">{t.gestionPila}</span>
@@ -304,7 +304,7 @@ export default function ScenarioPanels() {
                   </div>
                 
                   {/* Bloque 2: Control de áreas y puntos de aparición */}
-                  {isBaseCampaign && (
+                  {showCoreContent && (
                   <div className="track-surface-raised min-w-0 p-3 shadow-md">
                     <div className="flex items-center gap-2 mb-2 justify-center">
                       <GiRuneStone className="text-cyan-500 text-xl" />

@@ -11,7 +11,7 @@ import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
 import { INCURSION } from '@/data/incursion';
 import { INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import { DEFENSA } from '@/data/defensa';
-import { canUseBaseScenarioCards, getScenarioMonstersForCampaign } from '@/utils/scenarioCampaign';
+import { getScenarioMonstersForCampaign } from '@/utils/scenarioCampaign';
 import { GENERATION_COLORS, GENERATION_IMAGES } from '@/components/track/GenerationPointsBar';
 import { MAGIC_CANNON_COLORS, MAGIC_CANNON_IMAGES } from '@/components/track/MagicCannonsBar';
 import { } from '@/data/estadosAlterados';
@@ -132,7 +132,6 @@ const TopMenu = ({
         .map(m => [m.id, m])
     ).values()
   );
-  const isBaseCampaign = canUseBaseScenarioCards(mainBox);
 
   useEffect(() => {
     if (!scenarioMonster) return;
@@ -564,7 +563,7 @@ const TopMenu = ({
                 <div className="flex flex-col gap-2">
 
                   {/* --- Bloque 1: OSCURIDAD DE CAZA --- */}
-                  {isBaseCampaign && (
+                  {showCoreContent && (
                   <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
                     <div className="flex flex-wrap gap-2 justify-center items-center">
                       <GiRuneStone className="text-indigo-300 text-xl" />
@@ -1112,8 +1111,9 @@ const TopMenu = ({
                   <h3 id="nodes-section" className="min-w-0 flex-1 text-sm font-semibold">{t.nodesSection || 'Nodos y áreas'}</h3>
                 </div>
                 <ScenarioPanels />
+                <div className="mt-3 grid gap-3 xl:grid-cols-2">
                 {mainBox === 'awakenings' && (
-                  <div className="mt-3 rounded-xl border border-cyan-700/60 bg-cyan-950/30 p-2">
+                  <div className="rounded-xl border border-cyan-700/60 bg-cyan-950/30 p-2">
                     <div className="mb-2 text-xs font-bold uppercase tracking-wide text-cyan-200">
                       {t.generationPoints || 'Fichas de Generación'}
                     </div>
@@ -1150,7 +1150,7 @@ const TopMenu = ({
                   </div>
                 )}
                 {mainBox === 'awakenings' && (
-                <div className="mt-3 rounded-xl border border-orange-700/60 bg-orange-950/30 p-2">
+                <div className="rounded-xl border border-orange-700/60 bg-orange-950/30 p-2">
                   <div className="mb-2 text-xs font-bold uppercase tracking-wide text-orange-200">
                     {t.magicCannons || 'Cañones Mágicos'}
                   </div>
@@ -1204,6 +1204,7 @@ const TopMenu = ({
                   </div>
                 </div>
                 )}
+                </div>
               </section>
             </div>
           </motion.div>
@@ -1310,7 +1311,7 @@ const TopMenu = ({
 
                 <div className="grid gap-2">
                   {/* Incursión */}
-                  {isBaseCampaign && (
+                  {showCoreContent && (
                   <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
                     <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-orange-200">
                       <GiUprising className="text-sky-300 text-xl" />

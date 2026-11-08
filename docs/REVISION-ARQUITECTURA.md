@@ -2627,6 +2627,24 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 138.ª tanda — Historial, nodos y previsualización
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Historial** | Eliminada la entrada duplicada de Caza del Cosechador; el aviso ya registra el evento | `InitTracker` |
+| **Campañas** | La previsualización de otras cajas vuelve a mostrar contenido base, como el control de áreas y Oscuridad de Caza | `TopMenu`, `ScenarioPanels` |
+| **Almacenamiento** | `trackerSession` se guarda solo con campos conocidos y colas limitadas; Batalla Naval evita repetir la invocación del Artillero | `InitTracker` |
+| **Nodos** | Fichas y cañones en paralelo; panel compacto de pilas en el lateral, debajo de la bolsa y encima del historial | `TopMenu`, `PilaStatusPanel`, `InitTracker`, `CompanionPicker` |
+| **Incursiones** | Confirmaciones propias, recuentos correctos, cañones y elección de cañón con runa azul; colores distintos por lote | `InitTracker` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

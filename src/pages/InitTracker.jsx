@@ -14,7 +14,7 @@ import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
 import { INCURSION } from '@/data/incursion';
 import { INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import { DEFENSA } from '@/data/defensa';
-import { ESTADOS_ALTERADOS, OTROS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
+import { ESTADOS_ALTERADOS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { CARTAS_COMANDANTE, CARTAS_JEFE, CARTAS_HEROE_CAIDO, ASALTO_GUSANO, ACECHO, IRA, getOverlordDeck } from '@/data/cartasEspeciales';
 import { TURN_ORDER } from '@/data/turnOrder';
 import { ENEMY_RING_COLORS } from '@/data/enemyRings';
@@ -48,6 +48,7 @@ import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import PassiveCardsPanel from '@/components/track/PassiveCardsPanel';
 import GenerationPointsBar from '@/components/track/GenerationPointsBar';
 import MagicCannonsBar from '@/components/track/MagicCannonsBar';
+import PilaStatusPanel from '@/components/track/PilaStatusPanel';
 import CommanderCardModal from '@/components/CommanderCardModal';
 import ConfirmDialog from '@/components/ConfirmDialog';
 
@@ -218,11 +219,10 @@ const InitTracker = () => {
   const [pendingResolutionCard, setPendingResolutionCard] = useState(null);
   const [pendingResolutionQuestion, setPendingResolutionQuestion] = useState(false);
   const [incursionPlacement, setIncursionPlacement] = useState(null);
-  const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, removeSpawnPoint, controlPoints, removeControlPoint, runeKeys, removeRuneKey, rescue, removeRescue, pilas, pilasConcentrada, activarPilaConcentrada, activarPila, codigosPilas, handleCodigoChange, addTileToPila, addTileToPilaConcentrada, initializeDecks, drawCardFromDeck, removeTileFromPila, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack, placeTilesFromPilaToTrack, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, pilas, pilasConcentrada, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -569,6 +569,10 @@ const InitTracker = () => {
       if (current) finalizeIncursionPlacement(current);
       return null;
     });
+  };
+
+  const selectIncursionCannon = (cannonId) => {
+    setIncursionPlacement((current) => (current ? { ...current, cannonId } : current));
   };
 
   const spawnBossEnemies = (maxMonstruos, enemiesId, enemiesCat) => {
@@ -2350,13 +2354,6 @@ const InitTracker = () => {
   
     
 
-  const colorMap = {
-    rojo: 'state-btn-remove',
-    azul: 'bg-blue-700 hover:bg-blue-600',
-    verde: 'state-btn-add',
-    naranja: 'bg-orange-700 hover:bg-orange-600',
-    gris: 'bg-slate-700 hover:bg-slate-600',
-  };
   useEffect(() => {
     const initialHeroes = (Array.isArray(trackerData.heroes) ? trackerData.heroes : [])
       .map((id) => {
@@ -2480,18 +2477,27 @@ const InitTracker = () => {
   // Guarda los conjuntos de efectos ya procesados para no repetirlos al restaurar la partida.
   const persistProcessed = () => {
     const session = readJsonStorage('trackerSession', {}, isPlainObject) || {};
+    const tail = (values) => [...values].slice(-600);
     writeJsonStorage('trackerSession', {
-      ...session,
-      schemaVersion: 2,
+      schemaVersion: 1,
+      enemyEvolutions: session.enemyEvolutions,
+      turnIndex: session.turnIndex,
+      lastRealTurnIndex: session.lastRealTurnIndex,
+      roundNumber: session.roundNumber,
+      previousTurnIndex: session.previousTurnIndex,
+      groupTurnTracker: session.groupTurnTracker,
+      extraTurnsQueue: session.extraTurnsQueue,
+      extraTurnIndex: session.extraTurnIndex,
+      extraTurnTotal: session.extraTurnTotal,
       processed: {
-        voragine: [...processedVoragineRef.current],
-        defenseTurn: [...processedDefenseTurnRef.current],
-        start: [...processedStartEffectsRef.current],
-        end: [...processedEndEffectsRef.current],
-        cards: [...processedCardsRef.current],
-        tiempo: [...processedTiempoRef.current],
-        hero: [...processedHeroEffectsRef.current],
-        companion: [...processedCompanionEffectsRef.current],
+        voragine: tail(processedVoragineRef.current),
+        defenseTurn: tail(processedDefenseTurnRef.current),
+        start: tail(processedStartEffectsRef.current),
+        end: tail(processedEndEffectsRef.current),
+        cards: tail(processedCardsRef.current),
+        tiempo: tail(processedTiempoRef.current),
+        hero: tail(processedHeroEffectsRef.current),
+        companion: tail(processedCompanionEffectsRef.current),
         lastHeroTurn: lastHeroTurnRef.current || null,
       },
     });
@@ -2872,7 +2878,6 @@ const InitTracker = () => {
                   const x = getRuneCount(tile.runa) + drawnByColor[tile.runa];
                   const message = `🩸 Caza del Cosechador (${currentRune.cara}, ${i + 1}/${draws}): ${ti.colores?.[tile.runa] || tile.runa} → X = ${x}`;
                   showScenarioToast(message);
-                  appendGameLog('event', message);
                 }
               } else if (currentRune.numRunas) {
                 // 🔹 Lógica clásica de runa: roba fichas de runa
@@ -2925,7 +2930,6 @@ const InitTracker = () => {
                   if (loadedColors.length > 0) {
                     const message = `Carga de cañones mágicos: ${loadedColors.join(', ')}`;
                     showScenarioToast(message);
-                    appendGameLog('event', message);
                   }
                 }
               }
@@ -2994,9 +2998,14 @@ const InitTracker = () => {
                       showScenarioToast(ti.aviso4 || 'No se ha podido manifestar la runa.');
                     } else {
                       const usesCannons = Boolean(config.fixedMonsterId);
+                      const cannonOptions = usesCannons
+                        ? (tile.runa === 'azul'
+                          ? magicCannons
+                          : magicCannons.filter((cannon) => cannon.color === tile.runa))
+                        : [];
                       let canSpawn = false;
                       if (usesCannons) {
-                        canSpawn = magicCannons.some((cannon) => cannon.color === tile.runa);
+                        canSpawn = cannonOptions.length > 0;
                       } else {
                         const pilasActivas = [
                           ...pilas.filter((pila) => pila.estado === 'activa'),
@@ -3022,6 +3031,8 @@ const InitTracker = () => {
                             placed: 0,
                             color: tile.runa,
                             usesCannons,
+                            cannonOptions,
+                            cannonId: cannonOptions[0]?.id || null,
                           });
                         }
                       }
@@ -3816,327 +3827,6 @@ const InitTracker = () => {
               />
             )}
 
-            {/* Puntos de aparición visibles encima del track */}
-            {pilas.length > 0 && (
-                <div className="track-surface mt-3 p-3">
-                  <div className="text-xs text-yellow-300 mb-2">{ti.gestionPilas || ''}</div>
-                  <div className="flex gap-2 flex-wrap justify-center">
-                    {pilas.map(pila => (
-                      <div key={pila.id} className="track-surface-raised p-2 text-center text-white">
-                        
-                        {pila.estado === 'reserva' ? (
-                          <>
-                            <div className="font-bold mb-2">{ti.pila} 🗃️</div>
-                            <button
-                              className="state-btn-add text-white px-3 py-1 rounded text-xs"
-                              onClick={() => activarPila(pila.id)}
-                            >
-                              ✅ {ti.activaPila || 'Activar Pila'}
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <div className="font-bold mb-1">
-                              <span>{ti.pila} 🗃️</span>
-                              <input
-                                type="text"
-                                maxLength={5}
-                                value={codigosPilas[pila.id] || ''}
-                                onChange={(e) => handleCodigoChange(pila.id, e.target.value)}
-                                className="bg-slate-700 text-white text-xs px-2 py-1 rounded w-[70px] text-center"
-                                placeholder="ABC12"
-                                title={ti.codigoPila}
-                              />
-                            </div>
-                            <div className="text-xs text-slate-300 mb-2">
-                              {ti.tamano}: {pila.tiles.length}
-                            </div>
-                            <div className="flex flex-col items-center gap-1">
-                              <button
-                                className="state-btn-add text-white px-3 py-1 rounded text-xs"
-                                onClick={() => {addTileToPila(pila.id);}}
-                              >
-                                {ti.addRunaToPila}
-                              </button>
-                              <button
-                                className="state-btn-remove text-white px-3 py-1 rounded text-xs"
-                                onClick={() => {
-                                  const tilesRemoved = removeTileFromPila(pila.id);
-                                    if (tilesRemoved && tilesRemoved.length > 0) {
-                                      tilesRemoved.forEach(tile => showTileToast(tile, 'retira'));
-                                    } else {
-                                      alert(ti.emptyPila);
-                                    }
-                                }}
-                              >
-                                {ti.devolver}
-                              </button>
-                              {/* Botón combate estrecho */}
-                                <button
-                                  className="bg-red-900 hover:bg-red-800 text-white px-3 py-1 rounded text-xs"
-                                  onClick={() => {
-                                    const tiles = placeTilesFromPilaToTrack(pila.id);
-                                    if (!tiles || tiles.length === 0) {
-                                      alert(ti.emptyPila);
-                                      return;
-                                    }
-                                  }}
-                                >
-                                  {ti.combateEstrecho_pila || "Combate estrecho"}
-                                </button>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-            {pilasConcentrada.length > 0 && (
-                <div className="track-surface mt-3 p-3">
-                  <div className="text-xs text-yellow-300 mb-2">{ti.gestionPilas2 || ''}</div>
-                  <div className="flex gap-2 flex-wrap justify-center">
-                    {pilasConcentrada.map(pila => (
-                        <div key={pila.id} className="track-surface-raised p-2 text-center text-white">
-                          {pila.estado === 'reserva' ? (
-                            <>
-                              <div className="font-bold mb-2">{ti.nodo || 'Nodo'} 🗃️</div>
-                              <button
-                                className="state-btn-add text-white px-3 py-1 rounded text-xs"
-                                onClick={() => activarPilaConcentrada(pila.id)}
-                              >
-                                ✅ {ti.activaNodo || 'Activar Nodo'}
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <div className="font-bold mb-1">
-                                <span>{ti.nodo || 'Nodo'} 🗃️</span>
-                                <input
-                                  type="text"
-                                  maxLength={5}
-                                  value={codigosPilas[pila.id] || ''}
-                                  onChange={(e) => handleCodigoChange(pila.id, e.target.value)}
-                                  className="bg-slate-700 text-white text-xs px-2 py-1 rounded w-[70px] text-center"
-                                  placeholder="ABC12"
-                                  title={ti.codigoPila}
-                                />
-                              </div>
-                              <div className="text-xs text-slate-300 mb-2">
-                                {ti.tamano}: {pila.tiles.length}
-                              </div>
-                              <div className="flex flex-col items-center gap-1">
-                                <button
-                                  className="state-btn-add text-white px-3 py-1 rounded text-xs"
-                                  onClick={() => {addTileToPilaConcentrada(pila.id);}}
-                                >
-                                  {ti.addRunaToPila}
-                                </button>
-                                <button
-                                  className="state-btn-remove text-white px-3 py-1 rounded text-xs"
-                                  aria-expanded={pilaConcentradaEliminarAbierta === pila.id}
-                                  onClick={() =>
-                                    setPilaConcentradaEliminarAbierta(prev =>
-                                      prev === pila.id ? null : pila.id
-                                    )
-                                  }
-                                >
-                                  {ti.devolverNodo}
-                                </button>
-                                
-                                {pilaConcentradaEliminarAbierta === pila.id && (
-                                  <div className="mt-1 flex flex-wrap justify-center gap-1 rounded-lg border border-red-800 bg-slate-950 p-2">
-                                    <div className="w-full text-[11px] text-slate-300 mb-1">
-                                      {ti.eliminarPorColor || 'Eliminar una runa:'}
-                                    </div>
-                                
-                                    {['naranja', 'verde', 'azul', 'rojo', 'gris']
-                                      .filter(color =>
-                                        pila.tiles.some(tile => tile.runa === color)
-                                      )
-                                      .map(color => (
-                                        <button
-                                          key={color}
-                                          className={`${colorMap[color]} text-white px-2 py-1 rounded text-xs`}
-                                          onClick={() => {
-                                            const removed =
-                                              removeSingleTileFromPilaConcentrada(pila.id, color);
-                                
-                                            if (removed) {
-                                              showTileToast(removed, 'retira');
-                                            } else {
-                                              alert(ti.emptyPila);
-                                            }
-                                
-                                            setPilaConcentradaEliminarAbierta(null);
-                                          }}
-                                        >
-                                          {ti.colores?.[color] || color}
-                                        </button>
-                                      ))}
-                                
-                                    <button
-                                      className="bg-gradient-to-r from-blue-500 via-yellow-400 to-red-500 text-white px-2 py-1 rounded text-xs"
-                                      onClick={() => {
-                                        const removed =
-                                          removeSingleTileFromPilaConcentrada(pila.id);
-                                
-                                        if (removed) {
-                                          showTileToast(removed, 'retira');
-                                        } else {
-                                          alert(ti.emptyPila);
-                                        }
-                                
-                                        setPilaConcentradaEliminarAbierta(null);
-                                      }}
-                                    >
-                                      🎲 {ti.removeRandom || 'Aleatoria'}
-                                    </button>
-                                  </div>
-                                )}
-                               {/* Botón combate estrecho */}
-                                <button
-                                  className="bg-red-900 hover:bg-red-800 text-white px-3 py-1 rounded text-xs"
-                                  onClick={() => {
-                                    const tiles = placeTilesFromPilaConcentradaToTrack(pila.id);
-                                    if (!tiles || tiles.length === 0) {
-                                      alert(ti.emptyPila);
-                                      return;
-                                    }
-                                  }}
-                                >
-                                  {ti.combateEstrecho || "Combate estrecho"}
-                                </button>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      ))}
-                 </div>
-              </div>
-            )}  
-           
-
-            {spawnPoints.length > 0 && (
-              <div className="mt-3 p-2 bg-slate-700 rounded-lg">
-                <div className="text-xs text-yellow-300 mb-2">{ti.activeSpawnPoints}</div>
-                <div className="flex gap-2 flex-wrap justify-center">
-                  {spawnPoints.map(point => {
-                    if (point.runa === "evento") {
-                      // Buscar en OTROS la imagen
-                      const evento = OTROS.find(o => o.id === "evento");
-                      return (
-                        <div
-                          key={point.uuid}
-                          className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-1 text-white"
-                        >
-                          {evento?.imagen && (
-                            <img 
-                              src={evento.imagen}
-                              alt=""
-                              className="h-6 w-6 object-contain" loading="lazy" decoding="async" />
-                          )}
-                          <span>{ti.evento || 'Evento'}</span>
-                          <button
-                            onClick={() => removeSpawnPoint(point.uuid)}
-                            className="bg-red-600 hover:bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      );
-                    }
-            
-                    // 🔹 Render normal para runas
-                    return (
-                      <div
-                        key={point.uuid}
-                        className={`px-3 py-1 rounded text-white ${colorMap[point.runa]} flex items-center gap-2`}
-                      >
-                        <span>{ti.colores[point.runa]}</span>
-                        <button
-                          onClick={() => removeSpawnPoint(point.uuid)}
-                          className="bg-red-600 hover:bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Puntos de control de area visibles encima del track */}
-            {controlPoints.length > 0 && (
-                <div className="track-surface mt-3 p-3">
-                  <div className="text-xs text-yellow-300 mb-2cursor-help" title={ti.infoCA || ''}>{ti.activeBarricade || ''}</div>
-                  <div className="flex gap-2 flex-wrap justify-center">
-                    {controlPoints.map(point => (
-                      <div
-                        key={point.uuid}
-                        className={`px-3 py-1 rounded text-white ${colorMap[point.runa]} flex items-center gap-2`}
-                      >
-                        <span>{ti.colores[point.runa]}</span>
-                        <button
-                          onClick={() => removeControlPoint(point.uuid)}
-                          className="bg-red-600 hover:bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            
-              {/* LLaves rúnicas visibles encima del track */}
-              {runeKeys.length > 0 && (
-                <div className="track-surface mt-3 p-3">
-                  <div className="text-xs text-yellow-300 mb-2">{ti.activeRuneKeys}</div>
-                  <div className="flex gap-2 flex-wrap justify-center">
-                    {runeKeys.map(point => (
-                      <div
-                        key={point.uuid}
-                        className={`px-3 py-1 rounded text-white ${colorMap[point.runa]} flex items-center gap-2`}
-                      >
-                        <span>{ti.colores[point.runa]}</span>
-                        <button
-                          onClick={() => removeRuneKey(point.uuid)}
-                          className="bg-red-600 hover:bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-          {/* Aldeanos visibles encima del track */}
-            {rescue.length > 0  && (
-              <div className="track-surface mt-3 p-3">
-                <div className="text-xs text-yellow-300 mb-2">{ti.activeRescue}</div>
-                <div className="flex gap-2 flex-wrap justify-center">
-                  {rescue.map(point => (
-                    <div
-                      key={point.uuid}
-                      className={`px-3 py-1 rounded text-white ${colorMap[point.runa]} flex items-center gap-2`}
-                    >
-                      <span>{ti.colores[point.runa]}</span>
-                      <button
-                        onClick={() => removeRescue(point.uuid)}
-                        className="bg-red-600 hover:bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 🐉 Aviso de que la mecánica de Huésped está activa */}
             {huespedActivo && (
               <div className="mt-3 p-2 bg-indigo-900 rounded-lg">
                 <div className="text-xs text-indigo-300 font-bold">
@@ -4284,7 +3974,7 @@ const InitTracker = () => {
                 />
               </div>
 
-              {(bagOpen || historyOpen) && (
+              {(bagOpen || historyOpen || pilas.length > 0 || pilasConcentrada.length > 0) && (
                 <aside className="flex min-h-0 w-full max-h-[70dvh] flex-col gap-3 overflow-hidden lg:max-h-none lg:w-64 lg:shrink-0">
                   {bagOpen && (
                     <BagStatusPanel
@@ -4298,6 +3988,8 @@ const InitTracker = () => {
                       colors={ti.colores || {}}
                     />
                   )}
+
+                  <PilaStatusPanel />
 
                   {historyOpen && (
                     <HistoryPanel
@@ -4656,7 +4348,24 @@ const InitTracker = () => {
           cancelLabel={ti.incursionSkip || 'No colocar'}
           onConfirm={confirmIncursionPlacement}
           onCancel={cancelIncursionPlacement}
-        />
+        >
+          {incursionPlacement?.cannonOptions?.length > 1 && (
+            <label className="flex items-center gap-2 text-xs text-slate-200">
+              {ti.magicCannon || 'Cañón'}:
+              <select
+                value={incursionPlacement.cannonId || ''}
+                onChange={(event) => selectIncursionCannon(event.target.value)}
+                className="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-white"
+              >
+                {incursionPlacement.cannonOptions.map((cannon) => (
+                  <option key={cannon.id} value={cannon.id}>
+                    {ti.colores?.[cannon.color] || cannon.color}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+        </ConfirmDialog>
         {selectedEnemyUuid && (
           <ModalEnemyCard
             key={selectedEnemyUuid}

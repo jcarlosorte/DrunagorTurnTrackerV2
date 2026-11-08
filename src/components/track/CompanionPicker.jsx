@@ -315,13 +315,13 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
   }));
 
   return (
-    <div className="layer-dialog fixed inset-0 flex items-center justify-center bg-black/70 p-3" role="presentation">
+    <div className="layer-menu fixed inset-x-0 top-16 z-30 flex justify-center p-2 sm:p-3" role="presentation">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="companions-picker-title"
-        className="flex max-h-[92dvh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border-2 border-amber-900/60 bg-slate-900 text-slate-100 shadow-2xl"
+        className="flex max-h-[70dvh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border-2 border-amber-900/60 bg-slate-900 text-slate-100 shadow-2xl"
       >
         <header className="flex items-center gap-2 border-b border-slate-700 px-4 py-3">
           <GiPawPrint className="text-xl text-amber-300" aria-hidden="true" />
