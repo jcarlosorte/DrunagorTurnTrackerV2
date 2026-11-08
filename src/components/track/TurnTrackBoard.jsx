@@ -467,14 +467,19 @@ export default function TurnTrackBoard({
       style={manualHeight ? { height: `${manualHeight}px` } : undefined}
     >
       {presentation ? (
-        <div className="mb-2 flex justify-end">
-          <button
-            type="button"
-            onClick={onTogglePresentation}
-            className="min-h-9 rounded-xl border border-slate-600 bg-slate-900 px-3 text-xs font-semibold text-slate-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-          >
-            {labels.exitPresentation || 'Salir de presentación'}
-          </button>
+        <div className="mb-2 flex flex-col gap-2">
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={onTogglePresentation}
+              className="min-h-9 rounded-xl border border-slate-600 bg-slate-900 px-3 text-xs font-semibold text-slate-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+            >
+              {labels.exitPresentation || 'Salir de presentación'}
+            </button>
+          </div>
+          <div className="rounded-xl border border-slate-700/70 bg-slate-900/95 p-2 shadow-lg backdrop-blur-xl">
+            {toolbar}
+          </div>
         </div>
       ) : (
         <>
