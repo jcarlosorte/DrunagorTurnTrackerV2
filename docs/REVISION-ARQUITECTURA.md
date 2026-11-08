@@ -2674,6 +2674,20 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 141.ª tanda — Pilas compactas en dos columnas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Pilas** | Dos paneles por fila; runas ordenadas por color; en reserva solo se muestra el botón de activar; el panel activo mantiene código, ladrillos y gestión | `PilaStatusPanel` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
