@@ -2932,6 +2932,20 @@ Unit       202 tests
 E2E        65/65
 ```
 
+### 159.ª tanda — Artillero Infame excluido con Batalla Naval
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Runa Batalla Naval** | Mientras está en juego, Fell Asteris y sus versiones con la misma imagen no salen en selecciones aleatorias | `scenarioEnemyRandom`, `InitTracker` |
+| **Pruebas** | 203 unitarios · 65 E2E | tests |
+
+**Medición**
+
+```text
+Unit       203 tests
+E2E        65/65
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -71,7 +71,7 @@ import { applyCompanionTurnEffects } from '@/utils/companionAbilities';
 import { findEnemyVariant } from '@/utils/enemyVariant';
 import { resolveEntityLabel } from '@/utils/entityLabel';
 import { collectManualFacets, filterManualEnemies } from '@/utils/manualEnemyFilter';
-import { getScenarioLinkedEnemyIds, getNavalExcludedEnemyIds, isEnemyAllowedInRandom } from '@/utils/scenarioEnemyRandom';
+import { getScenarioLinkedEnemyIds, getNavalExcludedEnemyIds, getRuneNavalExcludedEnemyIds, isEnemyAllowedInRandom } from '@/utils/scenarioEnemyRandom';
 import { useHeroExtras } from '@/context/HeroExtrasContext';
 import useStatusEffects from '@/hooks/useStatusEffects';
 import useTurnCursor from '@/hooks/useTurnCursor';
@@ -238,9 +238,13 @@ const InitTracker = () => {
   const { executedRunes, setExecutedRunes } = useInitRunes();
   const scenarioLinkedEnemyIds = useMemo(() => {
     const ids = getScenarioLinkedEnemyIds(scenarioMonster, ENEMIES);
-    const navalInPlay = placedRunes.some((entry) => entry.rune.id === 'incursion_despertar_naval');
-    if (navalInPlay) {
+    const navalIncursionInPlay = placedRunes.some((entry) => entry.rune.id === 'incursion_despertar_naval');
+    if (navalIncursionInPlay) {
       getNavalExcludedEnemyIds(ENEMIES).forEach((id) => ids.add(id));
+    }
+    const navalRuneInPlay = placedRunes.some((entry) => entry.rune.id === 'runa_despertar_naval');
+    if (navalRuneInPlay) {
+      getRuneNavalExcludedEnemyIds(ENEMIES).forEach((id) => ids.add(id));
     }
     return ids;
   }, [scenarioMonster, placedRunes]);

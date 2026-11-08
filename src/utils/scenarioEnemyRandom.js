@@ -24,14 +24,26 @@ export function isEnemyAllowedInRandom(enemy, linkedIds = new Set()) {
 /** Imágenes vinculadas a Incursión Naval: Cazamareas y Executioner. */
 export const NAVAL_ASSOCIATED_IMAGES = ['nagian_hunter', 'executioner'];
 
-/** Versiones normales que no deben salir mientras Incursión Naval esté en juego. */
-export function getNavalExcludedEnemyIds(enemies = []) {
+/** Imágenes vinculadas a la carta de runa Batalla Naval: Artillero Infame. */
+export const RUNE_NAVAL_ASSOCIATED_IMAGES = ['fell_asteris'];
+
+function getExcludedByImages(enemies, images) {
   return new Set(
     enemies
       .filter((enemy) => (
-        NAVAL_ASSOCIATED_IMAGES.includes(enemy.imagen) &&
+        images.includes(enemy.imagen) &&
         enemy.scenario !== 'escenario'
       ))
       .map((enemy) => enemy.id)
   );
+}
+
+/** Versiones normales que no deben salir mientras Incursión Naval esté en juego. */
+export function getNavalExcludedEnemyIds(enemies = []) {
+  return getExcludedByImages(enemies, NAVAL_ASSOCIATED_IMAGES);
+}
+
+/** Versiones normales que no deben salir mientras Batalla Naval esté en juego. */
+export function getRuneNavalExcludedEnemyIds(enemies = []) {
+  return getExcludedByImages(enemies, RUNE_NAVAL_ASSOCIATED_IMAGES);
 }

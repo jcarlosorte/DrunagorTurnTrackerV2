@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { getNavalExcludedEnemyIds, getScenarioLinkedEnemyIds, isEnemyAllowedInRandom } from './scenarioEnemyRandom';
+import {
+  getNavalExcludedEnemyIds,
+  getRuneNavalExcludedEnemyIds,
+  getScenarioLinkedEnemyIds,
+  isEnemyAllowedInRandom,
+} from './scenarioEnemyRandom';
 
 const IMAGE_A = 'shared-image';
 const IMAGE_B = 'other-image';
@@ -52,6 +57,19 @@ describe('scenarioEnemyRandom', () => {
       'nagian_hunter_com',
       'executioner',
       'executioner_scenario1',
+    ]);
+  });
+
+  it('Batalla Naval excluye las versiones de Fell Asteris', () => {
+    const runeNavalEnemies = [
+      { id: 'fell_asteris', imagen: 'fell_asteris' },
+      { id: 'fell_asteris_com', imagen: 'fell_asteris' },
+      { id: 'infamous_striker', imagen: 'fell_asteris', scenario: 'escenario' },
+      { id: 'other', imagen: 'other' },
+    ];
+    expect([...getRuneNavalExcludedEnemyIds(runeNavalEnemies)]).toEqual([
+      'fell_asteris',
+      'fell_asteris_com',
     ]);
   });
 });
