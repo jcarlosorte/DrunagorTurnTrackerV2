@@ -2522,6 +2522,29 @@ const InitTracker = () => {
     groupTurnTracker, extraTurnsQueue, extraTurnIndex, extraTurnTotal,
   ]);
   
+  // Registro del turno activo: quién actúa y en qué ronda.
+  // Se declara antes de los efectos del turno para que el historial abra el
+  // grupo de la carta antes de registrar sus avisos de runa o incursión.
+  useEffect(() => {
+    if (!currentTurnEntity) return;
+    const id = currentTurnEntity.id || currentTurnEntity.uuid;
+    const label = resolveEntityLabel({ id: currentTurnEntity.id, name: currentTurnEntity.name, translations });
+
+    // Rastro para el carrusel: solo cuando cambia la entidad.
+    const trail = turnTrailRef.current;
+    if (trail[trail.length - 1]?.id !== id) {
+      trail.push({ id, name: label, type: currentTurnEntity.type });
+      if (trail.length > 6) trail.shift();
+    }
+
+    appendGameLog('turn', `Turno de ${label}`, {
+      round: roundRef.current,
+      turn: turnIndex,
+      type: currentTurnEntity.type,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTurnEntity?.uuid, currentTurnEntity?.id]);
+
   const applyAllyTurnStart = (entry, abilitiesText) => {
     const { enemy: withStatus, logs } = aplicarEfectosEstados(entry, 'inicio');
     const { entry: withShields, shields } = applyCompanionTurnEffects(withStatus, { abilities: abilitiesText });
@@ -3517,27 +3540,6 @@ const InitTracker = () => {
       }
     );
   };
-
-  // Registro del turno activo: quién actúa y en qué ronda.
-  useEffect(() => {
-    if (!currentTurnEntity) return;
-    const id = currentTurnEntity.id || currentTurnEntity.uuid;
-    const label = resolveEntityLabel({ id: currentTurnEntity.id, name: currentTurnEntity.name, translations });
-
-    // Rastro para el carrusel: solo cuando cambia la entidad.
-    const trail = turnTrailRef.current;
-    if (trail[trail.length - 1]?.id !== id) {
-      trail.push({ id, name: label, type: currentTurnEntity.type });
-      if (trail.length > 6) trail.shift();
-    }
-
-    appendGameLog('turn', `Turno de ${label}`, {
-      round: roundRef.current,
-      turn: turnIndex,
-      type: currentTurnEntity.type,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTurnEntity?.uuid, currentTurnEntity?.id]);
 
   // Cronómetro por turno y tiempo acumulado por héroe.
   useEffect(() => {

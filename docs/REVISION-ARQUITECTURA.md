@@ -2772,6 +2772,20 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 148.ª tanda — Orden del historial en cartas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Historial** | El turno de la carta se registra antes de sus avisos de runa/incursión; los eventos dejan de aparecer dentro del turno del jugador anterior | `InitTracker` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
