@@ -2240,7 +2240,7 @@ const InitTracker = () => {
     const nuevosEstados = [...entity.estadosAlterados];
     nuevosEstados[idx] = { ...estado, count: nuevoCount };
   
-    return { skipped: countOri > 0, nuevosEstados };
+    return { skipped: countOri > 0, nuevosEstados, finished: nuevoCount === 0 && countOri > 0 };
   };
 
   const interpretarTexto = (textoOriginal, runeColor, traductor) => {
@@ -2914,6 +2914,11 @@ const InitTracker = () => {
                 return updated;
             });
             showScenarioToast(`⏳ ${ti.saltaTurnoPorTiempo}`);
+            if (skippedData.finished) {
+              const runeName = translations.scenarioCard?.[currentRune.id] || currentRune.nombre || currentRune.id;
+              const template = ti.contadorCartaTerminado || 'El contador sobre la carta {carta} ha terminado.';
+              showScenarioToast(`⏳ ${template.replace('{carta}', runeName)}`);
+            }
             //setTimeout(() => handleNextTurn(), 800);
             return;
           }

@@ -2861,6 +2861,21 @@ Unit       201 tests
 E2E        65/65
 ```
 
+### 154.ª tanda — Fichas de Tiempo en cartas de runa
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Vista ampliada** | Sección exclusiva para gestionar fichas de Tiempo con −/+, máximo 4 y badge en la carta | `RuneCard`, `initRunesContext` |
+| **Turno** | Al llegar el turno de la carta se retira 1 ficha; al llegar a 0 se avisa de qué carta ha terminado el contador y queda en el historial | `InitTracker` |
+| **Pruebas** | 201 unitarios · 65 E2E | tests |
+
+**Medición**
+
+```text
+Unit       201 tests
+E2E        65/65
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

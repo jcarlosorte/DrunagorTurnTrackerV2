@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { RiArrowTurnBackLine, RiArrowTurnForwardLine } from 'react-icons/ri';
 import { useLanguage } from '@/context/LanguageContext';
@@ -34,8 +34,7 @@ const TONES = {
 export default function RuneCard({ rune, onRemove, flipped = false }) {
   const { translations } = useLanguage();
   const { trackerData } = useTracker();
-  const { toggleRuneEffect } = useInitRunes();
-  const [estadosLocal, setEstadosLocal] = useState(rune?.estadosAlterados || []);
+  const { toggleRuneEffect, setRuneEstadoCount } = useInitRunes();
   const [expanded, setExpanded] = useState(false);
 
   const tipo = rune.tipo;
@@ -58,10 +57,14 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
   const actionLine = tipo === 'asalto'
     ? `${(isCaraB ? accion2 : accion) || ''} ${y}`.trim()
     : `${accion || ''} ${rune.numRunas || ''}`.trim();
-
-  useEffect(() => {
-    setEstadosLocal(rune?.estadosAlterados ? [...rune.estadosAlterados] : []);
-  }, [rune?.estadosAlterados]);
+  const estados = rune?.estadosAlterados || [];
+  const tiempoConfig = ESTADOS_ALTERADOS.find((estado) => estado.id === 'TIEMPO');
+  const tiempoEstado = estados.find((estado) => estado.id === 'TIEMPO');
+  const tiempoCount = tiempoEstado?.count || 0;
+  const setTiempo = (next) => {
+    const max = tiempoConfig?.max || 4;
+    setRuneEstadoCount(rune.uuid, 'TIEMPO', Math.max(0, Math.min(max, next)));
+  };
 
   const renderMechanics = () => {
     if (tipo === 'asalto') {
@@ -120,6 +123,12 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
             <RiArrowTurnForwardLine className="text-[0.6rem]" />
           </span>
         )}
+        {tiempoCount > 0 && (
+          <span className="absolute right-1 top-1 flex items-center gap-0.5 rounded-full bg-slate-950/85 px-1 py-0.5 text-[0.55rem] font-bold text-amber-100">
+            {tiempoConfig?.imagen && <img src={tiempoConfig.imagen} alt="" className="h-3.5 w-3.5 rounded-full" />}
+            {tiempoCount}
+          </span>
+        )}
       </button>
 
       {expanded && createPortal(
@@ -150,9 +159,43 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
                 {renderMechanics()}
               </div>
 
-              {estadosLocal.filter((estado) => estado.count > 0).length > 0 && (
+              {tipo === 'runa' && (
+                <div className="rounded-xl border border-amber-700/60 bg-amber-950/25 p-3">
+                  <div className="flex items-center gap-2">
+                    {tiempoConfig?.imagen && (
+                      <img src={tiempoConfig.imagen} alt="" className="h-5 w-5 rounded-full" />
+                    )}
+                    <span className="min-w-0 flex-1 text-xs font-bold uppercase tracking-wide text-amber-200">
+                      {ti.gestionTiempo || 'Fichas de Tiempo'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setTiempo(tiempoCount - 1)}
+                      disabled={tiempoCount <= 0}
+                      aria-label={ti.quitarTiempo || 'Quitar ficha de tiempo'}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-700 text-lg font-black text-white hover:bg-slate-600 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                    >
+                      −
+                    </button>
+                    <span className="min-w-6 text-center text-lg font-black text-amber-100">{tiempoCount}</span>
+                    <button
+                      type="button"
+                      onClick={() => setTiempo(tiempoCount + 1)}
+                      aria-label={ti.anadirTiempo || 'Añadir ficha de tiempo'}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-700 text-lg font-black text-white hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <p className="mt-2 text-[0.7rem] leading-relaxed text-amber-100/70">
+                    {ti.tiempoCartaAyuda || 'Al llegar el turno de esta carta se retira 1 ficha de tiempo.'}
+                  </p>
+                </div>
+              )}
+
+              {estados.filter((estado) => estado.count > 0 && estado.id !== 'TIEMPO').length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {estadosLocal.filter((estado) => estado.count > 0).map((estado) => {
+                  {estados.filter((estado) => estado.count > 0 && estado.id !== 'TIEMPO').map((estado) => {
                     const estadoConfig = ESTADOS_ALTERADOS.find((item) => item.id === estado.id);
                     if (!estadoConfig) return null;
                     return (

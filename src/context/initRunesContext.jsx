@@ -59,9 +59,23 @@ export const InitRunesProvider = ({ children }) => {
       )
     );
   };
+
+  const setRuneEstadoCount = (uuid, estadoId, count) => {
+    setPlacedRunes(prev => prev.map(item => {
+      if (item.rune.uuid !== uuid) return item;
+      const estados = [...(item.rune.estadosAlterados || [])];
+      const index = estados.findIndex(estado => estado.id === estadoId);
+      if (index === -1) {
+        estados.push({ id: estadoId, count });
+      } else {
+        estados[index] = { ...estados[index], count };
+      }
+      return { ...item, rune: { ...item.rune, estadosAlterados: estados } };
+    }));
+  };
                                                     
 
-  return ( <InitRunesContext.Provider value={{ placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes, toggleRuneEffect, executedRunes, setExecutedRunes }}> {children} </InitRunesContext.Provider> ); 
+  return ( <InitRunesContext.Provider value={{ placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes, toggleRuneEffect, setRuneEstadoCount, executedRunes, setExecutedRunes }}> {children} </InitRunesContext.Provider> ); 
 
 };
 
