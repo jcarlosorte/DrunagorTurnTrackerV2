@@ -2816,6 +2816,20 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 151.ª tanda — Exclusión de enemigos de escenario en aleatorios
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Aleatorios** | Los enemigos de escenario nunca salen en selecciones aleatorias; al elegir uno, se excluyen las versiones normales que comparten su imagen | `scenarioEnemyRandom`, `InitTracker` |
+| **Pruebas** | 197 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       197 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

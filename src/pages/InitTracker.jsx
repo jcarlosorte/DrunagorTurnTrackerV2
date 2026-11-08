@@ -69,6 +69,7 @@ import { applyCompanionTurnEffects } from '@/utils/companionAbilities';
 import { findEnemyVariant } from '@/utils/enemyVariant';
 import { resolveEntityLabel } from '@/utils/entityLabel';
 import { collectManualFacets, filterManualEnemies } from '@/utils/manualEnemyFilter';
+import { getScenarioLinkedEnemyIds, isEnemyAllowedInRandom } from '@/utils/scenarioEnemyRandom';
 import { useHeroExtras } from '@/context/HeroExtrasContext';
 import useStatusEffects from '@/hooks/useStatusEffects';
 import useTurnCursor from '@/hooks/useTurnCursor';
@@ -125,11 +126,15 @@ function ManualEnemyBehaviorPicker({
   randomLabel,
   behaviorLabel,
   onAdd,
+  excludedRandomIds = new Set(),
 }) {
   const uniqueVariants = variants.filter((variant, index, self) => (
     index === self.findIndex((item) => (
       (item.comportamiento || 'estandar') === (variant.comportamiento || 'estandar')
     ))
+  ));
+  const randomVariants = uniqueVariants.filter((variant) => (
+    isEnemyAllowedInRandom(variant, excludedRandomIds)
   ));
   const [behavior, setBehavior] = useState(uniqueVariants[0]?.comportamiento || 'estandar');
   if (uniqueVariants.length === 0) return null;
@@ -171,8 +176,12 @@ function ManualEnemyBehaviorPicker({
         type="button"
         aria-label={randomLabel}
         title={randomLabel}
-        onClick={() => addBehavior(uniqueVariants[Math.floor(Math.random() * uniqueVariants.length)])}
-        className="min-h-8 shrink-0 rounded border border-cyan-600 bg-cyan-900/60 px-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-800"
+        disabled={randomVariants.length === 0}
+        onClick={() => {
+          if (randomVariants.length === 0) return;
+          addBehavior(randomVariants[Math.floor(Math.random() * randomVariants.length)]);
+        }}
+        className="min-h-8 shrink-0 rounded border border-cyan-600 bg-cyan-900/60 px-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-800 disabled:opacity-40"
       >
         🎲
       </button>
@@ -222,6 +231,10 @@ const InitTracker = () => {
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
   const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, pilas, pilasConcentrada, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice } = useGame();
+  const scenarioLinkedEnemyIds = useMemo(
+    () => getScenarioLinkedEnemyIds(scenarioMonster, ENEMIES),
+    [scenarioMonster],
+  );
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -357,7 +370,8 @@ const InitTracker = () => {
                 enemies.includes(e.id) &&   // está en expansiones activas
                 e.color === color &&
                 e.categoria === category &&
-                e.cara !== 'B'
+                e.cara !== 'B' &&
+                isEnemyAllowedInRandom(e, scenarioLinkedEnemyIds)
             );
     
             if (candidates.length === 0) {
@@ -811,7 +825,7 @@ const InitTracker = () => {
   const handleCategorySelect = (categoryKey) => {
     const color = categorySelector.color;
     setCategorySelector({ open: false, color: null });
-    const filtered = ENEMIES.filter(e => e.color === color && e.categoria === categoryKey && enemies.includes(e.id) && e.cara !=="B" && e.id !== scenarioMonster?.id);
+    const filtered = ENEMIES.filter(e => e.color === color && e.categoria === categoryKey && enemies.includes(e.id) && e.cara !=="B" && e.id !== scenarioMonster?.id && isEnemyAllowedInRandom(e, scenarioLinkedEnemyIds));
     if (filtered.length === 0) return;
     const selected = filtered[Math.floor(Math.random() * filtered.length)];
     const runeIndex = runesColorMap[selected.rune];
@@ -4304,16 +4318,17 @@ const InitTracker = () => {
                                 </div>
                               ) : (
                                 <ManualEnemyBehaviorPicker
-                                  variants={variants
-                                    .filter((variant, index, self) =>
-                                      index === self.findIndex(v =>
-                                        v.id === variant.id &&
-                                        v.categoria === variant.categoria &&
-                                        (v.comportamiento || 'estandar') === (variant.comportamiento || 'estandar') &&
-                                        (v.cara === 'A' || !v.cara)
-                                      )
-                                    )
-                                    .filter(v => v.cara === 'A' || !v.cara)}
+                  variants={variants
+                    .filter((variant, index, self) =>
+                      index === self.findIndex(v =>
+                        v.id === variant.id &&
+                        v.categoria === variant.categoria &&
+                        (v.comportamiento || 'estandar') === (variant.comportamiento || 'estandar') &&
+                        (v.cara === 'A' || !v.cara)
+                      )
+                    )
+                    .filter(v => v.cara === 'A' || !v.cara)}
+                  excludedRandomIds={scenarioLinkedEnemyIds}
                                   labels={tb}
                                   categoryLabel={tc?.[categoria] || categoria}
                                   addLabel={ti.addEnemy || 'Añadir'}

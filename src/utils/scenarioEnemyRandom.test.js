@@ -1,0 +1,40 @@
+import { describe, expect, it } from 'vitest';
+import { getScenarioLinkedEnemyIds, isEnemyAllowedInRandom } from './scenarioEnemyRandom';
+
+const IMAGE_A = 'shared-image';
+const IMAGE_B = 'other-image';
+
+const enemies = [
+  { id: 'scenario_a', nombre: 'Scenario A', imagen: IMAGE_A, scenario: 'escenario' },
+  { id: 'normal_a', nombre: 'Normal A', imagen: IMAGE_A },
+  { id: 'normal_a_com', nombre: 'Commander A', imagen: IMAGE_A, categoria: 'comandante' },
+  { id: 'normal_b', nombre: 'Normal B', imagen: IMAGE_B },
+];
+
+describe('scenarioEnemyRandom', () => {
+  it('relaciona por imagen todas las versiones no escenario', () => {
+    const linked = getScenarioLinkedEnemyIds(enemies[0], enemies);
+    expect([...linked]).toEqual(['normal_a', 'normal_a_com']);
+  });
+
+  it('no relaciona imágenes distintas ni al propio escenario', () => {
+    const linked = getScenarioLinkedEnemyIds(enemies[0], enemies);
+    expect(linked.has('scenario_a')).toBe(false);
+    expect(linked.has('normal_b')).toBe(false);
+  });
+
+  it('excluye escenarios y versiones vinculadas de la selección aleatoria', () => {
+    const linked = getScenarioLinkedEnemyIds(enemies[0], enemies);
+    expect(isEnemyAllowedInRandom(enemies[0], linked)).toBe(false);
+    expect(isEnemyAllowedInRandom(enemies[1], linked)).toBe(false);
+    expect(isEnemyAllowedInRandom(enemies[2], linked)).toBe(false);
+    expect(isEnemyAllowedInRandom(enemies[3], linked)).toBe(true);
+  });
+
+  it('sin escenario seleccionado solo excluye a los propios escenarios', () => {
+    const linked = getScenarioLinkedEnemyIds(null, enemies);
+    expect(linked.size).toBe(0);
+    expect(isEnemyAllowedInRandom(enemies[0], linked)).toBe(false);
+    expect(isEnemyAllowedInRandom(enemies[1], linked)).toBe(true);
+  });
+});
