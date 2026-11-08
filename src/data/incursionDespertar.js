@@ -55,7 +55,7 @@ export const INCURSION_DESPERTAR = [
     nombre: 'Incursión Naval',
     descripcionKey: 'incursion_despertar_naval_A',
     descripcion: 'Manifiesta 1 runa. Luego, invoca un Grupo de Esbirros Cazamareas adyacente al Cañón del Buque Cisne que coincida con el color de la Runa revelada: 1-2 Héroes: 1 Cazamareas; 3-4 Héroes: 2 Cazamareas; 5 Héroes: 3 Cazamareas. (Si se ha manifestado una Runa Azul, el Líder del grupo escoge el Cañón que será el Punto de Generación). Por último, voltea esta carta.',
-    incursion: { counts, fixedMonsterId: 'tide_hunter' },
+    incursion: { counts, fixedMonsterId: 'tide_hunter', spawnSource: 'cannon' },
   },
   {
     ...base,
@@ -63,15 +63,15 @@ export const INCURSION_DESPERTAR = [
     cara: 'B',
     nombre: 'Incursión Naval',
     descripcionKey: 'incursion_despertar_naval_B',
-    descripcion: 'Manifiesta 1 runa. Luego, invoca un Grupo de Esbirros Cazamareas adyacente al Cañón del Buque Cisne que coincida con el color de la Runa revelada: 1-2 Héroes: 1 Cazamareas; 3-4 Héroes: 2 Cazamareas; 5 Héroes: 3 Cazamareas. (Si se ha manifestado una Runa Azul, el Líder del grupo escoge el Cañón que será el Punto de Generación). Por último, voltea esta carta.',
-    incursion: { counts, fixedMonsterId: 'tide_hunter' },
+    descripcion: 'Manifiesta 1 runa. Luego, invoca un Grupo de Esbirros Contramaestres adyacente a la Ficha de Generación que coincida con el color de la Runa revelada: 1-2 Héroes: 1 Contramaestre; 3-4 Héroes: 2 Contramaestres; 5 Héroes: 3 Contramaestres. (Si se ha manifestado una Runa Azul, el Líder del grupo escoge la Ficha de Generación que será el Punto de Generación). Por último, voltea esta carta.',
+    incursion: { counts, fixedMonsterId: 'boatswain', spawnSource: 'generation' },
   },
 ];
 
 export const ACLARACIONES_INCURSION_DESPERTAR = {
   incursion_despertar_incansable: 'Selecciona previamente el monstruo de escenario. Comprueba las pilas de runas activas y coloca los esbirros adyacentes a una pila con el color manifestado.',
   incursion_despertar_atroz: 'Chequeo previo: si hay Monstruos en el tablero, la carta no tiene efecto este turno y se voltea. Si no, resuelve la invocación.',
-  incursion_despertar_naval: 'Invoca siempre Cazamareas (tide_hunter) junto al Cañón del Buque Cisne del color manifestado. Máximo 4 copias o 12 enemigos; pregunta por cada colocación.',
+  incursion_despertar_naval: 'Cara A: Cazamareas (tide_hunter) junto al Cañón del Buque Cisne del color manifestado. Cara B: Contramaestres (boatswain) junto a la Ficha de Generación del color manifestado; con runa azul se elige la ficha. Máximo 4 copias o 12 enemigos; pregunta por cada colocación.',
 };
 
 const PASOS = {
@@ -105,8 +105,8 @@ const PASOS = {
   ],
   incursion_despertar_naval_B: [
     'Manifiesta 1 runa.',
-    'Invoca 1/2/3 Cazamareas (1-2/3-4/5 Héroes) adyacentes al Cañón del Buque Cisne del color revelado.',
-    'Si la runa es Azul, el líder elige el Cañón que será el Punto de Generación.',
+    'Invoca 1/2/3 Contramaestres (1-2/3-4/5 Héroes) adyacentes a la Ficha de Generación del color revelado.',
+    'Si la runa es Azul, el líder elige la Ficha de Generación que será el Punto de Generación.',
     'Voltea esta carta.',
   ],
 };

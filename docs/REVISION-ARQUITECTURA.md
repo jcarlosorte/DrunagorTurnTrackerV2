@@ -2961,6 +2961,21 @@ Unit       208 tests
 E2E        65/65
 ```
 
+### 161.ª tanda — Incursión Naval B: Contramaestres y Fichas de Generación
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Incurción Naval B** | Invoca Contramaestres (`boatswain`) junto a una Ficha de Generación del color revelado; con runa azul se elige la ficha | `incursionDespertar`, `InitTracker` |
+| **Aleatorios** | Se mantiene la exclusión de las versiones normales asociadas a Cazamareas/Executioner | `scenarioEnemyRandom` |
+| **Pruebas** | 208 unitarios · 65 E2E | tests |
+
+**Medición**
+
+```text
+Unit       208 tests
+E2E        65/65
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

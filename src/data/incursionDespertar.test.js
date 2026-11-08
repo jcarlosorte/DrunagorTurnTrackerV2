@@ -19,5 +19,11 @@ describe('incursiones de Despertar', () => {
     expect(
       INCURSION_DESPERTAR.some((card) => card.incursion?.fixedMonsterId === 'tide_hunter'),
     ).toBe(true);
+    expect(
+      INCURSION_DESPERTAR.some((card) => card.incursion?.fixedMonsterId === 'boatswain'),
+    ).toBe(true);
+    expect(
+      INCURSION_DESPERTAR.some((card) => card.incursion?.spawnSource === 'generation'),
+    ).toBe(true);
   });
 });

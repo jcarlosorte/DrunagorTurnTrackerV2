@@ -631,6 +631,10 @@ const InitTracker = () => {
     setIncursionPlacement((current) => (current ? { ...current, cannonId } : current));
   };
 
+  const selectIncursionGeneration = (generationId) => {
+    setIncursionPlacement((current) => (current ? { ...current, generationId } : current));
+  };
+
   const selectNavalCannon = (cannonId) => {
     const cannon = magicCannons.find((entry) => entry.id === cannonId);
     setMagicCannonLoaded(cannonId, true);
@@ -3106,15 +3110,23 @@ const InitTracker = () => {
                     if (!tile) {
                       showScenarioToast(ti.aviso4 || 'No se ha podido manifestar la runa.');
                     } else {
-                      const usesCannons = Boolean(config.fixedMonsterId);
+                      const usesCannons = config.spawnSource === 'cannon';
+                      const usesGeneration = config.spawnSource === 'generation';
                       const cannonOptions = usesCannons
                         ? (tile.runa === 'azul'
                           ? magicCannons
                           : magicCannons.filter((cannon) => cannon.color === tile.runa))
                         : [];
+                      const generationOptions = usesGeneration
+                        ? (tile.runa === 'azul'
+                          ? generationPoints
+                          : generationPoints.filter((point) => point.color === tile.runa))
+                        : [];
                       let canSpawn = false;
                       if (usesCannons) {
                         canSpawn = cannonOptions.length > 0;
+                      } else if (usesGeneration) {
+                        canSpawn = generationOptions.length > 0;
                       } else {
                         const pilasActivas = [
                           ...pilas.filter((pila) => pila.estado === 'activa'),
@@ -3140,8 +3152,11 @@ const InitTracker = () => {
                             placed: 0,
                             color: tile.runa,
                             usesCannons,
+                            usesGeneration,
                             cannonOptions,
                             cannonId: cannonOptions[0]?.id || null,
+                            generationOptions,
+                            generationId: generationOptions[0]?.id || null,
                           });
                         }
                       }
@@ -4496,6 +4511,22 @@ const InitTracker = () => {
                 {incursionPlacement.cannonOptions.map((cannon) => (
                   <option key={cannon.id} value={cannon.id}>
                     {ti.colores?.[cannon.color] || cannon.color}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          {incursionPlacement?.generationOptions?.length > 1 && (
+            <label className="flex items-center gap-2 text-xs text-slate-200">
+              {ti.generationPoint || 'Ficha de Generación'}:
+              <select
+                value={incursionPlacement.generationId || ''}
+                onChange={(event) => selectIncursionGeneration(event.target.value)}
+                className="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-white"
+              >
+                {incursionPlacement.generationOptions.map((point) => (
+                  <option key={point.id} value={point.id}>
+                    {ti.colores?.[point.color] || point.color}
                   </option>
                 ))}
               </select>
