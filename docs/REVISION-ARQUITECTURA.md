@@ -2918,6 +2918,20 @@ Unit       201 tests
 E2E        65/65
 ```
 
+### 158.ª tanda — Exclusiones de Incursión Naval
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Incursión Naval** | Mientras la carta está en juego, no salen aleatoriamente Cazamareas (`nagian_hunter`) ni Executioner; se mantienen disponibles para añadirlos manualmente | `scenarioEnemyRandom`, `InitTracker` |
+| **Pruebas** | 202 unitarios · 65 E2E | tests |
+
+**Medición**
+
+```text
+Unit       202 tests
+E2E        65/65
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

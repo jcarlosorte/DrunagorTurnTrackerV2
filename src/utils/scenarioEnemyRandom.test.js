@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getScenarioLinkedEnemyIds, isEnemyAllowedInRandom } from './scenarioEnemyRandom';
+import { getNavalExcludedEnemyIds, getScenarioLinkedEnemyIds, isEnemyAllowedInRandom } from './scenarioEnemyRandom';
 
 const IMAGE_A = 'shared-image';
 const IMAGE_B = 'other-image';
@@ -36,5 +36,22 @@ describe('scenarioEnemyRandom', () => {
     expect(linked.size).toBe(0);
     expect(isEnemyAllowedInRandom(enemies[0], linked)).toBe(false);
     expect(isEnemyAllowedInRandom(enemies[1], linked)).toBe(true);
+  });
+
+  it('Incursión Naval excluye Cazamareas y Executioner', () => {
+    const navalEnemies = [
+      { id: 'nagian_hunter', imagen: 'nagian_hunter' },
+      { id: 'nagian_hunter_com', imagen: 'nagian_hunter' },
+      { id: 'executioner', imagen: 'executioner' },
+      { id: 'executioner_scenario1', imagen: 'executioner' },
+      { id: 'scenario', imagen: 'nagian_hunter', scenario: 'escenario' },
+      { id: 'other', imagen: 'other' },
+    ];
+    expect([...getNavalExcludedEnemyIds(navalEnemies)]).toEqual([
+      'nagian_hunter',
+      'nagian_hunter_com',
+      'executioner',
+      'executioner_scenario1',
+    ]);
   });
 });

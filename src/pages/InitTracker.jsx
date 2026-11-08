@@ -71,7 +71,7 @@ import { applyCompanionTurnEffects } from '@/utils/companionAbilities';
 import { findEnemyVariant } from '@/utils/enemyVariant';
 import { resolveEntityLabel } from '@/utils/entityLabel';
 import { collectManualFacets, filterManualEnemies } from '@/utils/manualEnemyFilter';
-import { getScenarioLinkedEnemyIds, isEnemyAllowedInRandom } from '@/utils/scenarioEnemyRandom';
+import { getScenarioLinkedEnemyIds, getNavalExcludedEnemyIds, isEnemyAllowedInRandom } from '@/utils/scenarioEnemyRandom';
 import { useHeroExtras } from '@/context/HeroExtrasContext';
 import useStatusEffects from '@/hooks/useStatusEffects';
 import useTurnCursor from '@/hooks/useTurnCursor';
@@ -233,13 +233,17 @@ const InitTracker = () => {
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
   const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, pilas, pilasConcentrada, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, drawErradenCard } = useGame();
-  const scenarioLinkedEnemyIds = useMemo(
-    () => getScenarioLinkedEnemyIds(scenarioMonster, ENEMIES),
-    [scenarioMonster],
-  );
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
+  const scenarioLinkedEnemyIds = useMemo(() => {
+    const ids = getScenarioLinkedEnemyIds(scenarioMonster, ENEMIES);
+    const navalInPlay = placedRunes.some((entry) => entry.rune.id === 'incursion_despertar_naval');
+    if (navalInPlay) {
+      getNavalExcludedEnemyIds(ENEMIES).forEach((id) => ids.add(id));
+    }
+    return ids;
+  }, [scenarioMonster, placedRunes]);
   const [warningMessage, setWarningMessage] = useState(null);
   const [overhealedEnemies, setOverhealedEnemies] = useState(() => new Set(persistedSession.overhealedEnemies || []));
 
