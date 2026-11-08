@@ -2660,6 +2660,20 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 140.ª tanda — Recuento del aviso de invocación
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Incursiones** | El aviso de «El Monstruo no se ha podido invocar…» se muestra siempre con el número de veces, incluso si no hay punto de invocación o capacidad desde el principio | `InitTracker` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

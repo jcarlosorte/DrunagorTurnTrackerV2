@@ -536,16 +536,19 @@ const InitTracker = () => {
 
   };
 
+  const showIncursionFailure = (count, reason = '') => {
+    if (count <= 0) return;
+    const warning = ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.';
+    showScenarioToast(`${reason ? `${reason} ` : ''}${count} × ${warning}`);
+  };
+
   const finalizeIncursionPlacement = (placement) => {
     if (!placement) return;
     if (placement.placed > 0) {
       spawnBatchEnemies(placement.placed, placement.target);
       showScenarioToast(`${ti.added} ${placement.placed} ${ti.Enemies} ${ti.invocaran}: ${ti.colores?.[placement.color] || placement.color}`);
     }
-    const failed = Math.max(0, placement.requested - placement.placed);
-    if (failed > 0) {
-      showScenarioToast(`${failed} × ${ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.'}`);
-    }
+    showIncursionFailure(Math.max(0, placement.requested - placement.placed));
   };
 
   const confirmIncursionPlacement = () => {
@@ -2894,7 +2897,7 @@ const InitTracker = () => {
                   if (!alreadySummoned) {
                     const point = generationPoints.find((entry) => entry.color === tile.runa);
                     if (!point) {
-                      showScenarioToast(ti.generationNoPoint || 'No hay una Ficha de Generación activa del color de la runa robada.');
+                      showIncursionFailure(1, ti.generationNoPoint || 'No hay una Ficha de Generación activa del color de la runa robada.');
                     } else {
                       const target = ENEMIES.find((enemy) => enemy.id === 'infamous_striker');
                       const existing = placedEnemies.filter((entry) => entry.enemy.id === target?.id).length;
@@ -2909,7 +2912,7 @@ const InitTracker = () => {
                         )));
                         showScenarioToast(`${ti.added} 1 ${ti.Enemies}: ${ti.colores[tile.runa]}`);
                       } else {
-                        showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
+                        showIncursionFailure(1);
                       }
                     }
                   }
@@ -3014,13 +3017,13 @@ const InitTracker = () => {
                         ));
                       }
                       if (!canSpawn) {
-                        showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
+                        showIncursionFailure(requested);
                       } else {
                         const existing = placedEnemies.filter((entry) => entry.enemy.id === target.id).length;
                         const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
                         const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
                         if (capacity <= 0) {
-                          showScenarioToast(ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.');
+                          showIncursionFailure(requested);
                         } else {
                           setIncursionPlacement({
                             target,
