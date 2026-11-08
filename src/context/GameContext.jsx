@@ -638,6 +638,10 @@ export const GameProvider = ({ children }) => {
     const uuid = createId();
     const tileWithId = { ...tile, tipo, uuid };
     setTileToasts(prev => [...prev, tileWithId]);
+    // Los avisos de runas se cierran solos, igual que el resto de avisos.
+    window.setTimeout(() => {
+      setTileToasts(prev => prev.filter(item => item.uuid !== uuid));
+    }, 9000);
     // Registro en el historial: color traducido de la runa y forma (dibujo).
     const colorName = ti.colores?.[tile?.runa] || tile?.runa || 'runa';
     const shape = tile?.dibujo ? tile.dibujo : '';

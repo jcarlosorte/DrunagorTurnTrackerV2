@@ -2744,6 +2744,20 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 146.ª tanda — Cierre automático de avisos de runas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Avisos** | Los avisos de runas se cierran solos a los 9 segundos, igual que el resto de avisos | `GameContext` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
