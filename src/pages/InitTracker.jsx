@@ -3976,8 +3976,44 @@ const InitTracker = () => {
                 />
               </div>
 
-              {(bagOpen || historyOpen || pilas.length > 0 || pilasConcentrada.length > 0) && (
+              {(diceOpen || bagOpen || historyOpen || pilas.length > 0 || pilasConcentrada.length > 0) && (
                 <aside className="flex min-h-0 w-full max-h-[70dvh] flex-col gap-3 overflow-hidden lg:max-h-none lg:w-64 lg:shrink-0">
+                  {diceOpen && (
+                    <DiceRoller
+                      inline
+                      open
+                      onClose={() => setDiceOpen(false)}
+                      heroes={(trackerData.placedHeroes || []).map((hero) => ({ id: hero.id, name: getHeroName(hero.id) }))}
+                      currentEntity={currentTurnEntity}
+                      labels={{
+                        title: ti.dados || 'Dados',
+                        roll: ti.tirarD20 || 'Tirar d20',
+                        rollTrap: ti.tirarTrampa || 'Tirar dado de trampa',
+                        trapDie: ti.dadoTrampa || 'Trampa',
+                        applyTo: ti.aplicarTurno || 'Aplicar al turno actual',
+                        noActiveTurn: ti.sinTurno || 'No hay un turno activo',
+                        addModifier: ti.sumarModificador || 'Sumar modificador de',
+                        noModifier: ti.sinModificador || 'Ninguno (tirada genérica)',
+                        close: ti.close || 'Cerrar',
+                      }}
+                      onApplyEstado={(estadoId, count) => {
+                        if (currentTurnEntity?.type === 'hero' && currentTurnEntity.id) {
+                          stepHeroEstadoAlterado(currentTurnEntity.id, estadoId, count);
+                          refreshHeroExtras();
+                        } else if (currentTurnEntity?.type === 'enemy' && currentTurnEntity.uuid) {
+                          setPlacedEnemies((prev) => prev.map((entry) => {
+                            if (entry.enemy.uuid !== currentTurnEntity.uuid) return entry;
+                            const estados = [...(entry.enemy.estadosAlterados || [])];
+                            const index = estados.findIndex((item) => item.id === estadoId);
+                            if (index === -1) estados.push({ id: estadoId, count });
+                            else estados[index] = { ...estados[index], count: estados[index].count + count };
+                            return { ...entry, enemy: { ...entry.enemy, estadosAlterados: estados } };
+                          }));
+                        }
+                      }}
+                    />
+                  )}
+
                   {bagOpen && (
                     <BagStatusPanel
                       usedTiles={usedTiles}
@@ -4413,38 +4449,6 @@ const InitTracker = () => {
           onConfirm={handleRestartGame}
         />
         <CampDialog open={isCampOpen} onClose={() => setIsCampOpen(false)} />
-        <DiceRoller
-          open={diceOpen}
-          onClose={() => setDiceOpen(false)}
-          heroes={(trackerData.placedHeroes || []).map((hero) => ({ id: hero.id, name: getHeroName(hero.id) }))}
-          currentEntity={currentTurnEntity}
-          labels={{
-            title: ti.dados || 'Dados',
-            roll: ti.tirarD20 || 'Tirar d20',
-            rollTrap: ti.tirarTrampa || 'Tirar dado de trampa',
-            trapDie: ti.dadoTrampa || 'Trampa',
-            applyTo: ti.aplicarTurno || 'Aplicar al turno actual',
-            noActiveTurn: ti.sinTurno || 'No hay un turno activo',
-            addModifier: ti.sumarModificador || 'Sumar modificador de',
-            noModifier: ti.sinModificador || 'Ninguno (tirada genérica)',
-            close: ti.close || 'Cerrar',
-          }}
-          onApplyEstado={(estadoId, count) => {
-            if (currentTurnEntity?.type === 'hero' && currentTurnEntity.id) {
-              stepHeroEstadoAlterado(currentTurnEntity.id, estadoId, count);
-              refreshHeroExtras();
-            } else if (currentTurnEntity?.type === 'enemy' && currentTurnEntity.uuid) {
-              setPlacedEnemies((prev) => prev.map((entry) => {
-                if (entry.enemy.uuid !== currentTurnEntity.uuid) return entry;
-                const estados = [...(entry.enemy.estadosAlterados || [])];
-                const index = estados.findIndex((item) => item.id === estadoId);
-                if (index === -1) estados.push({ id: estadoId, count });
-                else estados[index] = { ...estados[index], count: estados[index].count + count };
-                return { ...entry, enemy: { ...entry.enemy, estadosAlterados: estados } };
-              }));
-            }
-          }}
-        />
         {showPCModal && (
           <ModalCommanderPC
               commander={pcCommander}

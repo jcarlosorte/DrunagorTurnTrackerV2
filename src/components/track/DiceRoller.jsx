@@ -15,7 +15,7 @@ const TRAMPA_FACES = [
 
 const randomD20 = () => Math.floor(Math.random() * 20) + 1;
 
-export default function DiceRoller({ open, onClose, heroes = [], currentEntity, onApplyEstado, labels = {} }) {
+export default function DiceRoller({ open, onClose, heroes = [], currentEntity, onApplyEstado, labels = {}, inline = false }) {
   const [mode, setMode] = useState('d20');
   const [rolling, setRolling] = useState(false);
   const [d20, setD20] = useState(null);
@@ -91,13 +91,15 @@ export default function DiceRoller({ open, onClose, heroes = [], currentEntity, 
   );
 
   return (
-    <div className="layer-modal fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4" role="presentation">
+    <div className={inline ? 'track-surface-raised p-1' : 'layer-modal fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4'} role="presentation">
       <div
         role="dialog"
         ref={dialogRef}
-        aria-modal="true"
+        aria-modal={inline ? undefined : true}
         aria-label={labels.title || 'Dados'}
-        className="modal-enter relative w-full max-w-md overflow-hidden rounded-2xl border-2 border-slate-600 bg-slate-900 text-slate-100 shadow-2xl"
+        className={inline
+          ? 'flex max-h-[58dvh] w-full flex-col overflow-y-auto rounded-xl border-2 border-slate-600 bg-slate-900 text-slate-100 shadow-xl'
+          : 'modal-enter relative w-full max-w-md overflow-hidden rounded-2xl border-2 border-slate-600 bg-slate-900 text-slate-100 shadow-2xl'}
       >
         <div className="h-1.5 w-full bg-gradient-to-r from-sky-600 via-emerald-500 to-amber-500" aria-hidden="true" />
 

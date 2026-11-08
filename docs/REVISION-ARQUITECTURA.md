@@ -2688,6 +2688,20 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 142.ª tanda — Dados en panel lateral
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Dados** | El botón de dados abre y cierra un panel encima de la Bolsa de Runas, en lugar de una ventana modal | `DiceRoller`, `InitTracker` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
