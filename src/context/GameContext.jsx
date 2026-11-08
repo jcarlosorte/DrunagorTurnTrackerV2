@@ -776,15 +776,17 @@ export const GameProvider = ({ children }) => {
     const instanceId = erradenEvent.deck[index];
     const card = ERRADEN_CARDS.find((entry) => entry.instanceId === instanceId) || null;
     if (!card) return null;
-    setErradenEvent((prev) => (
-      prev.active
-        ? {
-          ...prev,
-          deck: prev.deck.filter((id) => id !== instanceId),
-          discarded: [...prev.discarded, instanceId],
-        }
-        : prev
-    ));
+    setErradenEvent((prev) => {
+      if (!prev.active) return prev;
+      const deck = prev.deck.filter((id) => id !== instanceId);
+      const discarded = [...prev.discarded, instanceId];
+      // Al sacar la última carta el evento desaparece de la vista principal y
+      // queda listo para poder añadirse de nuevo desde el menú.
+      if (deck.length === 0) {
+        return { active: false, deck: [], discarded: [] };
+      }
+      return { ...prev, deck, discarded };
+    });
     return card;
   };
 

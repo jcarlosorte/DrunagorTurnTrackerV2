@@ -8,6 +8,7 @@ export default function SpecialEventBar({ onDraw }) {
   const t = translations.trackerInit || {};
   if (!erradenEvent?.active) return null;
   const remaining = erradenEvent.deck.length;
+  if (remaining === 0) return null;
 
   return (
     <div className="mb-2 flex items-center gap-2 rounded-xl border border-fuchsia-700/60 bg-fuchsia-950/40 p-2 text-fuchsia-100">

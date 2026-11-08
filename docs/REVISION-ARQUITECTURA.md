@@ -2890,6 +2890,20 @@ Unit       201 tests
 E2E        65/65
 ```
 
+### 156.ª tanda — Fin del mazo Sorpresa de Eradren
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Evento** | Al robar la última carta, el evento desaparece de la vista principal y el mazo queda reiniciado para poder añadirse de nuevo | `GameContext`, `SpecialEventBar` |
+| **Pruebas** | 201 unitarios · 65 E2E | tests |
+
+**Medición**
+
+```text
+Unit       201 tests
+E2E        65/65
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
