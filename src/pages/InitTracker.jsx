@@ -82,7 +82,6 @@ import TurnCarousel from '@/components/track/TurnCarousel';
 import BossBanner from '@/components/track/BossBanner';
 import CampDialog from '@/components/track/CampDialog';
 import RestartGameDialog from '@/components/track/RestartGameDialog';
-import CompanionPicker from '@/components/track/CompanionPicker';
 import { boardSlotHeightFrom } from '@/components/track/trackLayout';
 import { CAMPAIGN_EXPANSIONS, getExpansionCampaigns, getScenarioExpansionIds } from '@/data/boxes';
 import { getCommanderCandidates } from '@/utils/commanderSelection';
@@ -238,7 +237,6 @@ const InitTracker = () => {
   const [selectedHeroId, setSelectedHeroId] = useState(null);
   const [selectedCompanionUid, setSelectedCompanionUid] = useState(null);
   const [selectedFollowerUid, setSelectedFollowerUid] = useState(null);
-  const [isCompanionPickerOpen, setIsCompanionPickerOpen] = useState(false);
   const [diceOpen, setDiceOpen] = useState(false);
   const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
@@ -3823,7 +3821,8 @@ const InitTracker = () => {
                 onTileDraw={handleTileDraw}
                 onOpenRestart={() => setIsRestartOpen(true)}
                 onOpenCamp={() => setIsCampOpen(true)}
-                onOpenCompanions={() => setIsCompanionPickerOpen(true)}
+                onOpenCompanion={(uid) => setSelectedCompanionUid(uid)}
+                onOpenFollower={(uid) => setSelectedFollowerUid(uid)}
               />
             )}
 
@@ -4411,18 +4410,6 @@ const InitTracker = () => {
           onConfirm={handleRestartGame}
         />
         <CampDialog open={isCampOpen} onClose={() => setIsCampOpen(false)} />
-        <CompanionPicker
-          open={isCompanionPickerOpen}
-          onClose={() => setIsCompanionPickerOpen(false)}
-          onOpenCompanion={(uid) => {
-            setIsCompanionPickerOpen(false);
-            setSelectedCompanionUid(uid);
-          }}
-          onOpenFollower={(uid) => {
-            setIsCompanionPickerOpen(false);
-            setSelectedFollowerUid(uid);
-          }}
-        />
         <DiceRoller
           open={diceOpen}
           onClose={() => setDiceOpen(false)}

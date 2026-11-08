@@ -26,7 +26,7 @@ import useFocusTrap from '@/hooks/useFocusTrap';
  * asigna a un héroe en juego y lista las ya asignadas. Una criatura asignada
  * deja de ofrecerse hasta que se quita.
  */
-export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpenFollower }) {
+export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpenFollower, inline = false }) {
   const { trackerData, setTrackerData } = useTracker();
   const { selectedExpansions, mainBox, previewOtherBoxes, canPreviewOtherBoxes } = useExpansions();
   const { translations } = useLanguage();
@@ -315,11 +315,11 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
   }));
 
   return (
-    <div className="layer-menu fixed inset-x-0 top-16 z-30 flex justify-center p-2 sm:p-3" role="presentation">
+    <div className={inline ? 'flex justify-center' : 'layer-menu fixed inset-x-0 top-16 z-30 flex justify-center p-2 sm:p-3'} role={inline ? 'region' : 'presentation'}>
       <div
         ref={dialogRef}
         role="dialog"
-        aria-modal="true"
+        aria-modal={inline ? undefined : true}
         aria-labelledby="companions-picker-title"
         className="flex max-h-[70dvh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border-2 border-amber-900/60 bg-slate-900 text-slate-100 shadow-2xl"
       >

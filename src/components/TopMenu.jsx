@@ -24,6 +24,7 @@ import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import CompanionPicker from '@/components/track/CompanionPicker';
 
 
 const TopMenu = ({
@@ -36,7 +37,8 @@ const TopMenu = ({
   onTileDraw,
   onOpenRestart,
   onOpenCamp,
-  onOpenCompanions,
+  onOpenCompanion,
+  onOpenFollower,
 }) => {
 
   const { translations } = useLanguage();
@@ -254,6 +256,7 @@ const TopMenu = ({
               { id: 'runes', icon: GiRuneStone, label: t.runesMenu || 'Runas', tone: 'emerald' },
               { id: 'nodes', icon: GiPositionMarker, label: t.nodesMenu || 'Nodos', tone: 'cyan' },
               { id: 'scenario', icon: GiVillage, label: t.scenarioMenu || 'Escenario', tone: 'amber' },
+              { id: 'companions', icon: GiPawPrint, label: t.companionsMenu || 'Compañeros', tone: 'amber' },
             ].map(({ id, icon: Icon, label, tone }) => {
               const isActive = activeMenu === id;
               const activeTone = tone === 'sky'
@@ -283,16 +286,6 @@ const TopMenu = ({
                 </button>
               );
             })}
-            <button
-              type="button"
-              onClick={() => onOpenCompanions?.()}
-              aria-label={t.companionsMenu || 'Compañeros'}
-              title={t.companionsMenu || 'Compañeros'}
-              className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg border border-transparent px-2 text-xs font-semibold text-slate-200 transition hover:border-slate-600 hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
-            >
-              <GiPawPrint size={20} aria-hidden="true" />
-              <span className="hidden md:inline">{t.companionsMenu || 'Compañeros'}</span>
-            </button>
           </div>
         </div>
 
@@ -1443,6 +1436,35 @@ const TopMenu = ({
               </section>
               </div>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {activeMenu === 'companions' && (
+          <motion.div
+            id="track-menu-companions"
+            role="region"
+            aria-label={t.companionsMenu || 'Compañeros'}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-2 overflow-y-auto px-3 pb-3 pt-2 text-white sm:px-4"
+          >
+            <CompanionPicker
+              inline
+              open
+              onClose={() => setActiveMenu(null)}
+              onOpenCompanion={(uid) => {
+                setActiveMenu(null);
+                onOpenCompanion?.(uid);
+              }}
+              onOpenFollower={(uid) => {
+                setActiveMenu(null);
+                onOpenFollower?.(uid);
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>

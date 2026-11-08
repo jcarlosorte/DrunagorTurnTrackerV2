@@ -478,6 +478,30 @@ export const GameProvider = ({ children }) => {
   };
 
   // Retira una sola ficha de la pila concentrada: por color o aleatoriamente.
+  const removeSingleTileFromPila = (pilaId, color = null) => {
+    const pilaActual = pilas.find((pila) => pila.id === pilaId);
+    if (!pilaActual || !Array.isArray(pilaActual.tiles) || pilaActual.tiles.length === 0) return null;
+
+    const candidates = pilaActual.tiles
+      .map((tile, index) => ({ tile, index }))
+      .filter(({ tile }) => !color || tile.runa === color);
+    if (candidates.length === 0) return null;
+
+    const selected = candidates[Math.floor(Math.random() * candidates.length)];
+    const tilesRestantes = pilaActual.tiles.filter((_, index) => index !== selected.index);
+    setAvailableTiles((prev) => [...prev, selected.tile]);
+    setPilas((prev) => prev
+      .map((pila) => (
+        pila.id !== pilaId
+          ? pila
+          : tilesRestantes.length === 0
+            ? null
+            : { ...pila, tiles: tilesRestantes }
+      ))
+      .filter(Boolean));
+    return selected.tile;
+  };
+
   const removeSingleTileFromPilaConcentrada = (pilaId, color = null) => {
     const pilaActual = pilasConcentrada.find(p => p.id === pilaId);
   
@@ -841,6 +865,7 @@ export const GameProvider = ({ children }) => {
         restoreDiscardedTile,
         pilas, setPilas, addNewPila, activarPila, activarPilaConcentrada, codigosPilas, setCodigosPilas, handleCodigoChange,
         removeTileFromPila, addRunesCascade, placeTilesFromPilaToTrack, addTileToPila, addTileToPilaConcentrada,
+        removeSingleTileFromPila,
         pilasConcentrada, setPilasConcentrada, addNewPilaConcentrada, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack,
         resetTiles,
         resetGameState: resetTiles,
