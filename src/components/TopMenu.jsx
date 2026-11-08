@@ -19,6 +19,7 @@ import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageMenu from "@/components/LanguageMenu";
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
+import mecanicaEspecialIcon from '@/assets/assets_logo/mecanica_especial.png';
 import ScenarioPanels from '@/components/scenario/ScenarioPanels';
 import ResponsiveImage from '@/components/track/ResponsiveImage';
 import { useGame } from '@/context/GameContext';
@@ -35,6 +36,17 @@ const RuneStackIcon = ({ size = 20 }) => (
     width={size}
     height={size}
     className="rounded-full"
+    aria-hidden="true"
+  />
+);
+
+const SpecialEventIcon = ({ size = 20 }) => (
+  <img
+    src={mecanicaEspecialIcon}
+    alt=""
+    width={size}
+    height={size}
+    className="rounded-md object-cover"
     aria-hidden="true"
   />
 );
@@ -68,7 +80,7 @@ const TopMenu = ({
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
-  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue } = useGame();
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent } = useGame();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const gameMenuRef = useRef(null);
@@ -269,6 +281,7 @@ const TopMenu = ({
               { id: 'nodes', icon: RuneStackIcon, label: t.nodesMenu || 'Nodos', tone: 'cyan' },
               { id: 'scenario', icon: GiVillage, label: t.scenarioMenu || 'Escenario', tone: 'amber' },
               { id: 'companions', icon: GiPawPrint, label: t.companionsMenu || 'Compañeros', tone: 'amber' },
+              { id: 'events', icon: SpecialEventIcon, label: t.eventsMenu || 'Eventos', tone: 'amber' },
             ].map(({ id, icon: Icon, label, tone }) => {
               const isActive = activeMenu === id;
               const activeTone = tone === 'sky'
@@ -398,7 +411,7 @@ const TopMenu = ({
             )}
           </div>
 
-          {['enemies', 'runes', 'nodes', 'scenario'].includes(activeMenu) && (
+          {['enemies', 'runes', 'nodes', 'scenario', 'events'].includes(activeMenu) && (
             <button
               type="button"
               data-testid="close-menu"
@@ -1477,6 +1490,67 @@ const TopMenu = ({
                 onOpenFollower?.(uid);
               }}
             />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {activeMenu === 'events' && (
+          <motion.div
+            id="track-menu-events"
+            role="region"
+            aria-label={t.eventsMenu || 'Eventos'}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-3 pt-2 text-white sm:px-4"
+          >
+            <div className="flex items-center gap-2">
+              <img src={mecanicaEspecialIcon} alt="" className="h-8 w-8 rounded-lg object-cover" />
+              <h2 className="min-w-0 flex-1 truncate text-base font-bold">
+                {t.eventsTitle || 'Eventos y mecánicas especiales'}
+              </h2>
+            </div>
+
+            <div className="rounded-xl border border-fuchsia-800/60 bg-fuchsia-950/30 p-3">
+              <p className="text-sm font-bold text-fuchsia-100">
+                {t.erradenTitle || 'Sorpresa de Eradren'}
+              </p>
+              <p className="mt-1 text-xs text-fuchsia-200/80">
+                {t.erradenDescription || 'Mazo de 6 cartas que se barajan y se descartan al salir.'}
+              </p>
+
+              {!erradenEvent.active ? (
+                <button
+                  type="button"
+                  onClick={addErradenEvent}
+                  className="mt-3 min-h-9 rounded-lg bg-fuchsia-700 px-3 text-xs font-bold text-white hover:bg-fuchsia-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-300"
+                >
+                  ➕ {t.addErraden || 'Añadir Sorpresa de Eradren'}
+                </button>
+              ) : (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-fuchsia-700 bg-slate-950/50 px-2 py-1 text-[0.65rem] text-fuchsia-100">
+                    {t.erradenRemaining || 'Cartas restantes'}: {erradenEvent.deck.length}/6
+                  </span>
+                  <button
+                    type="button"
+                    onClick={addErradenEvent}
+                    className="min-h-8 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600"
+                  >
+                    {t.resetErraden || 'Reiniciar mazo'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={resetErradenEvent}
+                    className="min-h-8 rounded-lg bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800"
+                  >
+                    {t.removeErraden || 'Quitar evento'}
+                  </button>
+                </div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

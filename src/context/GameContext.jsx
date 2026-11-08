@@ -7,6 +7,7 @@ import { useTracker } from '@/context/TrackerContext';
 import { ALDEANO, ERRANTES } from '@/data/cartasEspeciales';
 import { createId } from '@/utils/id';
 import { appendGenerationPoint } from '@/utils/generationPoints';
+import { ERRADEN_CARDS } from '@/data/eventosEspeciales';
 
 const GameContext = createContext();
 const defaultRunes = { rojo: 0, azul: 0, verde: 0, naranja: 0, gris: 0 };
@@ -49,6 +50,9 @@ export const GameProvider = ({ children }) => {
   const [tileWarning, setTileWarning] = useState(null);
   const [tileToasts, setTileToasts] = useState([]);
   const [rompenodoNotice, setRompenodoNotice] = useState(null);
+  const [erradenEvent, setErradenEvent] = useState(() => (
+    persisted.erradenEvent || { active: false, deck: [], discarded: [] }
+  ));
 
   const { translations } = useLanguage();
   const ti = translations.trackerInit || {};
@@ -81,12 +85,13 @@ export const GameProvider = ({ children }) => {
       errantesDeck,
       codigosPilas,
       campamento,
+      erradenEvent,
     });
   }, [
     runes, discardedTiles, pilaDeRunas, pilas, pilasConcentrada,
     nodosOscuridad, contadorPilas, contadorPilasConcentradas, contadorNodosOscuridad, availableTiles, usedTiles,
     scenarioMonster, spawnPoints, generationPoints, magicCannons, controlPoints, runeKeys, rescue,
-    aldeanoDeck, errantesDeck, codigosPilas, campamento,
+    aldeanoDeck, errantesDeck, codigosPilas, campamento, erradenEvent,
   ]);
 
   const handleCodigoChange = (pilaId, nuevoCodigo) => {
@@ -220,6 +225,7 @@ export const GameProvider = ({ children }) => {
     setContadorPilas(1);
     setContadorPilasConcentradas(1);
     setContadorNodosOscuridad(1);
+    setErradenEvent({ active: false, deck: [], discarded: [] });
     setCodigosPilas({});
     setTileToasts([]);
     setTileWarning(null);
@@ -755,6 +761,37 @@ export const GameProvider = ({ children }) => {
 
   const clearRompenodoNotice = () => setRompenodoNotice(null);
 
+  const addErradenEvent = () => {
+    const deck = ERRADEN_CARDS.map((card) => card.instanceId);
+    for (let i = deck.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    setErradenEvent({ active: true, deck, discarded: [] });
+  };
+
+  const drawErradenCard = () => {
+    if (!erradenEvent.active || erradenEvent.deck.length === 0) return null;
+    const index = Math.floor(Math.random() * erradenEvent.deck.length);
+    const instanceId = erradenEvent.deck[index];
+    const card = ERRADEN_CARDS.find((entry) => entry.instanceId === instanceId) || null;
+    if (!card) return null;
+    setErradenEvent((prev) => (
+      prev.active
+        ? {
+          ...prev,
+          deck: prev.deck.filter((id) => id !== instanceId),
+          discarded: [...prev.discarded, instanceId],
+        }
+        : prev
+    ));
+    return card;
+  };
+
+  const resetErradenEvent = () => {
+    setErradenEvent({ active: false, deck: [], discarded: [] });
+  };
+
   const deleteAvailableTileByColor = (color) => {
     const candidates = availableTiles.filter(t => t.runa === color);
     if (candidates.length === 0) return null;
@@ -1013,6 +1050,7 @@ export const GameProvider = ({ children }) => {
         nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, addTileToNodoOscuridad,
         removeTileFromNodoOscuridad, removeSingleTileFromNodoOscuridad, placeTilesFromNodoOscuridadToTrack,
         rompenodoNotice, notifyRompenodo, clearRompenodoNotice,
+        erradenEvent, addErradenEvent, drawErradenCard, resetErradenEvent,
         resetTiles,
         resetGameState: resetTiles,
         tileWarning, 

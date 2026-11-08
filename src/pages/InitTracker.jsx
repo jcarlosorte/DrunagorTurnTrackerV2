@@ -49,6 +49,8 @@ import PassiveCardsPanel from '@/components/track/PassiveCardsPanel';
 import GenerationPointsBar from '@/components/track/GenerationPointsBar';
 import MagicCannonsBar from '@/components/track/MagicCannonsBar';
 import PilaStatusPanel from '@/components/track/PilaStatusPanel';
+import SpecialEventBar from '@/components/track/SpecialEventBar';
+import EventCardModal from '@/components/track/EventCardModal';
 import CommanderCardModal from '@/components/CommanderCardModal';
 import ConfirmDialog from '@/components/ConfirmDialog';
 
@@ -230,7 +232,7 @@ const InitTracker = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, pilas, pilasConcentrada, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, pilas, pilasConcentrada, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, drawErradenCard } = useGame();
   const scenarioLinkedEnemyIds = useMemo(
     () => getScenarioLinkedEnemyIds(scenarioMonster, ENEMIES),
     [scenarioMonster],
@@ -251,6 +253,7 @@ const InitTracker = () => {
   const [selectedCompanionUid, setSelectedCompanionUid] = useState(null);
   const [selectedFollowerUid, setSelectedFollowerUid] = useState(null);
   const [diceOpen, setDiceOpen] = useState(false);
+  const [drawnEventCard, setDrawnEventCard] = useState(null);
   const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
   const getHeroName = (id) => translations.heroes?.[id] || id;
@@ -554,6 +557,32 @@ const InitTracker = () => {
     if (count <= 0) return;
     const warning = ti.incursionNoSpawn || 'El Monstruo no se ha podido invocar por lo que Activa el Monstruo que no sea Jefe que ocupe la posición jerárquica más alta. Si 2 o más ocupan la misma categoría, activa el que está más arriba en la hoja de Estado de Monstruos.';
     showScenarioToast(`${reason ? `${reason} ` : ''}${count} × ${warning}`);
+  };
+
+  const handleDrawErradenCard = () => {
+    const card = drawErradenCard();
+    if (!card) {
+      showScenarioToast(ti.erradenEmpty || 'No quedan cartas de Sorpresa de Eradren.');
+      return;
+    }
+    setDrawnEventCard(card);
+  };
+
+  const handleSummonErradenMonster = () => {
+    const candidates = ENEMIES.filter((enemy) => (
+      enemies.includes(enemy.id) &&
+      enemy.categoria === 'bisoño' &&
+      enemy.size === 'grande' &&
+      enemy.scenario !== 'escenario' &&
+      enemy.cara !== 'B'
+    ));
+    if (candidates.length === 0) {
+      showScenarioToast(ti.noMG || 'No hay ningún MG – Bisoño disponible en esta campaña.');
+      return;
+    }
+    const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+    spawnBatchEnemies(1, chosen);
+    setDrawnEventCard(null);
   };
 
   const finalizeIncursionPlacement = (placement) => {
@@ -3884,6 +3913,7 @@ const InitTracker = () => {
                   <GenerationPointsBar />
                   <MagicCannonsBar />
                 </div>
+                <SpecialEventBar onDraw={handleDrawErradenCard} />
                 <PassiveCardsPanel
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}
@@ -4475,6 +4505,12 @@ const InitTracker = () => {
           onConfirm={handleRestartGame}
         />
         <CampDialog open={isCampOpen} onClose={() => setIsCampOpen(false)} />
+        <EventCardModal
+          card={drawnEventCard}
+          onClose={() => setDrawnEventCard(null)}
+          onSummon={handleSummonErradenMonster}
+          summonLabel={{ invoke: ti.invokeEventMonster || 'Invocar', close: ti.close || 'Cerrar' }}
+        />
         {showPCModal && (
           <ModalCommanderPC
               commander={pcCommander}

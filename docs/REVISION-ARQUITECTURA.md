@@ -2844,6 +2844,23 @@ Unit       197 tests
 E2E        64/64
 ```
 
+### 153.ª tanda — Eventos especiales: Sorpresa de Eradren
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Menú** | Nuevo menú Eventos con botón para añadir Sorpresa de Eradren, estado del mazo y reinicio | `TopMenu` |
+| **Mazo** | Seis cartas barajadas sin reemplazo, descartadas al salir y persistidas | `eventosEspeciales`, `GameContext` |
+| **Track** | Icono `mecanica_especial` y botón para robar cartas | `SpecialEventBar` |
+| **Cartas** | Modal con título, texto completo, fondo de `assets/interactions` e invocación de MG – Bisoño | `EventCardModal`, `InitTracker` |
+| **Pruebas** | 201 unitarios · 65 E2E | tests |
+
+**Medición**
+
+```text
+Unit       201 tests
+E2E        65/65
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
