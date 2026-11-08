@@ -2552,20 +2552,44 @@ const InitTracker = () => {
   ));
 
   // Guarda los conjuntos de efectos ya procesados para no repetirlos al restaurar la partida.
+  const compactSessionEvolutions = (list) => (
+    Array.isArray(list)
+      ? list.slice(-200).map((entry) => ({
+        uuid: entry?.uuid,
+        count: Number(entry?.count) || 0,
+      }))
+      : []
+  );
+
+  const compactSessionGroup = (tracker) => ({
+    index: Number(tracker?.index) || 0,
+    group: Array.isArray(tracker?.group)
+      ? tracker.group.slice(0, 40).map((entry) => ({
+        uuid: entry?.uuid,
+        id: entry?.id,
+        type: entry?.type,
+        name: entry?.name,
+      }))
+      : [],
+  });
+
+  const compactExtraTurns = (list) => (
+    Array.isArray(list) ? list.filter((item) => typeof item === 'string').slice(-50) : []
+  );
+
   const persistProcessed = () => {
-    const session = readJsonStorage('trackerSession', {}, isPlainObject) || {};
     const tail = (values) => [...values].slice(-600);
     writeJsonStorage('trackerSession', {
       schemaVersion: 1,
-      enemyEvolutions: session.enemyEvolutions,
-      turnIndex: session.turnIndex,
-      lastRealTurnIndex: session.lastRealTurnIndex,
-      roundNumber: session.roundNumber,
-      previousTurnIndex: session.previousTurnIndex,
-      groupTurnTracker: session.groupTurnTracker,
-      extraTurnsQueue: session.extraTurnsQueue,
-      extraTurnIndex: session.extraTurnIndex,
-      extraTurnTotal: session.extraTurnTotal,
+      enemyEvolutions: compactSessionEvolutions(enemyEvolutions),
+      turnIndex,
+      lastRealTurnIndex,
+      roundNumber,
+      previousTurnIndex,
+      groupTurnTracker: compactSessionGroup(groupTurnTracker),
+      extraTurnsQueue: compactExtraTurns(extraTurnsQueue),
+      extraTurnIndex,
+      extraTurnTotal,
       processed: {
         voragine: tail(processedVoragineRef.current),
         defenseTurn: tail(processedDefenseTurnRef.current),
@@ -2575,7 +2599,9 @@ const InitTracker = () => {
         tiempo: tail(processedTiempoRef.current),
         hero: tail(processedHeroEffectsRef.current),
         companion: tail(processedCompanionEffectsRef.current),
-        lastHeroTurn: lastHeroTurnRef.current || null,
+        lastHeroTurn: lastHeroTurnRef.current
+          ? String(lastHeroTurnRef.current).slice(0, 200)
+          : null,
       },
     });
   };
@@ -2583,13 +2609,13 @@ const InitTracker = () => {
   useEffect(() => {
     writeJsonStorage('trackerSession', {
       schemaVersion: 1,
-      enemyEvolutions,
+      enemyEvolutions: compactSessionEvolutions(enemyEvolutions),
       turnIndex,
       lastRealTurnIndex,
       roundNumber,
       previousTurnIndex,
-      groupTurnTracker,
-      extraTurnsQueue,
+      groupTurnTracker: compactSessionGroup(groupTurnTracker),
+      extraTurnsQueue: compactExtraTurns(extraTurnsQueue),
       extraTurnIndex,
       extraTurnTotal,
     });
@@ -3239,6 +3265,7 @@ const InitTracker = () => {
   // Se declara después del efecto de turno para leer los conjuntos ya actualizados.
   useEffect(() => {
     persistProcessed();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turnIndex]);
 
   const addExtraTurn = (enemyUUID) => {

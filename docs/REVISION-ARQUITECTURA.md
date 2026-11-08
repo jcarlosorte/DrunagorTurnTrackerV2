@@ -2990,6 +2990,20 @@ Unit       208 tests
 E2E        65/65
 ```
 
+### 163.ª tanda — Evitar el crecimiento de trackerSession
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Sesión** | `trackerSession` guarda solo estado compacto: evoluciones limitadas, grupo de turno resumido, cola de turnos y efectos acotados | `InitTracker` |
+| **Pruebas** | 208 unitarios · 66 E2E; prueba específica de tamaño tras avanzar turnos | tests |
+
+**Medición**
+
+```text
+Unit       208 tests
+E2E        66/66
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
