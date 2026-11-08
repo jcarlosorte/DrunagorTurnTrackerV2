@@ -568,11 +568,12 @@ const InitTracker = () => {
     setDrawnEventCard(card);
   };
 
-  const handleSummonErradenMonster = () => {
+  const handleSummonErradenMonster = (card) => {
+    const summon = card?.summon || { categoria: 'bisoño', color: 'gris' };
     const candidates = ENEMIES.filter((enemy) => (
       enemies.includes(enemy.id) &&
-      enemy.categoria === 'bisoño' &&
-      enemy.size === 'grande' &&
+      enemy.color === (summon.color || 'gris') &&
+      enemy.categoria === (summon.categoria || 'bisoño') &&
       enemy.scenario !== 'escenario' &&
       enemy.cara !== 'B'
     ));

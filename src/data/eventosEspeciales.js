@@ -16,7 +16,7 @@ export const ERRADEN_CARDS = [
     title: '¡ASALTO!',
     text: 'Hurgando entre los escombros, terminas liberando una monstruosidad que, de lo contrario, estaría atrapada por su torpeza...\n\nInvoca 1 MG – Bisoño en la casilla que previamente ocupaba esta ficha de Mecánica Especial.',
     background: barricade,
-    summon: { label: 'MG – Bisoño', categoria: 'bisoño', size: 'grande' },
+    summon: { label: 'MG – Bisoño', categoria: 'bisoño', color: 'gris' },
   },
   {
     instanceId: 'erraden_asalto_2',
@@ -24,7 +24,7 @@ export const ERRADEN_CARDS = [
     title: '¡ASALTO!',
     text: 'Hurgando entre los escombros, terminas liberando una monstruosidad que, de lo contrario, estaría atrapada por su torpeza...\n\nInvoca 1 MG – Bisoño en la casilla que previamente ocupaba esta ficha de Mecánica Especial.',
     background: barricade,
-    summon: { label: 'MG – Bisoño', categoria: 'bisoño', size: 'grande' },
+    summon: { label: 'MG – Bisoño', categoria: 'bisoño', color: 'gris' },
   },
   {
     instanceId: 'erraden_superviviente_124',

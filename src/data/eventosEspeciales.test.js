@@ -18,7 +18,7 @@ describe('Sorpresa de Eradren', () => {
     asaltos.forEach((card) => {
       expect(card.summon?.label).toBe('MG – Bisoño');
       expect(card.summon?.categoria).toBe('bisoño');
-      expect(card.summon?.size).toBe('grande');
+      expect(card.summon?.color).toBe('gris');
     });
   });
 

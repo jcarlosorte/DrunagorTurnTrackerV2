@@ -2876,6 +2876,20 @@ Unit       201 tests
 E2E        65/65
 ```
 
+### 155.ª tanda — MG significa Monstruo Gris
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Sorpresa de Eradren** | Las cartas de Asalto invocan un Monstruo Gris (color gris) de categoría Bisoño, no un monstruo grande | `eventosEspeciales`, `InitTracker` |
+| **Pruebas** | 201 unitarios · 65 E2E | tests |
+
+**Medición**
+
+```text
+Unit       201 tests
+E2E        65/65
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
