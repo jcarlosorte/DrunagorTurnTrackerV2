@@ -1,9 +1,10 @@
-import { GiCardDraw, GiRuneStone } from 'react-icons/gi';
+import { GiRuneStone } from 'react-icons/gi';
 import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import { OTROS } from '@/data/estadosAlterados';
 import NodosOscuridadPanel from '@/components/scenario/NodosOscuridadPanel';
+import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
 
 /**
  * Paneles de escenario: pilas de runas, pila concentrada y control de áreas
@@ -69,7 +70,7 @@ export default function ScenarioPanels() {
                   {showCoreContent && (
                   <div className={`track-surface-raised min-w-0 p-3 shadow-md ${showCoreContent ? '' : 'xl:col-span-2'}`}>
                     <div className="flex items-center gap-2 mb-2 justify-center">
-                      <GiCardDraw className="text-purple-500 text-xl" />
+                      <img src={pilaRunasIcon} alt="" className="h-7 w-7 rounded-full" />
                       <span className="font-semibold text-white">{t.gestionPila}</span>
                     </div>
   
@@ -77,7 +78,7 @@ export default function ScenarioPanels() {
                       {/* Sub-bloque: Pila Oscuridad Inquieta */}
                       <div className="track-surface-raised flex-1 p-3 shadow-md">
                         <div className="flex items-center gap-2 mb-2 justify-center">
-                          <GiCardDraw className="text-purple-400 text-xl" />
+                          <img src={pilaRunasIcon} alt="" className="h-6 w-6 rounded-full" />
                           <span className="font-semibold text-white">{t.gestionPilas}</span>
                         </div>
           
@@ -168,7 +169,7 @@ export default function ScenarioPanels() {
                       {/* Sub-bloque: Pila Oscuridad Concentrada */}
                       <div className="track-surface-raised flex-1 p-3 shadow-md">
                         <div className="flex items-center gap-2 mb-2 justify-center">
-                          <GiCardDraw className="text-purple-400 text-xl" />
+                          <img src={pilaRunasIcon} alt="" className="h-6 w-6 rounded-full" />
                           <span className="font-semibold text-white">{t.gestionPilas2}</span>
                         </div>
                   

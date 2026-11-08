@@ -1,6 +1,7 @@
 import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
+import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
 
 const COLOR_BRICKS = {
   naranja: 'bg-orange-500 border-orange-300',
@@ -49,9 +50,12 @@ export default function PilaStatusPanel() {
 
   return (
     <section className="track-surface-raised min-h-0 overflow-auto p-2">
-      <h3 className="mb-2 text-[0.7rem] font-bold uppercase tracking-wide text-yellow-300">
-        {t.gestionPila || 'Pilas y nodos'}
-      </h3>
+      <div className="mb-2 flex items-center gap-1.5">
+        <img src={pilaRunasIcon} alt="" className="h-5 w-5 rounded-full" />
+        <h3 className="text-[0.7rem] font-bold uppercase tracking-wide text-yellow-300">
+          {t.gestionPila || 'Pilas y nodos'}
+        </h3>
+      </div>
       <div className="grid grid-cols-2 gap-1.5">
         {entries.map((pila) => {
           const tiles = Array.isArray(pila.tiles) ? pila.tiles : [];

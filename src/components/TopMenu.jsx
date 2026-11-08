@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { useSavesUi } from '@/context/SavesUiContext';
-import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPositionMarker, GiWoodenCrate, GiPawPrint } from 'react-icons/gi';
+import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiWoodenCrate, GiPawPrint } from 'react-icons/gi';
 import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
@@ -18,6 +18,7 @@ import { } from '@/data/estadosAlterados';
 import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageMenu from "@/components/LanguageMenu";
+import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
 import ScenarioPanels from '@/components/scenario/ScenarioPanels';
 import ResponsiveImage from '@/components/track/ResponsiveImage';
 import { useGame } from '@/context/GameContext';
@@ -26,6 +27,17 @@ import { useExpansions } from '@/context/ExpansionContext';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import CompanionPicker from '@/components/track/CompanionPicker';
 
+
+const RuneStackIcon = ({ size = 20 }) => (
+  <img
+    src={pilaRunasIcon}
+    alt=""
+    width={size}
+    height={size}
+    className="rounded-full"
+    aria-hidden="true"
+  />
+);
 
 const TopMenu = ({
   onAddEnemy,
@@ -254,7 +266,7 @@ const TopMenu = ({
             {[
               { id: 'enemies', icon: GiMinions, label: t.enemiesMenu || 'Enemigos', tone: 'sky' },
               { id: 'runes', icon: GiRuneStone, label: t.runesMenu || 'Runas', tone: 'emerald' },
-              { id: 'nodes', icon: GiPositionMarker, label: t.nodesMenu || 'Nodos', tone: 'cyan' },
+              { id: 'nodes', icon: RuneStackIcon, label: t.nodesMenu || 'Nodos', tone: 'cyan' },
               { id: 'scenario', icon: GiVillage, label: t.scenarioMenu || 'Escenario', tone: 'amber' },
               { id: 'companions', icon: GiPawPrint, label: t.companionsMenu || 'Compañeros', tone: 'amber' },
             ].map(({ id, icon: Icon, label, tone }) => {
@@ -1080,7 +1092,7 @@ const TopMenu = ({
             <div className="flex flex-col gap-3">
               <div data-testid="menu-header" className="sticky top-0 z-10 -mx-3 -mt-2 flex shrink-0 items-center gap-2 border-b border-slate-700 bg-slate-900/95 px-3 py-2 backdrop-blur sm:-mx-4 sm:px-4">
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-300">
-                  <GiPositionMarker className="text-lg" />
+                  <RuneStackIcon size={18} />
                 </span>
                 <h2 className="min-w-0 flex-1 truncate text-base font-bold">{t.nodesMenu || 'Nodos'}</h2>
                 <span className="shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums text-slate-200">

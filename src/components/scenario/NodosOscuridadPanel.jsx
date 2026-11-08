@@ -1,6 +1,6 @@
-import { GiCardDraw } from 'react-icons/gi';
 import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
+import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
 
 /**
  * Nodos de Oscuridad (Despertar): misma mecánica que las Nieblas del juego
@@ -35,7 +35,7 @@ export default function NodosOscuridadPanel() {
   return (
     <div className="track-surface-raised min-w-0 p-3 shadow-md">
       <div className="mb-2 flex items-center justify-center gap-2">
-        <GiCardDraw className="text-purple-400 text-xl" />
+        <img src={pilaRunasIcon} alt="" className="h-7 w-7 rounded-full" />
         <span className="font-semibold text-white">{t.nodosOscuridad || 'Nodos de Oscuridad'}</span>
       </div>
 

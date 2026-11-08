@@ -2830,6 +2830,20 @@ Unit       197 tests
 E2E        64/64
 ```
 
+### 152.ª tanda — Icono de pila de runas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Interfaz** | Nuevo icono de pila de runas en el menú Nodos, sus cabeceras y el panel lateral de pilas | `TopMenu`, `ScenarioPanels`, `NodosOscuridadPanel`, `PilaStatusPanel` |
+| **Pruebas** | 197 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       197 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
