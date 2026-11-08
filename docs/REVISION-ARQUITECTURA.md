@@ -2730,6 +2730,20 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 145.ª tanda — Compañeros como panel integrado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Compañeros** | Eliminado el contenedor central con borde, sombra y ancho máximo; el contenido ocupa el panel del menú superior | `CompanionPicker` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
