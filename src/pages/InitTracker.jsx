@@ -2995,29 +2995,20 @@ const InitTracker = () => {
                   handleInvadidosEffect();
                 }
                 if (currentRune.id === 'runa_despertar_naval' && !isCaraB && tiles?.length) {
-                  const placedNavalRune = placedRunes.find((entry) => entry.rune.uuid === currentRune.uuid)?.rune;
-                  const alreadySummoned = Boolean(placedNavalRune?.navalASummoned);
                   const tile = tiles[0];
-                  if (!alreadySummoned) {
-                    const point = generationPoints.find((entry) => entry.color === tile.runa);
-                    if (!point) {
-                      showIncursionFailure(1, ti.generationNoPoint || 'No hay una Ficha de Generación activa del color de la runa robada.');
+                  const point = generationPoints.find((entry) => entry.color === tile.runa);
+                  if (!point) {
+                    showIncursionFailure(1, ti.generationNoPoint || 'No hay una Ficha de Generación activa del color de la runa robada.');
+                  } else {
+                    const target = ENEMIES.find((enemy) => enemy.id === 'infamous_striker');
+                    const existing = placedEnemies.filter((entry) => entry.enemy.id === target?.id).length;
+                    const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
+                    const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
+                    if (target && capacity > 0) {
+                      spawnBatchEnemies(1, target);
+                      showScenarioToast(`${ti.added} 1 ${ti.Enemies}: ${ti.colores[tile.runa]}`);
                     } else {
-                      const target = ENEMIES.find((enemy) => enemy.id === 'infamous_striker');
-                      const existing = placedEnemies.filter((entry) => entry.enemy.id === target?.id).length;
-                      const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
-                      const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
-                      if (target && capacity > 0) {
-                        spawnBatchEnemies(1, target);
-                        setPlacedRunes((prev) => prev.map((entry) => (
-                          entry.rune.uuid === currentRune.uuid
-                            ? { ...entry, rune: { ...entry.rune, navalASummoned: true } }
-                            : entry
-                        )));
-                        showScenarioToast(`${ti.added} 1 ${ti.Enemies}: ${ti.colores[tile.runa]}`);
-                      } else {
-                        showIncursionFailure(1);
-                      }
+                      showIncursionFailure(1);
                     }
                   }
                 }

@@ -2976,6 +2976,20 @@ Unit       208 tests
 E2E        65/65
 ```
 
+### 162.ª tanda — Repetición del Artillero Infame
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Batalla Naval A** | Cada vez que se resuelve la cara A vuelve a invocar 1 Artillero Infame, respetando el máximo de 4 copias o 12 enemigos totales | `InitTracker` |
+| **Pruebas** | 208 unitarios · 65 E2E | tests |
+
+**Medición**
+
+```text
+Unit       208 tests
+E2E        65/65
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
