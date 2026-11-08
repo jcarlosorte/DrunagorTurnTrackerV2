@@ -2904,6 +2904,20 @@ Unit       201 tests
 E2E        65/65
 ```
 
+### 157.ª tanda — Cargar partida y abrir el track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Partidas** | Al pulsar Cargar se aplican los datos y se navega a `/init`, recargando la escena del track con la partida cargada | `SavesPanel` |
+| **Pruebas** | 201 unitarios · 65 E2E | tests |
+
+**Medición**
+
+```text
+Unit       201 tests
+E2E        65/65
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -60,7 +60,8 @@ test.describe('Guardados', () => {
     });
 
     await page.getByRole('button', { name: /^Cargar/i }).first().click();
-    // La carga recarga la página: se espera al valor saneado en vez de un tiempo fijo.
+    // La carga navega a la escena del track y recarga con los datos aplicados.
+    await expect(page).toHaveURL(/\/init$/);
     await expect.poll(async () => {
       const extras = await readStorage(page, 'heroExtras', {});
       return extras?.vorn?.vidaMax ?? null;

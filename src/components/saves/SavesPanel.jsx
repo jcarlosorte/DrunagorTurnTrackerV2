@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import {
   applyStorageData,
@@ -15,6 +16,7 @@ import ConfirmDialog from '@/components/ConfirmDialog';
 
 export default function SavesPanel({ mode = 'page' }) {
   const { translations } = useLanguage();
+  const navigate = useNavigate();
   const inputRef = useRef(null);
   const [pendingImport, setPendingImport] = useState(null);
   const [importScope, setImportScope] = useState('full');
@@ -82,7 +84,10 @@ export default function SavesPanel({ mode = 'page' }) {
       const data = extractSnapshotData(record.snapshot, 'full');
       const { data: sanitized } = sanitizeConfiguration(data);
       applyStorageData(sanitized, { scope: 'full' });
-      window.location.reload();
+      // La escena del track lee el estado al montar: navegamos a /init y
+      // recargamos para que todos los contextos arranquen con la partida nueva.
+      navigate('/init', { replace: true });
+      window.setTimeout(() => window.location.reload(), 50);
     } catch (error) {
       notify('error', error.message || 'No se pudo cargar la partida.');
     }
