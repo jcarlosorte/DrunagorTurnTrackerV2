@@ -1,9 +1,9 @@
 import { GiCardDraw, GiRuneStone } from 'react-icons/gi';
-import { useState } from 'react';
 import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import { OTROS } from '@/data/estadosAlterados';
+import NodosOscuridadPanel from '@/components/scenario/NodosOscuridadPanel';
 
 /**
  * Paneles de escenario: pilas de runas, pila concentrada y control de áreas
@@ -17,7 +17,7 @@ export default function ScenarioPanels() {
   const t = translations?.trackerInit || {};
   const { mainBox, previewOtherBoxes } = useExpansions();
   const showCoreContent = mainBox === 'core' || previewOtherBoxes;
-  const [pilaConcentradaEliminarAbierta, setPilaConcentradaEliminarAbierta] = useState(null);
+  const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes;
 
   const {
     availableTiles,
@@ -31,7 +31,8 @@ export default function ScenarioPanels() {
     pilasConcentrada,
     addNewPilaConcentrada,
     activarPilaConcentrada,
-    removeSingleTileFromPilaConcentrada,
+    removeTileFromPilaConcentrada,
+    notifyRompenodo,
     codigosPilas,
     handleCodigoChange,
     placeTilesFromPilaConcentradaToTrack,
@@ -64,7 +65,8 @@ export default function ScenarioPanels() {
 
   return (
                 <div className="grid gap-4 mt-4 xl:grid-cols-2">
-                  {/* Sub-bloque: Pilas */}
+                  {/* Sub-bloque: Pilas del juego base */}
+                  {showCoreContent && (
                   <div className={`track-surface-raised min-w-0 p-3 shadow-md ${showCoreContent ? '' : 'xl:col-span-2'}`}>
                     <div className="flex items-center gap-2 mb-2 justify-center">
                       <GiCardDraw className="text-purple-500 text-xl" />
@@ -216,66 +218,18 @@ export default function ScenarioPanels() {
                                     </button>
                                     <button
                                       className="state-btn-remove text-white px-3 py-1 rounded text-xs"
-                                      aria-expanded={pilaConcentradaEliminarAbierta === pila.id}
-                                      onClick={() =>
-                                        setPilaConcentradaEliminarAbierta(prev =>
-                                          prev === pila.id ? null : pila.id
-                                        )
-                                      }
+                                      onClick={() => {
+                                        const removed = removeTileFromPilaConcentrada(pila.id);
+                                        if (Array.isArray(removed) && removed.length > 0) {
+                                          removed.forEach((tile) => showTileToast(tile, 'retira'));
+                                          notifyRompenodo();
+                                        } else {
+                                          alert(t.emptyPila);
+                                        }
+                                      }}
                                     >
-                                      {t.devolverNodo}
+                                      {t.rompenodo || 'Rompenodo'}
                                     </button>
-                                    
-                                    {pilaConcentradaEliminarAbierta === pila.id && (
-                                      <div className="mt-1 p-2 rounded bg-slate-900 border border-red-700 flex flex-wrap justify-center gap-1">
-                                        <div className="w-full text-[11px] text-slate-300 mb-1">
-                                          {t.eliminarPorColor || 'Eliminar una runa:'}
-                                        </div>
-                                    
-                                        {['naranja', 'verde', 'azul', 'rojo', 'gris']
-                                          .filter(color =>
-                                            pila.tiles.some(tile => tile.runa === color)
-                                          )
-                                          .map(color => (
-                                            <button
-                                              key={color}
-                                              className={`${colorMap[color]} text-white px-2 py-1 rounded text-xs`}
-                                              onClick={() => {
-                                                const removed =
-                                                  removeSingleTileFromPilaConcentrada(pila.id, color);
-                                    
-                                                if (removed) {
-                                                  showTileToast(removed, 'retira');
-                                                } else {
-                                                  alert(t.emptyPila);
-                                                }
-                                    
-                                                setPilaConcentradaEliminarAbierta(null);
-                                              }}
-                                            >
-                                              {t.colores?.[color] || color}
-                                            </button>
-                                          ))}
-                                    
-                                        <button
-                                          className="bg-gradient-to-r from-blue-500 via-yellow-400 to-red-500 text-white px-2 py-1 rounded text-xs"
-                                          onClick={() => {
-                                            const removed =
-                                              removeSingleTileFromPilaConcentrada(pila.id);
-                                    
-                                            if (removed) {
-                                              showTileToast(removed, 'retira');
-                                            } else {
-                                              alert(t.emptyPila);
-                                            }
-                                    
-                                            setPilaConcentradaEliminarAbierta(null);
-                                          }}
-                                        >
-                                          🎲 {t.removeRandom || 'Aleatoria'}
-                                        </button>
-                                      </div>
-                                    )}
                                     {/* Botón combate estrecho */}
                                     <button
                                       className="bg-red-900 hover:bg-red-800 text-white px-3 py-1 rounded text-xs relative group"
@@ -302,6 +256,8 @@ export default function ScenarioPanels() {
                       </div>
                     </div>
                   </div>
+                  )}
+                  {showAwakeningsContent && <NodosOscuridadPanel />}
                 
                   {/* Bloque 2: Control de áreas y puntos de aparición */}
                   {showCoreContent && (

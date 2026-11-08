@@ -2800,6 +2800,22 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 150.ª tanda — Nodos de Oscuridad y Rompenodo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Campañas** | Las pilas de runas base solo se muestran en la caja base; Despertar usa Nodos de Oscuridad con estado propio | `ScenarioPanels`, `NodosOscuridadPanel`, `GameContext` |
+| **Rompenodo** | Devuelve `6 − héroes` runas, muestra el aviso de Concentración/Purificación y lo guarda en el historial | `ScenarioPanels`, `PilaStatusPanel`, `GameContext` |
+| **Track** | Las pilas del lateral dejan solo Añadir Runa y Rompenodo | `PilaStatusPanel` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

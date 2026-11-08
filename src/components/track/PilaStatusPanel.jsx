@@ -1,5 +1,6 @@
 import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useExpansions } from '@/context/ExpansionContext';
 
 const COLOR_BRICKS = {
   naranja: 'bg-orange-500 border-orange-300',
@@ -15,25 +16,34 @@ export default function PilaStatusPanel() {
   const {
     pilas,
     pilasConcentrada,
+    nodosOscuridad,
     activarPila,
     activarPilaConcentrada,
+    activarNodoOscuridad,
     addTileToPila,
     addTileToPilaConcentrada,
+    addTileToNodoOscuridad,
     removeSingleTileFromPila,
     removeSingleTileFromPilaConcentrada,
+    removeSingleTileFromNodoOscuridad,
     removeTileFromPila,
     removeTileFromPilaConcentrada,
-    placeTilesFromPilaToTrack,
-    placeTilesFromPilaConcentradaToTrack,
+    removeTileFromNodoOscuridad,
     codigosPilas,
     handleCodigoChange,
     showTileToast,
+    notifyRompenodo,
   } = useGame();
+  const { mainBox, previewOtherBoxes } = useExpansions();
   const { translations } = useLanguage();
   const t = translations.trackerInit || {};
+  const showCoreContent = mainBox === 'core' || previewOtherBoxes;
+  const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes;
+
   const entries = [
-    ...pilas.map((pila) => ({ ...pila, kind: 'pila' })),
-    ...pilasConcentrada.map((pila) => ({ ...pila, kind: 'nodo' })),
+    ...(showCoreContent ? pilas.map((pila) => ({ ...pila, kind: 'pila' })) : []),
+    ...(showCoreContent ? pilasConcentrada.map((pila) => ({ ...pila, kind: 'niebla' })) : []),
+    ...(showAwakeningsContent ? nodosOscuridad.map((pila) => ({ ...pila, kind: 'oscuridad' })) : []),
   ];
   if (!entries.length) return null;
 
@@ -44,30 +54,47 @@ export default function PilaStatusPanel() {
       </h3>
       <div className="grid grid-cols-2 gap-1.5">
         {entries.map((pila) => {
-          const isNodo = pila.kind === 'nodo';
           const tiles = Array.isArray(pila.tiles) ? pila.tiles : [];
           const sortedTiles = [...tiles].sort((a, b) => (
             (COLOR_ORDER[a.runa] ?? 9) - (COLOR_ORDER[b.runa] ?? 9)
           ));
           const isActive = pila.estado !== 'reserva';
+          const label = pila.kind === 'pila'
+            ? (t.pila || 'Pila')
+            : pila.kind === 'niebla'
+              ? (t.nodo || 'Nodo')
+              : (t.nodoOscuridad || 'Nodo de Oscuridad');
+
+          const activate = () => {
+            if (pila.kind === 'pila') activarPila(pila.id);
+            else if (pila.kind === 'niebla') activarPilaConcentrada(pila.id);
+            else activarNodoOscuridad(pila.id);
+          };
+          const addTile = () => {
+            if (pila.kind === 'pila') addTileToPila(pila.id);
+            else if (pila.kind === 'niebla') addTileToPilaConcentrada(pila.id);
+            else addTileToNodoOscuridad(pila.id);
+          };
           const removeOne = (tile) => {
-            const removed = isNodo
-              ? removeSingleTileFromPilaConcentrada(pila.id, tile.runa)
-              : removeSingleTileFromPila(pila.id, tile.runa);
+            const removed = pila.kind === 'pila'
+              ? removeSingleTileFromPila(pila.id, tile.runa)
+              : pila.kind === 'niebla'
+                ? removeSingleTileFromPilaConcentrada(pila.id, tile.runa)
+                : removeSingleTileFromNodoOscuridad(pila.id, tile.runa);
             if (removed) showTileToast(removed, 'retira');
           };
-          const removeAll = () => {
-            const removed = isNodo
-              ? removeTileFromPilaConcentrada(pila.id)
-              : removeTileFromPila(pila.id);
-            if (Array.isArray(removed)) removed.forEach((tile) => showTileToast(tile, 'retira'));
-            else if (removed) showTileToast(removed, 'retira');
-          };
-          const combat = () => {
-            const placed = isNodo
-              ? placeTilesFromPilaConcentradaToTrack(pila.id)
-              : placeTilesFromPilaToTrack(pila.id);
-            if (!placed || placed.length === 0) alert(t.emptyPila || 'Pila vacía');
+          const romper = () => {
+            const removed = pila.kind === 'pila'
+              ? removeTileFromPila(pila.id)
+              : pila.kind === 'niebla'
+                ? removeTileFromPilaConcentrada(pila.id)
+                : removeTileFromNodoOscuridad(pila.id);
+            if (Array.isArray(removed) && removed.length > 0) {
+              removed.forEach((tile) => showTileToast(tile, 'retira'));
+              notifyRompenodo();
+            } else {
+              alert(t.emptyPila || 'Pila vacía');
+            }
           };
 
           return (
@@ -75,16 +102,16 @@ export default function PilaStatusPanel() {
               {!isActive ? (
                 <button
                   type="button"
-                  onClick={() => (isNodo ? activarPilaConcentrada(pila.id) : activarPila(pila.id))}
+                  onClick={activate}
                   className="w-full rounded bg-emerald-700 px-1.5 py-1 text-[0.55rem] font-bold text-white"
                 >
-                  {isNodo ? (t.activaNodo || 'Activar') : (t.activaPila || 'Activar')} {pila.numPila}
+                  {t.activar || 'Activar'} {label} {pila.numPila}
                 </button>
               ) : (
                 <>
                   <div className="flex items-center justify-between gap-1">
                     <span className="text-[0.6rem] font-bold text-slate-100">
-                      {isNodo ? (t.nodo || 'Nodo') : (t.pila || 'Pila')} {pila.numPila}
+                      {label} {pila.numPila}
                     </span>
                     <span className="rounded bg-emerald-800 px-1 text-[0.5rem] font-bold text-emerald-100">
                       {pila.estado}
@@ -122,24 +149,17 @@ export default function PilaStatusPanel() {
                   <div className="mt-1 flex flex-wrap gap-1">
                     <button
                       type="button"
-                      onClick={() => (isNodo ? addTileToPilaConcentrada(pila.id) : addTileToPila(pila.id))}
+                      onClick={addTile}
                       className="rounded bg-sky-700 px-1.5 py-0.5 text-[0.5rem] font-bold text-white"
                     >
                       + {t.addRunaToPila || 'Runa'}
                     </button>
                     <button
                       type="button"
-                      onClick={removeAll}
+                      onClick={romper}
                       className="rounded bg-slate-700 px-1.5 py-0.5 text-[0.5rem] font-bold text-white"
                     >
-                      {t.devolver || 'Devolver'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={combat}
-                      className="rounded bg-red-900 px-1.5 py-0.5 text-[0.5rem] font-bold text-white"
-                    >
-                      {t.combateEstrecho || 'Combate'}
+                      {t.rompenodo || 'Rompenodo'}
                     </button>
                   </div>
                 </>

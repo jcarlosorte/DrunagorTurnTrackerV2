@@ -42,7 +42,7 @@ test('añade una carta de runa y una de incursión de Despertar', async ({ page 
 
   await page.getByRole('button', { name: 'Nodos', exact: true }).click();
   await expect(page.getByText('Fichas de Generación')).toBeVisible();
-  await expect(page.getByText(/Pila/i).first()).toBeVisible();
+  await expect(page.getByText('Nodos de Oscuridad')).toBeVisible();
 
   const orangeGeneration = page.getByRole('button', { name: /^\+ Naranja/ });
   await orangeGeneration.click();

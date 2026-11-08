@@ -221,7 +221,7 @@ const InitTracker = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, pilas, pilasConcentrada, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, pilas, pilasConcentrada, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -3610,6 +3610,13 @@ const InitTracker = () => {
       turn: turnIndex,
     });
   };
+
+  useEffect(() => {
+    if (!rompenodoNotice) return;
+    showScenarioToast(rompenodoNotice.message || rompenodoNotice);
+    clearRompenodoNotice();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rompenodoNotice, clearRompenodoNotice]);
 
   // Alturas de carta y separación desde la barra central (ver trackLayout.js).
 

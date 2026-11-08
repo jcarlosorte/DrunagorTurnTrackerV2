@@ -27,8 +27,10 @@ export const GameProvider = ({ children }) => {
   const [pilaDeRunas, setPilaDeRunas] = useState(() => persisted.pilaDeRunas || []);
   const [pilas, setPilas] = useState(() => persisted.pilas || []);
   const [pilasConcentrada, setPilasConcentrada] = useState(() => persisted.pilasConcentrada || []);
+  const [nodosOscuridad, setNodosOscuridad] = useState(() => persisted.nodosOscuridad || []);
   const [contadorPilas, setContadorPilas] = useState(() => persisted.contadorPilas || 1);
   const [contadorPilasConcentradas, setContadorPilasConcentradas] = useState(() => persisted.contadorPilasConcentradas || 1);
+  const [contadorNodosOscuridad, setContadorNodosOscuridad] = useState(() => persisted.contadorNodosOscuridad || 1);
   const [availableTiles, setAvailableTiles] = useState(() => persisted.availableTiles || createInitialTiles());
   const [usedTiles, setUsedTiles] = useState(() => persisted.usedTiles || []);
   const [scenarioMonster, setScenarioMonster] = useState(() => persisted.scenarioMonster || null);
@@ -46,6 +48,7 @@ export const GameProvider = ({ children }) => {
   const [campamento, setCampamento] = useState(() => normalizeCamp(persisted.campamento));
   const [tileWarning, setTileWarning] = useState(null);
   const [tileToasts, setTileToasts] = useState([]);
+  const [rompenodoNotice, setRompenodoNotice] = useState(null);
 
   const { translations } = useLanguage();
   const ti = translations.trackerInit || {};
@@ -61,8 +64,10 @@ export const GameProvider = ({ children }) => {
       pilaDeRunas,
       pilas,
       pilasConcentrada,
+      nodosOscuridad,
       contadorPilas,
       contadorPilasConcentradas,
+      contadorNodosOscuridad,
       availableTiles,
       usedTiles,
       scenarioMonster,
@@ -79,7 +84,7 @@ export const GameProvider = ({ children }) => {
     });
   }, [
     runes, discardedTiles, pilaDeRunas, pilas, pilasConcentrada,
-    contadorPilas, contadorPilasConcentradas, availableTiles, usedTiles,
+    nodosOscuridad, contadorPilas, contadorPilasConcentradas, contadorNodosOscuridad, availableTiles, usedTiles,
     scenarioMonster, spawnPoints, generationPoints, magicCannons, controlPoints, runeKeys, rescue,
     aldeanoDeck, errantesDeck, codigosPilas, campamento,
   ]);
@@ -211,8 +216,10 @@ export const GameProvider = ({ children }) => {
     });
     setPilas([]);
     setPilasConcentrada([]);
+    setNodosOscuridad([]);
     setContadorPilas(1);
     setContadorPilasConcentradas(1);
+    setContadorNodosOscuridad(1);
     setCodigosPilas({});
     setTileToasts([]);
     setTileWarning(null);
@@ -616,6 +623,138 @@ export const GameProvider = ({ children }) => {
   };
 
 
+  // Nodos de Oscuridad: misma mecánica que las Nieblas del juego base, pero
+  // con estado propio para la campaña Despertar.
+  const addNewNodoOscuridad = () => {
+    const colores = shuffleArray(['naranja', 'verde', 'azul', 'rojo', 'gris']);
+    const tilesSeleccionadas = [];
+    let updatedRunes = { ...runes };
+    let updatedUsedTiles = [...usedTiles];
+
+    colores.forEach((color) => {
+      if (updatedRunes[color] > 0) {
+        const index = updatedUsedTiles.findIndex((tile) => tile.runa === color);
+        if (index !== -1) {
+          tilesSeleccionadas.push(updatedUsedTiles[index]);
+          updatedUsedTiles.splice(index, 1);
+          updatedRunes[color] -= 1;
+        }
+      }
+    });
+
+    if (tilesSeleccionadas.length === 0) {
+      alert(ti.noRunasColocadas || 'No hay runas colocadas para formar la pila');
+      return;
+    }
+
+    setUsedTiles(updatedUsedTiles);
+    setRunes(updatedRunes);
+    const nuevoNodo = {
+      id: createId(),
+      tiles: tilesSeleccionadas,
+      estado: 'reserva',
+      numPila: contadorNodosOscuridad,
+    };
+    setNodosOscuridad((prev) => [...prev, nuevoNodo]);
+    setContadorNodosOscuridad((prev) => prev + 1);
+    return nuevoNodo;
+  };
+
+  const removeTileFromNodoOscuridad = (nodoId) => {
+    const nodoActual = nodosOscuridad.find((nodo) => nodo.id === nodoId);
+    if (!nodoActual || nodoActual.tiles.length === 0) return null;
+    const numEliminar = Math.max(0, 6 - numHeroes);
+    if (numEliminar === 0) return null;
+
+    const tilesAEliminar = nodoActual.tiles.slice(0, numEliminar);
+    const resto = nodoActual.tiles.slice(numEliminar);
+    setAvailableTiles((prev) => [...prev, ...tilesAEliminar]);
+    setNodosOscuridad((prev) => prev
+      .map((nodo) => {
+        if (nodo.id !== nodoId) return nodo;
+        return resto.length === 0 ? null : { ...nodo, tiles: resto };
+      })
+      .filter(Boolean));
+    return tilesAEliminar;
+  };
+
+  const removeSingleTileFromNodoOscuridad = (nodoId, color = null) => {
+    const nodoActual = nodosOscuridad.find((nodo) => nodo.id === nodoId);
+    if (!nodoActual || !Array.isArray(nodoActual.tiles) || nodoActual.tiles.length === 0) return null;
+    const candidates = nodoActual.tiles
+      .map((tile, index) => ({ tile, index }))
+      .filter(({ tile }) => !color || tile.runa === color);
+    if (candidates.length === 0) return null;
+    const selected = candidates[Math.floor(Math.random() * candidates.length)];
+    const tilesRestantes = nodoActual.tiles.filter((_, index) => index !== selected.index);
+    setAvailableTiles((prev) => [...prev, selected.tile]);
+    setNodosOscuridad((prev) => prev
+      .map((nodo) => (
+        nodo.id !== nodoId
+          ? nodo
+          : tilesRestantes.length === 0
+            ? null
+            : { ...nodo, tiles: tilesRestantes }
+      ))
+      .filter(Boolean));
+    return selected.tile;
+  };
+
+  const placeTilesFromNodoOscuridadToTrack = (nodoId) => {
+    const nodoActual = nodosOscuridad.find((nodo) => nodo.id === nodoId);
+    if (!nodoActual || !Array.isArray(nodoActual.tiles) || nodoActual.tiles.length === 0) return [];
+    const tilesRestantes = [...nodoActual.tiles];
+    setUsedTiles((prev) => [...prev, ...tilesRestantes]);
+    const increments = tilesRestantes.reduce((acc, tile) => {
+      acc[tile.runa] = (acc[tile.runa] || 0) + 1;
+      return acc;
+    }, {});
+    if (Object.keys(increments).length > 0) {
+      setRunes((prev) => {
+        const next = { ...prev };
+        Object.entries(increments).forEach(([color, amount]) => {
+          next[color] = (next[color] || 0) + amount;
+        });
+        return next;
+      });
+    }
+    tilesRestantes.forEach((tile) => showTileToast(tile, 'add'));
+    setNodosOscuridad((prev) => prev.filter((nodo) => nodo.id !== nodoId));
+    return tilesRestantes;
+  };
+
+  const activarNodoOscuridad = (id) => {
+    setNodosOscuridad((prev) => prev.map((nodo) => (
+      nodo.id === id ? { ...nodo, estado: 'activa' } : nodo
+    )));
+  };
+
+  const addTileToNodoOscuridad = (nodoId) => {
+    const colores = shuffleArray(['naranja', 'verde', 'azul', 'rojo', 'gris']);
+    let nuevaTile = null;
+    for (const color of colores) {
+      nuevaTile = deleteAvailableTileByColor(color);
+      if (nuevaTile) break;
+    }
+    if (!nuevaTile) {
+      alert(ti.aviso);
+      return;
+    }
+    setNodosOscuridad((prev) => prev.map((nodo) => (
+      nodo.id === nodoId ? { ...nodo, tiles: [...nodo.tiles, nuevaTile] } : nodo
+    )));
+    showTileToast(nuevaTile, 'add');
+  };
+
+  const notifyRompenodo = () => {
+    setRompenodoNotice({
+      id: createId(),
+      message: ti.rompenodoAviso || 'El Héroe gana CONCENTRACIÓN 1 O PURIFICACIÓN 1',
+    });
+  };
+
+  const clearRompenodoNotice = () => setRompenodoNotice(null);
+
   const deleteAvailableTileByColor = (color) => {
     const candidates = availableTiles.filter(t => t.runa === color);
     if (candidates.length === 0) return null;
@@ -871,6 +1010,9 @@ export const GameProvider = ({ children }) => {
         removeTileFromPila, addRunesCascade, placeTilesFromPilaToTrack, addTileToPila, addTileToPilaConcentrada,
         removeSingleTileFromPila,
         pilasConcentrada, setPilasConcentrada, addNewPilaConcentrada, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack,
+        nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, addTileToNodoOscuridad,
+        removeTileFromNodoOscuridad, removeSingleTileFromNodoOscuridad, placeTilesFromNodoOscuridadToTrack,
+        rompenodoNotice, notifyRompenodo, clearRompenodoNotice,
         resetTiles,
         resetGameState: resetTiles,
         tileWarning, 
