@@ -2702,6 +2702,20 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 143.ª tanda — Generación y cañones en paralelo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Track** | Las barras de Fichas de Generación y Cañones Mágicos se muestran una al lado de la otra encima del track | `InitTracker` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
