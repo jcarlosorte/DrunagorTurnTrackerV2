@@ -2946,6 +2946,21 @@ Unit       203 tests
 E2E        65/65
 ```
 
+### 160.ª tanda — Carga de cañones de Batalla Naval
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Batalla Naval B** | Carga los cañones coincidentes; si ya están cargados ofrece elegir otro descargado; la runa azul elige un cañón descargado | `navalCannons`, `CannonLoadDialog`, `InitTracker` |
+| **Fallos** | Se avisa por cada runa que no puede cargar ningún cañón, incluida la azul | `InitTracker` |
+| **Pruebas** | 208 unitarios · 65 E2E | tests |
+
+**Medición**
+
+```text
+Unit       208 tests
+E2E        65/65
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

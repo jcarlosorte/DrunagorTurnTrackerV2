@@ -51,6 +51,8 @@ import MagicCannonsBar from '@/components/track/MagicCannonsBar';
 import PilaStatusPanel from '@/components/track/PilaStatusPanel';
 import SpecialEventBar from '@/components/track/SpecialEventBar';
 import EventCardModal from '@/components/track/EventCardModal';
+import CannonLoadDialog from '@/components/track/CannonLoadDialog';
+import { planNavalCannonLoads } from '@/utils/navalCannons';
 import CommanderCardModal from '@/components/CommanderCardModal';
 import ConfirmDialog from '@/components/ConfirmDialog';
 
@@ -229,6 +231,7 @@ const InitTracker = () => {
   const [pendingResolutionCard, setPendingResolutionCard] = useState(null);
   const [pendingResolutionQuestion, setPendingResolutionQuestion] = useState(false);
   const [incursionPlacement, setIncursionPlacement] = useState(null);
+  const [navalCannonQueue, setNavalCannonQueue] = useState([]);
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
@@ -626,6 +629,23 @@ const InitTracker = () => {
 
   const selectIncursionCannon = (cannonId) => {
     setIncursionPlacement((current) => (current ? { ...current, cannonId } : current));
+  };
+
+  const selectNavalCannon = (cannonId) => {
+    const cannon = magicCannons.find((entry) => entry.id === cannonId);
+    setMagicCannonLoaded(cannonId, true);
+    if (cannon) {
+      showScenarioToast(`${ti.loadedCannon || 'Cañón cargado'}: ${ti.colores?.[cannon.color] || cannon.color}`);
+    }
+    setNavalCannonQueue((prev) => prev.slice(1));
+  };
+
+  const skipNavalCannon = () => {
+    const current = navalCannonQueue[0];
+    if (current) {
+      showScenarioToast(`${ti.noCannonLoad || 'No se ha cargado ningún cañón para la runa'} ${ti.colores?.[current.rune] || current.rune}.`);
+    }
+    setNavalCannonQueue((prev) => prev.slice(1));
   };
 
   const spawnBossEnemies = (maxMonstruos, enemiesId, enemiesCat) => {
@@ -2998,19 +3018,27 @@ const InitTracker = () => {
                   }
                 }
                 if (currentRune.id === 'runa_despertar_naval' && isCaraB && tiles?.length) {
-                  const loadedColors = [];
-                  tiles.forEach((tile) => {
-                    const cannon = magicCannons.find((entry) => entry.color === tile.runa);
-                    if (cannon) {
-                      setMagicCannonLoaded(cannon.id, true);
-                      loadedColors.push(ti.colores?.[tile.runa] || tile.runa);
+                  const plan = planNavalCannonLoads(magicCannons, tiles);
+                  plan.autoLoadedIds.forEach((id) => setMagicCannonLoaded(id, true));
+
+                  const loadedColors = plan.autoLoadedIds
+                    .map((id) => magicCannons.find((cannon) => cannon.id === id)?.color)
+                    .filter(Boolean);
+                  if (loadedColors.length > 0) {
+                    showScenarioToast(`Carga de cañones mágicos: ${loadedColors.map((color) => ti.colores?.[color] || color).join(', ')}`);
+                  }
+
+                  plan.failures.forEach(({ rune, reason }) => {
+                    const color = ti.colores?.[rune] || rune;
+                    if (reason === 'no-cannon') {
+                      showScenarioToast(`${ti.noMagicCannon || 'No hay Cañón Mágico de color'} ${color}.`);
                     } else {
-                      showScenarioToast(ti.noMagicCannon || `No hay Cañón Mágico de color ${ti.colores?.[tile.runa] || tile.runa}.`);
+                      showScenarioToast(`${ti.noUnloadedCannon || 'No hay cañones descargados disponibles para la runa'} ${color}.`);
                     }
                   });
-                  if (loadedColors.length > 0) {
-                    const message = `Carga de cañones mágicos: ${loadedColors.join(', ')}`;
-                    showScenarioToast(message);
+
+                  if (plan.pending.length > 0) {
+                    setNavalCannonQueue(plan.pending);
                   }
                 }
               }
@@ -4524,6 +4552,23 @@ const InitTracker = () => {
           onClose={() => setDrawnEventCard(null)}
           onSummon={handleSummonErradenMonster}
           summonLabel={{ invoke: ti.invokeEventMonster || 'Invocar', close: ti.close || 'Cerrar' }}
+        />
+        <CannonLoadDialog
+          open={navalCannonQueue.length > 0}
+          runeColor={navalCannonQueue[0]?.rune}
+          reason={navalCannonQueue[0]?.reason}
+          options={magicCannons.filter((cannon) => !cannon.loaded)}
+          onSelect={selectNavalCannon}
+          onSkip={skipNavalCannon}
+          labels={{
+            title: ti.loadMagicCannon || 'Cargar cañón mágico',
+            rune: ti.rune || 'Runa',
+            colors: ti.colores,
+            bluePrompt: ti.blueCannonPrompt || 'La runa azul no tiene cañón propio. Elige un cañón descargado para cargarlo.',
+            loadedPrompt: ti.loadedCannonPrompt || 'El cañón de ese color ya está cargado. Elige otro cañón descargado o no cargues ninguno.',
+            none: ti.noCannonOptions || 'No hay cañones descargados disponibles.',
+            skip: ti.skipCannon || 'No cargar',
+          }}
         />
         {showPCModal && (
           <ModalCommanderPC
