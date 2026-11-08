@@ -2758,6 +2758,20 @@ Unit       193 tests
 E2E        64/64
 ```
 
+### 147.ª tanda — Nombre traducido en confirmaciones
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Incursiones** | La ventana de confirmación muestra el nombre del enemigo traducido, no el nombre interno | `InitTracker` |
+| **Pruebas** | 193 unitarios · 64 E2E | tests |
+
+**Medición**
+
+```text
+Unit       193 tests
+E2E        64/64
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

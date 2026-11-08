@@ -4383,7 +4383,7 @@ const InitTracker = () => {
         <ConfirmDialog
           open={Boolean(incursionPlacement)}
           title={ti.incursionPlacementTitle || 'Invocar monstruo'}
-          description={incursionPlacement ? `${ti.incursionConfirm || '¿Colocar'} ${incursionPlacement.target.nombre}? Quedan ${incursionPlacement.remaining} por resolver en ${ti.colores?.[incursionPlacement.color] || incursionPlacement.color}.` : ''}
+          description={incursionPlacement ? `${ti.incursionConfirm || '¿Colocar'} ${getEnemyName(incursionPlacement.target.id, incursionPlacement.target.color)}? Quedan ${incursionPlacement.remaining} por resolver en ${ti.colores?.[incursionPlacement.color] || incursionPlacement.color}.` : ''}
           confirmLabel={ti.incursionPlace || 'Colocar'}
           cancelLabel={ti.incursionSkip || 'No colocar'}
           onConfirm={confirmIncursionPlacement}
