@@ -3139,6 +3139,20 @@ Unit       212 tests
 E2E        70/70
 ```
 
+### 174.ª tanda — Restaurar visibilidad de avisos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Avisos** | Corregido el listener que impedía mostrar los avisos de `appNotify`; vuelven a verse y a registrarse | `AppDialogHost` |
+| **Pruebas** | 212 unitarios · 71 E2E, incluyendo aviso al crear un Nodo sin runas | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        71/71
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

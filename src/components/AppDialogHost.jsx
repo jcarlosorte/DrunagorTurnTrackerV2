@@ -30,17 +30,17 @@ export default function AppDialogHost({ onNotify }) {
         resolve: event.detail?.resolve,
       }]);
     };
-    const onNotify = (event) => {
+    const handleNotify = (event) => {
       onNotify?.(event.detail?.message || '');
     };
 
     window.addEventListener('dsh:app-confirm', onConfirm);
     window.addEventListener('dsh:app-prompt', onPrompt);
-    window.addEventListener('dsh:app-notify', onNotify);
+    window.addEventListener('dsh:app-notify', handleNotify);
     return () => {
       window.removeEventListener('dsh:app-confirm', onConfirm);
       window.removeEventListener('dsh:app-prompt', onPrompt);
-      window.removeEventListener('dsh:app-notify', onNotify);
+      window.removeEventListener('dsh:app-notify', handleNotify);
     };
   }, [onNotify]);
 
