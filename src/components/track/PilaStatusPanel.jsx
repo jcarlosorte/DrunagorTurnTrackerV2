@@ -2,6 +2,7 @@ import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
+import useRompenodo from '@/hooks/useRompenodo';
 
 const COLOR_BRICKS = {
   naranja: 'bg-orange-500 border-orange-300',
@@ -27,14 +28,11 @@ export default function PilaStatusPanel() {
     removeSingleTileFromPila,
     removeSingleTileFromPilaConcentrada,
     removeSingleTileFromNodoOscuridad,
-    removeTileFromPila,
-    removeTileFromPilaConcentrada,
-    removeTileFromNodoOscuridad,
     codigosPilas,
     handleCodigoChange,
     showTileToast,
-    notifyRompenodo,
   } = useGame();
+  const { openRompenodo, rompenodoDialog } = useRompenodo();
   const { mainBox, previewOtherBoxes } = useExpansions();
   const { translations } = useLanguage();
   const t = translations.trackerInit || {};
@@ -87,19 +85,7 @@ export default function PilaStatusPanel() {
                 : removeSingleTileFromNodoOscuridad(pila.id, tile.runa);
             if (removed) showTileToast(removed, 'retira');
           };
-          const romper = () => {
-            const removed = pila.kind === 'pila'
-              ? removeTileFromPila(pila.id)
-              : pila.kind === 'niebla'
-                ? removeTileFromPilaConcentrada(pila.id)
-                : removeTileFromNodoOscuridad(pila.id);
-            if (Array.isArray(removed) && removed.length > 0) {
-              removed.forEach((tile) => showTileToast(tile, 'retira'));
-              notifyRompenodo();
-            } else {
-              alert(t.emptyPila || 'Pila vacía');
-            }
-          };
+          const romper = () => openRompenodo(pila.kind, pila);
 
           return (
             <div key={`${pila.kind}-${pila.id}`} className="rounded-lg border border-slate-700 bg-slate-950/60 p-1.5">
@@ -172,6 +158,7 @@ export default function PilaStatusPanel() {
           );
         })}
       </div>
+      {rompenodoDialog}
     </section>
   );
 }

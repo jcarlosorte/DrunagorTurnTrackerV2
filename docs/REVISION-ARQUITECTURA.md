@@ -3153,6 +3153,21 @@ Unit       212 tests
 E2E        71/71
 ```
 
+### 175.ª tanda — Elegir runa al aplicar Rompenodo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Rompenodo** | Diálogo para elegir el color de cada runa retirada o dejar que sea aleatoria, manteniendo el total de `6 − héroes` | `useRompenodo`, `RompenodoDialog` |
+| **Track y menú** | El diálogo está disponible tanto en el panel lateral del track como en el menú Nodos | `PilaStatusPanel`, `ScenarioPanels`, `NodosOscuridadPanel` |
+| **Pruebas** | 212 unitarios · 72 E2E | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        72/72
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

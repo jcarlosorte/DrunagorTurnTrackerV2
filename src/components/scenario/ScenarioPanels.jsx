@@ -5,6 +5,8 @@ import { useExpansions } from '@/context/ExpansionContext';
 import { OTROS } from '@/data/estadosAlterados';
 import NodosOscuridadPanel from '@/components/scenario/NodosOscuridadPanel';
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
+import { appNotify } from '@/utils/appDialogs';
+import useRompenodo from '@/hooks/useRompenodo';
 
 /**
  * Paneles de escenario: pilas de runas, pila concentrada y control de áreas
@@ -19,6 +21,7 @@ export default function ScenarioPanels() {
   const { mainBox, previewOtherBoxes } = useExpansions();
   const showCoreContent = mainBox === 'core' || previewOtherBoxes;
   const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes;
+  const { openRompenodo, rompenodoDialog } = useRompenodo();
 
   const {
     availableTiles,
@@ -32,8 +35,6 @@ export default function ScenarioPanels() {
     pilasConcentrada,
     addNewPilaConcentrada,
     activarPilaConcentrada,
-    removeTileFromPilaConcentrada,
-    notifyRompenodo,
     codigosPilas,
     handleCodigoChange,
     placeTilesFromPilaConcentradaToTrack,
@@ -135,7 +136,7 @@ export default function ScenarioPanels() {
                                         if (tilesRemoved && tilesRemoved.length > 0) {
                                           tilesRemoved.forEach(tile => showTileToast(tile, 'retira'));
                                         } else {
-                                          alert(t.emptyPila);
+                                          appNotify(t.emptyPila);
                                         }
                                       }}
                                     >
@@ -147,7 +148,7 @@ export default function ScenarioPanels() {
                                       onClick={() => {
                                         const tiles = placeTilesFromPilaToTrack(pila.id);
                                         if (!tiles || tiles.length === 0) {
-                                          alert(t.emptyPila);
+                                          appNotify(t.emptyPila);
                                           return;
                                         }
                                       }}
@@ -219,15 +220,7 @@ export default function ScenarioPanels() {
                                     </button>
                                     <button
                                       className="state-btn-remove text-white px-3 py-1 rounded text-xs"
-                                      onClick={() => {
-                                        const removed = removeTileFromPilaConcentrada(pila.id);
-                                        if (Array.isArray(removed) && removed.length > 0) {
-                                          removed.forEach((tile) => showTileToast(tile, 'retira'));
-                                          notifyRompenodo();
-                                        } else {
-                                          alert(t.emptyPila);
-                                        }
-                                      }}
+                                      onClick={() => openRompenodo('niebla', pila)}
                                     >
                                       {t.rompenodo || 'Rompenodo'}
                                     </button>
@@ -237,7 +230,7 @@ export default function ScenarioPanels() {
                                       onClick={() => {
                                         const tiles = placeTilesFromPilaConcentradaToTrack(pila.id);
                                         if (!tiles || tiles.length === 0) {
-                                          alert(t.emptyPila);
+                                          appNotify(t.emptyPila);
                                           return;
                                         }
                                       }}
@@ -495,6 +488,7 @@ export default function ScenarioPanels() {
                   </div>
                   )}
                 {/* FIN BLOQUE */}
+                {rompenodoDialog}
                 </div>
   );
 }

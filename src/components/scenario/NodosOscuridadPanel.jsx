@@ -1,6 +1,7 @@
 import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
+import useRompenodo from '@/hooks/useRompenodo';
 
 /**
  * Nodos de Oscuridad (Despertar): misma mecánica que las Nieblas del juego
@@ -12,25 +13,13 @@ export default function NodosOscuridadPanel() {
     addNewNodoOscuridad,
     activarNodoOscuridad,
     addTileToNodoOscuridad,
-    removeTileFromNodoOscuridad,
     placeTilesFromNodoOscuridadToTrack,
     codigosPilas,
     handleCodigoChange,
-    showTileToast,
-    notifyRompenodo,
   } = useGame();
+  const { openRompenodo, rompenodoDialog } = useRompenodo();
   const { translations } = useLanguage();
   const t = translations.trackerInit || {};
-
-  const romperNodo = (nodo) => {
-    const removed = removeTileFromNodoOscuridad(nodo.id);
-    if (!Array.isArray(removed) || removed.length === 0) {
-      alert(t.emptyPila || 'Pila vacía');
-      return;
-    }
-    removed.forEach((tile) => showTileToast(tile, 'retira'));
-    notifyRompenodo();
-  };
 
   return (
     <div className="track-surface-raised min-w-0 p-3 shadow-md">
@@ -89,7 +78,7 @@ export default function NodosOscuridadPanel() {
                   <button
                     type="button"
                     className="state-btn-remove rounded px-3 py-1 text-xs text-white"
-                    onClick={() => romperNodo(nodo)}
+                    onClick={() => openRompenodo('oscuridad', nodo)}
                   >
                     {t.rompenodo || 'Rompenodo'}
                   </button>
@@ -109,6 +98,7 @@ export default function NodosOscuridadPanel() {
           </div>
         ))}
       </div>
+      {rompenodoDialog}
     </div>
   );
 }
