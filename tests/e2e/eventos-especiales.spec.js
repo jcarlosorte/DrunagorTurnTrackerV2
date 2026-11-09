@@ -1,9 +1,14 @@
 import { expect, test } from '@playwright/test';
 import { buildSeed, openTracker, seedStorage } from './helpers';
 
+const awakeningsSeed = () => buildSeed({
+  mainBox: JSON.stringify('awakenings'),
+  expansions: JSON.stringify(['apocalypse_awakenings']),
+});
+
 test.describe('Sorpresa de Eradren', () => {
   test('añade el evento, roba una carta y la descarta', async ({ page }) => {
-    await seedStorage(page, buildSeed());
+    await seedStorage(page, awakeningsSeed());
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Eventos', exact: true }).click();
@@ -26,7 +31,7 @@ test.describe('Sorpresa de Eradren', () => {
   });
 
   test('las dos PS se añaden a la vez y aparecen juntas', async ({ page }) => {
-    await seedStorage(page, buildSeed());
+    await seedStorage(page, awakeningsSeed());
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Eventos', exact: true }).click();

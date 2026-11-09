@@ -161,7 +161,7 @@ Suite esperada antes de cada entrega:
 ```text
 lint      0 errores / 0 avisos
 unit      212 tests
-e2e       69 tests
+e2e       70 tests
 build     OK
 ```
 

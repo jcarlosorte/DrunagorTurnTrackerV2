@@ -1,9 +1,14 @@
 import { expect, test } from '@playwright/test';
 import { buildSeed, openTracker, seedStorage } from './helpers';
 
+const awakeningsSeed = () => buildSeed({
+  mainBox: JSON.stringify('awakenings'),
+  expansions: JSON.stringify(['apocalypse_awakenings']),
+});
+
 test.describe('Escenas', () => {
   test('Capítulo 4 activa todas las mecánicas de la escena', async ({ page }) => {
-    await seedStorage(page, buildSeed());
+    await seedStorage(page, awakeningsSeed());
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
@@ -36,9 +41,16 @@ test.describe('Escenas', () => {
     });
   });
 
+  test('Eventos y Escenas solo aparecen en Despertar', async ({ page }) => {
+    await seedStorage(page, buildSeed());
+    await openTracker(page);
+    await expect(page.getByRole('button', { name: 'Eventos', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Escenas', exact: true })).toHaveCount(0);
+  });
+
   test('Visión Clara se retira al atravesar Gris Abajo aunque esté vacío', async ({ page }) => {
     await seedStorage(page, {
-      ...buildSeed(),
+      ...awakeningsSeed(),
       gameState: JSON.stringify({ visionClaraActive: true }),
     });
     await openTracker(page);

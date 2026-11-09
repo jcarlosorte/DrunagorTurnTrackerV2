@@ -177,6 +177,12 @@ const TopMenu = ({
     if (!stillAvailable) setScenarioMonster(null);
   }, [mainBox, scenarioMonster, setScenarioMonster]);
 
+  useEffect(() => {
+    if (mainBox !== 'awakenings' && (activeMenu === 'events' || activeMenu === 'scenes')) {
+      setActiveMenu(null);
+    }
+  }, [mainBox, activeMenu]);
+
   const handleSelectUniqueCard = (card, timeToken = false) => {
     const tipo = card.tipo;
     // ✅ Comprobar si ya existe una carta de este tipo
@@ -360,8 +366,10 @@ const TopMenu = ({
               { id: 'nodes', icon: RuneStackIcon, label: t.nodesMenu || 'Nodos', tone: 'cyan' },
               { id: 'scenario', icon: GiVillage, label: t.scenarioMenu || 'Escenario', tone: 'amber' },
               { id: 'companions', icon: GiPawPrint, label: t.companionsMenu || 'Compañeros', tone: 'amber' },
-              { id: 'events', icon: SpecialEventIcon, label: t.eventsMenu || 'Eventos', tone: 'amber' },
-              { id: 'scenes', icon: GiStoneTower, label: t.scenesMenu || 'Escenas', tone: 'amber' },
+              ...(mainBox === 'awakenings' ? [
+                { id: 'events', icon: SpecialEventIcon, label: t.eventsMenu || 'Eventos', tone: 'amber' },
+                { id: 'scenes', icon: GiStoneTower, label: t.scenesMenu || 'Escenas', tone: 'amber' },
+              ] : []),
             ].map(({ id, icon: Icon, label, tone }) => {
               const isActive = activeMenu === id;
               const activeTone = tone === 'sky'

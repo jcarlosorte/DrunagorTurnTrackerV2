@@ -3109,6 +3109,20 @@ Unit       212 tests
 E2E        69/69
 ```
 
+### 171.ª tanda — Eventos y Escenas solo en Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Menús** | Los iconos de Eventos y Escenas se ocultan en campañas sin contenido asociado; solo aparecen en Despertar | `TopMenu` |
+| **Pruebas** | 212 unitarios · 70 E2E, incluyendo visibilidad por campaña | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        70/70
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
