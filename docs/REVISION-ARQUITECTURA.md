@@ -3182,6 +3182,20 @@ Unit       212 tests
 E2E        72/72
 ```
 
+### 177.ª tanda — Voltear cartas desde la vista ampliada
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cartas de runa e incursión** | Botón **Voltear** en el pie de la vista ampliada para cambiar entre caras A y B | `RuneCard` |
+| **Pruebas** | 212 unitarios · 72 E2E, con volteo real desde la vista ampliada | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        72/72
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

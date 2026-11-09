@@ -23,6 +23,9 @@ test('añade una carta de runa y una de incursión de Despertar', async ({ page 
   await expect(dialog.getByText('Las runas robadas por esta carta no generan ninguna loseta de oscuridad.')).toBeVisible();
   await expect(dialog.getByText('Luego, voltea esta carta.')).toBeVisible();
   await expect(dialog.getByRole('button', { name: /Aplicar efecto/ })).toBeVisible();
+  await dialog.getByRole('button', { name: /Voltear/ }).click();
+  await expect(dialog.getByText('Roba 2 runas.')).toBeVisible();
+  await expect(dialog.getByText('Las runas robadas por esta carta no generan ninguna loseta de oscuridad.')).toBeVisible();
   await dialog.getByRole('button', { name: 'Cerrar' }).click();
 
   await page.getByRole('button', { name: 'Runas', exact: true }).click();

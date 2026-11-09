@@ -5,6 +5,10 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { useInitRunes } from '@/context/initRunesContext';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
+import { RUNAS } from '@/data/runas';
+import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
+import { INCURSION } from '@/data/incursion';
+import { INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import runeRed from '@/assets/runes/card.png';
 import runeIndigo from '@/assets/runes/card-indigo.webp';
 import runeBlue from '@/assets/runes/card-blue.webp';
@@ -34,7 +38,7 @@ const TONES = {
 export default function RuneCard({ rune, onRemove, flipped = false }) {
   const { translations } = useLanguage();
   const { trackerData } = useTracker();
-  const { toggleRuneEffect, setRuneEstadoCount } = useInitRunes();
+  const { toggleRuneEffect, setRuneEstadoCount, setPlacedRunes } = useInitRunes();
   const [expanded, setExpanded] = useState(false);
 
   const tipo = rune.tipo;
@@ -64,6 +68,21 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
   const setTiempo = (next) => {
     const max = tiempoConfig?.max || 4;
     setRuneEstadoCount(rune.uuid, 'TIEMPO', Math.max(0, Math.min(max, next)));
+  };
+
+  const canFlip = tipo === 'runa' || tipo === 'incursion';
+  const flipCard = () => {
+    const source = tipo === 'runa'
+      ? [...RUNAS, ...RUNAS_DESPERTAR]
+      : [...INCURSION, ...INCURSION_DESPERTAR];
+    const caraDestino = rune.cara === 'A' ? 'B' : 'A';
+    const nueva = source.find((card) => card.id === rune.id && card.cara === caraDestino);
+    if (!nueva) return;
+    setPlacedRunes(prev => prev.map(item => (
+      item.rune.uuid === rune.uuid
+        ? { ...item, rune: { ...item.rune, ...nueva, cara: caraDestino } }
+        : item
+    )));
   };
 
   const renderMechanics = () => {
@@ -209,7 +228,7 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
               )}
             </div>
 
-            <div className="grid grid-cols-3 items-center gap-2 border-t border-slate-700/80 px-5 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-700/80 px-5 py-3">
               <button
                 type="button"
                 onClick={() => {
@@ -220,20 +239,31 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
               >
                 {ti.eliminarRuna || 'Eliminar'}
               </button>
-              <button
-                type="button"
-                onClick={() => toggleRuneEffect(rune.uuid)}
-                className={`justify-self-center min-h-9 rounded-lg border border-slate-600 bg-slate-800 px-3 text-xs font-bold transition hover:bg-slate-700 ${tone.text}`}
-              >
-                {ti.applyEffect || 'Aplicar efecto'}: {applyEffect ? 'Sí' : 'No'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setExpanded(false)}
-                className="justify-self-end min-h-9 rounded-lg bg-emerald-600 px-4 text-xs font-bold text-white transition hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
-              >
-                Cerrar
-              </button>
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {canFlip && (
+                  <button
+                    type="button"
+                    onClick={flipCard}
+                    className="min-h-9 rounded-lg border border-purple-500/60 bg-purple-950/50 px-3 text-xs font-bold text-purple-100 transition hover:bg-purple-900/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300"
+                  >
+                    🔄 {ti.voltearCarta || 'Voltear'}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => toggleRuneEffect(rune.uuid)}
+                  className={`justify-self-center min-h-9 rounded-lg border border-slate-600 bg-slate-800 px-3 text-xs font-bold transition hover:bg-slate-700 ${tone.text}`}
+                >
+                  {ti.applyEffect || 'Aplicar efecto'}: {applyEffect ? 'Sí' : 'No'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExpanded(false)}
+                  className="justify-self-end min-h-9 rounded-lg bg-emerald-600 px-4 text-xs font-bold text-white transition hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
+                >
+                  Cerrar
+                </button>
+              </div>
             </div>
           </div>
         </div>,

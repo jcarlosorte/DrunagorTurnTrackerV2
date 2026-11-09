@@ -743,6 +743,7 @@
     "desactivaInvadidos": "Disable Invaded",
     "invasionDamage": "INVADED deals 4 damage to each hero because the number of Shadow Vampires has been exceeded",
     "applyEffect": "Apply effect",
+    "voltearCarta": "Flip",
     "resetRunes": "Reset Runes",
     "RuneRepeat": "A Rune Card of this type already exists.",
     "yaExiste": "There's already one such card in play. There can only be one.",
