@@ -9,6 +9,7 @@ import { createId } from '@/utils/id';
 import { appendGenerationPoint } from '@/utils/generationPoints';
 import { appNotify } from '@/utils/appDialogs';
 import { ERRADEN_CARDS, CORRUPT_SHIP_CARDS, SWAN_SHIP_CARDS } from '@/data/eventosEspeciales';
+import { createFlickeringBoarDeck, drawFlickeringBoarCard, emptyFlickeringBoarDeck } from '@/utils/flickeringBoarDeck';
 
 const GameContext = createContext();
 const defaultRunes = { rojo: 0, azul: 0, verde: 0, naranja: 0, gris: 0 };
@@ -61,6 +62,9 @@ export const GameProvider = ({ children }) => {
   const [swanShipEvent, setSwanShipEvent] = useState(() => (
     persisted.swanShipEvent || { active: false, deck: [], discarded: [] }
   ));
+  const [flickeringBoarDeck, setFlickeringBoarDeck] = useState(() => (
+    persisted.flickeringBoarDeck || emptyFlickeringBoarDeck()
+  ));
   const [visionClaraActive, setVisionClaraActive] = useState(Boolean(persisted.visionClaraActive));
   const [terribleCannons, setTerribleCannons] = useState(() => (
     persisted.terribleCannons || [
@@ -103,6 +107,7 @@ export const GameProvider = ({ children }) => {
       erradenEvent,
       corruptShipEvent,
       swanShipEvent,
+      flickeringBoarDeck,
       visionClaraActive,
       terribleCannons,
     });
@@ -111,7 +116,7 @@ export const GameProvider = ({ children }) => {
     nodosOscuridad, contadorPilas, contadorPilasConcentradas, contadorNodosOscuridad, availableTiles, usedTiles,
     scenarioMonster, spawnPoints, generationPoints, magicCannons, controlPoints, runeKeys, rescue,
     aldeanoDeck, errantesDeck, codigosPilas, campamento, erradenEvent,
-    corruptShipEvent, swanShipEvent, visionClaraActive, terribleCannons,
+    corruptShipEvent, swanShipEvent, flickeringBoarDeck, visionClaraActive, terribleCannons,
   ]);
 
   const handleCodigoChange = (pilaId, nuevoCodigo) => {
@@ -248,6 +253,7 @@ export const GameProvider = ({ children }) => {
     setErradenEvent({ active: false, deck: [], discarded: [] });
     setCorruptShipEvent({ active: false, deck: [], discarded: [] });
     setSwanShipEvent({ active: false, deck: [], discarded: [] });
+    setFlickeringBoarDeck(emptyFlickeringBoarDeck());
     setVisionClaraActive(false);
     setTerribleCannons([{ id: 'terrible_1', time: 0 }, { id: 'terrible_2', time: 0 }]);
     setCodigosPilas({});
@@ -929,6 +935,22 @@ export const GameProvider = ({ children }) => {
     setSwanShipEvent({ active: false, deck: [], discarded: [] });
   };
 
+  const initializeFlickeringBoarDeck = (enemyUuid) => {
+    setFlickeringBoarDeck((prev) => (
+      prev.active && prev.enemyUuid === enemyUuid
+        ? prev
+        : createFlickeringBoarDeck(enemyUuid)
+    ));
+  };
+
+  const drawFlickeringBoarCardNow = () => {
+    setFlickeringBoarDeck((prev) => drawFlickeringBoarCard(prev));
+  };
+
+  const resetFlickeringBoarDeck = () => {
+    setFlickeringBoarDeck(emptyFlickeringBoarDeck());
+  };
+
   const activateVisionClara = () => setVisionClaraActive(true);
   const deactivateVisionClara = () => setVisionClaraActive(false);
 
@@ -1214,6 +1236,7 @@ export const GameProvider = ({ children }) => {
         erradenEvent, addErradenEvent, drawErradenCard, resetErradenEvent,
         corruptShipEvent, addCorruptShipEvent, drawCorruptShipCard, resetCorruptShipEvent,
         swanShipEvent, addSwanShipEvent, drawSwanShipCard, resetSwanShipEvent,
+        flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck,
         visionClaraActive, activateVisionClara, deactivateVisionClara,
         terribleCannons, addTerribleCannonTime, tickTerribleCannons,
         terribleCannonNotice, clearTerribleCannonNotice,

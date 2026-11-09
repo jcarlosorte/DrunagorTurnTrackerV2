@@ -3242,6 +3242,22 @@ Unit       212 tests
 E2E        76/76
 ```
 
+### 181.ª tanda — Baraja del Jabalí Parpadeante
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Baraja** | 8 cartas con las acciones Adelante, Descanso, Viento del Oeste y Brisa del Este; las pares añaden FURIA | `flickeringBoarDeck` |
+| **Ciclo** | Se baraja al inicializarse, descarta cada robo y recarga/baraja las 8 al agotarse | `flickeringBoarDeck` |
+| **Enemigo** | Se inicializa automáticamente al colocar un enemigo con id `flickering_boar` y se retira al quitarlo | `InitTracker`, `GameContext` |
+| **Pruebas** | 216 unitarios · 77 E2E | tests |
+
+**Medición**
+
+```text
+Unit       216 tests
+E2E        77/77
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

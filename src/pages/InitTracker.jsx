@@ -52,6 +52,7 @@ import PilaStatusPanel from '@/components/track/PilaStatusPanel';
 import SpecialEventBar from '@/components/track/SpecialEventBar';
 import StoryDeckBar from '@/components/track/StoryDeckBar';
 import TerribleCannonsBar from '@/components/track/TerribleCannonsBar';
+import FlickeringBoarDeckBar from '@/components/track/FlickeringBoarDeckBar';
 import TerribleCannonDialog from '@/components/track/TerribleCannonDialog';
 import VisionClaraModal from '@/components/track/VisionClaraModal';
 import EventCardModal from '@/components/track/EventCardModal';
@@ -241,7 +242,7 @@ const InitTracker = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, resetFlickeringBoarDeck, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -257,6 +258,19 @@ const InitTracker = () => {
     }
     return ids;
   }, [scenarioMonster, placedRunes]);
+
+  useEffect(() => {
+    const boar = placedEnemies.find((entry) => entry.enemy.id === 'flickering_boar');
+    if (boar) {
+      if (!flickeringBoarDeck.active || flickeringBoarDeck.enemyUuid !== boar.enemy.uuid) {
+        initializeFlickeringBoarDeck(boar.enemy.uuid);
+      }
+    } else if (flickeringBoarDeck.active) {
+      resetFlickeringBoarDeck();
+    }
+    // Las funciones del contexto se recrean en cada render; el estado evita bucles.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placedEnemies, flickeringBoarDeck.active, flickeringBoarDeck.enemyUuid]);
   const [warningMessage, setWarningMessage] = useState(null);
   const [overhealedEnemies, setOverhealedEnemies] = useState(() => new Set(persistedSession.overhealedEnemies || []));
 
@@ -4344,6 +4358,7 @@ const InitTracker = () => {
                     accent="cyan"
                   />
                 </div>
+                <FlickeringBoarDeckBar />
                 <PassiveCardsPanel
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}
