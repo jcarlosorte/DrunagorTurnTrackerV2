@@ -3258,6 +3258,23 @@ Unit       216 tests
 E2E        77/77
 ```
 
+### 182.ª tanda — Enemigo Jabalí Parpadeante
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigo** | Añadido `flickering_boar` como escenario de Despertar, con capacidad de desaparecer al recibir daño | `enemies`, i18n |
+| **Cara de carta** | Botón Voltear con animación; la cara de carta muestra Manifestar 1 Runa y recolocación junto a una Pila de Runas activa | `ModalEnemyCard`, `InitTracker` |
+| **Turno** | Cara carta: manifiesta, comprueba pila y vuelve al monstruo. Cara monstruo: roba de Comportamiento Jabalí Parpadeante | `InitTracker` |
+| **FURIA** | Acumula +2 Ataque y +1 Movimiento; después avisa de la Activación | `InitTracker` |
+| **Pruebas** | 216 unitarios · 78 E2E | tests |
+
+**Medición**
+
+```text
+Unit       216 tests
+E2E        78/78
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

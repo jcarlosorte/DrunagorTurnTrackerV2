@@ -944,7 +944,9 @@ export const GameProvider = ({ children }) => {
   };
 
   const drawFlickeringBoarCardNow = () => {
-    setFlickeringBoarDeck((prev) => drawFlickeringBoarCard(prev));
+    const next = drawFlickeringBoarCard(flickeringBoarDeck);
+    setFlickeringBoarDeck(next);
+    return next?.current || null;
   };
 
   const resetFlickeringBoarDeck = () => {

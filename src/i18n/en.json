@@ -311,6 +311,7 @@
     "fallen_woodcutter": "Fell Woodman",
     "nightmare": "Nightmare",
     "boatswain": "Boatswain",
+    "flickering_boar": "Flickering Boar",
     "tide_hunter": "Tidehunter",
     "skeleton_guard": "Skeleton Guard",
     "violent_bully": "Vicious Mauler",
@@ -349,6 +350,7 @@
       "fallen_woodcutter": "Fell Woodman",
       "nightmare": "Nightmare",
       "boatswain": "Boatswain",
+      "flickering_boar": "Flickering Boar",
       "tide_hunter": "Tidehunter",
       "skeleton_guard": "Skeleton Guard",
       "violent_bully": "Vicious Mauler",
@@ -415,7 +417,8 @@
       "comportamiento": "Behavior",
       "estandar": "Standard",
       "alternativo": "Alternate",
-      "complejo": "Complex"
+      "complejo": "Complex",
+      "especial": "Special"
     },
     "colors": {
       "blanco": "White Monsters",
@@ -560,6 +563,15 @@
     "boarRestText": "The Flickering Boar stays still and does not turn or move.",
     "boarWestText": "The Flickering Boar turns 90° left. Then it moves 3 spaces forward. If it cannot, it turns 180° and moves the remaining spaces it could not move in the previous step.",
     "boarEastText": "The Flickering Boar turns 90° right. Then it moves 3 spaces forward. If it cannot, it turns 180° and moves the remaining spaces it could not move in the previous step.",
+    "boarCardTitle": "FLICKERING BOAR",
+    "boarCardText": "First, Manifest 1 Rune.\nThen, place the Flickering Boar again adjacent to a Rune Pile on the board, chosen by the party leader, that contains 1 Rune matching the color of the revealed Rune.",
+    "boarCardOpen": "Flip to the monster",
+    "boarCardFlip": "Flip card",
+    "boarManifest": "Manifest 1 Rune",
+    "boarNoPile": "There is no active Rune Pile with that color",
+    "boarPlaced": "Place the Flickering Boar adjacent to a Rune Pile with that color",
+    "boarEvolution": "EVOLUTION: +2 Attack and +1 Movement",
+    "boarActivate": "The Flickering Boar ACTIVATES and attacks",
     "addErraden": "Add Eradren's Surprise",
     "resetErraden": "Reset deck",
     "removeErraden": "Remove event",
@@ -1308,6 +1320,7 @@
       "over_20": "MOLTEN SHIELD"
     },
     "capacidad": {
+      "SI EL JABALÍ RECIBE DAÑO, DESAPARECE": "IF THE BOAR TAKES DAMAGE, IT DISAPPEARS",
       "cmd_1": "THE COMMANDER GAINS {ESCUDO} {X}. SHIELD TOKENS GAINED THIS WAY CAN EXCEED THE MAXIMUM OF 4. THEN, IF A HERO IS ADJACENT TO THE COMMANDER, THIS {ATAQUE} DEALS {X} {DAÑO} TO THE STRONGEST OF THEM.",
       "cmd_2": "THE TARGET OF THIS {ATAQUE} IS THE STRONGEST HERO WITHIN RANGE 1 OF THE COMMANDER. DEALS {X} {DAÑO} AND {X} {VENENO}.",
       "cmd_3": "THE COMMANDER {SALTA} TO A SPACE CHOSEN BY THE PARTY LEADER, ADJACENT TO THE STRONGEST HERO. PUSHES ANY CHARACTER WHERE IT LANDS. THEN, THIS {ATAQUE} DEALS {X} UNPREVENTABLE {DAÑO} TO THE STRONGEST HERO.",

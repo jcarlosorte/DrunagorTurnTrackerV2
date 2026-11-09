@@ -2,7 +2,7 @@ import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { FLICKERING_BOAR_CARDS } from '@/data/flickeringBoarDeck';
 
-export default function FlickeringBoarDeckBar() {
+export default function FlickeringBoarDeckBar({ movement = 3 }) {
   const { flickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck } = useGame();
   const { translations } = useLanguage();
   const t = translations.trackerInit || {};
@@ -10,6 +10,9 @@ export default function FlickeringBoarDeckBar() {
   if (!flickeringBoarDeck?.active) return null;
   const card = FLICKERING_BOAR_CARDS.find((entry) => entry.id === flickeringBoarDeck.current) || null;
   const exhausted = flickeringBoarDeck.deck.length === 0;
+  const cardText = card
+    ? String(t[card.textKey] || '').replace(/3 casillas/g, `${movement} casillas`)
+    : '';
 
   return (
     <section
@@ -33,7 +36,7 @@ export default function FlickeringBoarDeckBar() {
         {card ? (
           <>
             <p className="text-xs font-black text-amber-100">{t[card.titleKey] || card.kind}</p>
-            <p className="mt-0.5 text-[0.68rem] leading-snug text-slate-200">{t[card.textKey] || ''}</p>
+            <p className="mt-0.5 text-[0.68rem] leading-snug text-slate-200">{cardText}</p>
             {card.fury && (
               <p className="mt-1 rounded border border-orange-600/60 bg-orange-950/40 p-1 text-[0.65rem] font-semibold text-orange-100">
                 {t.boarFury || '¡FURIA! Gana EVOLUCIÓN y luego se ACTIVA de la forma habitual.'}

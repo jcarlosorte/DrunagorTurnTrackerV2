@@ -13,6 +13,7 @@ import { RUNAS, ASALTO } from '@/data/runas';
 import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
 import { INCURSION } from '@/data/incursion';
 import { INCURSION_DESPERTAR } from '@/data/incursionDespertar';
+import { FLICKERING_BOAR_CARDS } from '@/data/flickeringBoarDeck';
 import { DEFENSA } from '@/data/defensa';
 import { ESTADOS_ALTERADOS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { CARTAS_COMANDANTE, CARTAS_JEFE, CARTAS_HEROE_CAIDO, ASALTO_GUSANO, ACECHO, IRA, getOverlordDeck } from '@/data/cartasEspeciales';
@@ -242,7 +243,7 @@ const InitTracker = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, resetFlickeringBoarDeck, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -1814,6 +1815,12 @@ const InitTracker = () => {
   };
 
   const updateEnemyVida = (uuid, nuevaVida, nuevoMax) => {
+    const before = placedEnemies.find((entry) => entry.enemy.uuid === uuid)?.enemy;
+    if (before?.id === 'flickering_boar' && nuevaVida < before.vida) {
+      removeEnemyByUUID(uuid);
+      showScenarioToast('🐗 El Jabalí Parpadeante recibe daño y DESAPARECE.');
+      return;
+    }
     setPlacedEnemies(prev =>
       prev.map(e => {
         if (e.enemy.uuid === uuid) {
@@ -1836,8 +1843,19 @@ const InitTracker = () => {
     );
   };
 
-  const updateEnemyEstados = (uuid, updatedStates) => {
-    setPlacedEnemies(prev =>
+  const flipBoarFace = (uuid) => {
+    setPlacedEnemies(prev => prev.map(entry => (
+      entry.enemy.uuid === uuid && entry.enemy.id === 'flickering_boar'
+        ? { ...entry, enemy: { ...entry.enemy, cara: entry.enemy.cara === 'B' ? 'A' : 'B' } }
+        : entry
+    )));
+    setFlippedCards(prev => (prev.includes(uuid) ? prev : [...prev, uuid]));
+    window.setTimeout(() => {
+      setFlippedCards(prev => prev.filter(id => id !== uuid));
+    }, 650);
+  };
+
+  const updateEnemyEstados = (uuid, updatedStates) => {    setPlacedEnemies(prev =>
       prev.map(e =>
         e.enemy?.uuid === uuid
           ? { ...e, enemy: { ...e.enemy, estadosAlterados: updatedStates } }
@@ -3137,6 +3155,66 @@ const InitTracker = () => {
         }
         setCurrentTurnEntity({ ...current, type: 'enemy', group });
         setGroupTurnTracker({ group, index: groupTurnTracker.index });
+
+        if (current.id === 'flickering_boar') {
+          if (current.cara === 'B') {
+            const tile = manifestTile();
+            const activePiles = [
+              ...pilas.filter((pila) => pila.estado === 'activa'),
+              ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
+            ];
+            const canPlace = Boolean(tile) && activePiles.some((pila) => (
+              pila.tiles?.some((entry) => entry.runa === tile.runa)
+            ));
+            showScenarioToast(`🐗 ${ti.boarManifest || 'Manifiesta 1 Runa'}${tile ? `: ${ti.colores?.[tile.runa] || tile.runa}` : ''}`);
+            if (!canPlace) {
+              showScenarioToast(`⚠️ ${ti.boarNoPile || 'No hay una Pila de Runas activa con ese color'}`);
+            } else {
+              showScenarioToast(`🐗 ${ti.boarPlaced || 'Coloca al Jabalí adyacente a una Pila de Runas con ese color'}`);
+            }
+            setPlacedEnemies(prev => prev.map(entry => (
+              entry.enemy.uuid === current.uuid
+                ? { ...entry, enemy: { ...entry.enemy, cara: 'A' } }
+                : entry
+            )));
+            setFlippedCards(prev => (prev.includes(current.uuid) ? prev : [...prev, current.uuid]));
+            window.setTimeout(() => {
+              setFlippedCards(prev => prev.filter(id => id !== current.uuid));
+            }, 650);
+            return;
+          }
+
+          const drawnId = drawFlickeringBoarCardNow();
+          const drawnCard = FLICKERING_BOAR_CARDS.find((card) => card.id === drawnId);
+          if (!drawnCard) {
+            showScenarioToast('🐗 La baraja del Jabalí está vacía.');
+            return;
+          }
+          showScenarioToast(`🐗 ${ti[drawnCard.titleKey] || drawnCard.kind}`);
+          if (drawnCard.fury) {
+            setEnemyEvolutions(prev => {
+              const existing = prev.find((entry) => entry.uuid === current.uuid);
+              return existing
+                ? prev.map((entry) => entry.uuid === current.uuid ? { ...entry, count: entry.count + 1 } : entry)
+                : [...prev, { uuid: current.uuid, count: 1 }];
+            });
+            setPlacedEnemies(prev => prev.map(entry => (
+              entry.enemy.uuid === current.uuid
+                ? {
+                  ...entry,
+                  enemy: {
+                    ...entry.enemy,
+                    ataque: Number(entry.enemy.ataque || 0) + 2,
+                    movimiento: Number(entry.enemy.movimiento || 0) + 1,
+                  },
+                }
+                : entry
+            )));
+            showScenarioToast(`🧬 ${ti.boarEvolution || 'EVOLUCIÓN: +2 Ataque y +1 Movimiento'}`);
+          }
+          showScenarioToast(`⚡ ${ti.boarActivate || 'El Jabalí Parpadeante se ACTIVA y ataca'}`);
+          return;
+        }
         
         // ✅ Controlar TIEMPO solo si no está procesado este turno
         if (!processedTiempoRef.current.has(current.uuid)) {
@@ -3803,7 +3881,7 @@ const InitTracker = () => {
 
             // ⚡️ Si pasa a cara A y tiene evolución activa, aplicar bonificación
             const evo = enemyEvolutions.find(e => e.uuid === item.enemy.uuid);
-            if (evo && evo.count > 0) {
+            if (evo && evo.count > 0 && item.enemy.id !== 'flickering_boar') {
               updatedEnemy = {
                 ...updatedEnemy,
                 ataque: (updatedEnemy.ataque || 0) + (2 * evo.count),
@@ -4358,7 +4436,9 @@ const InitTracker = () => {
                     accent="cyan"
                   />
                 </div>
-                <FlickeringBoarDeckBar />
+                <FlickeringBoarDeckBar
+                  movement={Number(placedEnemies.find((entry) => entry.enemy.id === 'flickering_boar')?.enemy.movimiento) || 3}
+                />
                 <PassiveCardsPanel
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}
@@ -4932,6 +5012,7 @@ const InitTracker = () => {
             overhealedEnemies={overhealedEnemies}
             setOverhealedEnemies={setOverhealedEnemies}
             onEstadoChange={updateEnemyEstados}
+            onFlip={flipBoarFace}
             getEffectiveStats={getEnemyEffectiveStats}
           />
           )}

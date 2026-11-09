@@ -311,6 +311,7 @@
     "fallen_woodcutter": "Leñador Caído",
     "nightmare": "Pesadilla",
     "boatswain": "Contramaestre",
+    "flickering_boar": "Jabalí Parpadeante",
     "tide_hunter": "Cazamareas",
     "skeleton_guard": "Guardia Esqueleto",
     "violent_bully": "Matón Violento",
@@ -349,6 +350,7 @@
       "fallen_woodcutter": "Leñador Caído",
       "nightmare": "Pesadilla",
       "boatswain": "Contramaestre",
+      "flickering_boar": "Jabalí Parpadeante",
       "tide_hunter": "Cazamareas",
       "skeleton_guard": "Guardia Esqueleto",
       "violent_bully": "Matón Violento",
@@ -416,7 +418,8 @@
       "comportamiento": "Comportamiento",
       "estandar": "Estándar",
       "alternativo": "Alternativo",
-      "complejo": "Complejo"
+      "complejo": "Complejo",
+      "especial": "Especial"
     },
     "colors": {
       "blanco": "Monstruos Blancos",
@@ -561,6 +564,15 @@
     "boarRestText": "El Jabalí Parpadeante se queda quieto y no se gira ni se mueve.",
     "boarWestText": "El Jabalí Parpadeante gira 90° a la izquierda. Luego, se mueve 3 casillas hacia adelante. Si no puede, gira 180° y mueve las casillas restantes que no pudiera en el paso anterior.",
     "boarEastText": "El Jabalí Parpadeante gira 90° a la derecha. Luego, se mueve 3 casillas hacia adelante. Si no puede, gira 180° y mueve las casillas restantes que no pudiera en el paso anterior.",
+    "boarCardTitle": "JABALÍ PARPADEANTE",
+    "boarCardText": "Primero, Manifiesta 1 Runa.\nLuego, Coloca de nuevo al Jabalí Parpadeante adyacente a una Pila de Runas en el Tablero, a elección del Líder del grupo que contenga 1 Runa que coincida con el color de la Runa revelada.",
+    "boarCardOpen": "Voltear al monstruo",
+    "boarCardFlip": "Voltear carta",
+    "boarManifest": "Manifiesta 1 Runa",
+    "boarNoPile": "No hay una Pila de Runas activa con ese color",
+    "boarPlaced": "Coloca al Jabalí Parpadeante adyacente a una Pila de Runas con ese color",
+    "boarEvolution": "EVOLUCIÓN: +2 Ataque y +1 Movimiento",
+    "boarActivate": "El Jabalí Parpadeante se ACTIVA y ataca",
     "addErraden": "Añadir Sorpresa de Eradren",
     "resetErraden": "Reiniciar mazo",
     "removeErraden": "Quitar evento",
@@ -1325,6 +1337,7 @@
       "over_20": "ESCUDO FUNDIDO"
     },
     "capacidad": {
+      "SI EL JABALÍ RECIBE DAÑO, DESAPARECE": "SI EL JABALÍ RECIBE DAÑO, DESAPARECE",
       "cmd_1": "EL COMANDANTE GANA {ESCUDO} {X}. LAS FICHAS DE ESCUDO RECIBIDAS ASÍ PUEDEN SUPERAR EL MÁXIMO DE 4. LUEGO, SI UN HÉROE ESTÁ ADYACENTE AL COMANDANTE, ESTE {ATAQUE} INFLINGE {DAÑO} {X} AL MÁS FUERTE DE ELLOS",
       "cmd_2": "EL OBJETIVO DE ESTE {ATAQUE} ES EL HÉROE MÁS FUERTE A ALCANCE 1 DEL COMANDANTE. LE INFLINGE {DAÑO} {X} Y {VENENO} {X}.",
       "cmd_3": "EL COMANDANTE {SALTA} A UNA CASILLA A ELECCIÓN DEL LÍDER DEL GRUPO, ADYACENTE AL HÉROE MÁS FUERTE. APARTA A CUAQUIER PERSONAJE EN DONDE ATERRICE. LUEGO, ESTE {ATAQUE} INFLINGE {DAÑO} {X} NO PREVENIBLE AL HÉROE MÁS FUERTE.",
