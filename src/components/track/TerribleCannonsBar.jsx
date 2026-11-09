@@ -3,10 +3,10 @@ import { useLanguage } from '@/context/LanguageContext';
 import canonTerrorifico from '@/assets/assets_logo/canon_terrorifico.png';
 
 export default function TerribleCannonsBar() {
-  const { terribleCannons, swanShipEvent } = useGame();
+  const { terribleCannons, corruptShipEvent } = useGame();
   const { translations } = useLanguage();
   const t = translations.trackerInit || {};
-  if (!swanShipEvent?.active && terribleCannons.every((cannon) => cannon.time === 0)) return null;
+  if (!corruptShipEvent?.active && terribleCannons.every((cannon) => cannon.time === 0)) return null;
 
   return (
     <div className="mb-2 flex flex-wrap items-center gap-2 rounded-xl border border-red-800/60 bg-red-950/30 p-2 text-red-100">

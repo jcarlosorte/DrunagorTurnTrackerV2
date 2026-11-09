@@ -4136,9 +4136,10 @@ const InitTracker = () => {
             
             <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 lg:flex-row">
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                <div className="mb-2 grid grid-cols-1 items-start gap-2 sm:grid-cols-2">
+                <div className="mb-2 grid grid-cols-1 items-start gap-2 sm:grid-cols-3">
                   <GenerationPointsBar />
                   <MagicCannonsBar />
+                  <TerribleCannonsBar />
                 </div>
                 <SpecialEventBar onDraw={handleDrawErradenCard} />
                 {visionClaraActive && (
@@ -4170,7 +4171,6 @@ const InitTracker = () => {
                     accent="cyan"
                   />
                 </div>
-                <TerribleCannonsBar />
                 <PassiveCardsPanel
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}

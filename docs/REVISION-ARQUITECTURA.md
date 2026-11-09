@@ -3066,6 +3066,21 @@ Unit       212 tests
 E2E        68/68
 ```
 
+### 168.ª tanda — Cañones Terroríficos junto a los Mágicos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Track** | El panel de Cañones Terroríficos se muestra junto a los Cañones Mágicos | `InitTracker`, `TerribleCannonsBar` |
+| **Visibilidad** | Aparece al añadir la baraja PS del Navío Corrupto, sin esperar a robar una carta | `TerribleCannonsBar` |
+| **Pruebas** | 212 unitarios · 68 E2E | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        68/68
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

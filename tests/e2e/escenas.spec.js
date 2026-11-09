@@ -12,6 +12,7 @@ test.describe('Escenas', () => {
     const followerDialog = page.getByRole('dialog', { name: 'Seguidores de la escena' });
     await expect(followerDialog).toBeVisible();
     await followerDialog.getByRole('button', { name: 'Añadir seguidores' }).click();
+    await expect(page.getByText('Cañones Terroríficos')).toBeVisible();
 
     await expect.poll(async () => page.evaluate(() => {
       const runes = JSON.parse(localStorage.getItem('initRunesState') || '{}');
