@@ -2792,9 +2792,22 @@ const InitTracker = () => {
     if (turnIndex < 0 || turnIndex >= effectiveTurnOrder.length) return;
     const step = effectiveTurnOrder[turnIndex];
 
-    if (visionClaraActive && step.type === 'rune' && step.index === runesColorMap.gris && step.position === 'abajo') {
-      deactivateVisionClara();
-      showScenarioToast('Visión Clara ha terminado: Visión Reducida vuelve a estar activa.');
+    if (visionClaraActive) {
+      const visionStepIndex = effectiveTurnOrder.findIndex((entry) => (
+        entry.type === 'enemy' && entry.rune === 'gris' && entry.position === 'abajo'
+      ));
+      const previousIndex = previousTurnIndexRef.current;
+      const atVisionTurn = step.type === 'enemy' && step.rune === 'gris' && step.position === 'abajo';
+      // Aunque el hueco de Gris Abajo esté vacío, el medidor lo atraviesa y la
+      // ficha debe retirarse igualmente.
+      const crossedVisionTurn = previousIndex !== null && visionStepIndex !== -1 && (
+        (turnIndex > previousIndex && visionStepIndex > previousIndex && visionStepIndex <= turnIndex) ||
+        (turnIndex <= previousIndex && (visionStepIndex > previousIndex || visionStepIndex <= turnIndex))
+      );
+      if (atVisionTurn || crossedVisionTurn) {
+        deactivateVisionClara();
+        showScenarioToast('Visión Clara ha terminado: Visión Reducida vuelve a estar activa.');
+      }
     }
 
     // ✅ Mostrar toast inicial solo una vez

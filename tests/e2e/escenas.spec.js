@@ -35,4 +35,22 @@ test.describe('Escenas', () => {
       followers: ['vorn_guerrero', 'elros_asesino'],
     });
   });
+
+  test('Visión Clara se retira al atravesar Gris Abajo aunque esté vacío', async ({ page }) => {
+    await seedStorage(page, {
+      ...buildSeed(),
+      gameState: JSON.stringify({ visionClaraActive: true }),
+    });
+    await openTracker(page);
+
+    for (let i = 0; i < 10; i += 1) {
+      await page.getByTestId('next-turn').click();
+      await page.waitForTimeout(50);
+    }
+
+    await expect.poll(async () => page.evaluate(() => {
+      const game = JSON.parse(localStorage.getItem('gameState') || '{}');
+      return game.visionClaraActive;
+    })).toBe(false);
+  });
 });

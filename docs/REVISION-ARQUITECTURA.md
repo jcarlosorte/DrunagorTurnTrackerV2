@@ -3081,6 +3081,20 @@ Unit       212 tests
 E2E        68/68
 ```
 
+### 169.ª tanda — Visión Clara se retira al pasar Gris Abajo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Visión Clara** | La ficha se retira al alcanzar el hueco Gris Abajo, exista o no una entidad colocada | `InitTracker` |
+| **Pruebas** | 212 unitarios · 69 E2E, incluyendo el caso de hueco vacío | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        69/69
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
