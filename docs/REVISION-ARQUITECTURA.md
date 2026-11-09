@@ -3050,6 +3050,22 @@ Unit       212 tests
 E2E        67/67
 ```
 
+### 167.ª tanda — Menú Escenas: Capítulo 4
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escenas** | Nuevo menú con activación conjunta de Capítulo 4: Batalla en Alta Mar | `TopMenu` |
+| **Activación** | Añade runa e incursión naval, fichas de generación, cañones descargados y las dos barajas PS | `TopMenu` |
+| **Seguidores** | Pregunta el estado de Vorn (Animado/Sediento) y Elros (Desanimado/Enérgico) antes de añadirlos | `SceneFollowerDialog` |
+| **Pruebas** | 212 unitarios · 68 E2E | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        68/68
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

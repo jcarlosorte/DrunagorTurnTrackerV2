@@ -17,7 +17,14 @@ import { MAGIC_CANNON_COLORS, MAGIC_CANNON_IMAGES } from '@/components/track/Mag
 import { } from '@/data/estadosAlterados';
 import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTracker } from '@/context/TrackerContext';
 import LanguageMenu from "@/components/LanguageMenu";
+import { FOLLOWERS } from '@/data/followers';
+import { ROLE_POSITIONS } from '@/data/roles';
+import { getInteractionBackgroundAt } from '@/data/companions';
+import { saveCampFollower } from '@/utils/campFollowers';
+import { createId } from '@/utils/id';
+import SceneFollowerDialog from '@/components/track/SceneFollowerDialog';
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
 import mecanicaEspecialIcon from '@/assets/assets_logo/mecanica_especial.png';
 import ScenarioPanels from '@/components/scenario/ScenarioPanels';
@@ -80,11 +87,15 @@ const TopMenu = ({
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
-  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent } = useGame();
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, setMagicCannonLoaded, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent } = useGame();
+  const { trackerData, setTrackerData } = useTracker();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const gameMenuRef = useRef(null);
-  const [activeMenu, setActiveMenu] = useState(null); // 'enemies' | 'runes' | 'nodes' | 'scenario' | null
+  const [activeMenu, setActiveMenu] = useState(null); // 'enemies' | 'runes' | 'nodes' | 'scenario' | 'events' | 'scenes'
+  const [sceneFollowerOpen, setSceneFollowerOpen] = useState(false);
+  const [sceneMissing, setSceneMissing] = useState({ vorn: false, elros: false });
+  const [sceneFollowerValues, setSceneFollowerValues] = useState({ vorn: 'animado', elros: 'energico' });
   const containerRef = useRef(null);
   const menuRefEnemies = useRef(null);
   const menuRefRunes = useRef(null);
@@ -180,6 +191,74 @@ const TopMenu = ({
   
     // ✅ Si no existe, la añadimos
     onSelectRuneCard(card, timeToken);
+  };
+
+  const activateChapter4 = () => {
+    const runeCard = RUNAS_DESPERTAR.find((card) => card.id === 'runa_despertar_naval' && card.cara === 'A');
+    const incursionCard = INCURSION_DESPERTAR.find((card) => card.id === 'incursion_despertar_naval' && card.cara === 'A');
+
+    if (runeCard && !placedRunes.some((entry) => entry.rune.id === runeCard.id)) {
+      onSelectRuneCard(runeCard);
+    }
+    if (incursionCard && !placedRunes.some((entry) => entry.rune.id === incursionCard.id)) {
+      onSelectRuneCard(incursionCard);
+    }
+
+    ['naranja', 'verde', 'rojo', 'gris'].forEach((color) => {
+      addGenerationPoint(color);
+      const existing = magicCannons.find((cannon) => cannon.color === color);
+      if (existing) setMagicCannonLoaded(existing.id, false);
+      else addMagicCannon(color, false);
+    });
+    addCorruptShipEvent();
+    addSwanShipEvent();
+
+    const followers = trackerData.followers || [];
+    const missing = {
+      vorn: !followers.some((entry) => entry.id === 'vorn_guerrero'),
+      elros: !followers.some((entry) => entry.id === 'elros_asesino'),
+    };
+    setSceneMissing(missing);
+    setActiveMenu(null);
+    if (missing.vorn || missing.elros) {
+      setSceneFollowerOpen(true);
+    }
+  };
+
+  const confirmSceneFollowers = () => {
+    const additions = [];
+    const addFollower = (followerId, stateId) => {
+      const follower = FOLLOWERS.find((item) => item.id === followerId);
+      if (!follower) return;
+      const state = follower.states.find((item) => item.id === stateId) || follower.states[0];
+      const index = FOLLOWERS.findIndex((item) => item.id === followerId);
+      additions.push({
+        uid: createId(),
+        id: follower.id,
+        name: follower.name,
+        epithet: follower.epithet,
+        role: follower.role,
+        position: ROLE_POSITIONS[follower.role] ?? 0,
+        stateId: state.id,
+        vida: state.vida,
+        vidaMax: state.vida,
+        estadosAlterados: [],
+        background: getInteractionBackgroundAt(index),
+        image: null,
+      });
+    };
+
+    if (sceneMissing.vorn) addFollower('vorn_guerrero', sceneFollowerValues.vorn);
+    if (sceneMissing.elros) addFollower('elros_asesino', sceneFollowerValues.elros);
+
+    if (additions.length > 0) {
+      setTrackerData((prev) => ({
+        ...prev,
+        followers: [...(prev.followers || []), ...additions],
+      }));
+      additions.forEach((entry) => saveCampFollower(entry));
+    }
+    setSceneFollowerOpen(false);
   };
 
   const runeColorName = (color) => (color ? (t.colores?.[color] || color) : (t.removeRandom || 'Aleatoria'));
@@ -282,6 +361,7 @@ const TopMenu = ({
               { id: 'scenario', icon: GiVillage, label: t.scenarioMenu || 'Escenario', tone: 'amber' },
               { id: 'companions', icon: GiPawPrint, label: t.companionsMenu || 'Compañeros', tone: 'amber' },
               { id: 'events', icon: SpecialEventIcon, label: t.eventsMenu || 'Eventos', tone: 'amber' },
+              { id: 'scenes', icon: GiStoneTower, label: t.scenesMenu || 'Escenas', tone: 'amber' },
             ].map(({ id, icon: Icon, label, tone }) => {
               const isActive = activeMenu === id;
               const activeTone = tone === 'sky'
@@ -411,7 +491,7 @@ const TopMenu = ({
             )}
           </div>
 
-          {['enemies', 'runes', 'nodes', 'scenario', 'events'].includes(activeMenu) && (
+          {['enemies', 'runes', 'nodes', 'scenario', 'events', 'scenes'].includes(activeMenu) && (
             <button
               type="button"
               data-testid="close-menu"
@@ -1609,7 +1689,59 @@ const TopMenu = ({
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {activeMenu === 'scenes' && (
+          <motion.div
+            id="track-menu-scenes"
+            role="region"
+            aria-label={t.scenesMenu || 'Escenas'}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+            className="menu-panel layer-menu flex max-h-[70dvh] flex-col gap-3 overflow-y-auto px-3 pb-3 pt-2 text-white sm:px-4"
+          >
+            <div className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-900/60 text-amber-200">
+                <GiStoneTower size={20} />
+              </span>
+              <h2 className="text-base font-bold">{t.scenesTitle || 'Escenas'}</h2>
+            </div>
+            <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-3">
+              <p className="text-sm font-bold text-amber-100">
+                {t.chapter4Title || 'Capítulo 4: Batalla en Alta Mar'}
+              </p>
+              <p className="mt-1 text-xs text-amber-100/80">
+                {t.chapter4Description || 'Activa de una vez todas las mecánicas de la escena: runa e incursión naval, generación, cañones y las dos barajas PS.'}
+              </p>
+              <button
+                type="button"
+                onClick={activateChapter4}
+                className="mt-3 min-h-9 rounded-lg bg-amber-700 px-3 text-xs font-bold text-white hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+              >
+                ▶ {t.activateChapter || 'Activar capítulo'}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
+
+      <SceneFollowerDialog
+        open={sceneFollowerOpen}
+        missing={sceneMissing}
+        values={sceneFollowerValues}
+        onChange={(key, value) => setSceneFollowerValues((prev) => ({ ...prev, [key]: value }))}
+        onConfirm={confirmSceneFollowers}
+        onCancel={() => setSceneFollowerOpen(false)}
+        labels={{
+          title: t.sceneFollowersTitle || 'Seguidores de la escena',
+          description: t.sceneFollowersDescription || 'Elige el estado con el que se añaden Vorn y Elros.',
+          confirm: t.sceneFollowersConfirm || 'Añadir seguidores',
+          cancel: t.close || 'Cancelar',
+        }}
+      />
 
       {/* Los avisos de fichas se muestran una sola vez desde InitTracker,
           que ya incluye la región aria-live y el cierre funcional. */}
