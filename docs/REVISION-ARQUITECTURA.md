@@ -3004,6 +3004,21 @@ Unit       208 tests
 E2E        66/66
 ```
 
+### 164.ª tanda — Estado INSPIRACIÓN
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **INSPIRACIÓN** | Nuevo estado exclusivo de héroes, único, primero de la fila y con imagen `inspiracion.png` | `estadosAlterados`, i18n |
+| **Orden** | Frágil, Polimorfismo y Restricción se colocan entre Lentitud y Hemorragia | `estadosAlterados` |
+| **Pruebas** | 210 unitarios · 66 E2E | tests |
+
+**Medición**
+
+```text
+Unit       210 tests
+E2E        66/66
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

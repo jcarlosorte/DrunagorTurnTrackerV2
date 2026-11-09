@@ -70,6 +70,21 @@ describe('estados de la versión 2.0', () => {
     expect(ids(getHeroStatusCatalog('sun', '2.0'))).not.toContain('IDOLO_DE_FURIA');
   });
 
+  it('Inspiración es el primer estado de héroe y solo admite 1', () => {
+    const heroe = ids(getHeroStatusCatalog('sun', '2.0'));
+    expect(heroe[0]).toBe('INSPIRACION');
+    expect(ESTADOS_ALTERADOS.find((estado) => estado.id === 'INSPIRACION')?.max).toBe(1);
+    expect(ids(getEnemyStatusCatalog('2.0'))).not.toContain('INSPIRACION');
+  });
+
+  it('Frágil, Polimorfismo y Restricción están entre Lentitud y Hemorragia', () => {
+    const idsOrden = ids(getHeroStatusCatalog('sun', '2.0'));
+    expect(idsOrden.indexOf('LENTITUD_I')).toBeLessThan(idsOrden.indexOf('FRAGIL'));
+    expect(idsOrden.indexOf('FRAGIL')).toBeLessThan(idsOrden.indexOf('POLIMORFISMO'));
+    expect(idsOrden.indexOf('POLIMORFISMO')).toBeLessThan(idsOrden.indexOf('RESTRICCION'));
+    expect(idsOrden.indexOf('RESTRICCION')).toBeLessThan(idsOrden.indexOf('HEMORRAGIA_I'));
+  });
+
   it('Frágil, Polimorfismo y Restricción se limitan a 1; Semilla del caos a 4', () => {
     ['FRAGIL', 'POLIMORFISMO', 'RESTRICCION'].forEach((id) => {
       expect(ESTADOS_ALTERADOS.find((estado) => estado.id === id)?.max).toBe(1);

@@ -25,15 +25,25 @@ import idoloDeFuria from "@/assets/assets_logo/idolo_de_furia.webp";
 import idoloDeResistencia from "@/assets/assets_logo/idolo_de_resistencia.webp";
 import idoloDeTormenta from "@/assets/assets_logo/idolo_de_tormenta.webp";
 import idoloDeTranquilidad from "@/assets/assets_logo/idolo_de_tranquilidad.webp";
+import inspiracion from "@/assets/assets_logo/inspiracion.png";
 import { getHeroClassId } from "@/data/heroClasses";
 
 export const ESTADOS_ALTERADOS = [
+  {
+    id: "INSPIRACION", texto: "inspiracion", accion: "inspiracion",
+    reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1,
+    imagen: inspiracion, mostrar: "si", prevenible: "si", soloHeroes: true,
+  },
+
   // condiciones redundantes
   { id: "DERRIBO_I", texto: "derribo", accion: "derribo", reduce: "si", numReduce: 1, turno: "principio", daño: 0, max: 1, imagen: derribo, mostrar: "si", prevenible: "si" },
   { id: "MARCA_DE_MONTARAZ", texto: "marca", accion: "marca", reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1, imagen: marca, mostrar: "si", prevenible: "si" },
   { id: "SIGILO_I", texto: "sigilo", accion: "sigilo", reduce: "si", numReduce: 1, turno: "principio", daño: 0, max: 1, imagen: sigilo, mostrar: "si", prevenible: "si" },
   { id: "ATURDIMIENTO_I", texto: "aturdimiento", accion: "aturdimiento", reduce: "si", numReduce: 1, turno: "principio", daño: 0, max: 1, imagen: aturdimiento, mostrar: "si", prevenible: "si" },
   { id: "LENTITUD_I", texto: "lentitud", accion: "lentitud", reduce: "si", numReduce: 1, turno: "principio", daño: 0, max: 1, imagen: lentitud, mostrar: "si", prevenible: "si" },
+  { id: "FRAGIL", texto: "fragil", accion: "fragil", reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1, imagen: fragil, mostrar: "si", prevenible: "si", version: "2.0" },
+  { id: "POLIMORFISMO", texto: "polimorfismo", accion: "polimorfismo", reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1, imagen: polimorfismo, mostrar: "si", prevenible: "si", version: "2.0" },
+  { id: "RESTRICCION", texto: "restriccion", accion: "restriccion", reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1, imagen: restriccion, mostrar: "si", prevenible: "si", version: "2.0" },
 
   // condiciones acumulables
   { id: "HEMORRAGIA_I", texto: "hemorragia", accion: "hemorragia", reduce: "si", numReduce: 4, turno: "principio", daño: 1, max: 4, imagen: hemorragia, mostrar: "si", prevenible: "no" },
@@ -69,9 +79,6 @@ export const ESTADOS_ALTERADOS = [
   { id: "TIEMPO", texto: "tiempo", accion: "tiempo", reduce: "si", numReduce: 1, turno: "principio", daño: 0, max: 4, imagen: tiempo, mostrar: "no", prevenible: "si" },
 
   // estados de la versión 2.0
-  { id: "FRAGIL", texto: "fragil", accion: "fragil", reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1, imagen: fragil, mostrar: "si", prevenible: "si", version: "2.0" },
-  { id: "POLIMORFISMO", texto: "polimorfismo", accion: "polimorfismo", reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1, imagen: polimorfismo, mostrar: "si", prevenible: "si", version: "2.0" },
-  { id: "RESTRICCION", texto: "restriccion", accion: "restriccion", reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1, imagen: restriccion, mostrar: "si", prevenible: "si", version: "2.0" },
   {
     id: "SEMILLA_DEL_CAOS", texto: "semilla del caos", accion: "semilla_del_caos",
     reduce: "no", numReduce: 0, turno: "", daño: 0, max: 4,
