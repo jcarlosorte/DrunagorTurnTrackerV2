@@ -3196,6 +3196,24 @@ Unit       212 tests
 E2E        72/72
 ```
 
+### 178.ª tanda — Escenas 1–4 de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escenas** | Añadidos Capítulos 1–3 y completado el 4 con runas en el track y enemigos por número de héroes | `scenes`, `TopMenu`, `InitTracker` |
+| **Runa e incursión** | Capítulos 1–3 usan Influencia Creciente; el 2 añade Incursión Atroz y el 4 la incursión naval | `scenes` |
+| **Invocaciones** | Los enemigos se añaden de forma acumulativa según los héroes, con casilla de color e inicial más orden en el historial | `InitTracker`, `HistoryPanel`, `gameLog` |
+| **Nodos** | El Capítulo 2 crea 4 Nodos activos y el 3 crea 1, después de colocar las runas | `GameContext` |
+| **Inglés** | Títulos de escena y «Dreadful Raid» corregidos | i18n |
+| **Pruebas** | 212 unitarios · 76 E2E | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        76/76
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

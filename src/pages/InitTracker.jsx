@@ -66,7 +66,7 @@ import { appNotify, appConfirm, appPrompt } from '@/utils/appDialogs';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { healSurvivors } from '@/utils/hiloDeVida';
 import { formatCardText } from '@/utils/cardText';
-import { appendGameLog, clearGameLog } from '@/utils/gameLog';
+import { appendGameLog, clearGameLog, replaceLastGameLog } from '@/utils/gameLog';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
@@ -241,7 +241,7 @@ const InitTracker = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, pilas, pilasConcentrada, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, drawErradenCard, corruptShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -1608,11 +1608,12 @@ const InitTracker = () => {
   };
 
 
-  const handleAddRuneCard = (runeCard, timeToken) => {
+  const handleAddRuneCard = (runeCard, timeToken, timeTokens = 0) => {
     const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
-    if (timeToken) {
+    const tiempoInicial = timeTokens || (timeToken ? 2 : 0);
+    if (tiempoInicial > 0) {
       const idxTiempo = initialStates.findIndex(e => e.id === "TIEMPO");
-      initialStates[idxTiempo].count = 2;
+      if (idxTiempo !== -1) initialStates[idxTiempo].count = tiempoInicial;
     }
     const newRune = {
       uuid: createId(),
@@ -1642,6 +1643,124 @@ const InitTracker = () => {
       initializeDecks();
     };
     
+  };
+
+  const SCENE_BADGE_COLORS = {
+    blanco: 'blanco',
+    gris: 'gris',
+    negro: 'negro',
+    comandante: 'dorado',
+    dorado: 'dorado',
+    esbirro: 'azul_claro',
+    escenario: 'violeta',
+    violeta: 'violeta',
+    señor: 'morado',
+    morado: 'morado',
+  };
+  const SCENE_BADGE_INITIALS = {
+    blanco: 'B', gris: 'G', negro: 'N',
+    comandante: 'D', dorado: 'D',
+    esbirro: 'A', azul_claro: 'A',
+    escenario: 'V', violeta: 'V',
+    señor: 'M', morado: 'M',
+  };
+
+  const getSceneEnemyPool = (group) => {
+    const allowed = new Set([
+      ...(enemies || []),
+      ...enemiesInSelectedExpansions.map((entry) => entry.id),
+    ]);
+    return ENEMIES.filter((entry) => (
+      entry.tipo === 'enemigo'
+      && entry.cara !== 'B'
+      && entry.color === group.color
+      && entry.categoria === group.category
+      && allowed.has(entry.id)
+      && entry.id !== scenarioMonster?.id
+      && (!group.enemyId || entry.id === group.enemyId)
+    ));
+  };
+
+  const spawnSceneEnemies = async (scene) => {
+    const totalHeroes = Math.max(1, Math.min(5, numHeroes || 1));
+    let order = 0;
+    for (let heroCount = 1; heroCount <= totalHeroes; heroCount += 1) {
+      const groups = scene.enemiesByHeroes?.[heroCount] || [];
+      for (const group of groups) {
+        const pool = getSceneEnemyPool(group);
+        for (let copy = 0; copy < (group.quantity || 1); copy += 1) {
+          if (pool.length === 0) continue;
+          const selected = pool[Math.floor(Math.random() * pool.length)];
+          order += 1;
+          await handleManualEnemyAdd(
+            selected.id,
+            selected.comportamiento,
+            selected.categoria,
+            'NoShow',
+          );
+          const color = SCENE_BADGE_COLORS[selected.color] || selected.color;
+          const initial = SCENE_BADGE_INITIALS[selected.color] || '?';
+          const colorCode = selected.color === 'blanco' ? 'MB' : selected.color === 'gris' ? 'MG' : selected.color === 'negro' ? 'MN' : '';
+          const displayName = group.label || tee?.[selected.id] || selected.nombre || selected.id;
+          const categoryLabel = tc?.[selected.categoria] || selected.categoria;
+          const message = group.label
+            ? `${displayName} · ${categoryLabel} · orden ${order}`
+            : `${colorCode || displayName} · ${categoryLabel} · orden ${order}`;
+          const meta = {
+            badge: {
+              label: `${initial}${order}`,
+              color,
+              title: `${displayName} · ${categoryLabel}`,
+            },
+            round: roundRef.current,
+            turn: turnIndex,
+          };
+          if (!replaceLastGameLog('summon', message, meta)) {
+            appendGameLog('summon', message, meta);
+          }
+        }
+      }
+    }
+  };
+
+  const activateScene = async (scene) => {
+    const runeCard = scene.runeId
+      ? RUNAS_DESPERTAR.find((card) => card.id === scene.runeId && card.cara === 'A')
+      : null;
+    if (runeCard && !placedRunes.some((entry) => entry.rune.id === runeCard.id)) {
+      handleAddRuneCard(runeCard, false, scene.timeTokens || 0);
+    }
+
+    // Las runas se colocan primero y los Nodos se forman después con las runas
+    // que ya están en el track.
+    const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0);
+
+    if (scene.incursionId) {
+      const incursion = INCURSION_DESPERTAR.find((card) => card.id === scene.incursionId && card.cara === 'A');
+      if (incursion && !placedRunes.some((entry) => entry.rune.id === incursion.id)) {
+        handleAddRuneCard(incursion);
+      }
+    }
+    if (scene.scenarioMonsterId) {
+      const monster = ENEMIES.find((entry) => entry.id === scene.scenarioMonsterId && entry.cara !== 'B');
+      if (monster) setScenarioMonster(monster);
+    }
+    if (scene.erraden) addErradenEvent();
+    (scene.generationColors || []).forEach((color) => {
+      addGenerationPoint(color);
+      const existing = magicCannons.find((cannon) => cannon.color === color);
+      if (existing) setMagicCannonLoaded(existing.id, false);
+      else addMagicCannon(color, false);
+    });
+    if (scene.corruptShip) addCorruptShipEvent();
+    if (scene.swanShip) addSwanShipEvent();
+
+    await spawnSceneEnemies(scene);
+
+    const placedCount = prepared.placed.length;
+    const nodeCount = prepared.nodes.length;
+    const title = scene.titleKey ? (ti[scene.titleKey] || scene.titleEn) : scene.titleEn;
+    showScenarioToast(`🎬 ${title}${placedCount ? ` · ${placedCount} runas en el track` : ''}${nodeCount ? ` · ${nodeCount} Nodos activos` : ''}`);
   };
 
   const onRemove = (uuid) => {
@@ -4148,6 +4267,7 @@ const InitTracker = () => {
                 onOpenCamp={() => setIsCampOpen(true)}
                 onOpenCompanion={(uid) => setSelectedCompanionUid(uid)}
                 onOpenFollower={(uid) => setSelectedFollowerUid(uid)}
+                onActivateScene={activateScene}
               />
             )}
 

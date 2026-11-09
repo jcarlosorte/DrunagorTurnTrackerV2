@@ -12,7 +12,7 @@ test.describe('Escenas', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
-    await page.getByRole('button', { name: /Activar capítulo/ }).click();
+    await page.getByTestId('scene-chapter4').getByRole('button', { name: /Activar capítulo/ }).click();
 
     const followerDialog = page.getByRole('dialog', { name: 'Seguidores de la escena' });
     await expect(followerDialog).toBeVisible();

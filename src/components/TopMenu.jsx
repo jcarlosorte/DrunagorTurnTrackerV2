@@ -25,6 +25,7 @@ import { getInteractionBackgroundAt } from '@/data/companions';
 import { saveCampFollower } from '@/utils/campFollowers';
 import { createId } from '@/utils/id';
 import { appNotify } from '@/utils/appDialogs';
+import { SCENES } from '@/data/scenes';
 import SceneFollowerDialog from '@/components/track/SceneFollowerDialog';
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
 import mecanicaEspecialIcon from '@/assets/assets_logo/mecanica_especial.png';
@@ -71,6 +72,7 @@ const TopMenu = ({
   onOpenCamp,
   onOpenCompanion,
   onOpenFollower,
+  onActivateScene,
 }) => {
 
   const { translations } = useLanguage();
@@ -88,7 +90,7 @@ const TopMenu = ({
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
-  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, setMagicCannonLoaded, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent } = useGame();
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent } = useGame();
   const { trackerData, setTrackerData } = useTracker();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
@@ -200,26 +202,8 @@ const TopMenu = ({
     onSelectRuneCard(card, timeToken);
   };
 
-  const activateChapter4 = () => {
-    const runeCard = RUNAS_DESPERTAR.find((card) => card.id === 'runa_despertar_naval' && card.cara === 'A');
-    const incursionCard = INCURSION_DESPERTAR.find((card) => card.id === 'incursion_despertar_naval' && card.cara === 'A');
-
-    if (runeCard && !placedRunes.some((entry) => entry.rune.id === runeCard.id)) {
-      onSelectRuneCard(runeCard);
-    }
-    if (incursionCard && !placedRunes.some((entry) => entry.rune.id === incursionCard.id)) {
-      onSelectRuneCard(incursionCard);
-    }
-
-    ['naranja', 'verde', 'rojo', 'gris'].forEach((color) => {
-      addGenerationPoint(color);
-      const existing = magicCannons.find((cannon) => cannon.color === color);
-      if (existing) setMagicCannonLoaded(existing.id, false);
-      else addMagicCannon(color, false);
-    });
-    addCorruptShipEvent();
-    addSwanShipEvent();
-
+  const activateScene = (scene) => {
+    onActivateScene?.(scene);
     const followers = trackerData.followers || [];
     const missing = {
       vorn: !followers.some((entry) => entry.id === 'vorn_guerrero'),
@@ -227,7 +211,7 @@ const TopMenu = ({
     };
     setSceneMissing(missing);
     setActiveMenu(null);
-    if (missing.vorn || missing.elros) {
+    if (scene.id === 'chapter4' && (missing.vorn || missing.elros)) {
       setSceneFollowerOpen(true);
     }
   };
@@ -1716,20 +1700,24 @@ const TopMenu = ({
               </span>
               <h2 className="text-base font-bold">{t.scenesTitle || 'Escenas'}</h2>
             </div>
-            <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-3">
-              <p className="text-sm font-bold text-amber-100">
-                {t.chapter4Title || 'Capítulo 4: Batalla en Alta Mar'}
-              </p>
-              <p className="mt-1 text-xs text-amber-100/80">
-                {t.chapter4Description || 'Activa de una vez todas las mecánicas de la escena: runa e incursión naval, generación, cañones y las dos barajas PS.'}
-              </p>
-              <button
-                type="button"
-                onClick={activateChapter4}
-                className="mt-3 min-h-9 rounded-lg bg-amber-700 px-3 text-xs font-bold text-white hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
-              >
-                ▶ {t.activateChapter || 'Activar capítulo'}
-              </button>
+            <div className="grid gap-2">
+              {SCENES.map((scene) => (
+                <div key={scene.id} data-testid={`scene-${scene.id}`} className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-3">
+                  <p className="text-sm font-bold text-amber-100">
+                    {t[scene.titleKey] || scene.titleEn}
+                  </p>
+                  <p className="mt-1 text-xs text-amber-100/80">
+                    {t[scene.descriptionKey] || ''}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => activateScene(scene)}
+                    className="mt-3 min-h-9 rounded-lg bg-amber-700 px-3 text-xs font-bold text-white hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                  >
+                    ▶ {t.activateChapter || 'Activar capítulo'}
+                  </button>
+                </div>
+              ))}
             </div>
           </motion.div>
         )}

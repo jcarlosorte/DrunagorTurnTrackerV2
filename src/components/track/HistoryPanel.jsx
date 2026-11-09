@@ -18,6 +18,18 @@ const KIND_ICONS = {
   summon: '👹',
 };
 
+const BADGE_CLASSES = {
+  blanco: 'border-white bg-white text-slate-900',
+  gris: 'border-slate-300 bg-slate-400 text-slate-950',
+  negro: 'border-slate-400 bg-slate-950 text-white',
+  dorado: 'border-amber-200 bg-amber-500 text-amber-950',
+  azul_claro: 'border-sky-200 bg-sky-300 text-sky-950',
+  violeta: 'border-violet-300 bg-violet-600 text-white',
+  morado: 'border-purple-300 bg-purple-800 text-white',
+};
+
+const getBadgeClass = (color) => BADGE_CLASSES[color] || 'border-slate-500 bg-slate-700 text-white';
+
 const FILTERS = [
   { id: 'all', label: 'Todo', icon: '≡' },
   { id: 'turn', label: 'Turnos', icon: '🎯' },
@@ -179,6 +191,15 @@ export default function HistoryPanel({ limit = 60, labels = {}, refreshKey = 0 }
                         key={`${entry.at}-${entry.message}`}
                         className={`flex items-start gap-1 rounded-md border px-1.5 py-1 text-[0.65rem] leading-snug ${KIND_CLASSES[entry.kind] || KIND_CLASSES.event}`}
                       >
+                        {entry.badge?.label && (
+                          <span
+                            title={entry.badge.title || ''}
+                            aria-label={entry.badge.title || entry.badge.label}
+                            className={`mt-px inline-flex min-h-4 min-w-4 shrink-0 items-center justify-center rounded border px-1 text-[0.55rem] font-black leading-none ${getBadgeClass(entry.badge.color)}`}
+                          >
+                            {entry.badge.label}
+                          </span>
+                        )}
                         <span aria-hidden="true" className="mt-px shrink-0">{KIND_ICONS[entry.kind] || '✦'}</span>
                         <span className="min-w-0 flex-1 break-words">{entry.message}</span>
                         <span className="shrink-0 font-mono text-[0.55rem] opacity-60">

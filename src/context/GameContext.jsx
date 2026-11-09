@@ -690,6 +690,62 @@ export const GameProvider = ({ children }) => {
     return nuevoNodo;
   };
 
+  // Preparación de escena: coloca runas desde la bolsa y, después, forma los
+  // Nodos de Oscuridad activos consumiendo esas mismas runas del track.
+  const placeSceneRunes = (perColor = 0, nodeCount = 0) => {
+    const colores = ['naranja', 'verde', 'azul', 'rojo', 'gris'];
+    let remaining = [...availableTiles];
+    const used = [...usedTiles];
+    const placed = [];
+
+    for (const color of colores) {
+      for (let index = 0; index < perColor; index += 1) {
+        const tileIndex = remaining.findIndex((tile) => tile.runa === color);
+        if (tileIndex === -1) break;
+        const [tile] = remaining.splice(tileIndex, 1);
+        placed.push(tile);
+        used.push(tile);
+      }
+    }
+
+    const nodes = [];
+    for (let index = 0; index < nodeCount; index += 1) {
+      const nodeTiles = [];
+      for (const color of colores) {
+        const tileIndex = used.findIndex((tile) => tile.runa === color);
+        if (tileIndex === -1) break;
+        nodeTiles.push(used.splice(tileIndex, 1)[0]);
+      }
+      if (nodeTiles.length !== colores.length) {
+        used.push(...nodeTiles);
+        break;
+      }
+      nodes.push({
+        id: createId(),
+        tiles: nodeTiles,
+        estado: 'activa',
+        numPila: contadorNodosOscuridad + nodes.length,
+      });
+    }
+
+    const nextRunes = { ...runes };
+    placed.forEach((tile) => {
+      nextRunes[tile.runa] = (nextRunes[tile.runa] || 0) + 1;
+    });
+    nodes.flatMap((node) => node.tiles).forEach((tile) => {
+      nextRunes[tile.runa] = Math.max(0, (nextRunes[tile.runa] || 0) - 1);
+    });
+
+    setAvailableTiles(remaining);
+    setUsedTiles(used);
+    setRunes(nextRunes);
+    if (nodes.length > 0) {
+      setNodosOscuridad((prev) => [...prev, ...nodes]);
+      setContadorNodosOscuridad((prev) => prev + nodes.length);
+    }
+    return { placed, nodes };
+  };
+
   const removeTileFromNodoOscuridad = (nodoId) => {
     const nodoActual = nodosOscuridad.find((nodo) => nodo.id === nodoId);
     if (!nodoActual || nodoActual.tiles.length === 0) return null;
@@ -1153,6 +1209,7 @@ export const GameProvider = ({ children }) => {
         pilasConcentrada, setPilasConcentrada, addNewPilaConcentrada, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack,
         nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, addTileToNodoOscuridad,
         removeTileFromNodoOscuridad, removeSingleTileFromNodoOscuridad, placeTilesFromNodoOscuridadToTrack,
+        placeSceneRunes,
         rompenodoNotice, notifyRompenodo, clearRompenodoNotice,
         erradenEvent, addErradenEvent, drawErradenCard, resetErradenEvent,
         corruptShipEvent, addCorruptShipEvent, drawCorruptShipCard, resetCorruptShipEvent,

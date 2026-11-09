@@ -34,6 +34,19 @@ export function appendGameLog(kind, message, extra = {}) {
   notifyGameLogChanged();
 }
 
+export function replaceLastGameLog(kind, message, extra = {}) {
+  if (!message) return false;
+  const log = readGameLog();
+  for (let index = log.length - 1; index >= 0; index -= 1) {
+    if (log[index]?.kind !== kind) continue;
+    log[index] = { ...log[index], kind, message: String(message), ...extra };
+    writeJsonStorage(GAME_LOG_KEY, log.slice(-MAX_LOG_ENTRIES));
+    notifyGameLogChanged();
+    return true;
+  }
+  return false;
+}
+
 export function clearGameLog() {
   removeStorage(GAME_LOG_KEY);
   notifyGameLogChanged();
