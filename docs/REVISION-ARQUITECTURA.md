@@ -3095,6 +3095,20 @@ Unit       212 tests
 E2E        69/69
 ```
 
+### 170.ª tanda — Fuego de respuesta con cañón ya cargado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **PS del Navío Corrupto** | Si el cañón del color manifestado ya está cargado, se ofrece elegir otro cañón descargado antes de invocar a los Cazamareas | `InitTracker` |
+| **Pruebas** | 212 unitarios · 69 E2E | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        69/69
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

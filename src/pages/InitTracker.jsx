@@ -643,35 +643,37 @@ const InitTracker = () => {
     }
 
     if (card.action === 'fuego') {
+      const unloaded = magicCannons.filter((cannon) => !cannon.loaded);
       if (tile.runa === 'azul') {
-        const options = magicCannons.filter((cannon) => !cannon.loaded);
-        if (options.length === 0) {
-          showScenarioToast(ti.noMagicCannon || 'No hay Cañón Mágico disponible para esa runa.');
+        if (unloaded.length === 0) {
+          showScenarioToast(ti.noUnloadedCannon || 'No hay cañones descargados disponibles para la runa');
           setStoryCard(null);
           return;
         }
-        setFuegoCannonChoice({ tile, options });
+        setFuegoCannonChoice({ tile, options: unloaded, reason: 'blue' });
         setStoryCard(null);
         return;
       }
-      const cannon = magicCannons.find((entry) => entry.color === tile.runa);
-      if (!cannon) {
+
+      const matching = magicCannons.find((entry) => entry.color === tile.runa);
+      if (!matching) {
         showScenarioToast(ti.noMagicCannon || 'No hay Cañón Mágico disponible para esa runa.');
         setStoryCard(null);
         return;
       }
-      setMagicCannonLoaded(cannon.id, true);
-      const target = ENEMIES.find((enemy) => enemy.id === 'tide_hunter');
-      const existing = placedEnemies.filter((entry) => entry.enemy.id === target?.id).length;
-      const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
-      const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
-      if (target && capacity > 0) {
-        spawnBatchEnemies(1, target);
-        showScenarioToast('¡Fuego de respuesta!: cañón recargado y Cazamareas invocado.');
-      } else {
-        showIncursionFailure(1);
+      if (matching.loaded) {
+        if (unloaded.length === 0) {
+          showScenarioToast(ti.noUnloadedCannon || 'No hay cañones descargados disponibles para la runa');
+          setStoryCard(null);
+          return;
+        }
+        setFuegoCannonChoice({ tile, options: unloaded, reason: 'loaded' });
+        setStoryCard(null);
+        return;
       }
+
       setStoryCard(null);
+      handleFuegoCannonSelect(matching.id);
       return;
     }
 
@@ -4820,7 +4822,7 @@ const InitTracker = () => {
         <CannonLoadDialog
           open={Boolean(fuegoCannonChoice)}
           runeColor={fuegoCannonChoice?.tile?.runa}
-          reason="blue"
+          reason={fuegoCannonChoice?.reason || 'blue'}
           options={fuegoCannonChoice?.options || []}
           onSelect={handleFuegoCannonSelect}
           onSkip={() => setFuegoCannonChoice(null)}
