@@ -3228,6 +3228,20 @@ Unit       212 tests
 E2E        76/76
 ```
 
+### 180.ª tanda — Anillos distintos en invocaciones de escena
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Anillos** | Las invocaciones de una escena reservan un anillo distinto por enemigo y dejan libre el siguiente disponible | `InitTracker` |
+| **Pruebas** | 212 unitarios · 76 E2E, verificando tres anillos únicos en el Capítulo 4 | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        76/76
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

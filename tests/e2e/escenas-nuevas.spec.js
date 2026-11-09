@@ -109,15 +109,18 @@ test.describe('Escenas de Despertar', () => {
       const game = JSON.parse(localStorage.getItem('gameState') || '{}');
       const enemiesState = JSON.parse(localStorage.getItem('initEnemiesState') || '{}');
       const log = JSON.parse(localStorage.getItem('gameLog') || '[]');
+      const rings = Object.values(enemiesState.enemyColorMap || {});
       return {
         used: (game.usedTiles || []).length,
         enemies: (enemiesState.placedEnemies || []).length,
         summons: log.filter((entry) => entry.kind === 'summon').map((entry) => entry.badge?.label),
+        uniqueRings: new Set(rings).size,
       };
     })).toEqual({
       used: 25,
       enemies: 3,
       summons: ['G1', 'G2', 'B3'],
+      uniqueRings: 3,
     });
   });
 });

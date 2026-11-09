@@ -1684,6 +1684,10 @@ const InitTracker = () => {
   const spawnSceneEnemies = async (scene) => {
     const totalHeroes = Math.max(1, Math.min(5, numHeroes || 1));
     let order = 0;
+    // Simulamos los anillos ya ocupados para que cada invocación de la misma
+    // escena reciba un color distinto y el siguiente pueda seguir asignando.
+    const simulatedSmall = [...usedColors];
+    const simulatedBig = [...usedColorsBig];
     for (let heroCount = 1; heroCount <= totalHeroes; heroCount += 1) {
       const groups = scene.enemiesByHeroes?.[heroCount] || [];
       for (const group of groups) {
@@ -1692,11 +1696,17 @@ const InitTracker = () => {
           if (pool.length === 0) continue;
           const selected = pool[Math.floor(Math.random() * pool.length)];
           order += 1;
+          const isBig = selected.size === 'grande';
+          const ringColor = getNextAvailableColorSimulated(isBig, simulatedSmall, simulatedBig) || 'noColor';
+          if (ringColor !== 'noColor') {
+            (isBig ? simulatedBig : simulatedSmall).push(ringColor);
+          }
           await handleManualEnemyAdd(
             selected.id,
             selected.comportamiento,
             selected.categoria,
             'NoShow',
+            ringColor,
           );
           const color = SCENE_BADGE_COLORS[selected.color] || selected.color;
           const initial = SCENE_BADGE_INITIALS[selected.color] || '?';
