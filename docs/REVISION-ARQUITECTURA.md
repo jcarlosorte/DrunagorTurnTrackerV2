@@ -3123,6 +3123,22 @@ Unit       212 tests
 E2E        70/70
 ```
 
+### 173.ª tanda — Ventanas propias de la app
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Avisos** | Todos los `alert` se sustituyen por avisos integrados de la app con historial | `AppDialogHost`, `appDialogs` |
+| **Confirmaciones** | Los `window.confirm` pasan a diálogos propios, incluidos vida excedida, estados y consecuencias | `ConfirmDialog`, `ModalEnemyCard`, `InitTracker` |
+| **Entradas** | Los `window.prompt` pasan a un diálogo propio con campo de texto/numérico | `PromptDialog` |
+| **Pruebas** | 212 unitarios · 70 E2E | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        70/70
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

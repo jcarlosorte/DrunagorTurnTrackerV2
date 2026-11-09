@@ -6,6 +6,7 @@ import useGlossary from '@/hooks/useGlossary';
 import { useRules } from '@/context/RulesContext';
 import { getEstadoLogo2 } from '@/data/estados2';
 import { ESTADOS_ALTERADOS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
+import { appConfirm } from '@/utils/appDialogs';
 import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRunes';
 import { resolveCapabilityLabel } from '@/utils/enemyCapability';
 import { getAbilityColor } from '@/components/track/enemyVisuals';
@@ -164,7 +165,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
     jefe: 'glow-commander',
   };
 
-  const handleVidaChange = (delta) => {
+  const handleVidaChange = async (delta) => {
     let vidaTentativa = vidaLocal + delta;
   
     if (delta < 0) {
@@ -207,7 +208,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   
     // ✅ Vida mayor que máximo (overheal)
     if (vidaTentativa > enemy.vidaMax && !overhealedEnemies.has(uuid)) {
-      const confirm = window.confirm(`${vidaTentativa} ${ti?.vidaExcedida}`);
+      const confirm = await appConfirm(
+        `${vidaTentativa} ${ti?.vidaExcedida || 'supera la vida máxima. ¿Quieres aplicar el exceso?'}`,
+        { title: ti?.vidaExcedidaTitulo || 'Vida excedida' },
+      );
       if (!confirm) return;
   
       setOverhealedEnemies(prev => new Set(prev).add(uuid));
@@ -300,7 +304,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
     return translations.enemies?.[id];
   };
 
-  const handleEstadoChangeLocal = (estadoId, delta) => {
+  const handleEstadoChangeLocal = async (estadoId, delta) => {
     // Si el estado ya no está activo (se consumió en el turno) el botón + debe
     // poder volver a añadirlo; antes solo se recorrían los estados existentes.
     if (!estadosLocal.some((estado) => estado.id === estadoId)) {
@@ -313,33 +317,25 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
       return;
     }
 
+    const target = estadosLocal.find((estado) => estado.id === estadoId);
+    const estadoConfig = ESTADOS_ALTERADOS.find((item) => item.id === estadoId);
+    const currentMax = target?.max || estadoConfig?.max || 1;
+    const newCount = (target?.count || 0) + delta;
+    if (delta > 0 && newCount > currentMax) {
+      const confirm = await appConfirm(
+        `${tea[target?.texto] || estadoConfig?.texto || estadoId} ${ti?.estadoExcedido_1 || 'supera el máximo'} (${currentMax}). ${ti?.estadoExcedido_2 || '¿Quieres aumentarlo?'}`,
+        { title: ti?.estadoExcedidoTitulo || 'Límite de estado superado' },
+      );
+      if (!confirm) return;
+    }
+
     const updatedStates = estadosLocal.map((estado) => {
-      if (estado.id === estadoId) {
-        const estadoConfig = ESTADOS_ALTERADOS.find(e => e.id === estado.id);
-        const currentMax = estado.max || estadoConfig?.max || 1;
-        const currentCount = estado.count || 0;
-        const newCount = currentCount + delta;
-  
-        if (delta > 0 && newCount > currentMax) {
-          const confirm = window.confirm(
-            `${tea[estado.texto]} ${ti?.estadoExcedido_1} (${currentMax}). ${ti?.estadoExcedido_2}`
-          );
-          if (!confirm) return estado;
-  
-          // ✅ Aumentamos el límite dinámicamente
-          return {
-            ...estado,
-            count: newCount,
-            max: newCount // Nuevo límite
-          };
-        }
-  
-        return {
-          ...estado,
-          count: Math.max(0, newCount)
-        };
-      }
-      return estado;
+      if (estado.id !== estadoId) return estado;
+      return {
+        ...estado,
+        count: Math.max(0, (estado.count || 0) + delta),
+        ...(delta > 0 && newCount > currentMax ? { max: newCount } : {}),
+      };
     });
   
     setEstadosLocal(updatedStates);

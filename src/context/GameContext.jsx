@@ -7,6 +7,7 @@ import { useTracker } from '@/context/TrackerContext';
 import { ALDEANO, ERRANTES } from '@/data/cartasEspeciales';
 import { createId } from '@/utils/id';
 import { appendGenerationPoint } from '@/utils/generationPoints';
+import { appNotify } from '@/utils/appDialogs';
 import { ERRADEN_CARDS, CORRUPT_SHIP_CARDS, SWAN_SHIP_CARDS } from '@/data/eventosEspeciales';
 
 const GameContext = createContext();
@@ -419,7 +420,7 @@ export const GameProvider = ({ children }) => {
     }
   
     if (!nuevaTile) {
-      alert(ti.aviso);
+      appNotify(ti.aviso);
       return;
     }
   
@@ -462,7 +463,7 @@ export const GameProvider = ({ children }) => {
     });
 
     if (tilesSeleccionadas.length === 0) {
-      alert(ti.noRunasColocadas || 'No hay runas colocadas para formar la pila');
+      appNotify(ti.noRunasColocadas || 'No hay runas colocadas para formar la pila');
       return;
     }
 
@@ -634,7 +635,7 @@ export const GameProvider = ({ children }) => {
     }
   
     if (!nuevaTile) {
-      alert(ti.aviso);
+      appNotify(ti.aviso);
       return;
     }
   
@@ -672,7 +673,7 @@ export const GameProvider = ({ children }) => {
     });
 
     if (tilesSeleccionadas.length === 0) {
-      alert(ti.noRunasColocadas || 'No hay runas colocadas para formar la pila');
+      appNotify(ti.noRunasColocadas || 'No hay runas colocadas para formar la pila');
       return;
     }
 
@@ -766,7 +767,7 @@ export const GameProvider = ({ children }) => {
       if (nuevaTile) break;
     }
     if (!nuevaTile) {
-      alert(ti.aviso);
+      appNotify(ti.aviso);
       return;
     }
     setNodosOscuridad((prev) => prev.map((nodo) => (
@@ -956,7 +957,7 @@ export const GameProvider = ({ children }) => {
         newPoints.push({ uuid: createId(), runa: color, tile });
         pool = pool.filter((item) => item.uuid !== tile.uuid);
       } else {
-        alert(`${missingMessage} ${ti.colores?.[color] || color}`);
+        appNotify(`${missingMessage} ${ti.colores?.[color] || color}`);
       }
     });
 

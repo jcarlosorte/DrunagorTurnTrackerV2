@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLanguage } from "@/context/LanguageContext";
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { createId } from '@/utils/id';
+import { appNotify } from '@/utils/appDialogs';
 
 const InitRunesContext = createContext();
 
@@ -20,7 +21,7 @@ export const InitRunesProvider = ({ children }) => {
     // Verificar si ya existe una carta con el mismo id
     const exists = placedRunes.some((r) => r.rune.id === rune.id);
     if (exists) {
-      alert(t.RuneRepeat);
+      appNotify(t.RuneRepeat);
       return;
     }
 

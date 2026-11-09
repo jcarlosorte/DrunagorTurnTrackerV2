@@ -59,8 +59,10 @@ import CannonLoadDialog from '@/components/track/CannonLoadDialog';
 import { planNavalCannonLoads } from '@/utils/navalCannons';
 import CommanderCardModal from '@/components/CommanderCardModal';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import AppDialogHost from '@/components/AppDialogHost';
 
 import { createId } from '@/utils/id';
+import { appNotify, appConfirm, appPrompt } from '@/utils/appDialogs';
 import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { healSurvivors } from '@/utils/hiloDeVida';
 import { formatCardText } from '@/utils/cardText';
@@ -418,7 +420,7 @@ const InitTracker = () => {
 
             if (!nextColorId) {
               if (!warnedNoColors){
-                alert(ti.noColorsAvailable);
+                appNotify(ti.noColorsAvailable);
                 warnedNoColors = true;    
               }
               nextColorId = 'noColor';
@@ -555,7 +557,7 @@ const InitTracker = () => {
       
       if (!nextColorId) {
         if (!warnedNoColors){
-          alert(ti.noColorsAvailable);
+          appNotify(ti.noColorsAvailable);
           warnedNoColors = true;    
         }
         nextColorId = 'noColor';
@@ -815,7 +817,7 @@ const InitTracker = () => {
   
       if (!nextColorId) {
         if (!warnedNoColors) {
-          alert(ti.noColorsAvailable);
+          appNotify(ti.noColorsAvailable);
           warnedNoColors = true;
         }
         nextColorId = 'noColor';
@@ -1002,7 +1004,7 @@ const InitTracker = () => {
         let nextColorId = getNextAvailableColorSimulated(isBig, simulatedUsedSmall, simulatedUsedBig);
         if (!nextColorId) {
           if (!warnedNoColors) {
-            alert(ti.noColorsAvailable || "No hay más colores disponibles para asignar");
+            appNotify(ti.noColorsAvailable || "No hay más colores disponibles para asignar");
             warnedNoColors = true;
           }
           nextColorId = 'noColor';
@@ -1071,7 +1073,7 @@ const InitTracker = () => {
     return Number.isFinite(parsed) ? parsed : 0;
   };
 
-  const handleManualEnemyAdd = (enemyId, behaviorType, category, ver = 'show', forcedColorId = null, forcedUUID = null, forcedPcValue = null ) => {
+  const handleManualEnemyAdd = async (enemyId, behaviorType, category, ver = 'show', forcedColorId = null, forcedUUID = null, forcedPcValue = null ) => {
     setManualSelector({ open: false, color: null });
     // Reglas comunes en `findEnemyVariant`: tolera `comportamiento` ausente y
     // permite las apariciones de escenario aunque no estén en la lista.
@@ -1250,9 +1252,9 @@ const InitTracker = () => {
           return;
           
         } else if (selected.rune === 'jefe'){
-          const cubosTrauma = parseInt(window.prompt(`${ti.cubosTrauma}`, "0"), 10) || 0;
+          const cubosTrauma = parseInt(await appPrompt(`${ti.cubosTrauma}`, '0', { title: ti.cubosTrauma || 'Cubos de trauma' }), 10) || 0;
           const subTotalTrauma = cubosTrauma * selected.cubo_T;
-          const cubosMaldicion = parseInt(window.prompt(`${ti.cubosMaldicion}`, "0"), 10) || 0;
+          const cubosMaldicion = parseInt(await appPrompt(`${ti.cubosMaldicion}`, '0', { title: ti.cubosMaldicion || 'Cubos de maldición' }), 10) || 0;
           const subTotalMaldicion = cubosMaldicion * selected.cubo_M;
           const subTotalVida = selected.vida * (numHeroes);
           const totalVida = subTotalVida + subTotalTrauma + subTotalMaldicion;
@@ -1302,19 +1304,19 @@ const InitTracker = () => {
             let vidaReducida = 0;
           
             // Pregunta 1: Rompereliquias
-            const romperReliquias = window.confirm(`${ti.activaRompe}`);
+            const romperReliquias = await appConfirm(`${ti.activaRompe}`, { title: ti.consecuencias || 'Consecuencias' });
             if (romperReliquias) {
               vidaReducida += 15 * numHeroes;
             }
           
             // Pregunta 2: Amantes reunidos
-            const amantesReunidos = window.confirm(`${ti.activaAmantes}`);
+            const amantesReunidos = await appConfirm(`${ti.activaAmantes}`, { title: ti.consecuencias || 'Consecuencias' });
             if (amantesReunidos) {
               vidaReducida += 15 * numHeroes;
             }
           
             // Pregunta 3: Dúo Dinámico
-            const duoDinamico = window.confirm(`${ti.activaDuo}`);
+            const duoDinamico = await appConfirm(`${ti.activaDuo}`, { title: ti.consecuencias || 'Consecuencias' });
             if (duoDinamico) {
               showScenarioToast(`${ti.textoDuo}`);
             }
@@ -1504,7 +1506,7 @@ const InitTracker = () => {
     });
   };
 
-  const placeFallenHeroCards = (enemy, heroUUID, isTurnActivation = false) => {
+  const placeFallenHeroCards = async (enemy, heroUUID, isTurnActivation = false) => {
     const enemyId = enemy.id;
     const enemyColor = enemy.color;
     const enemyCat = enemy.categoria;
@@ -1512,9 +1514,9 @@ const InitTracker = () => {
     const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     const nuevasCartas = [];
   
-    CARTAS_HEROE_CAIDO.forEach(carta => {
+    for (const carta of CARTAS_HEROE_CAIDO) {
       const nombreTraducido = (ta && ta.nombre && ta.nombre[carta.id]) || carta.nombre || carta.id;
-      const confirmar = window.confirm(`${ti.cumpleCondiciones} ${nombreTraducido}?`);
+      const confirmar = await appConfirm(`${ti.cumpleCondiciones} ${nombreTraducido}?`, { title: ti.cumpleCondiciones || 'Confirmar' });
       
       if (confirmar) {
         nuevasCartas.push({
@@ -1536,7 +1538,7 @@ const InitTracker = () => {
           },
         });
       }
-    });
+    }
   
     if (nuevasCartas.length > 0) {
       const msg = ti.voragineWarning.replace('{name}', nombreHeroe);
@@ -1923,7 +1925,7 @@ const InitTracker = () => {
     };
   };
 
-  const aplicarCapacidadesCartaEspecial = (cartaEspecial, options = {}) => {
+  const aplicarCapacidadesCartaEspecial = async (cartaEspecial, options = {}) => {
     const { applyConditional = true } = options;
     const logs = [];
     const capacidades = cartaEspecial.lista_capacidad || [];
@@ -1940,7 +1942,7 @@ const InitTracker = () => {
     
     if (!enemigo) return { logs }; // Nada que hacer si no hay enemigo vinculado
   
-    capacidades.forEach(cap => {
+    for (const cap of capacidades) {
       // Curación condicional de FURIA HEMORRÁGICA: solo si no sufrió la hemorragia.
       if (cap === "SANA_X_SI_NO_HEMORRAGIA") {
         if (hemorragiaAplicada) return;
@@ -1967,10 +1969,10 @@ const InitTracker = () => {
         // 🔹 Determinar valor base
         let baseValor = runeCount;
         if (condicionCasillas) {
-          const confirmarCasillas = window.confirm(`${ti.numCasillas1}`);
+          const confirmarCasillas = await appConfirm(`${ti.numCasillas1}`, { title: ti.numCasillas1 || 'Confirmar casillas' });
           if (!confirmarCasillas) return;
           
-          const input = parseInt(window.prompt(`${ti.numCasillas2}`, "0"), 10);
+          const input = parseInt(await appPrompt(`${ti.numCasillas2}`, '0', { title: ti.numCasillas2 || 'Número de casillas' }), 10);
           if (!isNaN(input) && input > 0) {
             baseValor = input * heroCount;
           } else {
@@ -2364,7 +2366,7 @@ const InitTracker = () => {
     
             if (!nextColorId) {
               if (!warnedNoColors) {
-                alert(ti.noColorsAvailable || "No hay más colores disponibles para asignar");
+                appNotify(ti.noColorsAvailable || "No hay más colores disponibles para asignar");
                 warnedNoColors = true;
               }
               nextColorId = 'noColor';
@@ -2383,7 +2385,7 @@ const InitTracker = () => {
     }
       
  
-    });
+    }
   
     return { logs };
   };
@@ -2437,7 +2439,7 @@ const InitTracker = () => {
     return '';
   };
 
-  const interpretarCapacidades = (capacidades, runeColor) => {
+  const interpretarCapacidades = async (capacidades, runeColor) => {
     if (!Array.isArray(capacidades) || capacidades.length === 0) return;
    
     capacidades.forEach(cap => {
@@ -2474,7 +2476,7 @@ const InitTracker = () => {
               let nextColorId = getNextAvailableColorSimulated(isBig, simulatedUsedSmall, simulatedUsedBig);
               if (!nextColorId) {
                 if (!warnedNoColors) {
-                  alert(ti.noColorsAvailable || "No hay más colores disponibles para asignar");
+                  appNotify(ti.noColorsAvailable || "No hay más colores disponibles para asignar");
                   warnedNoColors = true;
                 }
                 nextColorId = 'noColor';
@@ -3015,11 +3017,11 @@ const InitTracker = () => {
                 setPendingResolutionQuestion(true);
                 return;
               }
-              const { logs } = aplicarCapacidadesCartaEspecial(current);
-        
-              logs.forEach(log =>
-                showScenarioToast(`🃏 ${current.nombreEnemy || current.nombre}: ${log}`)
-              );
+              aplicarCapacidadesCartaEspecial(current).then(({ logs }) => {
+                logs.forEach(log =>
+                  showScenarioToast(`🃏 ${current.nombreEnemy || current.nombre}: ${log}`)
+                );
+              });
         
               return;
             }
@@ -4692,8 +4694,8 @@ const InitTracker = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    const { logs } = aplicarCapacidadesCartaEspecial(pendingResolutionCard, { applyConditional: true });
+                  onClick={async () => {
+                    const { logs } = await aplicarCapacidadesCartaEspecial(pendingResolutionCard, { applyConditional: true });
                     logs.forEach((log) => showScenarioToast(`🃏 ${pendingResolutionCard.nombreEnemy || pendingResolutionCard.nombre}: ${log}`));
                     setPendingResolutionCard(null);
                     setPendingResolutionQuestion(false);
@@ -4793,6 +4795,7 @@ const InitTracker = () => {
           onConfirm={handleRestartGame}
         />
         <CampDialog open={isCampOpen} onClose={() => setIsCampOpen(false)} />
+        <AppDialogHost onNotify={showScenarioToast} />
         <EventCardModal
           card={drawnEventCard}
           onClose={() => setDrawnEventCard(null)}

@@ -7,6 +7,7 @@ import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storag
 import { compactPlacedEnemies } from '@/utils/enemySanitize';
 import { resolveEntityLabel } from '@/utils/entityLabel';
 import { appendGameLog } from '@/utils/gameLog';
+import { appNotify } from '@/utils/appDialogs';
 
 const InitEnemiesContext = createContext();
 
@@ -82,7 +83,7 @@ export const InitEnemiesProvider = ({ children }) => {
   const assignColorToEnemy = (enemyUUID, isBig = false, forcedColor = false) => {
     const available = forcedColor || getNextAvailableColor(isBig);
     if (!available) {
-      alert(ti.noColorsAvailable || 'No hay más colores disponibles');
+      appNotify(ti.noColorsAvailable || 'No hay más colores disponibles');
       return undefined;
     }
   

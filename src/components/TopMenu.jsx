@@ -24,6 +24,7 @@ import { ROLE_POSITIONS } from '@/data/roles';
 import { getInteractionBackgroundAt } from '@/data/companions';
 import { saveCampFollower } from '@/utils/campFollowers';
 import { createId } from '@/utils/id';
+import { appNotify } from '@/utils/appDialogs';
 import SceneFollowerDialog from '@/components/track/SceneFollowerDialog';
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
 import mecanicaEspecialIcon from '@/assets/assets_logo/mecanica_especial.png';
@@ -191,7 +192,7 @@ const TopMenu = ({
       : placedRunes.some(r => r.rune.tipo === tipo);
   
     if (yaEx) {
-      alert(t.yaExiste);
+      appNotify(t.yaExiste);
       return;
     }
   
@@ -275,7 +276,7 @@ const TopMenu = ({
       .filter((candidate) => usedTiles.some((tile) => tile.runa === candidate));
     const targetColor = color || availableColors[Math.floor(Math.random() * availableColors.length)];
     if (!targetColor) {
-      alert(t.noTilesToRemove || 'No hay fichas para eliminar.');
+      appNotify(t.noTilesToRemove || 'No hay fichas para eliminar.');
       return;
     }
     setPendingRuneAction({ type: 'remove', color: targetColor });
@@ -284,7 +285,7 @@ const TopMenu = ({
   const requestDeleteAvailableTile = (color) => {
     const targetColor = color || availableTiles[Math.floor(Math.random() * availableTiles.length)]?.runa;
     if (!targetColor) {
-      alert(t.noTilesToRemove || 'No hay fichas para eliminar.');
+      appNotify(t.noTilesToRemove || 'No hay fichas para eliminar.');
       return;
     }
     setPendingRuneAction({ type: 'delete', color: targetColor });
@@ -308,13 +309,13 @@ const TopMenu = ({
     if (action.type === 'remove') {
       const removed = removeRune(action.color);
       if (removed) showTileToast(removed, 'remove');
-      else alert(t.noTilesToRemove || 'No hay fichas para eliminar.');
+      else appNotify(t.noTilesToRemove || 'No hay fichas para eliminar.');
       return;
     }
 
     const tile = deleteAvailableTileByColor(action.color);
     if (tile) showTileToast(tile, 'remove');
-    else alert(t.noTilesToRemove || 'No hay fichas para eliminar.');
+    else appNotify(t.noTilesToRemove || 'No hay fichas para eliminar.');
   };
 
   const pendingRuneCopy = (() => {
@@ -1029,7 +1030,7 @@ const TopMenu = ({
                             //addRune(color); // del GameContext
                             onTileDraw(tile);
                           } else {
-                            alert(`${t.aviso2} ${t.colores[color]}`);
+                            appNotify(`${t.aviso2} ${t.colores[color]}`);
                           }
                         }}
                         className={`${colorMap[color]} text-white text-xs px-2 py-1 rounded-full`}
@@ -1047,7 +1048,7 @@ const TopMenu = ({
                         if (tile && onTileDraw) {
                           onTileDraw(tile);
                         } else {
-                          alert(`${t.aviso2} ${t.colores[randomColor]}`);
+                          appNotify(`${t.aviso2} ${t.colores[randomColor]}`);
                         }
                       }}
                       className="bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500 text-white text-xs px-2 py-1 rounded-full"
