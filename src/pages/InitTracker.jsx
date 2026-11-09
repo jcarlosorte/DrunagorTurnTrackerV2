@@ -2523,8 +2523,17 @@ const InitTracker = () => {
           )
         );
         const nombreEnemy = tee?.[enemy.id] || enemy.nombre || enemy.id;
-        showScenarioToast(`⏳ ${nombreEnemy} ${ti.saltaTurnoPorTiempo}`);
-        return false; // turno saltado
+        if (mainBox === 'awakenings') {
+          showScenarioToast(`⏳ ${nombreEnemy}: ${ti.tiempoReducido || 'Se reduce 1 Ficha de Tiempo'}`);
+          if (skippedData.finished) {
+            const template = ti.contadorCartaTerminado || 'El contador sobre la carta {carta} ha terminado.';
+            showScenarioToast(`⏳ ${template.replace('{carta}', nombreEnemy)}`);
+          }
+          // En Despertar la ficha se reduce pero el turno no se salta.
+        } else {
+          showScenarioToast(`⏳ ${nombreEnemy} ${ti.saltaTurnoPorTiempo}`);
+          return false; // turno saltado
+        }
       }
     }
   
@@ -3003,9 +3012,18 @@ const InitTracker = () => {
             current.tipo === "especial" || current.tipo === "fallenHero"
               ? ta.nombre?.[current.id] || current.nombre || current.id
               : tee?.[current.id] || current.nombre || current.id;
-            showScenarioToast(`⏳ ${nombreEnemy} ${ti.saltaTurnoPorTiempo}`);
-            //setTimeout(() => handleNextTurn(), 1500);
-            return;
+            if (mainBox === 'awakenings') {
+              showScenarioToast(`⏳ ${nombreEnemy}: ${ti.tiempoReducido || 'Se reduce 1 Ficha de Tiempo'}`);
+              if (skippedData.finished) {
+                const template = ti.contadorCartaTerminado || 'El contador sobre la carta {carta} ha terminado.';
+                showScenarioToast(`⏳ ${template.replace('{carta}', nombreEnemy)}`);
+              }
+              // En Despertar no se salta el turno.
+            } else {
+              showScenarioToast(`⏳ ${nombreEnemy} ${ti.saltaTurnoPorTiempo}`);
+              //setTimeout(() => handleNextTurn(), 1500);
+              return;
+            }
           }
 
           // ✅ Si es carta especial → ejecutar lógica y salir
@@ -3128,14 +3146,22 @@ const InitTracker = () => {
                 );
                 return updated;
             });
-            showScenarioToast(`⏳ ${ti.saltaTurnoPorTiempo}`);
-            if (skippedData.finished) {
-              const runeName = translations.scenarioCard?.[currentRune.id] || currentRune.nombre || currentRune.id;
-              const template = ti.contadorCartaTerminado || 'El contador sobre la carta {carta} ha terminado.';
-              showScenarioToast(`⏳ ${template.replace('{carta}', runeName)}`);
+            const runeName = translations.scenarioCard?.[currentRune.id] || currentRune.nombre || currentRune.id;
+            const template = ti.contadorCartaTerminado || 'El contador sobre la carta {carta} ha terminado.';
+            if (mainBox === 'awakenings') {
+              showScenarioToast(`⏳ ${runeName}: ${ti.tiempoReducido || 'Se reduce 1 Ficha de Tiempo'}`);
+              if (skippedData.finished) {
+                showScenarioToast(`⏳ ${template.replace('{carta}', runeName)}`);
+              }
+              // En Despertar no se salta el turno.
+            } else {
+              showScenarioToast(`⏳ ${ti.saltaTurnoPorTiempo}`);
+              if (skippedData.finished) {
+                showScenarioToast(`⏳ ${template.replace('{carta}', runeName)}`);
+              }
+              //setTimeout(() => handleNextTurn(), 800);
+              return;
             }
-            //setTimeout(() => handleNextTurn(), 800);
-            return;
           }
           
          

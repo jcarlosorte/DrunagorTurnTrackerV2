@@ -478,6 +478,7 @@
     "anadirTiempo": "Añadir ficha de tiempo",
     "tiempoCartaAyuda": "Al llegar el turno de esta carta se retira 1 ficha de tiempo.",
     "contadorCartaTerminado": "El contador sobre la carta {carta} ha terminado.",
+    "tiempoReducido": "Se reduce 1 Ficha de Tiempo",
     "reduce": "la Condición se reduce en",
     "consume": "consume",
     "escudos": "ESCUDO/S",

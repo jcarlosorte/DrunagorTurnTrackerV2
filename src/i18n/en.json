@@ -477,6 +477,7 @@
     "anadirTiempo": "Add time token",
     "tiempoCartaAyuda": "When this card's turn arrives, remove 1 time token.",
     "contadorCartaTerminado": "The counter on card {carta} has ended.",
+    "tiempoReducido": "1 Time Token is removed",
     "reduce": "Condition is reduced by",
     "consume": "spend",
     "escudos": "SHIELD/S",
