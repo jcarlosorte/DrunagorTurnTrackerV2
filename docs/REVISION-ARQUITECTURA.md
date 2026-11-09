@@ -3275,6 +3275,21 @@ Unit       216 tests
 E2E        78/78
 ```
 
+### 183.ª tanda — Fichas y cañones solo con iconos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Fichas de Generación** | Se retiran los nombres de color; solo queda el icono, manteniendo tooltip y etiqueta accesible | `GenerationPointsBar` |
+| **Cañones Mágicos** | Se retiran los nombres de color; quedan el icono y el indicador de carga | `MagicCannonsBar` |
+| **Pruebas** | 216 unitarios · 78 E2E | tests |
+
+**Medición**
+
+```text
+Unit       216 tests
+E2E        78/78
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

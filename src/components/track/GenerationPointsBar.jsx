@@ -31,10 +31,10 @@ export default function GenerationPointsBar() {
           type="button"
           onClick={() => removeGenerationPoint(point.id)}
           title={`${t.remove || 'Quitar'} ${t.colores?.[point.color] || point.color}`}
-          className="flex items-center gap-1 rounded-full border border-cyan-700/60 bg-slate-950/60 px-1.5 py-0.5 text-[0.65rem] text-cyan-100 hover:border-red-400"
+          aria-label={`${t.remove || 'Quitar'} ${t.colores?.[point.color] || point.color}`}
+          className="flex items-center gap-1 rounded-full border border-cyan-700/60 bg-slate-950/60 p-1 text-[0.65rem] text-cyan-100 hover:border-red-400"
         >
-          <img src={GENERATION_IMAGES[point.color]} alt="" className="h-5 w-5 rounded-full" />
-          {t.colores?.[point.color] || point.color}
+          <img src={GENERATION_IMAGES[point.color]} alt="" className="h-6 w-6 rounded-full" />
         </button>
       ))}
     </div>
