@@ -1700,24 +1700,26 @@ const TopMenu = ({
               </span>
               <h2 className="text-base font-bold">{t.scenesTitle || 'Escenas'}</h2>
             </div>
-            <div className="grid gap-2">
-              {SCENES.map((scene) => (
-                <div key={scene.id} data-testid={`scene-${scene.id}`} className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-3">
-                  <p className="text-sm font-bold text-amber-100">
-                    {t[scene.titleKey] || scene.titleEn}
-                  </p>
-                  <p className="mt-1 text-xs text-amber-100/80">
-                    {t[scene.descriptionKey] || ''}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => activateScene(scene)}
-                    className="mt-3 min-h-9 rounded-lg bg-amber-700 px-3 text-xs font-bold text-white hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
-                  >
-                    ▶ {t.activateChapter || 'Activar capítulo'}
-                  </button>
-                </div>
-              ))}
+            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+              {[...SCENES]
+                .sort((a, b) => Number(a.id.replace(/\D/g, '')) - Number(b.id.replace(/\D/g, '')))
+                .map((scene) => (
+                  <div key={scene.id} data-testid={`scene-${scene.id}`} className="rounded-lg border border-amber-800/60 bg-amber-950/30 p-2">
+                    <p className="text-xs font-bold text-amber-100">
+                      {t[scene.titleKey] || scene.titleEn}
+                    </p>
+                    <p className="mt-0.5 line-clamp-2 text-[0.65rem] leading-snug text-amber-100/75">
+                      {t[scene.descriptionKey] || ''}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => activateScene(scene)}
+                      className="mt-1.5 min-h-7 rounded-md bg-amber-700 px-2 text-[0.65rem] font-bold text-white hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                    >
+                      ▶ {t.activateChapter || 'Activar capítulo'}
+                    </button>
+                  </div>
+                ))}
             </div>
           </motion.div>
         )}

@@ -3214,6 +3214,20 @@ Unit       212 tests
 E2E        76/76
 ```
 
+### 179.ª tanda — Menú de escenas compacto y ordenado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escenas** | Capítulos ordenados 1–4 y tarjetas compactas en dos columnas con botón reducido | `TopMenu` |
+| **Pruebas** | 212 unitarios · 76 E2E | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        76/76
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
