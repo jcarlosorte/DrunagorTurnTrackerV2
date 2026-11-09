@@ -3036,6 +3036,20 @@ Unit       212 tests
 E2E        67/67
 ```
 
+### 166.ª tanda — Descripciones correctas de estados alterados
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Tooltips** | Los estados alterados usan la descripción del estado (`DERRIBO`) y no la de su inmunidad (`DERRIBO_I`) | `ModalHeroCard` |
+| **Pruebas** | 212 unitarios · 67 E2E | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        67/67
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

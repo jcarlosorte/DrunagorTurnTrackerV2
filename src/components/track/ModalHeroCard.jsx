@@ -280,11 +280,14 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                 const count = countAlterado(estadoConfig.id);
                 const maxCount = estadoConfig.max || 1;
                 const nombre = translations.estadosAlterados?.[estadoConfig.texto] || estadoConfig.texto;
+                // Las claves con _I son inmunidades, no estados alterados.
+                const descriptionKey = estadoConfig.id.replace(/_I$/, '');
+                const descripcion = glossary.descriptions?.[descriptionKey] || '';
                 return (
                   <div
                     key={estadoConfig.id}
                     className="flex min-w-[2.1rem] max-w-[3.5rem] flex-1 basis-0 flex-col items-center rounded-lg border border-slate-700 bg-slate-800/70 py-0.5"
-                    title={`${nombre} ×${count}${glossary.descriptions?.[estadoConfig.id] ? `\n${glossary.descriptions[estadoConfig.id]}` : ''}`}
+                    title={`${nombre} ×${count}${descripcion ? `\n${descripcion}` : ''}`}
                   >
                     <button
                       type="button"
