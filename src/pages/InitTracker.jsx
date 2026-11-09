@@ -50,6 +50,10 @@ import GenerationPointsBar from '@/components/track/GenerationPointsBar';
 import MagicCannonsBar from '@/components/track/MagicCannonsBar';
 import PilaStatusPanel from '@/components/track/PilaStatusPanel';
 import SpecialEventBar from '@/components/track/SpecialEventBar';
+import StoryDeckBar from '@/components/track/StoryDeckBar';
+import TerribleCannonsBar from '@/components/track/TerribleCannonsBar';
+import TerribleCannonDialog from '@/components/track/TerribleCannonDialog';
+import VisionClaraModal from '@/components/track/VisionClaraModal';
 import EventCardModal from '@/components/track/EventCardModal';
 import CannonLoadDialog from '@/components/track/CannonLoadDialog';
 import { planNavalCannonLoads } from '@/utils/navalCannons';
@@ -235,7 +239,7 @@ const InitTracker = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, pilas, pilasConcentrada, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, drawErradenCard } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, spawnPoints, generationPoints, pilas, pilasConcentrada, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, drawErradenCard, corruptShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -265,6 +269,10 @@ const InitTracker = () => {
   const [selectedFollowerUid, setSelectedFollowerUid] = useState(null);
   const [diceOpen, setDiceOpen] = useState(false);
   const [drawnEventCard, setDrawnEventCard] = useState(null);
+  const [storyCard, setStoryCard] = useState(null);
+  const [fuegoCannonChoice, setFuegoCannonChoice] = useState(null);
+  const [terribleCannonChoice, setTerribleCannonChoice] = useState(false);
+  const [visionClaraDetails, setVisionClaraDetails] = useState(false);
   const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
   const getHeroName = (id) => translations.heroes?.[id] || id;
@@ -595,6 +603,132 @@ const InitTracker = () => {
     const chosen = candidates[Math.floor(Math.random() * candidates.length)];
     spawnBatchEnemies(1, chosen);
     setDrawnEventCard(null);
+  };
+
+  const showStoryDeckEnd = () => {
+    showScenarioToast('La Aventura Termina Aquí – Comprueba las consecuencias-');
+  };
+
+  const drawStoryDeck = (deck) => {
+    const state = deck === 'corrupt' ? corruptShipEvent : swanShipEvent;
+    if (!state?.active || state.deck.length === 0) {
+      showScenarioToast(ti.noEventCards || 'No quedan cartas en este mazo.');
+      return;
+    }
+    const lastCard = state.deck.length === 1;
+    const card = deck === 'corrupt' ? drawCorruptShipCard() : drawSwanShipCard();
+    if (!card) return;
+    setStoryCard({ card, deck });
+    if (lastCard) showStoryDeckEnd();
+  };
+
+  const handleStoryCardAction = (card) => {
+    if (!card) return;
+    if (card.action === 'vision') {
+      activateVisionClara();
+      setStoryCard(null);
+      showScenarioToast('Visión Clara: Visión Reducida desactivada.');
+      return;
+    }
+    if (card.action === 'disparo') {
+      setStoryCard(null);
+      setTerribleCannonChoice(true);
+      return;
+    }
+
+    const tile = manifestTile();
+    if (!tile) {
+      showScenarioToast(ti.aviso4 || 'No se ha podido manifestar la runa.');
+      return;
+    }
+
+    if (card.action === 'fuego') {
+      if (tile.runa === 'azul') {
+        const options = magicCannons.filter((cannon) => !cannon.loaded);
+        if (options.length === 0) {
+          showScenarioToast(ti.noMagicCannon || 'No hay Cañón Mágico disponible para esa runa.');
+          setStoryCard(null);
+          return;
+        }
+        setFuegoCannonChoice({ tile, options });
+        setStoryCard(null);
+        return;
+      }
+      const cannon = magicCannons.find((entry) => entry.color === tile.runa);
+      if (!cannon) {
+        showScenarioToast(ti.noMagicCannon || 'No hay Cañón Mágico disponible para esa runa.');
+        setStoryCard(null);
+        return;
+      }
+      setMagicCannonLoaded(cannon.id, true);
+      const target = ENEMIES.find((enemy) => enemy.id === 'tide_hunter');
+      const existing = placedEnemies.filter((entry) => entry.enemy.id === target?.id).length;
+      const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
+      const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
+      if (target && capacity > 0) {
+        spawnBatchEnemies(1, target);
+        showScenarioToast('¡Fuego de respuesta!: cañón recargado y Cazamareas invocado.');
+      } else {
+        showIncursionFailure(1);
+      }
+      setStoryCard(null);
+      return;
+    }
+
+    if (card.action === 'refuerzos') {
+      const options = tile.runa === 'azul'
+        ? generationPoints
+        : generationPoints.filter((point) => point.color === tile.runa);
+      if (options.length === 0) {
+        showIncursionFailure(1);
+        setStoryCard(null);
+        return;
+      }
+      const target = ENEMIES.find((enemy) => enemy.id === 'infamous_striker');
+      if (!target) {
+        setStoryCard(null);
+        return;
+      }
+      const existing = placedEnemies.filter((entry) => entry.enemy.id === target.id).length;
+      const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
+      const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
+      if (capacity <= 0) {
+        showIncursionFailure(1);
+        setStoryCard(null);
+        return;
+      }
+      setIncursionPlacement({
+        target,
+        requested: 1,
+        remaining: Math.min(1, capacity),
+        placed: 0,
+        color: tile.runa,
+        usesGeneration: true,
+        generationOptions: options,
+        generationId: options[0]?.id || null,
+      });
+      setStoryCard(null);
+    }
+  };
+
+  const handleTerribleCannonSelect = (id) => {
+    addTerribleCannonTime(id);
+    setTerribleCannonChoice(false);
+  };
+
+  const handleFuegoCannonSelect = (id) => {
+    setMagicCannonLoaded(id, true);
+    const target = ENEMIES.find((enemy) => enemy.id === 'tide_hunter');
+    const existing = placedEnemies.filter((entry) => entry.enemy.id === target?.id).length;
+    const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
+    const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
+    setFuegoCannonChoice(null);
+    if (target && capacity > 0) {
+      spawnBatchEnemies(1, target);
+      showScenarioToast('¡Fuego de respuesta!: cañón recargado y Cazamareas invocado.');
+    } else {
+      showIncursionFailure(1);
+    }
   };
 
   const finalizeIncursionPlacement = (placement) => {
@@ -2658,6 +2792,11 @@ const InitTracker = () => {
     if (turnIndex < 0 || turnIndex >= effectiveTurnOrder.length) return;
     const step = effectiveTurnOrder[turnIndex];
 
+    if (visionClaraActive && step.type === 'rune' && step.index === runesColorMap.gris && step.position === 'abajo') {
+      deactivateVisionClara();
+      showScenarioToast('Visión Clara ha terminado: Visión Reducida vuelve a estar activa.');
+    }
+
     // ✅ Mostrar toast inicial solo una vez
     if (previousTurnIndexRef.current === null && roundRef.current === 0) {
       roundRef.current = 1;
@@ -3730,6 +3869,19 @@ const InitTracker = () => {
   };
 
   useEffect(() => {
+    if (!terribleCannonNotice) return;
+    showScenarioToast(terribleCannonNotice);
+    clearTerribleCannonNotice();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [terribleCannonNotice, clearTerribleCannonNotice]);
+
+  useEffect(() => {
+    if (roundNumber <= 0 || !swanShipEvent.active) return;
+    tickTerribleCannons();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roundNumber, swanShipEvent.active]);
+
+  useEffect(() => {
     if (!rompenodoNotice) return;
     showScenarioToast(rompenodoNotice.message || rompenodoNotice);
     clearRompenodoNotice();
@@ -3989,6 +4141,36 @@ const InitTracker = () => {
                   <MagicCannonsBar />
                 </div>
                 <SpecialEventBar onDraw={handleDrawErradenCard} />
+                {visionClaraActive && (
+                  <div className="mb-2 flex flex-wrap items-center gap-2 rounded-xl border border-cyan-700/60 bg-cyan-950/40 p-2 text-cyan-100">
+                    <span className="text-xs font-bold">👁 Visión Clara</span>
+                    <span className="min-w-0 flex-1 text-[0.7rem] text-cyan-100/80">
+                      Visión Reducida desactivada hasta que el medidor alcance Gris Abajo.
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setVisionClaraDetails(true)}
+                      className="rounded bg-cyan-800 px-2 py-1 text-[0.65rem] font-bold text-white hover:bg-cyan-700"
+                    >
+                      Detalles
+                    </button>
+                  </div>
+                )}
+                <div className="mb-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <StoryDeckBar
+                    title={ti.corruptShipDeck || 'PS del Navío Corrupto'}
+                    event={corruptShipEvent}
+                    onDraw={() => drawStoryDeck('corrupt')}
+                    accent="amber"
+                  />
+                  <StoryDeckBar
+                    title={ti.swanShipDeck || 'PS del Buque Cisne'}
+                    event={swanShipEvent}
+                    onDraw={() => drawStoryDeck('swan')}
+                    accent="cyan"
+                  />
+                </div>
+                <TerribleCannonsBar />
                 <PassiveCardsPanel
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}
@@ -4601,6 +4783,51 @@ const InitTracker = () => {
           onClose={() => setDrawnEventCard(null)}
           onSummon={handleSummonErradenMonster}
           summonLabel={{ invoke: ti.invokeEventMonster || 'Invocar', close: ti.close || 'Cerrar' }}
+        />
+        <EventCardModal
+          card={storyCard?.card}
+          onClose={() => setStoryCard(null)}
+          onAction={handleStoryCardAction}
+          actionLabel={storyCard?.card?.actionLabel}
+          summonLabel={{ close: ti.close || 'Cerrar' }}
+        />
+        <TerribleCannonDialog
+          open={terribleCannonChoice}
+          cannons={terribleCannons}
+          onSelect={handleTerribleCannonSelect}
+          onCancel={() => setTerribleCannonChoice(false)}
+          labels={{
+            title: ti.terribleCannonTitle || 'Elegir Cañón Terrorífico',
+            description: ti.terribleCannonDescription || 'Elige a qué cañón se le añade la ficha de tiempo.',
+            cannon: ti.terribleCannon || 'Cañón',
+            damaged: ti.damaged || 'Dañado',
+            cancel: ti.close || 'Cancelar',
+          }}
+        />
+        <CannonLoadDialog
+          open={Boolean(fuegoCannonChoice)}
+          runeColor={fuegoCannonChoice?.tile?.runa}
+          reason="blue"
+          options={fuegoCannonChoice?.options || []}
+          onSelect={handleFuegoCannonSelect}
+          onSkip={() => setFuegoCannonChoice(null)}
+          labels={{
+            title: ti.reloadMagicCannon || 'Recargar cañón mágico',
+            rune: ti.rune || 'Runa',
+            colors: ti.colores,
+            bluePrompt: ti.blueCannonPrompt || 'La runa azul no tiene cañón propio. Elige un cañón descargado.',
+            none: ti.noCannonOptions || 'No hay cañones descargados disponibles.',
+            skip: ti.skipCannon || 'No cargar',
+          }}
+        />
+        <VisionClaraModal
+          open={visionClaraDetails}
+          onClose={() => setVisionClaraDetails(false)}
+          labels={{
+            title: 'Visión Clara',
+            close: ti.close || 'Cerrar',
+            text: 'La regla especial de Visión Reducida está suspendida mientras la ficha permanezca en la carta de escenario del Artillero Infame. Se retira cuando el medidor de iniciativa vuelva a alcanzar esa carta en la siguiente ronda.',
+          }}
         />
         <CannonLoadDialog
           open={navalCannonQueue.length > 0}

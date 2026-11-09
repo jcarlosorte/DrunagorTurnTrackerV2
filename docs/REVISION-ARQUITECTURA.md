@@ -3019,6 +3019,23 @@ Unit       210 tests
 E2E        66/66
 ```
 
+### 165.ª tanda — Barajas PS del Navío Corrupto y del Buque Cisne
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Barajas** | Dos mazos de 6 cartas, activables a la vez y visibles en paralelo; aviso al agotarse | `eventosEspeciales`, `GameContext`, `StoryDeckBar`, `TopMenu` |
+| **Fuego / Refuerzos** | Manifestar runa, recargar cañón o elegir Ficha de Generación y resolver la invocación | `InitTracker` |
+| **Visión Clara** | Aviso sobre el track y retirada al alcanzar Gris Abajo | `InitTracker`, `VisionClaraModal` |
+| **Cañones Terroríficos** | Dos fichas con tiempo, selección al sacar la carta y anuncio de disponibilidad | `TerribleCannonsBar`, `TerribleCannonDialog` |
+| **Pruebas** | 212 unitarios · 67 E2E | tests |
+
+**Medición**
+
+```text
+Unit       212 tests
+E2E        67/67
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

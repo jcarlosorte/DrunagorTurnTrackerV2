@@ -24,4 +24,18 @@ test.describe('Sorpresa de Eradren', () => {
       return state.erradenEvent?.deck?.length;
     })).toBe(5);
   });
+
+  test('las dos PS se añaden a la vez y aparecen juntas', async ({ page }) => {
+    await seedStorage(page, buildSeed());
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Eventos', exact: true }).click();
+    await page.getByRole('button', { name: /Añadir PS del Navío Corrupto/ }).click();
+    await page.getByRole('button', { name: /Añadir PS del Buque Cisne/ }).click();
+    await page.getByTestId('close-menu').click();
+
+    await expect(page.getByText('PS del Navío Corrupto').last()).toBeVisible();
+    await expect(page.getByText('PS del Buque Cisne').last()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Robar', exact: true })).toHaveCount(2);
+  });
 });

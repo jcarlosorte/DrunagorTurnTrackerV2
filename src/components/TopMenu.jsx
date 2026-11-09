@@ -80,7 +80,7 @@ const TopMenu = ({
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
-  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent } = useGame();
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent } = useGame();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const gameMenuRef = useRef(null);
@@ -1511,6 +1511,60 @@ const TopMenu = ({
               <h2 className="min-w-0 flex-1 truncate text-base font-bold">
                 {t.eventsTitle || 'Eventos y mecánicas especiales'}
               </h2>
+            </div>
+
+            <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-3">
+              <p className="text-sm font-bold text-amber-100">
+                {t.corruptShipDeck || 'PS del Navío Corrupto'}
+              </p>
+              {!corruptShipEvent.active ? (
+                <button
+                  type="button"
+                  onClick={addCorruptShipEvent}
+                  className="mt-2 min-h-9 rounded-lg bg-amber-700 px-3 text-xs font-bold text-white hover:bg-amber-600"
+                >
+                  ➕ {t.addCorruptShip || 'Añadir PS del Navío Corrupto'}
+                </button>
+              ) : (
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-amber-700 bg-slate-950/50 px-2 py-1 text-[0.65rem]">
+                    {t.erradenRemaining || 'Cartas restantes'}: {corruptShipEvent.deck.length}/6
+                  </span>
+                  <button type="button" onClick={addCorruptShipEvent} className="rounded bg-slate-700 px-2 py-1 text-[0.65rem] font-bold text-white">
+                    {t.resetDeck || 'Reiniciar mazo'}
+                  </button>
+                  <button type="button" onClick={resetCorruptShipEvent} className="rounded bg-red-900 px-2 py-1 text-[0.65rem] font-bold text-white">
+                    {t.removeDeck || 'Quitar'}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-xl border border-cyan-800/60 bg-cyan-950/30 p-3">
+              <p className="text-sm font-bold text-cyan-100">
+                {t.swanShipDeck || 'PS del Buque Cisne'}
+              </p>
+              {!swanShipEvent.active ? (
+                <button
+                  type="button"
+                  onClick={addSwanShipEvent}
+                  className="mt-2 min-h-9 rounded-lg bg-cyan-700 px-3 text-xs font-bold text-white hover:bg-cyan-600"
+                >
+                  ➕ {t.addSwanShip || 'Añadir PS del Buque Cisne'}
+                </button>
+              ) : (
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-cyan-700 bg-slate-950/50 px-2 py-1 text-[0.65rem]">
+                    {t.erradenRemaining || 'Cartas restantes'}: {swanShipEvent.deck.length}/6
+                  </span>
+                  <button type="button" onClick={addSwanShipEvent} className="rounded bg-slate-700 px-2 py-1 text-[0.65rem] font-bold text-white">
+                    {t.resetDeck || 'Reiniciar mazo'}
+                  </button>
+                  <button type="button" onClick={resetSwanShipEvent} className="rounded bg-red-900 px-2 py-1 text-[0.65rem] font-bold text-white">
+                    {t.removeDeck || 'Quitar'}
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="rounded-xl border border-fuchsia-800/60 bg-fuchsia-950/30 p-3">

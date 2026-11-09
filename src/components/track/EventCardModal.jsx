@@ -1,4 +1,4 @@
-export default function EventCardModal({ card, onClose, onSummon, summonLabel }) {
+export default function EventCardModal({ card, onClose, onSummon, onAction, actionLabel, summonLabel }) {
   if (!card) return null;
 
   return (
@@ -35,6 +35,15 @@ export default function EventCardModal({ card, onClose, onSummon, summonLabel })
           </p>
 
           <div className="mt-5 flex flex-wrap justify-end gap-2">
+            {card.action && (
+              <button
+                type="button"
+                onClick={() => onAction?.(card)}
+                className="min-h-10 rounded-xl bg-fuchsia-600 px-4 text-sm font-bold text-white hover:bg-fuchsia-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-300"
+              >
+                {actionLabel || card.actionLabel || 'Resolver'}
+              </button>
+            )}
             {card.summon && (
               <button
                 type="button"

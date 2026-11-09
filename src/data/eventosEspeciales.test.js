@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ERRADEN_CARDS } from './eventosEspeciales';
+import { CORRUPT_SHIP_CARDS, ERRADEN_CARDS, SWAN_SHIP_CARDS } from './eventosEspeciales';
 
 describe('Sorpresa de Eradren', () => {
   it('tiene seis cartas con textos completos y fondo', () => {
@@ -34,5 +34,23 @@ describe('Sorpresa de Eradren', () => {
     const gatitos = ERRADEN_CARDS.filter((card) => card.id.startsWith('gatito'));
     expect(gatitos).toHaveLength(2);
     expect(gatitos[0].text).not.toBe(gatitos[1].text);
+  });
+});
+
+describe('PS del Navío Corrupto', () => {
+  it('tiene seis cartas con sus dos Fuegos y dos Visiones', () => {
+    expect(CORRUPT_SHIP_CARDS).toHaveLength(6);
+    expect(CORRUPT_SHIP_CARDS.filter((card) => card.action === 'fuego')).toHaveLength(2);
+    expect(CORRUPT_SHIP_CARDS.filter((card) => card.action === 'vision')).toHaveLength(2);
+    expect(CORRUPT_SHIP_CARDS.filter((card) => card.id === 'agarraos')).toHaveLength(2);
+  });
+});
+
+describe('PS del Buque Cisne', () => {
+  it('tiene tres Refuerzos y un Disparo del Cañón', () => {
+    expect(SWAN_SHIP_CARDS).toHaveLength(6);
+    expect(SWAN_SHIP_CARDS.filter((card) => card.action === 'refuerzos')).toHaveLength(3);
+    expect(SWAN_SHIP_CARDS.filter((card) => card.action === 'disparo')).toHaveLength(1);
+    expect(SWAN_SHIP_CARDS.filter((card) => card.id === 'disparo_critico')).toHaveLength(2);
   });
 });

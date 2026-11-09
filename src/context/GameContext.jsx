@@ -7,7 +7,7 @@ import { useTracker } from '@/context/TrackerContext';
 import { ALDEANO, ERRANTES } from '@/data/cartasEspeciales';
 import { createId } from '@/utils/id';
 import { appendGenerationPoint } from '@/utils/generationPoints';
-import { ERRADEN_CARDS } from '@/data/eventosEspeciales';
+import { ERRADEN_CARDS, CORRUPT_SHIP_CARDS, SWAN_SHIP_CARDS } from '@/data/eventosEspeciales';
 
 const GameContext = createContext();
 const defaultRunes = { rojo: 0, azul: 0, verde: 0, naranja: 0, gris: 0 };
@@ -50,8 +50,22 @@ export const GameProvider = ({ children }) => {
   const [tileWarning, setTileWarning] = useState(null);
   const [tileToasts, setTileToasts] = useState([]);
   const [rompenodoNotice, setRompenodoNotice] = useState(null);
+  const [terribleCannonNotice, setTerribleCannonNotice] = useState(null);
   const [erradenEvent, setErradenEvent] = useState(() => (
     persisted.erradenEvent || { active: false, deck: [], discarded: [] }
+  ));
+  const [corruptShipEvent, setCorruptShipEvent] = useState(() => (
+    persisted.corruptShipEvent || { active: false, deck: [], discarded: [] }
+  ));
+  const [swanShipEvent, setSwanShipEvent] = useState(() => (
+    persisted.swanShipEvent || { active: false, deck: [], discarded: [] }
+  ));
+  const [visionClaraActive, setVisionClaraActive] = useState(Boolean(persisted.visionClaraActive));
+  const [terribleCannons, setTerribleCannons] = useState(() => (
+    persisted.terribleCannons || [
+      { id: 'terrible_1', time: 0 },
+      { id: 'terrible_2', time: 0 },
+    ]
   ));
 
   const { translations } = useLanguage();
@@ -86,12 +100,17 @@ export const GameProvider = ({ children }) => {
       codigosPilas,
       campamento,
       erradenEvent,
+      corruptShipEvent,
+      swanShipEvent,
+      visionClaraActive,
+      terribleCannons,
     });
   }, [
     runes, discardedTiles, pilaDeRunas, pilas, pilasConcentrada,
     nodosOscuridad, contadorPilas, contadorPilasConcentradas, contadorNodosOscuridad, availableTiles, usedTiles,
     scenarioMonster, spawnPoints, generationPoints, magicCannons, controlPoints, runeKeys, rescue,
     aldeanoDeck, errantesDeck, codigosPilas, campamento, erradenEvent,
+    corruptShipEvent, swanShipEvent, visionClaraActive, terribleCannons,
   ]);
 
   const handleCodigoChange = (pilaId, nuevoCodigo) => {
@@ -226,6 +245,10 @@ export const GameProvider = ({ children }) => {
     setContadorPilasConcentradas(1);
     setContadorNodosOscuridad(1);
     setErradenEvent({ active: false, deck: [], discarded: [] });
+    setCorruptShipEvent({ active: false, deck: [], discarded: [] });
+    setSwanShipEvent({ active: false, deck: [], discarded: [] });
+    setVisionClaraActive(false);
+    setTerribleCannons([{ id: 'terrible_1', time: 0 }, { id: 'terrible_2', time: 0 }]);
     setCodigosPilas({});
     setTileToasts([]);
     setTileWarning(null);
@@ -794,6 +817,84 @@ export const GameProvider = ({ children }) => {
     setErradenEvent({ active: false, deck: [], discarded: [] });
   };
 
+  const shuffleEventDeck = (cards) => {
+    const deck = cards.map((card) => card.instanceId);
+    for (let i = deck.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    return deck;
+  };
+
+  const addCorruptShipEvent = () => {
+    setCorruptShipEvent({ active: true, deck: shuffleEventDeck(CORRUPT_SHIP_CARDS), discarded: [] });
+  };
+
+  const drawCorruptShipCard = () => {
+    if (!corruptShipEvent.active || corruptShipEvent.deck.length === 0) return null;
+    const index = Math.floor(Math.random() * corruptShipEvent.deck.length);
+    const instanceId = corruptShipEvent.deck[index];
+    const card = CORRUPT_SHIP_CARDS.find((entry) => entry.instanceId === instanceId) || null;
+    if (!card) return null;
+    setCorruptShipEvent((prev) => {
+      const deck = prev.deck.filter((id) => id !== instanceId);
+      return deck.length === 0
+        ? { active: false, deck: [], discarded: [] }
+        : { ...prev, deck, discarded: [...prev.discarded, instanceId] };
+    });
+    return card;
+  };
+
+  const resetCorruptShipEvent = () => {
+    setCorruptShipEvent({ active: false, deck: [], discarded: [] });
+  };
+
+  const addSwanShipEvent = () => {
+    setSwanShipEvent({ active: true, deck: shuffleEventDeck(SWAN_SHIP_CARDS), discarded: [] });
+  };
+
+  const drawSwanShipCard = () => {
+    if (!swanShipEvent.active || swanShipEvent.deck.length === 0) return null;
+    const index = Math.floor(Math.random() * swanShipEvent.deck.length);
+    const instanceId = swanShipEvent.deck[index];
+    const card = SWAN_SHIP_CARDS.find((entry) => entry.instanceId === instanceId) || null;
+    if (!card) return null;
+    setSwanShipEvent((prev) => {
+      const deck = prev.deck.filter((id) => id !== instanceId);
+      return deck.length === 0
+        ? { active: false, deck: [], discarded: [] }
+        : { ...prev, deck, discarded: [...prev.discarded, instanceId] };
+    });
+    return card;
+  };
+
+  const resetSwanShipEvent = () => {
+    setSwanShipEvent({ active: false, deck: [], discarded: [] });
+  };
+
+  const activateVisionClara = () => setVisionClaraActive(true);
+  const deactivateVisionClara = () => setVisionClaraActive(false);
+
+  const addTerribleCannonTime = (id) => {
+    setTerribleCannons((prev) => prev.map((cannon) => (
+      cannon.id === id ? { ...cannon, time: cannon.time + 1 } : cannon
+    )));
+    setTerribleCannonNotice('Cañón Terrorífico Dañado');
+  };
+
+  const tickTerribleCannons = () => {
+    const next = terribleCannons.map((cannon) => (
+      cannon.time > 0 ? { ...cannon, time: cannon.time - 1 } : cannon
+    ));
+    const released = next.some((cannon, index) => (
+      cannon.time === 0 && terribleCannons[index].time > 0
+    ));
+    setTerribleCannons(next);
+    if (released) setTerribleCannonNotice('El cañón terrorífico está disponible.');
+  };
+
+  const clearTerribleCannonNotice = () => setTerribleCannonNotice(null);
+
   const deleteAvailableTileByColor = (color) => {
     const candidates = availableTiles.filter(t => t.runa === color);
     if (candidates.length === 0) return null;
@@ -1053,6 +1154,11 @@ export const GameProvider = ({ children }) => {
         removeTileFromNodoOscuridad, removeSingleTileFromNodoOscuridad, placeTilesFromNodoOscuridadToTrack,
         rompenodoNotice, notifyRompenodo, clearRompenodoNotice,
         erradenEvent, addErradenEvent, drawErradenCard, resetErradenEvent,
+        corruptShipEvent, addCorruptShipEvent, drawCorruptShipCard, resetCorruptShipEvent,
+        swanShipEvent, addSwanShipEvent, drawSwanShipCard, resetSwanShipEvent,
+        visionClaraActive, activateVisionClara, deactivateVisionClara,
+        terribleCannons, addTerribleCannonTime, tickTerribleCannons,
+        terribleCannonNotice, clearTerribleCannonNotice,
         resetTiles,
         resetGameState: resetTiles,
         tileWarning, 
