@@ -656,22 +656,28 @@ export const GameProvider = ({ children }) => {
   // con estado propio para la campaña Despertar.
   const addNewNodoOscuridad = () => {
     const colores = shuffleArray(['naranja', 'verde', 'azul', 'rojo', 'gris']);
-    let remaining = [...availableTiles];
     const tilesSeleccionadas = [];
+    let updatedRunes = { ...runes };
+    let updatedUsedTiles = [...usedTiles];
 
-    // Los Nodos de Oscuridad se forman con runas de la bolsa, no del track.
-    for (const color of colores) {
-      const candidates = remaining.filter((tile) => tile.runa === color);
-      if (candidates.length === 0) {
-        alert(ti.noRunasColocadas || 'No hay runas en la bolsa para formar la pila');
-        return null;
+    colores.forEach((color) => {
+      if (updatedRunes[color] > 0) {
+        const index = updatedUsedTiles.findIndex((tile) => tile.runa === color);
+        if (index !== -1) {
+          tilesSeleccionadas.push(updatedUsedTiles[index]);
+          updatedUsedTiles.splice(index, 1);
+          updatedRunes[color] -= 1;
+        }
       }
-      const tile = candidates[Math.floor(Math.random() * candidates.length)];
-      tilesSeleccionadas.push(tile);
-      remaining = remaining.filter((item) => item.uuid !== tile.uuid);
+    });
+
+    if (tilesSeleccionadas.length === 0) {
+      alert(ti.noRunasColocadas || 'No hay runas colocadas para formar la pila');
+      return;
     }
 
-    setAvailableTiles(remaining);
+    setUsedTiles(updatedUsedTiles);
+    setRunes(updatedRunes);
     const nuevoNodo = {
       id: createId(),
       tiles: tilesSeleccionadas,

@@ -3123,20 +3123,6 @@ Unit       212 tests
 E2E        70/70
 ```
 
-### 172.ª tanda — Nodos de Oscuridad desde la bolsa
-
-| Cambio | Detalle | Archivos |
-|---|---|---|
-| **Nodos de Oscuridad** | Se forman tomando las runas de la bolsa (`availableTiles`), no del track (`usedTiles`) | `GameContext` |
-| **Pruebas** | 212 unitarios · 70 E2E | tests |
-
-**Medición**
-
-```text
-Unit       212 tests
-E2E        70/70
-```
-
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
