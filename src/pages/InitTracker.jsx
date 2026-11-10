@@ -1800,6 +1800,7 @@ const InitTracker = () => {
       if (monster) setScenarioMonster(monster);
     }
     if (scene.erraden) addErradenEvent();
+    if (scene.siege) addSiegeEvent();
     if (scene.boar) {
       await handleManualEnemyAdd(
         'flickering_boar',

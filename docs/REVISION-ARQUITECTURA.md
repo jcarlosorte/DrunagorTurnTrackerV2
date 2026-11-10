@@ -3528,6 +3528,22 @@ Unit       217 tests
 E2E        82/82
 ```
 
+### 199.ª tanda — Escenas 7 y 8 de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Capítulo 7** | Asedio de Limiternia, 5 Fichas de Generación, seguidores a elegir y enemigos de escenario | `scenes`, `TopMenu`, `InitTracker` |
+| **Seguidores** | Se eligen 5 − número de héroes entre Elros, Lorelai, Maya y Vorn, con su estado fijo | `SceneFollowerSelectionDialog` |
+| **Capítulo 8** | Influencia Creciente, 5 runas por color y enemigos campeones | `scenes` |
+| **Pruebas** | 217 unitarios · 84 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        84/84
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

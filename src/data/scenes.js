@@ -136,6 +136,62 @@ export const SCENES = [
       5: [{ color: 'negro', category: 'veterano', quantity: 1 }],
     },
   },
+  {
+    id: 'chapter7',
+    titleKey: 'sceneChapter7',
+    titleEn: 'Chapter 07 – Siege Of Everedge',
+    descriptionKey: 'sceneChapter7Description',
+    runesPerColor: 0,
+    nodes: 0,
+    generationColors: ['naranja', 'verde', 'azul', 'rojo', 'gris'],
+    siege: true,
+    followerSelection: {
+      countBase: 5,
+      options: [
+        { id: 'elros_asesino', stateId: 'energico' },
+        { id: 'lorelai_maga', stateId: 'tenaz' },
+        { id: 'maya_montaraz', stateId: 'alerta' },
+        { id: 'vorn_guerrero', stateId: 'animado' },
+      ],
+    },
+    enemiesByHeroes: {
+      1: [
+        { enemyId: 'tangled_witch', color: 'escenario', category: 'escenario', quantity: 1, label: 'Bruja Enredada' },
+        { enemyId: 'infamous_monster', color: 'escenario', category: 'escenario', quantity: 1, label: 'Engendro Maligno' },
+        { enemyId: 'violent_bully', color: 'escenario', category: 'escenario', quantity: 1, label: 'Matón Violento' },
+      ],
+      2: [
+        { enemyId: 'tangled_witch', color: 'escenario', category: 'escenario', quantity: 1, label: 'Bruja Enredada' },
+        { enemyId: 'infamous_monster', color: 'escenario', category: 'escenario', quantity: 1, label: 'Engendro Maligno' },
+      ],
+      3: [
+        { enemyId: 'tangled_witch', color: 'escenario', category: 'escenario', quantity: 1, label: 'Bruja Enredada' },
+        { enemyId: 'infamous_monster', color: 'escenario', category: 'escenario', quantity: 1, label: 'Engendro Maligno' },
+      ],
+      4: [{ enemyId: 'violent_bully', color: 'escenario', category: 'escenario', quantity: 1, label: 'Matón Violento' }],
+      5: [
+        { enemyId: 'tangled_witch', color: 'escenario', category: 'escenario', quantity: 1, label: 'Bruja Enredada' },
+        { enemyId: 'infamous_monster', color: 'escenario', category: 'escenario', quantity: 1, label: 'Engendro Maligno' },
+      ],
+    },
+  },
+  {
+    id: 'chapter8',
+    titleKey: 'sceneChapter8',
+    titleEn: 'Chapter 08 – No Regrets',
+    descriptionKey: 'sceneChapter8Description',
+    runeId: 'runa_despertar_influencia',
+    runesPerColor: 5,
+    timeTokens: 0,
+    nodes: 0,
+    enemiesByHeroes: {
+      1: [{ color: 'gris', category: 'campeon', quantity: 1 }],
+      2: [{ color: 'blanco', category: 'campeon', quantity: 1 }],
+      3: [{ color: 'gris', category: 'campeon', quantity: 1 }],
+      4: [{ color: 'blanco', category: 'campeon', quantity: 1 }],
+      5: [{ color: 'gris', category: 'campeon', quantity: 1 }],
+    },
+  },
 ];
 
 export default SCENES;

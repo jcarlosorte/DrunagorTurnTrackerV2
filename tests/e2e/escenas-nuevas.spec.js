@@ -182,4 +182,58 @@ test.describe('Escenas de Despertar', () => {
       summons: ['B1', 'G2'],
     });
   });
+
+  test('Capítulo 7 añade Asedio, generación, seguidores y enemigos', async ({ page }) => {
+    await seedStorage(page, awakeningsSeed());
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await page.getByTestId('scene-chapter7').getByRole('button', { name: /Activar capítulo/ }).click();
+
+    const picker = page.getByRole('dialog', { name: 'Elegir seguidores' });
+    await expect(picker).toBeVisible();
+    for (const name of ['Elros', 'Lorelai', 'Maya', 'Vorn']) {
+      await picker.getByRole('button', { name: new RegExp(name) }).click();
+    }
+    await picker.getByRole('button', { name: 'Añadir seguidores' }).click();
+
+    await expect.poll(async () => page.evaluate(() => {
+      const game = JSON.parse(localStorage.getItem('gameState') || '{}');
+      const enemiesState = JSON.parse(localStorage.getItem('initEnemiesState') || '{}');
+      const tracker = JSON.parse(localStorage.getItem('trackerData') || '{}');
+      return {
+        siege: game.siegeEvent?.active,
+        generation: (game.generationPoints || []).length,
+        enemies: (enemiesState.placedEnemies || []).length,
+        followers: (tracker.followers || []).map((entry) => entry.id).sort(),
+      };
+    })).toEqual({
+      siege: true,
+      generation: 5,
+      enemies: 3,
+      followers: ['elros_asesino', 'lorelai_maga', 'maya_montaraz', 'vorn_guerrero'],
+    });
+  });
+
+  test('Capítulo 8 coloca Influencia Creciente y enemigos campeones', async ({ page }) => {
+    await seedStorage(page, awakeningsSeed());
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await page.getByTestId('scene-chapter8').getByRole('button', { name: /Activar capítulo/ }).click();
+
+    await expect.poll(async () => page.evaluate(() => {
+      const game = JSON.parse(localStorage.getItem('gameState') || '{}');
+      const enemiesState = JSON.parse(localStorage.getItem('initEnemiesState') || '{}');
+      return {
+        cards: (JSON.parse(localStorage.getItem('initRunesState') || '{}').placedRunes || []).map((entry) => entry.rune.id),
+        used: (game.usedTiles || []).length,
+        enemies: (enemiesState.placedEnemies || []).length,
+      };
+    })).toEqual({
+      cards: ['runa_despertar_influencia'],
+      used: 25,
+      enemies: 1,
+    });
+  });
 });

@@ -27,6 +27,7 @@ import { createId } from '@/utils/id';
 import { appNotify } from '@/utils/appDialogs';
 import { SCENES } from '@/data/scenes';
 import SceneFollowerDialog from '@/components/track/SceneFollowerDialog';
+import SceneFollowerSelectionDialog from '@/components/track/SceneFollowerSelectionDialog';
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
 import mecanicaEspecialIcon from '@/assets/assets_logo/mecanica_especial.png';
 import ScenarioPanels from '@/components/scenario/ScenarioPanels';
@@ -97,6 +98,7 @@ const TopMenu = ({
   const gameMenuRef = useRef(null);
   const [activeMenu, setActiveMenu] = useState(null); // 'enemies' | 'runes' | 'nodes' | 'scenario' | 'events' | 'scenes'
   const [sceneFollowerOpen, setSceneFollowerOpen] = useState(false);
+  const [sceneFollowerSelection, setSceneFollowerSelection] = useState(null);
   const [sceneMissing, setSceneMissing] = useState({ vorn: false, elros: false });
   const [sceneFollowerValues, setSceneFollowerValues] = useState({ vorn: 'animado', elros: 'energico' });
   const containerRef = useRef(null);
@@ -202,6 +204,36 @@ const TopMenu = ({
     onSelectRuneCard(card, timeToken);
   };
 
+  const buildFollowerEntry = (followerId, stateId) => {
+    const follower = FOLLOWERS.find((item) => item.id === followerId);
+    if (!follower) return null;
+    const state = follower.states.find((item) => item.id === stateId) || follower.states[0];
+    const index = FOLLOWERS.findIndex((item) => item.id === followerId);
+    return {
+      uid: createId(),
+      id: follower.id,
+      name: follower.name,
+      epithet: follower.epithet,
+      role: follower.role,
+      position: ROLE_POSITIONS[follower.role] ?? 0,
+      stateId: state.id,
+      vida: state.vida,
+      vidaMax: state.vida,
+      estadosAlterados: [],
+      background: getInteractionBackgroundAt(index),
+      image: null,
+    };
+  };
+
+  const addFollowersToTracker = (additions) => {
+    if (additions.length === 0) return;
+    setTrackerData((prev) => ({
+      ...prev,
+      followers: [...(prev.followers || []), ...additions],
+    }));
+    additions.forEach((entry) => saveCampFollower(entry));
+  };
+
   const activateScene = (scene) => {
     onActivateScene?.(scene);
     const followers = trackerData.followers || [];
@@ -211,6 +243,29 @@ const TopMenu = ({
     };
     setSceneMissing(missing);
     setActiveMenu(null);
+
+    if (scene.followerSelection) {
+      const totalHeroes = trackerData.placedHeroes?.length || trackerData.heroes?.length || 0;
+      const count = Math.max(0, scene.followerSelection.countBase - totalHeroes);
+      const options = scene.followerSelection.options
+        .filter((option) => !followers.some((entry) => entry.id === option.id))
+        .map((option) => {
+          const follower = FOLLOWERS.find((item) => item.id === option.id);
+          const state = follower?.states.find((item) => item.id === option.stateId) || follower?.states[0];
+          return {
+            id: option.id,
+            stateId: state?.id || option.stateId,
+            name: follower?.name || option.id,
+            stateName: state?.name || option.stateId,
+          };
+        });
+      const toChoose = Math.min(count, options.length);
+      if (toChoose > 0) {
+        setSceneFollowerSelection({ count: toChoose, options, selected: [] });
+        return;
+      }
+    }
+
     if (scene.id === 'chapter4' && (missing.vorn || missing.elros)) {
       setSceneFollowerOpen(true);
     }
@@ -218,38 +273,29 @@ const TopMenu = ({
 
   const confirmSceneFollowers = () => {
     const additions = [];
-    const addFollower = (followerId, stateId) => {
-      const follower = FOLLOWERS.find((item) => item.id === followerId);
-      if (!follower) return;
-      const state = follower.states.find((item) => item.id === stateId) || follower.states[0];
-      const index = FOLLOWERS.findIndex((item) => item.id === followerId);
-      additions.push({
-        uid: createId(),
-        id: follower.id,
-        name: follower.name,
-        epithet: follower.epithet,
-        role: follower.role,
-        position: ROLE_POSITIONS[follower.role] ?? 0,
-        stateId: state.id,
-        vida: state.vida,
-        vidaMax: state.vida,
-        estadosAlterados: [],
-        background: getInteractionBackgroundAt(index),
-        image: null,
-      });
-    };
-
-    if (sceneMissing.vorn) addFollower('vorn_guerrero', sceneFollowerValues.vorn);
-    if (sceneMissing.elros) addFollower('elros_asesino', sceneFollowerValues.elros);
-
-    if (additions.length > 0) {
-      setTrackerData((prev) => ({
-        ...prev,
-        followers: [...(prev.followers || []), ...additions],
-      }));
-      additions.forEach((entry) => saveCampFollower(entry));
+    if (sceneMissing.vorn) {
+      const entry = buildFollowerEntry('vorn_guerrero', sceneFollowerValues.vorn);
+      if (entry) additions.push(entry);
     }
+    if (sceneMissing.elros) {
+      const entry = buildFollowerEntry('elros_asesino', sceneFollowerValues.elros);
+      if (entry) additions.push(entry);
+    }
+    addFollowersToTracker(additions);
     setSceneFollowerOpen(false);
+  };
+
+  const confirmSceneFollowerSelection = () => {
+    const selection = sceneFollowerSelection;
+    if (!selection) return;
+    const additions = selection.selected
+      .map((followerId) => {
+        const option = selection.options.find((entry) => entry.id === followerId);
+        return option ? buildFollowerEntry(option.id, option.stateId) : null;
+      })
+      .filter(Boolean);
+    addFollowersToTracker(additions);
+    setSceneFollowerSelection(null);
   };
 
   const runeColorName = (color) => (color ? (t.colores?.[color] || color) : (t.removeRandom || 'Aleatoria'));
@@ -1765,6 +1811,28 @@ const TopMenu = ({
         labels={{
           title: t.sceneFollowersTitle || 'Seguidores de la escena',
           description: t.sceneFollowersDescription || 'Elige el estado con el que se añaden Vorn y Elros.',
+          confirm: t.sceneFollowersConfirm || 'Añadir seguidores',
+          cancel: t.close || 'Cancelar',
+        }}
+      />
+
+      <SceneFollowerSelectionDialog
+        open={Boolean(sceneFollowerSelection)}
+        count={sceneFollowerSelection?.count || 0}
+        options={sceneFollowerSelection?.options || []}
+        selected={sceneFollowerSelection?.selected || []}
+        onToggle={(followerId) => setSceneFollowerSelection((prev) => {
+          if (!prev) return prev;
+          const selected = prev.selected.includes(followerId)
+            ? prev.selected.filter((id) => id !== followerId)
+            : (prev.selected.length < prev.count ? [...prev.selected, followerId] : prev.selected);
+          return { ...prev, selected };
+        })}
+        onConfirm={confirmSceneFollowerSelection}
+        onClose={() => setSceneFollowerSelection(null)}
+        labels={{
+          title: t.sceneFollowerSelectionTitle || 'Elegir seguidores',
+          description: t.sceneFollowerSelectionDescription || 'Elige los seguidores que acompañan al grupo.',
           confirm: t.sceneFollowersConfirm || 'Añadir seguidores',
           cancel: t.close || 'Cancelar',
         }}
