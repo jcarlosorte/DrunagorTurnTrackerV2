@@ -3603,6 +3603,23 @@ Unit       217 tests
 E2E        85/85
 ```
 
+### 204.ª tanda — Jefes de Despertar y runas del Cosechador
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cubos** | Los jefes de Despertar ya no preguntan por cubos de trauma/maldición; solo el juego base mantiene esas preguntas | `InitTracker` |
+| **Runas de jefe** | El Cosechador de Almas muestra cinco rombos verticales (gris, naranja, rojo, verde y azul) con la runa gris seleccionada inicialmente | `BossBanner` |
+| **Persistencia** | La runa de jefe seleccionada se conserva en la ficha | `enemySanitize` |
+| **Mazo de jefe** | La infraestructura de mazos de jefe sigue activa, pero no hay cartas de Soul Harvester Boss en los datos | — |
+| **Pruebas** | 217 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

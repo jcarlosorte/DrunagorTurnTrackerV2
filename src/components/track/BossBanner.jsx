@@ -10,6 +10,13 @@ import { useLanguage } from '@/context/LanguageContext';
 export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels = {} }) {
   const { translations } = useLanguage();
   const immunityLabels = translations.condiciones_d || {};
+  const bossRunes = [
+    { id: 'gris', className: 'bg-slate-400 border-slate-200' },
+    { id: 'naranja', className: 'bg-orange-500 border-orange-200' },
+    { id: 'rojo', className: 'bg-red-500 border-red-200' },
+    { id: 'verde', className: 'bg-emerald-500 border-emerald-200' },
+    { id: 'azul', className: 'bg-blue-500 border-blue-200' },
+  ];
   const jefes = enemies.filter((entry) => (
     entry?.enemy?.categoria === 'jefe' && entry.enemy.tipo !== 'especial'
   ));
@@ -26,6 +33,8 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
           const vidaMax = Math.max(1, Number(enemy.vidaMax) || 1);
           const ratio = Math.max(0, Math.min(1, vida / vidaMax));
           const nombre = getEnemyName?.(enemy.id, enemy.color) || enemy.nombre || enemy.id;
+          const isSoulHarvester = enemy.id === 'soul_harvester_boss';
+          const activeBossRune = enemy.bossRune || 'gris';
 
           return (
             <button
@@ -48,6 +57,26 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                   <span className="flex h-full w-full items-center justify-center text-slate-600">☠</span>
                 )}
               </span>
+
+              {isSoulHarvester && (
+                <span
+                  className="flex shrink-0 flex-col items-center justify-center gap-1 rounded-lg border border-red-800/60 bg-slate-950/70 px-2 py-1"
+                  aria-label={labels.bossRunes || 'Runas de jefe'}
+                >
+                  {bossRunes.map((rune) => (
+                    <span key={rune.id} className="relative flex h-4 w-5 items-center justify-center">
+                      {activeBossRune === rune.id && (
+                        <span className="absolute -left-2 text-[0.65rem] font-black text-amber-200" aria-hidden="true">▶</span>
+                      )}
+                      <span
+                        className={`h-3 w-3 rotate-45 border-2 ${rune.className} ${
+                          activeBossRune === rune.id ? 'ring-2 ring-amber-200 ring-offset-1 ring-offset-slate-950' : ''
+                        }`}
+                      />
+                    </span>
+                  ))}
+                </span>
+              )}
 
               <span className="flex min-w-0 flex-col gap-1">
                 <span className="text-[0.6rem] font-black uppercase tracking-[0.25em] text-red-300">

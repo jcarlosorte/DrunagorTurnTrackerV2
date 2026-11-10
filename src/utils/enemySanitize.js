@@ -12,6 +12,7 @@ const CAMPOS = [
   'categoria',
   'comportamiento',
   'specialBehavior',
+  'bossRune',
   'vida',
   'vidaMax',
   'movimiento',

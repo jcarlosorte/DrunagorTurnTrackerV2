@@ -1293,10 +1293,17 @@ const InitTracker = () => {
           return;
           
         } else if (selected.rune === 'jefe'){
-          const cubosTrauma = parseInt(await appPrompt(`${ti.cubosTrauma}`, '0', { title: ti.cubosTrauma || 'Cubos de trauma' }), 10) || 0;
-          const subTotalTrauma = cubosTrauma * selected.cubo_T;
-          const cubosMaldicion = parseInt(await appPrompt(`${ti.cubosMaldicion}`, '0', { title: ti.cubosMaldicion || 'Cubos de maldición' }), 10) || 0;
-          const subTotalMaldicion = cubosMaldicion * selected.cubo_M;
+          // Los jefes del juego base usan cubos de trauma/maldición; los de
+          // campañas posteriores (Despertar) no pasan por esas preguntas.
+          const useCubes = selected.expansionId === 'base';
+          const cubosTrauma = useCubes
+            ? (parseInt(await appPrompt(`${ti.cubosTrauma}`, '0', { title: ti.cubosTrauma || 'Cubos de trauma' }), 10) || 0)
+            : 0;
+          const subTotalTrauma = useCubes ? cubosTrauma * selected.cubo_T : 0;
+          const cubosMaldicion = useCubes
+            ? (parseInt(await appPrompt(`${ti.cubosMaldicion}`, '0', { title: ti.cubosMaldicion || 'Cubos de maldición' }), 10) || 0)
+            : 0;
+          const subTotalMaldicion = useCubes ? cubosMaldicion * selected.cubo_M : 0;
           const subTotalVida = selected.vida * (numHeroes);
           const totalVida = subTotalVida + subTotalTrauma + subTotalMaldicion;
 
@@ -1310,6 +1317,7 @@ const InitTracker = () => {
             position: runeIndex,
             categoria: category,
             comportamiento: behaviorType,
+            bossRune: selected.id === 'soul_harvester_boss' ? 'gris' : undefined,
             vida: totalVida,
             vidaMax: totalVida,
             movimiento: null,
