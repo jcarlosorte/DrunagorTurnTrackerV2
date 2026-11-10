@@ -3653,6 +3653,23 @@ Unit       218 tests
 E2E        85/85
 ```
 
+### 207.ª tanda — Lazo de Alma y Ficha de Tiempo del jefe
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Lazo de Alma** | Nuevo estado de héroe con el icono `atadura.png` | `estadosAlterados`, i18n |
+| **Ficha de Tiempo** | El jefe la inicia a 0 y se muestra en la ficha normal y ampliada como un estado más | `BossBanner`, `ModalEnemyCard` |
+| **Esbirros** | La carta Marcha del Corrompido queda vinculada al `invoca` del jefe (`fallen_woodcutter`) | `cartasEspeciales` |
+| **Resolución** | Daño, semillas y objetivos se aplican manualmente | — |
+| **Pruebas** | 218 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       218 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

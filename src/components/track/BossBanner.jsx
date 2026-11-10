@@ -1,4 +1,4 @@
-import { INMUNIDADES } from '@/data/estadosAlterados';
+import { INMUNIDADES, ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { useLanguage } from '@/context/LanguageContext';
 import BossRunesColumn from './BossRunesColumn';
 
@@ -11,6 +11,7 @@ import BossRunesColumn from './BossRunesColumn';
 export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels = {} }) {
   const { translations } = useLanguage();
   const immunityLabels = translations.condiciones_d || {};
+  const tiempoConfig = ESTADOS_ALTERADOS.find((estado) => estado.id === 'TIEMPO');
   const jefes = enemies.filter((entry) => (
     entry?.enemy?.categoria === 'jefe' && entry.enemy.tipo !== 'especial'
   ));
@@ -29,6 +30,7 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
           const nombre = getEnemyName?.(enemy.id, enemy.color) || enemy.nombre || enemy.id;
           const isSoulHarvester = enemy.id === 'soul_harvester_boss';
           const activeBossRune = enemy.bossRune || 'gris';
+          const tiempoCount = (enemy.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
 
           return (
             <button
@@ -68,6 +70,12 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                   <span className="font-mono text-xs font-bold tabular-nums text-white sm:text-sm">
                     {vida}/{vidaMax}
                   </span>
+                  {tiempoConfig && (
+                    <span className="flex items-center gap-1 rounded bg-slate-900/80 px-1.5 py-0.5" title={labels.tiempo || 'Ficha de Tiempo'}>
+                      <img src={tiempoConfig.imagen} alt="" className="h-4 w-4 rounded-full border border-white/70" />
+                      <span className="font-mono text-[0.65rem] font-bold tabular-nums text-white">{tiempoCount}</span>
+                    </span>
+                  )}
                 </span>
 
                 {(enemy.inmunidad || []).length > 0 && (

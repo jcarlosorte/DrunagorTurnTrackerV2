@@ -20,6 +20,7 @@ import fragil from "@/assets/assets_logo/fragil.png";
 import polimorfismo from "@/assets/assets_logo/polimorfismo.png";
 import restriccion from "@/assets/assets_logo/restriccion.png";
 import semillaDelCaos from "@/assets/assets_logo/semilla_del_caos.png";
+import atadura from "@/assets/assets_logo/atadura.png";
 import entropia from "@/assets/assets_logo/entropia.png";
 import idoloDeFuria from "@/assets/assets_logo/idolo_de_furia.webp";
 import idoloDeResistencia from "@/assets/assets_logo/idolo_de_resistencia.webp";
@@ -83,6 +84,12 @@ export const ESTADOS_ALTERADOS = [
     id: "SEMILLA_DEL_CAOS", texto: "semilla del caos", accion: "semilla_del_caos",
     reduce: "no", numReduce: 0, turno: "", daño: 0, max: 4,
     imagen: semillaDelCaos, mostrar: "si", prevenible: "no",
+    soloHeroes: true, aliados: true, version: "2.0",
+  },
+  {
+    id: "LAZO_DE_ALMA", texto: "lazo_de_alma", accion: "lazo_de_alma",
+    reduce: "no", numReduce: 0, turno: "", daño: 0, max: 1,
+    imagen: atadura, mostrar: "si", prevenible: "no",
     soloHeroes: true, aliados: true, version: "2.0",
   },
   {

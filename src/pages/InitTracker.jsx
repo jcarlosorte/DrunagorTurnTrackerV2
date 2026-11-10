@@ -1633,6 +1633,7 @@ const InitTracker = () => {
         lista_capacidad: carta.lista_capacidad,
         maxHeal: carta.maxHeal,
         shieldOverMax: carta.shieldOverMax,
+        invoca: carta.invoca,
         rune: carta.rune,
         runePosition: carta.runePosition,
         categoria: enemyCat,

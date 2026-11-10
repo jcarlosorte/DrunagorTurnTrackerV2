@@ -573,6 +573,7 @@ export const CARTAS_JEFE = [
     runePosition: 'abajo',
     idJefe: 'soul_harvester_boss',
     capacidades: 'boss_22',
+    invoca: 'fallen_woodcutter',
     lista_capacidad: []
   },
   {

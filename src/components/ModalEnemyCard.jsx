@@ -449,7 +449,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               {/* Estados alterados sobre la imagen */}
               <div className="absolute top-1 left-1 grid grid-rows-4 grid-flow-col gap-1">
                 {estadosLocal
-                  .filter(estado => estado.count > 0)
+                  .filter(estado => estado.count > 0 || (categoria === 'jefe' && estado.id === 'TIEMPO'))
                   .map((estado) => {
                     const estadoConfig = ESTADOS_ALTERADOS.find(e => e.id === estado.id);
                     if (!estadoConfig) return null;
@@ -460,7 +460,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                           src={logo || estadoConfig.imagen}
                           alt={estadoConfig.texto}
                           className="w-6 h-6 border border-white rounded-full shadow-md" loading="lazy" decoding="async" />
-                        {estado.count > 1 && (
+                        {(estado.count > 1 || (categoria === 'jefe' && estado.id === 'TIEMPO')) && (
                           <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1 rounded-full">
                             {estado.count}
                           </span>
@@ -543,7 +543,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
             <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
             <div className="flex flex-wrap items-stretch justify-center gap-1">
             {getEnemyStatusCatalog(rulesVersion)
-              .filter((config) => config.mostrar === 'si')
+              .filter((config) => config.mostrar === 'si' || (categoria === 'jefe' && config.id === 'TIEMPO'))
               .filter((config) => !todasInmunidades?.includes(config.id) && !(todasInmunidades?.includes('GRANDE') && ['DERRIBO_I', 'ATURDIMIENTO_I'].includes(config.id)))
               .map((estadoConfig) => {
                 const activo = estadosLocal.find((item) => item.id === estadoConfig.id);
