@@ -3202,9 +3202,9 @@ const InitTracker = () => {
             showScenarioToast(`🐗 ${ti.boarManifest || 'Manifiesta 1 Runa'}${tile ? `: ${ti.colores?.[tile.runa] || tile.runa}` : ''}`);
             if (!canPlace) {
               showScenarioToast(`⚠️ ${ti.boarNoPile || 'No hay una Pila de Runas activa con ese color'}`);
-            } else {
-              showScenarioToast(`🐗 ${ti.boarPlaced || 'Coloca al Jabalí adyacente a una Pila de Runas con ese color'}`);
+              return;
             }
+            showScenarioToast(`🐗 ${ti.boarPlaced || 'Coloca al Jabalí adyacente a una Pila de Runas con ese color'}`);
             setPlacedEnemies(prev => prev.map(entry => (
               entry.enemy.uuid === current.uuid
                 ? { ...entry, enemy: { ...entry.enemy, cara: 'A' } }
@@ -5025,6 +5025,7 @@ const InitTracker = () => {
             overhealedEnemies={overhealedEnemies}
             setOverhealedEnemies={setOverhealedEnemies}
             onEstadoChange={updateEnemyEstados}
+            onFlip={flipBoarFace}
             getEffectiveStats={getEnemyEffectiveStats}
           />
           )}

@@ -3353,6 +3353,22 @@ Unit       217 tests
 E2E        78/78
 ```
 
+### 188.ª tanda — Vista ampliada de ambas caras del Jabalí
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cara B ampliada** | La Cara B muestra su carta con fondo, título y texto en la vista ampliada | `ModalEnemyCard` |
+| **Volteo** | Botón de volteo disponible en las vistas ampliadas de ambas caras | `ModalEnemyCard` |
+| **Pila** | Si no hay una Pila de Runas activa con el color manifestado, la carta no se voltea | `InitTracker` |
+| **Pruebas** | 217 unitarios · 78 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        78/78
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

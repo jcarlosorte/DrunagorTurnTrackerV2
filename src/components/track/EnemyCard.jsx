@@ -85,13 +85,11 @@ export default function EnemyCard({
       role="button"
       tabIndex={0}
       aria-label={name}
-      onClick={() => {
-        if (!boarCardSide) openEnemyModal(uuid);
-      }}
+      onClick={() => openEnemyModal(uuid)}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          if (!boarCardSide) openEnemyModal(uuid);
+          openEnemyModal(uuid);
         }
       }}
       className={classNames(

@@ -51,23 +51,18 @@ test('la baraja del Jabalí se inicializa al colocarlo y no muestra panel', asyn
   await expect(page.getByTestId('flickering-boar-deck')).toHaveCount(0);
 });
 
-test('el Jabalí muestra su capacidad y se voltea en el tablero sin abrir la vista ampliada', async ({ page }) => {
+test('el Jabalí muestra su capacidad y se voltea en la vista ampliada', async ({ page }) => {
   await seedBoar(page);
 
   const enemyCard = page.locator('[data-enemy-card="e2e-flickering-boar"]');
   await enemyCard.click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('SI EL JABALÍ RECIBE DAÑO, DESAPARECE');
-  await dialog.getByRole('button', { name: 'Cerrar' }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-
-  await enemyCard.getByRole('button', { name: 'Voltear carta' }).click();
-  await expect(enemyCard).toContainText('JABALÍ PARPADEANTE');
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-  await enemyCard.click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-
-  await enemyCard.getByRole('button', { name: 'Voltear al monstruo' }).click();
-  await expect(enemyCard.getByRole('button', { name: 'Voltear carta' })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Voltear carta' }).click();
+  await expect(page.getByRole('dialog')).toContainText('JABALÍ PARPADEANTE');
+  await expect(page.getByRole('dialog')).toContainText('Primero, Manifiesta 1 Runa.');
+  await page.getByRole('dialog').getByRole('button', { name: 'Voltear al monstruo' }).click();
+  await expect(page.getByRole('dialog').getByRole('button', { name: 'Voltear carta' })).toBeVisible();
+  await page.getByRole('dialog').getByRole('button', { name: 'Cerrar' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
 });
