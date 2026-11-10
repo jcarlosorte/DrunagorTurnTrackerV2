@@ -3573,6 +3573,22 @@ Unit       217 tests
 E2E        85/85
 ```
 
+### 202.ª tanda — Menús de Despertar compactos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nodos** | Nodos de Oscuridad, Fichas de Generación y Cañones Mágicos en una sola fila de tres columnas | `TopMenu`, `ScenarioPanels` |
+| **Eventos** | Las cuatro barajas de Despertar en una fila compacta de cuatro columnas | `TopMenu` |
+| **Escenas** | Tarjetas más compactas en cuatro columnas y descripciones de una línea | `TopMenu` |
+| **Pruebas** | 217 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -3,7 +3,6 @@ import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import { OTROS } from '@/data/estadosAlterados';
-import NodosOscuridadPanel from '@/components/scenario/NodosOscuridadPanel';
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
 import { appNotify } from '@/utils/appDialogs';
 import useRompenodo from '@/hooks/useRompenodo';
@@ -20,7 +19,6 @@ export default function ScenarioPanels() {
   const t = translations?.trackerInit || {};
   const { mainBox, previewOtherBoxes } = useExpansions();
   const showCoreContent = mainBox === 'core' || previewOtherBoxes;
-  const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes;
   const { openRompenodo, rompenodoDialog } = useRompenodo();
 
   const {
@@ -251,7 +249,6 @@ export default function ScenarioPanels() {
                     </div>
                   </div>
                   )}
-                  {showAwakeningsContent && <NodosOscuridadPanel />}
                 
                   {/* Bloque 2: Control de áreas y puntos de aparición */}
                   {showCoreContent && (

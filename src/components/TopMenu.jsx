@@ -30,6 +30,7 @@ import SceneFollowerSelectionDialog from '@/components/track/SceneFollowerSelect
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
 import mecanicaEspecialIcon from '@/assets/assets_logo/mecanica_especial.png';
 import ScenarioPanels from '@/components/scenario/ScenarioPanels';
+import NodosOscuridadPanel from '@/components/scenario/NodosOscuridadPanel';
 import ResponsiveImage from '@/components/track/ResponsiveImage';
 import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
@@ -1268,9 +1269,10 @@ const TopMenu = ({
                   </button>
                 </div>
                 <ScenarioPanels />
-                <div className="mt-3 grid gap-3 xl:grid-cols-2">
+                <div className="mt-2 grid items-start gap-2 lg:grid-cols-3">
+                {mainBox === 'awakenings' && <NodosOscuridadPanel />}
                 {mainBox === 'awakenings' && (
-                  <div className="rounded-xl border border-cyan-700/60 bg-cyan-950/30 p-2">
+                  <div className="rounded-xl border border-cyan-700/60 bg-cyan-950/30 p-1.5">
                     <div className="mb-2 text-xs font-bold uppercase tracking-wide text-cyan-200">
                       {t.generationPoints || 'Fichas de Generación'}
                     </div>
@@ -1307,7 +1309,7 @@ const TopMenu = ({
                   </div>
                 )}
                 {mainBox === 'awakenings' && (
-                <div className="rounded-xl border border-orange-700/60 bg-orange-950/30 p-2">
+                <div className="rounded-xl border border-orange-700/60 bg-orange-950/30 p-1.5">
                   <div className="mb-2 text-xs font-bold uppercase tracking-wide text-orange-200">
                     {t.magicCannons || 'Cañones Mágicos'}
                   </div>
@@ -1652,8 +1654,9 @@ const TopMenu = ({
               </h2>
             </div>
 
-            <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-3">
-              <p className="text-sm font-bold text-amber-100">
+            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-2">
+              <p className="text-xs font-bold text-amber-100">
                 {t.corruptShipDeck || 'PS del Navío Corrupto'}
               </p>
               {!corruptShipEvent.active ? (
@@ -1679,8 +1682,8 @@ const TopMenu = ({
               )}
             </div>
 
-            <div className="rounded-xl border border-cyan-800/60 bg-cyan-950/30 p-3">
-              <p className="text-sm font-bold text-cyan-100">
+            <div className="rounded-xl border border-cyan-800/60 bg-cyan-950/30 p-2">
+              <p className="text-xs font-bold text-cyan-100">
                 {t.swanShipDeck || 'PS del Buque Cisne'}
               </p>
               {!swanShipEvent.active ? (
@@ -1706,9 +1709,9 @@ const TopMenu = ({
               )}
             </div>
 
-            <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-3">
-              <p className="text-sm font-bold text-amber-100">{t.siegeTitle || 'Asedio de Limiternia'}</p>
-              <p className="mt-1 text-xs text-amber-200/80">
+            <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-2">
+              <p className="text-xs font-bold text-amber-100">{t.siegeTitle || 'Asedio de Limiternia'}</p>
+              <p className="mt-1 line-clamp-2 text-[0.6rem] text-amber-200/80">
                 {t.siegeDescription || 'Baraja de 10 cartas que se roban en orden y se resuelven al final de la ronda.'}
               </p>
               {!siegeEvent.active ? (
@@ -1734,11 +1737,11 @@ const TopMenu = ({
               )}
             </div>
 
-            <div className="rounded-xl border border-fuchsia-800/60 bg-fuchsia-950/30 p-3">
-              <p className="text-sm font-bold text-fuchsia-100">
+            <div className="rounded-xl border border-fuchsia-800/60 bg-fuchsia-950/30 p-2">
+              <p className="text-xs font-bold text-fuchsia-100">
                 {t.erradenTitle || 'Sorpresa de Eradren'}
               </p>
-              <p className="mt-1 text-xs text-fuchsia-200/80">
+              <p className="mt-1 line-clamp-2 text-[0.6rem] text-fuchsia-200/80">
                 {t.erradenDescription || 'Mazo de 6 cartas que se barajan y se descartan al salir.'}
               </p>
 
@@ -1772,6 +1775,7 @@ const TopMenu = ({
                 </div>
               )}
             </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1794,21 +1798,21 @@ const TopMenu = ({
               </span>
               <h2 className="text-base font-bold">{t.scenesTitle || 'Escenas'}</h2>
             </div>
-            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-4">
               {[...SCENES]
                 .sort((a, b) => Number(a.id.replace(/\D/g, '')) - Number(b.id.replace(/\D/g, '')))
                 .map((scene) => (
-                  <div key={scene.id} data-testid={`scene-${scene.id}`} className="rounded-lg border border-amber-800/60 bg-amber-950/30 p-2">
-                    <p className="text-xs font-bold text-amber-100">
+                  <div key={scene.id} data-testid={`scene-${scene.id}`} className="rounded-lg border border-amber-800/60 bg-amber-950/30 p-1.5">
+                    <p className="text-[0.65rem] font-bold leading-tight text-amber-100">
                       {t[scene.titleKey] || scene.titleEn}
                     </p>
-                    <p className="mt-0.5 line-clamp-2 text-[0.65rem] leading-snug text-amber-100/75">
+                    <p className="mt-0.5 line-clamp-1 text-[0.58rem] leading-snug text-amber-100/75">
                       {t[scene.descriptionKey] || ''}
                     </p>
                     <button
                       type="button"
                       onClick={() => activateScene(scene)}
-                      className="mt-1.5 min-h-7 rounded-md bg-amber-700 px-2 text-[0.65rem] font-bold text-white hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                      className="mt-1 min-h-6 rounded-md bg-amber-700 px-1.5 text-[0.58rem] font-bold text-white hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
                     >
                       ▶ {t.activateChapter || 'Activar capítulo'}
                     </button>

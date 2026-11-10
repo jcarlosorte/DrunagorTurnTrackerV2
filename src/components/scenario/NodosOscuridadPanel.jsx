@@ -22,7 +22,7 @@ export default function NodosOscuridadPanel() {
   const t = translations.trackerInit || {};
 
   return (
-    <div className="track-surface-raised min-w-0 p-3 shadow-md">
+    <div className="track-surface-raised min-w-0 p-2 shadow-md">
       <div className="mb-2 flex items-center justify-center gap-2">
         <img src={pilaRunasIcon} alt="" className="h-7 w-7 rounded-full" />
         <span className="font-semibold text-white">{t.nodosOscuridad || 'Nodos de Oscuridad'}</span>
