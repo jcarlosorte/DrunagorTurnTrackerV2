@@ -247,7 +247,7 @@ const InitTracker = () => {
   const isFlickeringBoar = (enemy) => (
     enemy?.specialBehavior === 'flickering_boar' || enemy?.id === 'flickering_boar'
   );
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -3209,6 +3209,7 @@ const InitTracker = () => {
             const activePiles = [
               ...pilas.filter((pila) => pila.estado === 'activa'),
               ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
+              ...nodosOscuridad.filter((nodo) => nodo.estado === 'activa'),
             ];
             const canPlace = Boolean(tile) && activePiles.some((pila) => (
               pila.tiles?.some((entry) => entry.runa === tile.runa)
