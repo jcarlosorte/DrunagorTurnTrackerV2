@@ -62,7 +62,6 @@ export default function EnemyCard({
   inmunidad = [],
   specialBehavior,
   cara,
-  onFlipBoar,
 }) {
   const { translations } = useLanguage();
   const conditions = translations.condiciones_t || {};
@@ -173,21 +172,6 @@ export default function EnemyCard({
           </span>
         </button>
 
-        {isBoar && !boarCardSide && (
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              onFlipBoar?.(uuid);
-            }}
-            aria-label={translations.trackerInit?.boarCardFlip || 'Voltear carta'}
-            title={translations.trackerInit?.boarCardFlip || 'Voltear carta'}
-            className="absolute -right-2 -top-2 z-30 flex h-6 w-6 items-center justify-center rounded-full border border-purple-300 bg-purple-800 text-xs text-white shadow-lg hover:bg-purple-700"
-          >
-            🔄
-          </button>
-        )}
-
         {boarCardSide && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-amber-400 bg-slate-950 text-center">
             <img src={boarBackground} alt="" className="absolute inset-0 h-full w-full object-cover opacity-35" />
@@ -196,17 +180,6 @@ export default function EnemyCard({
               <span className="text-[0.68rem] font-black leading-tight text-amber-100">
                 {translations.trackerInit?.boarCardTitle || 'JABALÍ PARPADEANTE'}
               </span>
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onFlipBoar?.(uuid);
-                }}
-                aria-label={translations.trackerInit?.boarCardOpen || 'Voltear al monstruo'}
-                className="mt-1 rounded bg-purple-800 px-1.5 py-0.5 text-[0.55rem] font-bold text-white hover:bg-purple-700"
-              >
-                🔄 {translations.trackerInit?.boarCardOpen || 'Voltear'}
-              </button>
             </div>
           </div>
         )}

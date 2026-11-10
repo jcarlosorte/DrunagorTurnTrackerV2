@@ -74,7 +74,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   const flipBoar = () => {
     setBoarFlipping(true);
     onFlip?.(uuid);
-    window.setTimeout(() => setBoarFlipping(false), 650);
+    window.setTimeout(() => {
+      setBoarFlipping(false);
+      onClose?.();
+    }, 650);
   };
 
   if (boarCardSide) {

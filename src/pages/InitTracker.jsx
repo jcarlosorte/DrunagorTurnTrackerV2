@@ -3834,7 +3834,7 @@ const InitTracker = () => {
         
     // 🔄 Si hay carta con cara, rotarla
     if (currentTurnEntity?.cara) {
-      if (currentTurnEntity.type === 'enemy') {
+      if (currentTurnEntity.type === 'enemy' && !isFlickeringBoar(currentTurnEntity)) {
         // La cara actual se lee del tablero: la entidad puede venir de un turno
         // anterior y quedarse con la cara antigua.
         const enTablero = placedEnemies.find(e => e.enemy.uuid === currentTurnEntity.uuid)?.enemy;
@@ -4249,7 +4249,6 @@ const InitTracker = () => {
     heroManagementEnabled,
     onRemove,
     openEnemyModal,
-    flipBoarFace,
     removeRuneByUUID,
     setSelectedHeroId,
     companions: trackerData.companions || [],
