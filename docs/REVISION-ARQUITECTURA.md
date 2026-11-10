@@ -3290,6 +3290,21 @@ Unit       216 tests
 E2E        78/78
 ```
 
+### 184.ª tanda — Comportamiento especial del Jabalí sin usar «comportamiento»
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Clave propia** | El Jabalí usa `specialBehavior: "flickering_boar"` en lugar de `comportamiento: "especial"` | `enemies`, `enemySanitize` |
+| **Volteo y turno** | El volteo, la baraja y el comportamiento se detectan por `specialBehavior` o por id, nunca por `comportamiento` | `ModalEnemyCard`, `InitTracker` |
+| **Pruebas** | 216 unitarios · 78 E2E | tests |
+
+**Medición**
+
+```text
+Unit       216 tests
+E2E        78/78
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

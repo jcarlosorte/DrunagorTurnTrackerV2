@@ -243,6 +243,9 @@ const InitTracker = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
+  const isFlickeringBoar = (enemy) => (
+    enemy?.specialBehavior === 'flickering_boar' || enemy?.id === 'flickering_boar'
+  );
   const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -261,7 +264,7 @@ const InitTracker = () => {
   }, [scenarioMonster, placedRunes]);
 
   useEffect(() => {
-    const boar = placedEnemies.find((entry) => entry.enemy.id === 'flickering_boar');
+    const boar = placedEnemies.find((entry) => isFlickeringBoar(entry.enemy));
     if (boar) {
       if (!flickeringBoarDeck.active || flickeringBoarDeck.enemyUuid !== boar.enemy.uuid) {
         initializeFlickeringBoarDeck(boar.enemy.uuid);
@@ -1062,6 +1065,7 @@ const InitTracker = () => {
         position: runeIndex,
         categoria: selected.categoria,
         comportamiento: selected.comportamiento,
+        specialBehavior: selected.specialBehavior,
         vida: resolveEnemyVida(selected.vida),
         vidaMax: resolveEnemyVida(selected.vida),
         movimiento: selected.movimiento, 
@@ -1410,6 +1414,7 @@ const InitTracker = () => {
         position: runeIndex,
         categoria: selected.categoria,
         comportamiento: selected.comportamiento,
+        specialBehavior: selected.specialBehavior,
         vida: totalVida,
         vidaMax: totalVida,
         movimiento: selected.movimiento,
@@ -1816,7 +1821,7 @@ const InitTracker = () => {
 
   const updateEnemyVida = (uuid, nuevaVida, nuevoMax) => {
     const before = placedEnemies.find((entry) => entry.enemy.uuid === uuid)?.enemy;
-    if (before?.id === 'flickering_boar' && nuevaVida < before.vida) {
+    if (isFlickeringBoar(before) && nuevaVida < before.vida) {
       removeEnemyByUUID(uuid);
       showScenarioToast('🐗 El Jabalí Parpadeante recibe daño y DESAPARECE.');
       return;
@@ -1845,7 +1850,7 @@ const InitTracker = () => {
 
   const flipBoarFace = (uuid) => {
     setPlacedEnemies(prev => prev.map(entry => (
-      entry.enemy.uuid === uuid && entry.enemy.id === 'flickering_boar'
+      entry.enemy.uuid === uuid && isFlickeringBoar(entry.enemy)
         ? { ...entry, enemy: { ...entry.enemy, cara: entry.enemy.cara === 'B' ? 'A' : 'B' } }
         : entry
     )));
@@ -3156,7 +3161,7 @@ const InitTracker = () => {
         setCurrentTurnEntity({ ...current, type: 'enemy', group });
         setGroupTurnTracker({ group, index: groupTurnTracker.index });
 
-        if (current.id === 'flickering_boar') {
+        if (isFlickeringBoar(current)) {
           if (current.cara === 'B') {
             const tile = manifestTile();
             const activePiles = [
@@ -3881,7 +3886,7 @@ const InitTracker = () => {
 
             // ⚡️ Si pasa a cara A y tiene evolución activa, aplicar bonificación
             const evo = enemyEvolutions.find(e => e.uuid === item.enemy.uuid);
-            if (evo && evo.count > 0 && item.enemy.id !== 'flickering_boar') {
+            if (evo && evo.count > 0 && !isFlickeringBoar(item.enemy)) {
               updatedEnemy = {
                 ...updatedEnemy,
                 ataque: (updatedEnemy.ataque || 0) + (2 * evo.count),
@@ -4437,7 +4442,7 @@ const InitTracker = () => {
                   />
                 </div>
                 <FlickeringBoarDeckBar
-                  movement={Number(placedEnemies.find((entry) => entry.enemy.id === 'flickering_boar')?.enemy.movimiento) || 3}
+                  movement={Number(placedEnemies.find((entry) => isFlickeringBoar(entry.enemy))?.enemy.movimiento) || 3}
                 />
                 <PassiveCardsPanel
                   cards={passiveCards}

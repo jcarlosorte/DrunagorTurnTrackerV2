@@ -67,7 +67,8 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   }
 
   const { id, name, rune, imagen, vidaMax, movimiento, ataque, color, comportamiento, categoria, inmunidad, tipo_ataque, capacidadesOriginales } = enemy;
-  const boarCardSide = id === 'flickering_boar' && enemy.cara === 'B';
+  const isBoar = enemy.specialBehavior === 'flickering_boar' || id === 'flickering_boar';
+  const boarCardSide = isBoar && enemy.cara === 'B';
 
   const flipBoar = () => {
     setBoarFlipping(true);
@@ -619,7 +620,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               🗑 {ti.remove || 'Eliminar'}
             </button>
           ) : <span />}
-          {id === 'flickering_boar' && onFlip && (
+          {isBoar && onFlip && (
             <button
               type="button"
               onClick={flipBoar}

@@ -956,6 +956,7 @@
   },
   "condiciones_t": {
     "none": "",
+    "SI EL JABALÍ RECIBE DAÑO, DESAPARECE": "IF THE BOAR TAKES DAMAGE, IT DISAPPEARS",
     "ESPARCIR": "SPREAD",
     "ENJAMBRE": "SWARM",
     "CARGA": "CHARGE",

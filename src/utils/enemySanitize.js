@@ -11,6 +11,7 @@ const CAMPOS = [
   'position',
   'categoria',
   'comportamiento',
+  'specialBehavior',
   'vida',
   'vidaMax',
   'movimiento',
