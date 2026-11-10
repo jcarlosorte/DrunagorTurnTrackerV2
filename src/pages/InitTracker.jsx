@@ -247,6 +247,16 @@ const InitTracker = () => {
   const isFlickeringBoar = (enemy) => (
     enemy?.specialBehavior === 'flickering_boar' || enemy?.id === 'flickering_boar'
   );
+
+  const getActiveRunePilesForCard = (card) => {
+    const isAwakeningCard = String(card?.id || '').includes('_despertar_');
+    return isAwakeningCard
+      ? nodosOscuridad.filter((nodo) => nodo.estado === 'activa')
+      : [
+        ...pilas.filter((pila) => pila.estado === 'activa'),
+        ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
+      ];
+  };
   const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -3578,10 +3588,7 @@ const InitTracker = () => {
                       } else if (usesGeneration) {
                         canSpawn = generationOptions.length > 0;
                       } else {
-                        const pilasActivas = [
-                          ...pilas.filter((pila) => pila.estado === 'activa'),
-                          ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
-                        ];
+                        const pilasActivas = getActiveRunePilesForCard(currentRune);
                         canSpawn = pilasActivas.some((pila) => (
                           pila.tiles.some((tileEntry) => tileEntry.runa === tile.runa)
                         ));
@@ -3631,10 +3638,7 @@ const InitTracker = () => {
                   const spawnExists = tieneEvento || spawnPoints.some(sp => sp.runa === tile.runa);
                   
                   // ✅ Buscar pilas activas con esa loseta
-                  const pilasActivas = [
-                    ...pilas.filter(p => p.estado === 'activa'),
-                    ...pilasConcentrada.filter(p => p.estado === 'activa')
-                  ];
+                  const pilasActivas = getActiveRunePilesForCard(currentRune);
                   
                   const pilasQueContienen = pilasActivas.filter(pila =>
                     pila.tiles.some(t => t.runa === tile.runa)

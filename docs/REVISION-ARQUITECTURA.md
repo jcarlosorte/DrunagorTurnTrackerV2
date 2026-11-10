@@ -3431,6 +3431,21 @@ Unit       217 tests
 E2E        81/81
 ```
 
+### 193.ª tanda — Pilas de Despertar en runas e incursiones
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Despertar** | Las cartas de runa e incursión de Despertar comprueban los Nodos de Oscuridad activos | `InitTracker` |
+| **Juego base** | Las cartas del juego base siguen comprobando sus pilas originales | `InitTracker` |
+| **Pruebas** | 217 unitarios · 81 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        81/81
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
