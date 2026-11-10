@@ -53,7 +53,6 @@ import PilaStatusPanel from '@/components/track/PilaStatusPanel';
 import SpecialEventBar from '@/components/track/SpecialEventBar';
 import StoryDeckBar from '@/components/track/StoryDeckBar';
 import TerribleCannonsBar from '@/components/track/TerribleCannonsBar';
-import FlickeringBoarDeckBar from '@/components/track/FlickeringBoarDeckBar';
 import FlickeringBoarCardModal from '@/components/track/FlickeringBoarCardModal';
 import TerribleCannonDialog from '@/components/track/TerribleCannonDialog';
 import VisionClaraModal from '@/components/track/VisionClaraModal';
@@ -4236,6 +4235,7 @@ const InitTracker = () => {
     heroManagementEnabled,
     onRemove,
     openEnemyModal,
+    flipBoarFace,
     removeRuneByUUID,
     setSelectedHeroId,
     companions: trackerData.companions || [],
@@ -4452,9 +4452,6 @@ const InitTracker = () => {
                     accent="cyan"
                   />
                 </div>
-                <FlickeringBoarDeckBar
-                  movement={Number(placedEnemies.find((entry) => isFlickeringBoar(entry.enemy))?.enemy.movimiento) || 3}
-                />
                 <PassiveCardsPanel
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}
@@ -5028,7 +5025,6 @@ const InitTracker = () => {
             overhealedEnemies={overhealedEnemies}
             setOverhealedEnemies={setOverhealedEnemies}
             onEstadoChange={updateEnemyEstados}
-            onFlip={flipBoarFace}
             getEffectiveStats={getEnemyEffectiveStats}
           />
           )}
@@ -5070,7 +5066,7 @@ const InitTracker = () => {
           movement={pendingBoarCard?.movement || 3}
           labels={{
             ...ti,
-            boarResolve: ti.boarResolve || 'Aplicar y activar',
+            boarResolve: ti.boarResolve || 'Aceptar',
           }}
           onResolve={resolvePendingBoarCard}
         />

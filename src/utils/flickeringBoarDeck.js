@@ -43,11 +43,12 @@ export function drawFlickeringBoarCard(state, random = Math.random) {
   if (deck.length === 0) return state;
 
   const [current, ...rest] = deck;
+  const exhausted = rest.length === 0;
   return {
     ...state,
-    deck: rest,
-    discarded: [...discarded, current],
+    deck: exhausted ? shuffled(FLICKERING_BOAR_CARD_IDS, random) : rest,
+    discarded: exhausted ? [] : [...discarded, current],
     current,
-    cycles,
+    cycles: exhausted ? cycles + 1 : cycles,
   };
 }

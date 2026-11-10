@@ -3321,6 +3321,24 @@ Unit       216 tests
 E2E        78/78
 ```
 
+### 186.ª tanda — Cara B del Jabalí en el tablero
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cara B** | Se muestra como carta con fondo de interacción y título en el propio track, sin abrir la vista ampliada | `EnemyCard` |
+| **Volteo** | Botón de volteo en la ficha del track; al pasar a Cara B no se abre ningún modal | `EnemyCard`, `TrackSlot` |
+| **Mazo** | Eliminado el panel visual; se baraja al colocar y se recarga automáticamente al agotarse | `InitTracker`, `flickeringBoarDeck` |
+| **FURIA** | Solo las cartas 2 y 4 tienen FURIA | `flickeringBoarDeck` |
+| **Ventana** | El botón pasa a llamarse **Aceptar** | `FlickeringBoarCardModal`, i18n |
+| **Pruebas** | 217 unitarios · 78 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        78/78
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

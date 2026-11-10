@@ -9,8 +9,8 @@ const boarEnemy = {
     name: 'Flickering Boar',
     color: 'escenario',
     categoria: 'escenario',
-    comportamiento: 'especial',
     cara: 'A',
+    specialBehavior: 'flickering_boar',
     vida: 15,
     vidaMax: 15,
     movimiento: 3,
@@ -28,7 +28,7 @@ const boarEnemy = {
   },
 };
 
-test('la baraja del Jabalí Parpadeante se inicializa y recarga al agotarse', async ({ page }) => {
+async function seedBoar(page) {
   await seedStorage(page, buildSeed());
   await openTracker(page);
   await page.evaluate((enemyState) => {
@@ -36,40 +36,38 @@ test('la baraja del Jabalí Parpadeante se inicializa y recarga al agotarse', as
   }, JSON.stringify({ placedEnemies: [boarEnemy] }));
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForSelector('.track-slot');
+}
 
-  const deckBar = page.getByTestId('flickering-boar-deck');
-  await expect(deckBar).toBeVisible();
-  await expect(deckBar).toContainText('Mazo: 8/8');
+test('la baraja del Jabalí se inicializa al colocarlo y no muestra panel', async ({ page }) => {
+  await seedBoar(page);
 
-  for (let index = 0; index < 8; index += 1) {
-    await deckBar.getByRole('button', { name: /Robar/ }).click();
-  }
-  await expect(deckBar).toContainText('Descartadas: 8');
-  await expect(deckBar.getByRole('button', { name: /Recargar y robar/ })).toBeVisible();
-
-  await deckBar.getByRole('button', { name: /Recargar y robar/ }).click();
-  await expect(deckBar).toContainText('Mazo: 7/8');
   await expect.poll(async () => page.evaluate(() => {
     const game = JSON.parse(localStorage.getItem('gameState') || '{}');
-    return game.flickeringBoarDeck?.cycles;
-  })).toBe(1);
+    return {
+      active: game.flickeringBoarDeck?.active,
+      size: game.flickeringBoarDeck?.deck?.length,
+    };
+  })).toEqual({ active: true, size: 8 });
+  await expect(page.getByTestId('flickering-boar-deck')).toHaveCount(0);
 });
 
-test('el Jabalí muestra su capacidad y permite voltear entre monstruo y carta', async ({ page }) => {
-  await seedStorage(page, buildSeed());
-  await openTracker(page);
-  await page.evaluate((enemyState) => {
-    localStorage.setItem('initEnemiesState', enemyState);
-  }, JSON.stringify({ placedEnemies: [boarEnemy] }));
-  await page.reload({ waitUntil: 'networkidle' });
-  await page.waitForSelector('.track-slot');
+test('el Jabalí muestra su capacidad y se voltea en el tablero sin abrir la vista ampliada', async ({ page }) => {
+  await seedBoar(page);
 
-  await page.getByRole('button', { name: /Flickering Boar|Jabalí Parpadeante/ }).first().click();
+  const enemyCard = page.locator('[data-enemy-card="e2e-flickering-boar"]');
+  await enemyCard.click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('SI EL JABALÍ RECIBE DAÑO, DESAPARECE');
-  await dialog.getByRole('button', { name: /Voltear carta/ }).click();
-  await expect(page.getByRole('dialog')).toContainText('JABALÍ PARPADEANTE');
-  await expect(page.getByRole('dialog')).toContainText('Primero, Manifiesta 1 Runa.');
-  await page.getByRole('dialog').getByRole('button', { name: /Voltear al monstruo/ }).click();
-  await expect(page.getByRole('dialog').getByRole('button', { name: /Voltear carta/ })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Cerrar' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+
+  await enemyCard.getByRole('button', { name: 'Voltear carta' }).click();
+  await expect(enemyCard).toContainText('JABALÍ PARPADEANTE');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await enemyCard.click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+
+  await enemyCard.getByRole('button', { name: 'Voltear al monstruo' }).click();
+  await expect(enemyCard.getByRole('button', { name: 'Voltear carta' })).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
 });

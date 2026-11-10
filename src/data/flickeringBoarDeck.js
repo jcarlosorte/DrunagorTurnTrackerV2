@@ -4,9 +4,9 @@ const CARD_BLUEPRINTS = [
   { suffix: 3, kind: 'rest', fury: false },
   { suffix: 4, kind: 'rest', fury: true },
   { suffix: 5, kind: 'west', fury: false },
-  { suffix: 6, kind: 'west', fury: true },
+  { suffix: 6, kind: 'west', fury: false },
   { suffix: 7, kind: 'east', fury: false },
-  { suffix: 8, kind: 'east', fury: true },
+  { suffix: 8, kind: 'east', fury: false },
 ];
 
 const TITLE_KEYS = {

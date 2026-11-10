@@ -6,6 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { borderColorMap, categoryTextGlowMap, textBgColorMap } from './enemyVisuals';
 import FitText from './FitText';
 import ResponsiveImage from './ResponsiveImage';
+import boarBackground from '@/assets/interactions/runic.avif';
 
 // Los ayudas usan `title` nativo: el tablero tiene scroll y `overflow`, así que
 // cualquier tooltip absoluto quedaría recortado o tapado por otras tarjetas.
@@ -46,6 +47,7 @@ function ImmunityBadge({ immunityId, isBoss, label }) {
 
 export default function EnemyCard({
   uuid,
+  id,
   name,
   comportamiento,
   categoria,
@@ -58,11 +60,16 @@ export default function EnemyCard({
   isFlipping,
   estadosAlterados = [],
   inmunidad = [],
+  specialBehavior,
+  cara,
+  onFlipBoar,
 }) {
   const { translations } = useLanguage();
   const conditions = translations.condiciones_t || {};
   const immunityLabels = translations.condiciones_d || {};
   const behaviors = translations.trackerSelect?.comportamientos || {};
+  const isBoar = specialBehavior === 'flickering_boar' || id === 'flickering_boar';
+  const boarCardSide = isBoar && cara === 'B';
 
   const isBoss = categoria === 'jefe';
   const ringClass = ENEMY_RING_COLORS.find((ring) => ring.id === ringColor)?.className
@@ -78,11 +85,13 @@ export default function EnemyCard({
       role="button"
       tabIndex={0}
       aria-label={name}
-      onClick={() => openEnemyModal(uuid)}
+      onClick={() => {
+        if (!boarCardSide) openEnemyModal(uuid);
+      }}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          openEnemyModal(uuid);
+          if (!boarCardSide) openEnemyModal(uuid);
         }
       }}
       className={classNames(
@@ -165,6 +174,44 @@ export default function EnemyCard({
             </span>
           </span>
         </button>
+
+        {isBoar && !boarCardSide && (
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onFlipBoar?.(uuid);
+            }}
+            aria-label={translations.trackerInit?.boarCardFlip || 'Voltear carta'}
+            title={translations.trackerInit?.boarCardFlip || 'Voltear carta'}
+            className="absolute -right-2 -top-2 z-30 flex h-6 w-6 items-center justify-center rounded-full border border-purple-300 bg-purple-800 text-xs text-white shadow-lg hover:bg-purple-700"
+          >
+            🔄
+          </button>
+        )}
+
+        {boarCardSide && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-amber-400 bg-slate-950 text-center">
+            <img src={boarBackground} alt="" className="absolute inset-0 h-full w-full object-cover opacity-35" />
+            <div className="relative flex flex-col items-center gap-1 p-1">
+              <span className="text-[0.5rem] font-bold uppercase tracking-[0.15em] text-amber-300">Cara B</span>
+              <span className="text-[0.68rem] font-black leading-tight text-amber-100">
+                {translations.trackerInit?.boarCardTitle || 'JABALÍ PARPADEANTE'}
+              </span>
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onFlipBoar?.(uuid);
+                }}
+                aria-label={translations.trackerInit?.boarCardOpen || 'Voltear al monstruo'}
+                className="mt-1 rounded bg-purple-800 px-1.5 py-0.5 text-[0.55rem] font-bold text-white hover:bg-purple-700"
+              >
+                🔄 {translations.trackerInit?.boarCardOpen || 'Voltear'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

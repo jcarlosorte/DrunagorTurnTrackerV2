@@ -15,11 +15,10 @@ import { GiHealthPotion, GiRunningNinja, GiSwordClash, GiShieldReflect, GiSteelt
 import { MdLooksOne,  MdLooksTwo,  MdLooks3,  MdLooks4,  MdLooks5,  MdLooks6,} from 'react-icons/md';
 
 
-export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, overhealedEnemies, setOverhealedEnemies, onEstadoChange, getEffectiveStats, onFlip }) => {
+export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, overhealedEnemies, setOverhealedEnemies, onEstadoChange, getEffectiveStats }) => {
   const [vidaLocal, setVidaLocal] = useState(enemy?.vida || 0);
   const [vidaMaxLocal, setVidaMaxLocal] = useState(enemy?.vidaMax || 0);
   const [estadosLocal, setEstadosLocal] = useState(enemy?.estadosAlterados || []);
-  const [boarFlipping, setBoarFlipping] = useState(false);
   const { translations } = useLanguage();
   const [avisos, setAvisos] = useState([]);
 
@@ -67,50 +66,6 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   }
 
   const { id, name, rune, imagen, vidaMax, movimiento, ataque, color, comportamiento, categoria, inmunidad, tipo_ataque, capacidadesOriginales } = enemy;
-  const isBoar = enemy.specialBehavior === 'flickering_boar' || id === 'flickering_boar';
-  const boarCardSide = isBoar && enemy.cara === 'B';
-
-  const flipBoar = () => {
-    setBoarFlipping(true);
-    onFlip?.(uuid);
-    window.setTimeout(() => setBoarFlipping(false), 650);
-  };
-
-  if (boarCardSide) {
-    return (
-      <div className="layer-modal fixed inset-0 flex items-center justify-center bg-black/70 p-4" role="presentation">
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={ti.boarCardTitle || 'Jabalí Parpadeante'}
-          className={`modal-enter relative flex max-h-[92dvh] w-full max-w-md flex-col overflow-y-auto rounded-2xl border-4 border-amber-500 bg-gradient-to-b from-amber-950 to-slate-950 p-5 text-amber-50 shadow-2xl ${boarFlipping ? 'card-flip' : ''}`}
-        >
-          <p className="text-center text-[0.65rem] font-bold uppercase tracking-[0.2em] text-amber-300">Jabalí Parpadeante</p>
-          <h2 className="mt-1 text-center text-2xl font-black text-amber-100">{ti.boarCardTitle || 'JABALÍ PARPADEANTE'}</h2>
-          <div className="my-4 rounded-xl border border-amber-500/50 bg-black/25 p-3 text-sm leading-relaxed">
-            {(ti.boarCardText || 'Primero, Manifiesta 1 Runa.\nLuego, Coloca de nuevo al Jabalí Parpadeante adyacente a una Pila de Runas en el Tablero.')
-              .split('\n').map((line) => <p key={line} className="mb-2 last:mb-0">{line}</p>)}
-          </div>
-          <div className="flex justify-center gap-2">
-            <button
-              type="button"
-              onClick={flipBoar}
-              className="min-h-10 rounded-lg bg-purple-700 px-4 text-sm font-bold text-white hover:bg-purple-600"
-            >
-              🔄 {ti.boarCardOpen || 'Voltear al monstruo'}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="min-h-10 rounded-lg bg-slate-700 px-4 text-sm font-bold text-white hover:bg-slate-600"
-            >
-              {ti.close || 'Cerrar'}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const numeroIconos = [    <MdLooksOne key="1" />,    <MdLooksTwo key="2" />,    <MdLooks3 key="3" />,    <MdLooks4 key="4" />,    <MdLooks5 key="5" />,    <MdLooks6 key="6" />,  ];
   const capacidadesAjustadas = adjustCapabilitiesByRunes(capacidadesOriginales, rune, getRuneCount);
@@ -400,7 +355,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
         ref={dialogRef}
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`${bgColorMap[color] || ''} modal-enter relative flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border-4 shadow-2xl ${borderColorMap[color] || ''} ${boarFlipping ? 'card-flip' : ''}`}
+        className={`${bgColorMap[color] || ''} modal-enter relative flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border-4 shadow-2xl ${borderColorMap[color] || ''}`}
       >
         
         {/* Franja superior con el color de facción */}
@@ -620,15 +575,6 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               🗑 {ti.remove || 'Eliminar'}
             </button>
           ) : <span />}
-          {isBoar && onFlip && (
-            <button
-              type="button"
-              onClick={flipBoar}
-              className="min-h-11 rounded-xl border border-purple-500/60 bg-purple-900/70 px-4 text-sm font-bold text-purple-100 hover:bg-purple-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300"
-            >
-              🔄 {ti.boarCardFlip || 'Voltear carta'}
-            </button>
-          )}
           <button
             ref={closeRef}
             type="button"

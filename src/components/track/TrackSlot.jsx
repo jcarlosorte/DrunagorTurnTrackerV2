@@ -39,6 +39,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     heroManagementEnabled,
     onRemove,
     openEnemyModal,
+    flipBoarFace,
     removeRuneByUUID,
     setSelectedHeroId,
     companions = [],
@@ -164,6 +165,9 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
                 ringColor={item.enemy.ringColor}
                 isFlipping={isEntityFlipping}
                 estadosAlterados={item.enemy.estadosAlterados}
+                specialBehavior={item.enemy.specialBehavior}
+                cara={item.enemy.cara}
+                onFlipBoar={flipBoarFace}
               />
             ) : type === 'rune' ? (
               <RuneCard rune={item} onRemove={removeRuneByUUID} flipped={flippedCards.includes(item.uuid)} />

@@ -572,7 +572,7 @@
     "boarPlaced": "Place the Flickering Boar adjacent to a Rune Pile with that color",
     "boarEvolution": "EVOLUTION: +2 Attack and +1 Movement",
     "boarActivate": "The Flickering Boar ACTIVATES and attacks",
-    "boarResolve": "Apply and activate",
+    "boarResolve": "Accept",
     "addErraden": "Add Eradren's Surprise",
     "resetErraden": "Reset deck",
     "removeErraden": "Remove event",

@@ -41,7 +41,7 @@ export default function FlickeringBoarCardModal({
               onClick={onResolve}
               className="min-h-10 rounded-xl bg-amber-600 px-4 text-sm font-bold text-white hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
             >
-              {labels.boarResolve || 'Aplicar y activar'}
+              {labels.boarResolve || 'Aceptar'}
             </button>
           </div>
         </div>
