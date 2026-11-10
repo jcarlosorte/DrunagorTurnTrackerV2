@@ -47,6 +47,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     placedFollowers = [],
     openFollower,
     siegeEvent,
+    openSiegeDeck,
     RuneCard,
   } = deps;
 
@@ -140,16 +141,21 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
               </div>
             )}
             {isSiege ? (
-              <div className="relative overflow-hidden rounded-lg border-2 border-amber-600/80 bg-slate-950 shadow-lg">
+              <button
+                type="button"
+                onClick={() => openSiegeDeck?.()}
+                aria-label={ti.siegeTitle || 'Asedio de Limiternia'}
+                className="relative w-full overflow-hidden rounded-lg border-2 border-amber-600/80 bg-slate-950 text-left shadow-lg"
+              >
                 <img src={siegeDeckBack} alt="" className="h-[150px] w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-1 text-center">
                   <p className="truncate text-[0.6rem] font-black uppercase leading-tight text-amber-100">
                     {ti.siegeTitle || 'Asedio de Limiternia'}
                   </p>
-                  <p className="text-[0.55rem] text-amber-200">{siegeEvent.deck.length}/10</p>
+                  <p className="text-[0.55rem] text-amber-200">{10 - siegeEvent.deck.length}/10</p>
                 </div>
-              </div>
+              </button>
             ) : isFollower ? (
               <FollowerCard
                 entry={item}

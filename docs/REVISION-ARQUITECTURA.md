@@ -3478,6 +3478,25 @@ Unit       217 tests
 E2E        82/82
 ```
 
+### 196.ª tanda — Ajustes finales del Asedio de Limiternia
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Concentración** | Las cartas ya no aplican Concentración a los héroes | `InitTracker` |
+| **Confirmación** | Botones **Sí / No** al preguntar por una invocación | `InitTracker` |
+| **Avisos** | Si no se puede colocar, se muestra «Activar [monstruo]» y se añade su turno extra una sola vez por tipo | `AppAlertDialog`, `InitTracker` |
+| **Anillos** | Invocaciones con anillos distintos | `InitTracker` |
+| **Turno** | El Asedio espera a resolver su ventana antes de avanzar | `InitTracker` |
+| **Carta** | Saltos de línea, contador creciente y vista ampliada con eliminar/reiniciar/cerrar | `SiegeCardModal`, `SiegeDeckModal`, `TrackSlot` |
+| **Pruebas** | 217 unitarios · 82 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        82/82
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

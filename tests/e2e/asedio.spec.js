@@ -23,6 +23,11 @@ test('Asedio de Limiternia se coloca al final y roba sus cartas en orden', async
 
   await expect(page.getByText('Asedio de Limiternia').last()).toBeVisible();
   await page.getByRole('button', { name: 'Cerrar', exact: true }).click();
+  await page.waitForTimeout(500);
+
+  await page.getByRole('button', { name: 'Asedio de Limiternia', exact: true }).click();
+  await expect(page.getByRole('dialog')).toContainText('Contador: 0/10');
+  await page.getByRole('dialog').getByRole('button', { name: 'Cerrar' }).click();
 
   for (let index = 0; index < 24; index += 1) {
     if (await page.getByRole('dialog').count() > 0) break;
@@ -34,6 +39,10 @@ test('Asedio de Limiternia se coloca al final y roba sus cartas en orden', async
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText('ASEDIO DE INCURSIÓN DE MONSTRUOS');
   await dialog.getByRole('button', { name: /Resolver asedio/ }).click();
+
+  const alertDialog = page.getByRole('dialog').filter({ hasText: 'Activar Matón Violento' });
+  await expect(alertDialog).toBeVisible();
+  await alertDialog.getByRole('button', { name: 'Aceptar' }).click();
 
   await expect.poll(async () => page.evaluate(() => {
     const game = JSON.parse(localStorage.getItem('gameState') || '{}');

@@ -2,6 +2,10 @@ import siegeBackground from '@/assets/interactions/portal.avif';
 
 export default function SiegeCardModal({ card, labels = {}, onResolve, resolving = false }) {
   if (!card) return null;
+  const rawText = String(labels[card.textKey] || '');
+  const text = rawText.includes('\n')
+    ? rawText
+    : rawText.replace(/\.\s+/g, '.\n').replace(/:\s+/g, ':\n').replace(/;\s+/g, ';\n');
 
   return (
     <div className="layer-modal fixed inset-0 z-[98] flex items-center justify-center bg-black/80 p-4" role="presentation">
@@ -23,7 +27,7 @@ export default function SiegeCardModal({ card, labels = {}, onResolve, resolving
             {labels[card.titleKey] || `Carta ${card.number}`}
           </h2>
           <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-100">
-            {labels[card.textKey] || ''}
+            {text}
           </p>
           <div className="mt-4 flex justify-end">
             <button

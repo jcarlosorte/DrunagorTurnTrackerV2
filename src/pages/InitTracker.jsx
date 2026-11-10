@@ -56,6 +56,8 @@ import StoryDeckBar from '@/components/track/StoryDeckBar';
 import TerribleCannonsBar from '@/components/track/TerribleCannonsBar';
 import FlickeringBoarCardModal from '@/components/track/FlickeringBoarCardModal';
 import SiegeCardModal from '@/components/track/SiegeCardModal';
+import SiegeDeckModal from '@/components/track/SiegeDeckModal';
+import AppAlertDialog from '@/components/AppAlertDialog';
 import TerribleCannonDialog from '@/components/track/TerribleCannonDialog';
 import VisionClaraModal from '@/components/track/VisionClaraModal';
 import EventCardModal from '@/components/track/EventCardModal';
@@ -239,6 +241,8 @@ const InitTracker = () => {
 
   const [pendingSiegeCard, setPendingSiegeCard] = useState(null);
   const [siegeResolving, setSiegeResolving] = useState(false);
+  const [siegeDeckOpen, setSiegeDeckOpen] = useState(false);
+  const [siegeAlertQueue, setSiegeAlertQueue] = useState([]);
   const siegeActiveRef = useRef(false);
   const processedSiegeTurnRef = useRef(new Set());
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
@@ -263,7 +267,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, drawSiegeCard, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -1923,45 +1927,66 @@ const InitTracker = () => {
     const spawns = (card.spawns || []).filter((spawn) => heroCount >= (spawn.minHeroes || 1));
     let totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
     const sameCounts = {};
+    const failedTypes = new Set();
+    const simulatedSmall = [...usedColors];
+    const simulatedBig = [...usedColorsBig];
+
     for (const spawn of spawns) {
       const sameMonster = sameCounts[spawn.enemyId]
         ?? placedEnemies.filter((entry) => entry.enemy.id === spawn.enemyId).length;
+      const enemy = ENEMIES.find((entry) => entry.id === spawn.enemyId && entry.cara !== 'B');
+      const name = tee?.[spawn.enemyId] || enemy?.nombre || spawn.enemyId;
+
       if (totalMonsters >= 12 || sameMonster >= 4) {
         showScenarioToast(`⚠️ ${ti.siegeNoCapacity || 'No hay espacio para invocar más monstruos'}`);
+        failedTypes.add(spawn.enemyId);
         continue;
       }
       const generation = generationPoints.find((point) => point.color === spawn.color);
       if (!generation) {
         showScenarioToast(`⚠️ ${ti.siegeNoPoint || 'No hay Ficha de Generación de ese color'}`);
+        failedTypes.add(spawn.enemyId);
         continue;
       }
-      const enemy = ENEMIES.find((entry) => entry.id === spawn.enemyId && entry.cara !== 'B');
-      const name = tee?.[spawn.enemyId] || enemy?.nombre || spawn.enemyId;
       const colorLabel = ti.colores?.[spawn.color] || spawn.color;
       const confirmed = await appConfirm(
         (ti.siegeConfirmSpawn || '¿Colocar {name} en la Ficha de Generación {color}?')
           .replace('{name}', name)
           .replace('{color}', colorLabel),
-        { title: ti.siegeTitle || 'Asedio de Limiternia' },
+        {
+          title: ti.siegeTitle || 'Asedio de Limiternia',
+          confirmLabel: ti.si || 'Sí',
+          cancelLabel: ti.no || 'No',
+        },
       );
-      if (!confirmed) continue;
-      await handleManualEnemyAdd(spawn.enemyId, enemy?.comportamiento, 'escenario', 'NoShow');
+      if (!confirmed) {
+        failedTypes.add(spawn.enemyId);
+        continue;
+      }
+      const isBig = enemy?.size === 'grande';
+      const ringColor = getNextAvailableColorSimulated(isBig, simulatedSmall, simulatedBig) || 'noColor';
+      if (ringColor !== 'noColor') (isBig ? simulatedBig : simulatedSmall).push(ringColor);
+      await handleManualEnemyAdd(
+        spawn.enemyId,
+        enemy?.comportamiento,
+        'escenario',
+        'NoShow',
+        ringColor,
+      );
       totalMonsters += 1;
       sameCounts[spawn.enemyId] = sameMonster + 1;
       showScenarioToast(`🐾 ${name} · ${colorLabel}`);
     }
 
-    if (card.concentration > 0) {
-      (trackerData.heroes || []).forEach((heroId) => {
-        const extras = getHeroExtras(heroId) || {};
-        const states = [...(extras.estadosAlterados || [])];
-        const index = states.findIndex((state) => state.id === 'CONCENTRACION');
-        if (index === -1) states.push({ id: 'CONCENTRACION', count: 2 });
-        else states[index] = { ...states[index], count: Math.min(4, (states[index].count || 0) + 2) };
-        updateHeroExtras(heroId, { estadosAlterados: states });
-      });
-      showScenarioToast(`✨ ${ti.siegeConcentration || 'Cada héroe gana Concentración 2'}`);
-    }
+    failedTypes.forEach((enemyId) => {
+      const enemy = ENEMIES.find((entry) => entry.id === enemyId);
+      const name = tee?.[enemyId] || enemy?.nombre || enemyId;
+      setSiegeAlertQueue(prev => [...prev, `Activar ${name}`]);
+      appendGameLog('event', `Activar ${name}`, { round: roundRef.current, turn: turnIndex });
+      const existing = placedEnemies.find((entry) => entry.enemy.id === enemyId);
+      if (existing) addExtraTurn(existing.enemy.uuid);
+    });
+
     if (card.traps) {
       showScenarioToast(`🪤 ${ti.siegeTrap || 'Coloca 2 trampas defensivas'}`);
       appendGameLog('event', ti.siegeTrap || 'Coloca 2 trampas defensivas', { round: roundRef.current, turn: turnIndex });
@@ -3813,6 +3838,7 @@ const InitTracker = () => {
     events: siegeEvent.active ? ['siege'] : [],
   });
   const handleNextTurn = () => {
+    if (pendingSiegeCard || siegeAlertQueue.length > 0) return;
     // Guardamos el cursor de turno para poder deshacer el último avance.
     if (currentTurnEntity?.bonusAtaqueTemporal) {
       setPlacedEnemies(prev =>
@@ -4347,6 +4373,7 @@ const InitTracker = () => {
     placedFollowers: trackerData.followers || [],
     openFollower: setSelectedFollowerUid,
     siegeEvent,
+    openSiegeDeck: () => setSiegeDeckOpen(true),
     rolesOnTop,
     rolesOnBottom,
     currentTurnEntity,
@@ -5200,6 +5227,23 @@ const InitTracker = () => {
           labels={ti}
           resolving={siegeResolving}
           onResolve={resolveSiegeCard}
+        />
+        <AppAlertDialog
+          open={siegeAlertQueue.length > 0}
+          message={siegeAlertQueue[0] || ''}
+          onClose={() => setSiegeAlertQueue(prev => prev.slice(1))}
+          confirmLabel={ti.aceptar || 'Aceptar'}
+        />
+        <SiegeDeckModal
+          open={siegeDeckOpen}
+          event={siegeEvent}
+          labels={ti}
+          onRemove={() => {
+            resetSiegeEvent();
+            setSiegeDeckOpen(false);
+          }}
+          onReset={() => addSiegeEvent()}
+          onClose={() => setSiegeDeckOpen(false)}
         />
         <EventCardModal
           card={drawnEventCard}
