@@ -3463,6 +3463,21 @@ Unit       217 tests
 E2E        82/82
 ```
 
+### 195.ª tanda — Imagen y solape del Asedio en el track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Imagen** | La baraja usa `assets/runes/card-indigo.webp`, una imagen que no estaba en uso | `TrackSlot` |
+| **Solape** | La carta del Asedio forma parte de la misma pila inferior que las runas, usando las mismas distancias de solape | `TrackSlot` |
+| **Pruebas** | 217 unitarios · 82 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        82/82
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

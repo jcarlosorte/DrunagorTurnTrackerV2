@@ -22,7 +22,7 @@ test('Asedio de Limiternia se coloca al final y roba sus cartas en orden', async
   })).toEqual({ active: true, size: 10 });
 
   await expect(page.getByText('Asedio de Limiternia').last()).toBeVisible();
-  await page.getByTestId('close-menu').click();
+  await page.getByRole('button', { name: 'Cerrar', exact: true }).click();
 
   for (let index = 0; index < 24; index += 1) {
     if (await page.getByRole('dialog').count() > 0) break;

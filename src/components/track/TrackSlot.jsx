@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { GiWingedSword, GiAbstract065 } from 'react-icons/gi';
+import siegeDeckBack from '@/assets/runes/card-indigo.webp';
 import CommanderCard from '@/components/CommanderCard';
 import EnemyCard from '@/components/track/EnemyCard';
 import CharacterCard from '@/components/track/CharacterCard';
@@ -79,9 +80,15 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
   const enemiesBelow = placedEnemies.filter((e) => e.enemy.position === index && e.enemy.runePosition === 'abajo');
   const runesAbove = placedRunes.filter((r) => r.rune.colorIndex === index && r.rune.posicion === 'arriba');
   const runesBelow = placedRunes.filter((r) => r.rune.colorIndex === index && r.rune.posicion === 'abajo');
+  const runesBelowItems = [
+    ...runesBelow.map((r) => r.rune),
+    ...(isRuneTextSlot && siegeEvent?.active
+      ? [{ kind: 'siege', id: 'siege', name: ti.siegeTitle || 'Asedio de Limiternia' }]
+      : []),
+  ];
 
   const totalAbove = stackAbove.length + (isRune ? enemiesAbove.length : 0) + (isRuneTextSlot ? runesAbove.length : 0);
-  const totalBelow = stackBelow.length + (isRune ? enemiesBelow.length : 0) + (isRuneTextSlot ? runesBelow.length : 0);
+  const totalBelow = stackBelow.length + (isRune ? enemiesBelow.length : 0) + (isRuneTextSlot ? runesBelowItems.length : 0);
   // Densidad compacta: cartas algo más pequeñas y pilas más juntas.
   const densityFactor = density === 'compact' ? 0.85 : 1;
   // Solape compacto: las cartas se acercan entre sí (sin tocar la separación al track).
@@ -102,18 +109,20 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
 
       const isCompanion = type === 'hero' && item.kind === 'companion';
       const isFollower = type === 'hero' && item.kind === 'follower';
+      const isSiege = item.kind === 'siege';
       const isCurrentTurn = currentTurnEntity && (
         (type === 'enemy' && item.enemy.uuid === currentTurnEntity.uuid) ||
         (type === 'rune' && item.uuid === currentTurnEntity.uuid) ||
+        (isSiege && currentTurnEntity.type === 'event') ||
         (type === 'hero' && isCompanion && currentTurnEntity.type === 'companion' && item.uid === currentTurnEntity.uid) ||
         (type === 'hero' && isFollower && currentTurnEntity.type === 'follower' && item.uid === currentTurnEntity.uid) ||
-        (type === 'hero' && !isCompanion && !isFollower && currentTurnEntity.type === 'hero' && item.id === currentTurnEntity.id)
+        (type === 'hero' && !isCompanion && !isFollower && !isSiege && currentTurnEntity.type === 'hero' && item.id === currentTurnEntity.id)
       );
       const isEntityFlipping = type === 'enemy' && flippedCards.includes(item.enemy.uuid);
 
       return (
         <div
-          key={type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : isFollower ? item.uid : isCompanion ? item.uid : `${type}-${item.id}`}
+          key={isSiege ? 'siege' : type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : isFollower ? item.uid : isCompanion ? item.uid : `${type}-${item.id}`}
           className="absolute left-1/2 w-[108px] max-w-full transition-transform duration-300"
           style={{
             ...(isTop
@@ -130,7 +139,18 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
                 <GiWingedSword className="animate-bounce text-white" size={40} />
               </div>
             )}
-            {isFollower ? (
+            {isSiege ? (
+              <div className="relative overflow-hidden rounded-lg border-2 border-amber-600/80 bg-slate-950 shadow-lg">
+                <img src={siegeDeckBack} alt="" className="h-[150px] w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-1 text-center">
+                  <p className="truncate text-[0.6rem] font-black uppercase leading-tight text-amber-100">
+                    {ti.siegeTitle || 'Asedio de Limiternia'}
+                  </p>
+                  <p className="text-[0.55rem] text-amber-200">{siegeEvent.deck.length}/10</p>
+                </div>
+              </div>
+            ) : isFollower ? (
               <FollowerCard
                 entry={item}
                 onOpen={() => openFollower?.(item.uid)}
@@ -260,20 +280,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       {/* Pila inferior: se ancla al 50% del slot y crece hacia abajo */}
       {renderStack(stackBelow, 'bottom', 'hero')}
       {isRune && renderStack(enemiesBelow, 'bottom', 'enemy')}
-      {isRuneTextSlot && renderStack(runesBelow.map((r) => r.rune), 'bottom', 'rune')}
-
-      {isRuneTextSlot && siegeEvent?.active && (
-        <div className="absolute bottom-1 left-1/2 z-30 w-[108px] -translate-x-1/2">
-          <div className={`rounded-lg border-2 bg-amber-950/90 px-1.5 py-1 text-center text-amber-100 shadow-lg ${
-            currentTurnEntity?.type === 'event' ? 'border-white ring-2 ring-amber-300' : 'border-amber-600/70'
-          }`}>
-            <p className="truncate text-[0.6rem] font-black uppercase leading-tight">
-              {ti.siegeTitle || 'Asedio de Limiternia'}
-            </p>
-            <p className="text-[0.55rem] text-amber-200">{siegeEvent.deck.length}/10</p>
-          </div>
-        </div>
-      )}
+      {isRuneTextSlot && renderStack(runesBelowItems, 'bottom', 'rune')}
     </div>
   );
 }
