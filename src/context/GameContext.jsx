@@ -241,6 +241,7 @@ export const GameProvider = ({ children }) => {
 
 
   const resetTiles = () => {
+
     setAvailableTiles(createInitialTiles());
     setUsedTiles([]);
     setPilaDeRunas([]);
@@ -278,6 +279,23 @@ export const GameProvider = ({ children }) => {
     setErrantesDeck([]);
     decksInitialized.current = false;
     clearRunes();
+  };
+
+  const resetNodeMechanics = () => {
+    setPilas([]);
+    setPilasConcentrada([]);
+    setNodosOscuridad([]);
+    setContadorPilas(1);
+    setContadorPilasConcentradas(1);
+    setContadorNodosOscuridad(1);
+    setCodigosPilas({});
+    setSpawnPoints([]);
+    setGenerationPoints([]);
+    setMagicCannons([]);
+    setControlPoints([]);
+    setRuneKeys([]);
+    setRescue([]);
+    setRompenodoNotice(null);
   };
 
   const discardTileByColor = (color) => {
@@ -1275,6 +1293,7 @@ export const GameProvider = ({ children }) => {
         terribleCannons, addTerribleCannonTime, tickTerribleCannons,
         terribleCannonNotice, clearTerribleCannonNotice,
         resetTiles,
+        resetNodeMechanics,
         resetGameState: resetTiles,
         tileWarning, 
         setTileWarning,

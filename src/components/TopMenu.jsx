@@ -24,8 +24,7 @@ import { ROLE_POSITIONS } from '@/data/roles';
 import { getInteractionBackgroundAt } from '@/data/companions';
 import { saveCampFollower } from '@/utils/campFollowers';
 import { createId } from '@/utils/id';
-import { appNotify } from '@/utils/appDialogs';
-import { SCENES } from '@/data/scenes';
+import { appNotify, appConfirm } from '@/utils/appDialogs';import { SCENES } from '@/data/scenes';
 import SceneFollowerDialog from '@/components/track/SceneFollowerDialog';
 import SceneFollowerSelectionDialog from '@/components/track/SceneFollowerSelectionDialog';
 import pilaRunasIcon from '@/assets/assets_logo/pila-runas.webp';
@@ -91,7 +90,7 @@ const TopMenu = ({
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
-  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent, siegeEvent, addSiegeEvent, resetSiegeEvent } = useGame();
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, resetNodeMechanics, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent, siegeEvent, addSiegeEvent, resetSiegeEvent } = useGame();
   const { trackerData, setTrackerData } = useTracker();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
@@ -296,6 +295,20 @@ const TopMenu = ({
       .filter(Boolean);
     addFollowersToTracker(additions);
     setSceneFollowerSelection(null);
+  };
+
+  const handleResetNodeMechanics = async () => {
+    const confirmed = await appConfirm(
+      t.resetNodeMechanicsConfirm || 'Se reiniciarán todas las mecánicas del menú Nodos: pilas, Nodos, áreas, generación y cañones.',
+      {
+        title: t.resetNodeMechanics || 'Resetear mecánicas',
+        confirmLabel: t.reset || 'Resetear',
+        cancelLabel: t.cancel || 'Cancelar',
+      },
+    );
+    if (!confirmed) return;
+    resetNodeMechanics();
+    appNotify(t.resetNodeMechanicsDone || 'Mecánicas de Nodos reiniciadas.');
   };
 
   const runeColorName = (color) => (color ? (t.colores?.[color] || color) : (t.removeRandom || 'Aleatoria'));
@@ -1246,6 +1259,13 @@ const TopMenu = ({
                     <GiRuneStone className="text-lg" />
                   </span>
                   <h3 id="nodes-section" className="min-w-0 flex-1 text-sm font-semibold">{t.nodesSection || 'Nodos y áreas'}</h3>
+                  <button
+                    type="button"
+                    onClick={handleResetNodeMechanics}
+                    className="min-h-8 shrink-0 rounded-lg bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800"
+                  >
+                    ↺ {t.resetNodeMechanicsShort || 'Resetear mecánicas'}
+                  </button>
                 </div>
                 <ScenarioPanels />
                 <div className="mt-3 grid gap-3 xl:grid-cols-2">

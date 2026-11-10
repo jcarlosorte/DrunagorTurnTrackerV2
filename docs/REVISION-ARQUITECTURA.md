@@ -3544,6 +3544,21 @@ Unit       217 tests
 E2E        84/84
 ```
 
+### 200.ª tanda — Reset completo del menú Nodos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Reset** | Botón para reiniciar pilas, Nodos de Oscuridad, áreas, generación, cañones, llaves y rescate | `TopMenu`, `GameContext` |
+| **Confirmación** | Se pide confirmación antes de borrar las mecánicas | `AppDialogHost` |
+| **Pruebas** | 217 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
