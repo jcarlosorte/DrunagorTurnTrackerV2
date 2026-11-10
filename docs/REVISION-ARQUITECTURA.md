@@ -3637,6 +3637,22 @@ Unit       217 tests
 E2E        85/85
 ```
 
+### 206.ª tanda — Mazo del Cosechador de Almas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Mazo** | Añadidas las cinco cartas de ataque del jefe, asociadas a `soul_harvester_boss` | `cartasEspeciales` |
+| **Textos** | Nombres y descripciones en español e inglés | i18n |
+| **Colocación** | Al invocar al jefe se colocan sus cinco cartas en las runas correspondientes | `InitTracker` |
+| **Pruebas** | 218 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       218 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

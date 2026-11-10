@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CARTAS_COMANDANTE, CARTAS_OVERLORD, getOverlordDeck } from '@/data/cartasEspeciales';
+import { CARTAS_COMANDANTE, CARTAS_JEFE, CARTAS_OVERLORD, getOverlordDeck } from '@/data/cartasEspeciales';
 
 describe('cartas de comandante', () => {
   it('las 10 cartas base pertenecen al juego base', () => {
@@ -41,5 +41,21 @@ describe('cartas de Señor Supremo', () => {
       .toMatchObject({ rune: 'azul', runePosition: 'abajo' });
     expect(CARTAS_OVERLORD.find((carta) => carta.id === 'over_20'))
       .toMatchObject({ rune: 'naranja', runePosition: 'arriba' });
+  });
+});
+
+describe('cartas del Cosechador de Almas', () => {
+  it('incluye las cinco cartas del jefe con sus runas y posiciones', () => {
+    const deck = CARTAS_JEFE.filter((carta) => carta.idJefe === 'soul_harvester_boss');
+    expect(deck.map((carta) => carta.id)).toEqual([
+      'boss_21', 'boss_22', 'boss_23', 'boss_24', 'boss_25',
+    ]);
+    expect(deck.map((carta) => `${carta.rune}-${carta.runePosition}`)).toEqual([
+      'naranja-abajo',
+      'rojo-abajo',
+      'verde-arriba',
+      'gris-abajo',
+      'azul-abajo',
+    ]);
   });
 });

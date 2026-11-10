@@ -556,6 +556,51 @@ export const CARTAS_JEFE = [
     idJefe: 'aralhezec',
     capacidades: 'boss_20',
     lista_capacidad: []
+  },
+  {
+    id: 'boss_21',
+    nombre: 'boss_21',
+    rune: 'naranja',
+    runePosition: 'abajo',
+    idJefe: 'soul_harvester_boss',
+    capacidades: 'boss_21',
+    lista_capacidad: ['CONDICIONES']
+  },
+  {
+    id: 'boss_22',
+    nombre: 'boss_22',
+    rune: 'rojo',
+    runePosition: 'abajo',
+    idJefe: 'soul_harvester_boss',
+    capacidades: 'boss_22',
+    lista_capacidad: []
+  },
+  {
+    id: 'boss_23',
+    nombre: 'boss_23',
+    rune: 'verde',
+    runePosition: 'arriba',
+    idJefe: 'soul_harvester_boss',
+    capacidades: 'boss_23',
+    lista_capacidad: []
+  },
+  {
+    id: 'boss_24',
+    nombre: 'boss_24',
+    rune: 'gris',
+    runePosition: 'abajo',
+    idJefe: 'soul_harvester_boss',
+    capacidades: 'boss_24',
+    lista_capacidad: []
+  },
+  {
+    id: 'boss_25',
+    nombre: 'boss_25',
+    rune: 'azul',
+    runePosition: 'abajo',
+    idJefe: 'soul_harvester_boss',
+    capacidades: 'boss_25',
+    lista_capacidad: []
   }
 ];
 
