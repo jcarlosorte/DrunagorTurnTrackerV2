@@ -3369,6 +3369,22 @@ Unit       217 tests
 E2E        78/78
 ```
 
+### 189.ª tanda — Escenas 5 y 6 de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Capítulo 5** | Influencia Creciente, 6 runas por color, 3 Nodos activos, Incursión Atroz con Cazamareas, Jabalí silencioso y enemigos por héroes | `scenes`, `InitTracker` |
+| **Capítulo 6** | Influencia Creciente, 5 runas por color y enemigos por héroes | `scenes` |
+| **Historial** | El Jabalí del Capítulo 5 se coloca sin entrada de invocación | `InitEnemiesContext` |
+| **Pruebas** | 217 unitarios · 80 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        80/80
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

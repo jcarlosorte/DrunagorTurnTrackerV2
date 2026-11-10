@@ -1093,7 +1093,7 @@ const InitTracker = () => {
     return Number.isFinite(parsed) ? parsed : 0;
   };
 
-  const handleManualEnemyAdd = async (enemyId, behaviorType, category, ver = 'show', forcedColorId = null, forcedUUID = null, forcedPcValue = null ) => {
+  const handleManualEnemyAdd = async (enemyId, behaviorType, category, ver = 'show', forcedColorId = null, forcedUUID = null, forcedPcValue = null, silentSummon = false) => {
     setManualSelector({ open: false, color: null });
     // Reglas comunes en `findEnemyVariant`: tolera `comportamiento` ausente y
     // permite las apariciones de escenario aunque no estén en la lista.
@@ -1370,6 +1370,8 @@ const InitTracker = () => {
         position: runeIndex,
         categoria: category,
         comportamiento: behaviorType,
+        specialBehavior: selected.specialBehavior,
+        silentSummon,
         vida: resolveEnemyVida(selected.vida),
         vidaMax: resolveEnemyVida(selected.vida),
         movimiento: selected.movimiento,
@@ -1777,6 +1779,18 @@ const InitTracker = () => {
       if (monster) setScenarioMonster(monster);
     }
     if (scene.erraden) addErradenEvent();
+    if (scene.boar) {
+      await handleManualEnemyAdd(
+        'flickering_boar',
+        undefined,
+        'escenario',
+        'NoShow',
+        null,
+        null,
+        null,
+        true,
+      );
+    }
     (scene.generationColors || []).forEach((color) => {
       addGenerationPoint(color);
       const existing = magicCannons.find((cannon) => cannon.color === color);

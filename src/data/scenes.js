@@ -87,6 +87,55 @@ export const SCENES = [
       5: [{ enemyId: 'dark_vampire', color: 'gris', category: 'soldado', quantity: 1, label: 'Vampiro Sombrío' }],
     },
   },
+  {
+    id: 'chapter5',
+    titleKey: 'sceneChapter5',
+    titleEn: 'Chapter 05 – Tempest Island',
+    descriptionKey: 'sceneChapter5Description',
+    runeId: 'runa_despertar_influencia',
+    runesPerColor: 6,
+    timeTokens: 0,
+    nodes: 3,
+    incursionId: 'incursion_despertar_atroz',
+    scenarioMonsterId: 'tide_hunter',
+    boar: true,
+    enemiesByHeroes: {
+      1: [
+        { color: 'blanco', category: 'veterano', quantity: 2 },
+        { color: 'gris', category: 'soldado', quantity: 1 },
+      ],
+      2: [
+        { color: 'blanco', category: 'veterano', quantity: 1 },
+        { color: 'gris', category: 'soldado', quantity: 1 },
+      ],
+      3: [{ color: 'blanco', category: 'veterano', quantity: 1 }],
+      4: [{ color: 'gris', category: 'soldado', quantity: 1 }],
+      5: [{ color: 'gris', category: 'soldado', quantity: 1 }],
+    },
+  },
+  {
+    id: 'chapter6',
+    titleKey: 'sceneChapter6',
+    titleEn: 'Chapter 06 – The Sunken Temple',
+    descriptionKey: 'sceneChapter6Description',
+    runeId: 'runa_despertar_influencia',
+    runesPerColor: 5,
+    timeTokens: 0,
+    nodes: 0,
+    enemiesByHeroes: {
+      1: [
+        { color: 'blanco', category: 'veterano', quantity: 1 },
+        { color: 'gris', category: 'veterano', quantity: 1 },
+      ],
+      2: [{ color: 'blanco', category: 'veterano', quantity: 1 }],
+      3: [
+        { color: 'blanco', category: 'veterano', quantity: 1 },
+        { color: 'gris', category: 'veterano', quantity: 1 },
+      ],
+      4: [{ color: 'blanco', category: 'veterano', quantity: 1 }],
+      5: [{ color: 'negro', category: 'veterano', quantity: 1 }],
+    },
+  },
 ];
 
 export default SCENES;

@@ -123,4 +123,63 @@ test.describe('Escenas de Despertar', () => {
       uniqueRings: 3,
     });
   });
+
+  test('Capítulo 5 coloca el Jabalí sin historial y añade sus enemigos', async ({ page }) => {
+    await seedStorage(page, awakeningsSeed());
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await page.getByTestId('scene-chapter5').getByRole('button', { name: /Activar capítulo/ }).click();
+
+    await expect.poll(async () => page.evaluate(() => {
+      const runes = JSON.parse(localStorage.getItem('initRunesState') || '{}');
+      const game = JSON.parse(localStorage.getItem('gameState') || '{}');
+      const enemiesState = JSON.parse(localStorage.getItem('initEnemiesState') || '{}');
+      const log = JSON.parse(localStorage.getItem('gameLog') || '[]');
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        used: (game.usedTiles || []).length,
+        nodes: (game.nodosOscuridad || []).filter((node) => node.estado === 'activa').length,
+        monster: game.scenarioMonster?.id,
+        boar: (enemiesState.placedEnemies || []).filter((entry) => entry.enemy.id === 'flickering_boar').length,
+        enemies: (enemiesState.placedEnemies || []).length,
+        boarDeck: game.flickeringBoarDeck?.active,
+        summons: log.filter((entry) => entry.kind === 'summon').map((entry) => entry.badge?.label),
+      };
+    })).toEqual({
+      cards: ['runa_despertar_influencia', 'incursion_despertar_atroz'],
+      used: 15,
+      nodes: 3,
+      monster: 'tide_hunter',
+      boar: 1,
+      enemies: 4,
+      boarDeck: true,
+      summons: ['B1', 'B2', 'G3'],
+    });
+  });
+
+  test('Capítulo 6 coloca 5 runas de cada color y sus enemigos', async ({ page }) => {
+    await seedStorage(page, awakeningsSeed());
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await page.getByTestId('scene-chapter6').getByRole('button', { name: /Activar capítulo/ }).click();
+
+    await expect.poll(async () => page.evaluate(() => {
+      const game = JSON.parse(localStorage.getItem('gameState') || '{}');
+      const enemiesState = JSON.parse(localStorage.getItem('initEnemiesState') || '{}');
+      const log = JSON.parse(localStorage.getItem('gameLog') || '[]');
+      return {
+        cards: (JSON.parse(localStorage.getItem('initRunesState') || '{}').placedRunes || []).map((entry) => entry.rune.id),
+        used: (game.usedTiles || []).length,
+        enemies: (enemiesState.placedEnemies || []).length,
+        summons: log.filter((entry) => entry.kind === 'summon').map((entry) => entry.badge?.label),
+      };
+    })).toEqual({
+      cards: ['runa_despertar_influencia'],
+      used: 25,
+      enemies: 2,
+      summons: ['B1', 'G2'],
+    });
+  });
 });

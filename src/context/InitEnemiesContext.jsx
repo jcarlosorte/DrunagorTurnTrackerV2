@@ -114,6 +114,7 @@ export const InitEnemiesProvider = ({ children }) => {
 
     // Historial: alta de enemigo (manual, aleatorio o invocado).
     const enemy = enemyWithPosition?.enemy || enemyWithPosition;
+    if (enemy?.silentSummon) return;
     const enemyId = enemy?.id;
     const name = resolveEntityLabel({ id: enemyId, name: enemy?.name || enemy?.nombre, translations }) || 'Enemigo';
     const color = translations.trackerInit?.colores?.[enemy?.color] || enemy?.color || '';
