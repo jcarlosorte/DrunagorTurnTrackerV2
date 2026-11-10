@@ -123,7 +123,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
 
       return (
         <div
-          key={isSiege ? 'siege' : type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : isFollower ? item.uid : isCompanion ? item.uid : `${type}-${item.id}`}
+          key={isSiege ? `siege-${siegeEvent.current ?? 'none'}-${siegeEvent.deck.length}` : type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : isFollower ? item.uid : isCompanion ? item.uid : `${type}-${item.id}`}
           className="absolute left-1/2 w-[108px] max-w-full transition-transform duration-300"
           style={{
             ...(isTop
@@ -135,7 +135,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
           }}
         >
           <div className="relative items-center" data-current-turn={isCurrentTurn || undefined}>
-            {isCurrentTurn && (
+            {isCurrentTurn && !isSiege && (
               <div className="absolute bottom-10 left-1/2 z-30 -translate-x-1/2 transform rounded-full border-2 border-white bg-purple-600">
                 <GiWingedSword className="animate-bounce text-white" size={40} />
               </div>
@@ -145,15 +145,21 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
                 type="button"
                 onClick={() => openSiegeDeck?.()}
                 aria-label={ti.siegeTitle || 'Asedio de Limiternia'}
-                className="relative w-full overflow-hidden rounded-lg border-2 border-amber-600/80 bg-slate-950 text-left shadow-lg"
+                className={`siege-draw relative w-full overflow-hidden rounded-lg border-2 bg-slate-950 text-left shadow-lg ${
+                  isCurrentTurn ? 'border-amber-300 ring-2 ring-amber-300/70' : 'border-amber-600/80'
+                }`}
               >
                 <img src={siegeDeckBack} alt="" className="h-[150px] w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-1 text-center">
+                <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/10 to-slate-950/20" />
+                <div className="absolute inset-x-0 top-0 p-1 text-center">
                   <p className="truncate text-[0.6rem] font-black uppercase leading-tight text-amber-100">
                     {ti.siegeTitle || 'Asedio de Limiternia'}
                   </p>
-                  <p className="text-[0.55rem] text-amber-200">{10 - siegeEvent.deck.length}/10</p>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <p className="rounded-full bg-slate-950/70 px-2 py-0.5 text-[0.65rem] font-bold text-amber-200">
+                    {10 - siegeEvent.deck.length}/10
+                  </p>
                 </div>
               </button>
             ) : isFollower ? (

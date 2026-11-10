@@ -3497,6 +3497,22 @@ Unit       217 tests
 E2E        82/82
 ```
 
+### 197.ª tanda — Presentación del Asedio en el track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Icono** | Eliminado el icono de iniciativa sobre la carta del Asedio | `TrackSlot` |
+| **Carta** | Título en la parte superior y contador centrado | `TrackSlot` |
+| **Animación** | La carta se anima al robarse, tanto en el track como en su ventana | `TrackSlot`, `SiegeCardModal`, `index.css` |
+| **Pruebas** | 217 unitarios · 82 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        82/82
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

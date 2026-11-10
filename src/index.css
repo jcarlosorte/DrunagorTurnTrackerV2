@@ -786,3 +786,13 @@ textarea:focus-visible {
   .hero-class-group { grid-column: span var(--span); }
   .hero-class-cards { grid-template-columns: repeat(var(--span, 1), minmax(0, 1fr)); }
 }
+/* Robo de la carta de Asedio: sube y se asienta sobre el mazo. */
+@keyframes siegeDraw {
+  0% { transform: translateY(22px) rotate(-4deg) scale(0.92); opacity: 0.25; }
+  60% { transform: translateY(-5px) rotate(1deg) scale(1.03); opacity: 1; }
+  100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+}
+
+.siege-draw {
+  animation: siegeDraw 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}

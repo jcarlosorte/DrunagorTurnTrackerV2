@@ -13,7 +13,7 @@ export default function SiegeCardModal({ card, labels = {}, onResolve, resolving
         role="dialog"
         aria-modal="true"
         aria-label={labels[card.titleKey] || `Asedio ${card.number}`}
-        className="relative w-full max-w-xl overflow-hidden rounded-2xl border-2 border-amber-600/80 bg-slate-900 text-slate-100 shadow-2xl"
+        className="siege-draw relative w-full max-w-xl overflow-hidden rounded-2xl border-2 border-amber-600/80 bg-slate-900 text-slate-100 shadow-2xl"
       >
         <img src={siegeBackground} alt="" className="absolute inset-0 h-full w-full object-cover opacity-20" />
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/85 to-slate-950" aria-hidden="true" />
