@@ -3305,6 +3305,22 @@ Unit       216 tests
 E2E        78/78
 ```
 
+### 185.ª tanda — Ventana de comportamiento del Jabalí y turno único
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Daño** | El Jabalí ya no se elimina automáticamente al recibir daño | `InitTracker` |
+| **Carta robada** | La carta y sus efectos se muestran en una ventana con fondo de interacción | `FlickeringBoarCardModal` |
+| **Turno** | El comportamiento del Jabalí se procesa una sola vez por turno, aunque la carta se voltee durante ese turno | `InitTracker` |
+| **Pruebas** | 216 unitarios · 78 E2E | tests |
+
+**Medición**
+
+```text
+Unit       216 tests
+E2E        78/78
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

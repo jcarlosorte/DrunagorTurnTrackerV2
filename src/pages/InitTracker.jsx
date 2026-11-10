@@ -54,6 +54,7 @@ import SpecialEventBar from '@/components/track/SpecialEventBar';
 import StoryDeckBar from '@/components/track/StoryDeckBar';
 import TerribleCannonsBar from '@/components/track/TerribleCannonsBar';
 import FlickeringBoarDeckBar from '@/components/track/FlickeringBoarDeckBar';
+import FlickeringBoarCardModal from '@/components/track/FlickeringBoarCardModal';
 import TerribleCannonDialog from '@/components/track/TerribleCannonDialog';
 import VisionClaraModal from '@/components/track/VisionClaraModal';
 import EventCardModal from '@/components/track/EventCardModal';
@@ -236,6 +237,7 @@ const InitTracker = () => {
   const [showAllScenario, setShowAllScenario] = useState(false);
 
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
+  const [pendingBoarCard, setPendingBoarCard] = useState(null);
   const [pendingResolutionCard, setPendingResolutionCard] = useState(null);
   const [pendingResolutionQuestion, setPendingResolutionQuestion] = useState(false);
   const [incursionPlacement, setIncursionPlacement] = useState(null);
@@ -1820,12 +1822,6 @@ const InitTracker = () => {
   };
 
   const updateEnemyVida = (uuid, nuevaVida, nuevoMax) => {
-    const before = placedEnemies.find((entry) => entry.enemy.uuid === uuid)?.enemy;
-    if (isFlickeringBoar(before) && nuevaVida < before.vida) {
-      removeEnemyByUUID(uuid);
-      showScenarioToast('🐗 El Jabalí Parpadeante recibe daño y DESAPARECE.');
-      return;
-    }
     setPlacedEnemies(prev =>
       prev.map(e => {
         if (e.enemy.uuid === uuid) {
@@ -1858,6 +1854,34 @@ const InitTracker = () => {
     window.setTimeout(() => {
       setFlippedCards(prev => prev.filter(id => id !== uuid));
     }, 650);
+  };
+
+  const resolvePendingBoarCard = () => {
+    const pending = pendingBoarCard;
+    if (!pending) return;
+    if (pending.card.fury) {
+      setEnemyEvolutions(prev => {
+        const existing = prev.find((entry) => entry.uuid === pending.enemyUuid);
+        return existing
+          ? prev.map((entry) => entry.uuid === pending.enemyUuid ? { ...entry, count: entry.count + 1 } : entry)
+          : [...prev, { uuid: pending.enemyUuid, count: 1 }];
+      });
+      setPlacedEnemies(prev => prev.map(entry => (
+        entry.enemy.uuid === pending.enemyUuid
+          ? {
+            ...entry,
+            enemy: {
+              ...entry.enemy,
+              ataque: Number(entry.enemy.ataque || 0) + 2,
+              movimiento: Number(entry.enemy.movimiento || 0) + 1,
+            },
+          }
+          : entry
+      )));
+      showScenarioToast(`🧬 ${ti.boarEvolution || 'EVOLUCIÓN: +2 Ataque y +1 Movimiento'}`);
+    }
+    showScenarioToast(`⚡ ${ti.boarActivate || 'El Jabalí Parpadeante se ACTIVA y ataca'}`);
+    setPendingBoarCard(null);
   };
 
   const updateEnemyEstados = (uuid, updatedStates) => {    setPlacedEnemies(prev =>
@@ -2821,6 +2845,7 @@ const InitTracker = () => {
   const processedCompanionEffectsRef = useRef(toSet(persistedSession?.processed?.companion));
   const lastHeroTurnRef = useRef(persistedSession?.processed?.lastHeroTurn || null);
   const processedCardsRef = useRef(toSet(persistedSession?.processed?.cards));
+  const processedBoarTurnRef = useRef(new Set());
   const processedTiempoRef = useRef(toSet(persistedSession?.processed?.tiempo));
   const [presentation, setPresentation] = useState(false);
   // En móvil la bolsa arranca cerrada: libera altura para el tablero.
@@ -3008,6 +3033,7 @@ const InitTracker = () => {
       processedStartEffectsRef.current.clear();
       processedEndEffectsRef.current.clear();
       processedCardsRef.current.clear();
+      processedBoarTurnRef.current.clear();
       processedTiempoRef.current = new Set();
       processedHeroEffectsRef.current = new Set();
       processedCompanionEffectsRef.current = new Set();
@@ -3162,6 +3188,9 @@ const InitTracker = () => {
         setGroupTurnTracker({ group, index: groupTurnTracker.index });
 
         if (isFlickeringBoar(current)) {
+          if (processedBoarTurnRef.current.has(current.uuid)) return;
+          processedBoarTurnRef.current.add(current.uuid);
+
           if (current.cara === 'B') {
             const tile = manifestTile();
             const activePiles = [
@@ -3195,29 +3224,11 @@ const InitTracker = () => {
             showScenarioToast('🐗 La baraja del Jabalí está vacía.');
             return;
           }
-          showScenarioToast(`🐗 ${ti[drawnCard.titleKey] || drawnCard.kind}`);
-          if (drawnCard.fury) {
-            setEnemyEvolutions(prev => {
-              const existing = prev.find((entry) => entry.uuid === current.uuid);
-              return existing
-                ? prev.map((entry) => entry.uuid === current.uuid ? { ...entry, count: entry.count + 1 } : entry)
-                : [...prev, { uuid: current.uuid, count: 1 }];
-            });
-            setPlacedEnemies(prev => prev.map(entry => (
-              entry.enemy.uuid === current.uuid
-                ? {
-                  ...entry,
-                  enemy: {
-                    ...entry.enemy,
-                    ataque: Number(entry.enemy.ataque || 0) + 2,
-                    movimiento: Number(entry.enemy.movimiento || 0) + 1,
-                  },
-                }
-                : entry
-            )));
-            showScenarioToast(`🧬 ${ti.boarEvolution || 'EVOLUCIÓN: +2 Ataque y +1 Movimiento'}`);
-          }
-          showScenarioToast(`⚡ ${ti.boarActivate || 'El Jabalí Parpadeante se ACTIVA y ataca'}`);
+          setPendingBoarCard({
+            card: drawnCard,
+            enemyUuid: current.uuid,
+            movement: Number(current.movimiento) || 3,
+          });
           return;
         }
         
@@ -5053,6 +5064,16 @@ const InitTracker = () => {
         />
         <CampDialog open={isCampOpen} onClose={() => setIsCampOpen(false)} />
         <AppDialogHost onNotify={showScenarioToast} />
+        <FlickeringBoarCardModal
+          open={Boolean(pendingBoarCard)}
+          card={pendingBoarCard?.card}
+          movement={pendingBoarCard?.movement || 3}
+          labels={{
+            ...ti,
+            boarResolve: ti.boarResolve || 'Aplicar y activar',
+          }}
+          onResolve={resolvePendingBoarCard}
+        />
         <EventCardModal
           card={drawnEventCard}
           onClose={() => setDrawnEventCard(null)}
