@@ -126,7 +126,7 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
       >
         <img src={background} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
         <span className="absolute inset-x-0 top-0 flex flex-col items-center px-2 pt-2 text-center">
-          <span className="text-[0.62rem] font-black uppercase leading-tight text-amber-100 drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)] sm:text-[0.72rem]">
+          <span className="w-full break-words text-center text-[0.62rem] font-black uppercase leading-tight text-amber-100 drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)] sm:text-[0.72rem]">
             {title}
           </span>
           {actionLine && (
@@ -163,7 +163,7 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
                 <p className="text-[0.6rem] font-bold uppercase tracking-[0.25em] text-emerald-300">
                   {ti.runeCard || 'Carta de runa'}
                 </p>
-                <h2 id={`rune-title-${rune.uuid}`} className="mt-1 truncate text-xl font-black text-slate-50">
+                <h2 id={`rune-title-${rune.uuid}`} className="mt-1 break-words text-center text-xl font-black text-slate-50">
                   {title}
                 </h2>
                 <p className="mt-0.5 text-xs text-slate-400">

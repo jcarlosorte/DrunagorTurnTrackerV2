@@ -3513,6 +3513,21 @@ Unit       217 tests
 E2E        82/82
 ```
 
+### 198.ª tanda — Títulos largos en cartas del track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Asedio** | El título se centra y divide por palabras; ya no se recorta | `TrackSlot` |
+| **Runas e incursiones** | Los títulos del track y de la vista ampliada se centran y ajustan por palabras | `RuneCard` |
+| **Pruebas** | 217 unitarios · 82 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        82/82
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

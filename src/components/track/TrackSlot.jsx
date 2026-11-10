@@ -152,7 +152,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
                 <img src={siegeDeckBack} alt="" className="h-[150px] w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/10 to-slate-950/20" />
                 <div className="absolute inset-x-0 top-0 p-1 text-center">
-                  <p className="truncate text-[0.6rem] font-black uppercase leading-tight text-amber-100">
+                  <p className="w-full break-words px-0.5 text-center text-[0.55rem] font-black uppercase leading-[1.05] text-amber-100">
                     {ti.siegeTitle || 'Asedio de Limiternia'}
                   </p>
                 </div>
