@@ -3589,6 +3589,20 @@ Unit       217 tests
 E2E        85/85
 ```
 
+### 203.ª tanda — Enemigos aleatorios en una fila
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | Blancos, Grises, Negros y Comandantes en una sola fila compacta | `TopMenu` |
+| **Pruebas** | 217 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -17,7 +17,7 @@ test.describe('Selector manual de enemigos', () => {
     await openTracker(page);
   });
 
-  test('el menú agrupa aleatorios 2×2, manuales en dos filas y reset centrado', async ({ page }) => {
+  test('el menú agrupa aleatorios en una fila, manuales en dos filas y reset centrado', async ({ page }) => {
     await page.getByRole('button', { name: 'Enemigos', exact: true }).first().click();
     const panel = page.locator('#track-menu-enemies');
 
@@ -26,8 +26,8 @@ test.describe('Selector manual de enemigos', () => {
       return { x: Math.round(r.x), y: Math.round(r.y) };
     }));
     expect(randomBoxes).toHaveLength(4);
-    expect(new Set(randomBoxes.map((box) => box.x)).size).toBe(2);
-    expect(new Set(randomBoxes.map((box) => box.y)).size).toBe(2);
+    expect(new Set(randomBoxes.map((box) => box.x)).size).toBe(4);
+    expect(new Set(randomBoxes.map((box) => box.y)).size).toBe(1);
 
     const manualBoxes = await panel.locator('[data-testid="manual-enemies"] .grid > button').evaluateAll((els) => els.map((el) => {
       const r = el.getBoundingClientRect();

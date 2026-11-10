@@ -581,7 +581,7 @@ const TopMenu = ({
                   </span>
                   <span className="font-semibold">{t.addEnemies || 'Enemigos aleatorios'}</span>
                 </div>
-                <div className="grid grid-cols-2 gap-1.5">
+                <div className="grid grid-cols-4 gap-1">
                   {[
                     { key: 'blanco', label: t.addWhiteEnemies, color: 'text-white', ring: 'ring-white/30' },
                     { key: 'gris', label: t.addGrayEnemies, color: 'text-slate-400', ring: 'ring-slate-400/30' },
@@ -594,14 +594,14 @@ const TopMenu = ({
                         setEnemySelect(key);
                         handleEnemySelect({ target: { value: key } });
                       }}
-                      className={`state-chip flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg border px-1.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+                      className={`state-chip flex min-h-12 min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg border px-1 py-1 text-[0.6rem] font-semibold leading-tight transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
                         enemySelect === key
                           ? 'border-sky-400 bg-sky-700 text-white shadow-lg shadow-sky-950/50'
                           : 'border-slate-600 bg-slate-800 text-slate-200 hover:border-slate-400 hover:bg-slate-700'
                       }`}
                     >
-                      <GiBullyMinion className={`text-2xl ${key === 'negro' ? 'rounded bg-white text-black' : color} ${ring}`} />
-                      <span className="text-center text-xs">{label}</span>
+                      <GiBullyMinion className={`text-xl ${key === 'negro' ? 'rounded bg-white text-black' : color} ${ring}`} />
+                      <span className="break-words text-center text-[0.6rem]">{label}</span>
                     </button>
                   ))}
                 </div>
