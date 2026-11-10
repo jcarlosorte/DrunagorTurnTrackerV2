@@ -3385,6 +3385,22 @@ Unit       217 tests
 E2E        80/80
 ```
 
+### 190.ª tanda — Ficha de Generación azul
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Ficha azul** | Añadida al menú de Nodos y al panel del track | `GenerationPointsBar`, `TopMenu` |
+| **Persistencia** | Las fichas azules se guardan y recuperan como el resto | `GameContext`, `generationPoints` |
+| **Icono** | Nuevo `generacion-azul.png` | assets |
+| **Pruebas** | 217 unitarios · 81 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        81/81
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

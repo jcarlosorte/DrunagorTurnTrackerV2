@@ -39,7 +39,7 @@ export const GameProvider = ({ children }) => {
   const [scenarioMonster, setScenarioMonster] = useState(() => persisted.scenarioMonster || null);
   const [spawnPoints, setSpawnPoints] = useState(() => persisted.spawnPoints || []);
   const [generationPoints, setGenerationPoints] = useState(() => (
-    (persisted.generationPoints || []).filter((point) => point.color !== 'azul')
+    persisted.generationPoints || []
   ));
   const [magicCannons, setMagicCannons] = useState(() => persisted.magicCannons || []);
   const [controlPoints, setControlPoints] = useState(() => persisted.controlPoints || []);

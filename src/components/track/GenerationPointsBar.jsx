@@ -2,17 +2,19 @@ import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
 import genNaranja from '@/assets/assets_logo/generacion-naranja.png';
 import genVerde from '@/assets/assets_logo/generacion-verde.png';
+import genAzul from '@/assets/assets_logo/generacion-azul.png';
 import genRojo from '@/assets/assets_logo/generacion.png';
 import genGris from '@/assets/assets_logo/generacion-gris.png';
 
 export const GENERATION_IMAGES = {
   naranja: genNaranja,
   verde: genVerde,
+  azul: genAzul,
   rojo: genRojo,
   gris: genGris,
 };
 
-export const GENERATION_COLORS = ['naranja', 'verde', 'rojo', 'gris'];
+export const GENERATION_COLORS = ['naranja', 'verde', 'azul', 'rojo', 'gris'];
 
 export default function GenerationPointsBar() {
   const { generationPoints, removeGenerationPoint } = useGame();
