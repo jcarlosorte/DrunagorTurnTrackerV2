@@ -290,6 +290,7 @@
     "plague_horsemen": "Jinetes de la Plaga",
     "famine_horsemen": "Jinetes del Hambre",
     "soul_harvester": "Cosechador de Almas",
+    "soul_harvester_boss": "Jefe Cosechador de Almas",
     "gorgon_hexer": "Hechicero Gorgona",
     "gorgon_hexer_com": "Comandante Hechicero",
     "gremlin_horde": "Horda de Duendes",
@@ -347,6 +348,7 @@
     },
     "escenario": {
       "soul_harvester": "Cosechador de Almas",
+    "soul_harvester_boss": "Jefe Cosechador de Almas",
       "fallen_woodcutter": "Leñador Caído",
       "nightmare": "Pesadilla",
       "boatswain": "Contramaestre",

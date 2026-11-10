@@ -11,6 +11,7 @@ import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRune
 import { resolveCapabilityLabel } from '@/utils/enemyCapability';
 import { getAbilityColor } from '@/components/track/enemyVisuals';
 import { useGame } from '@/context/GameContext';
+import BossRunesColumn from '@/components/track/BossRunesColumn';
 import boarBackground from '@/assets/interactions/runic.avif';
 import { GiHealthPotion, GiRunningNinja, GiSwordClash, GiShieldReflect, GiSteeltoeBoots, GiBloodySword, GiArcheryTarget, GiMoebiusTrefoil } from "react-icons/gi";
 import { MdLooksOne,  MdLooksTwo,  MdLooks3,  MdLooks4,  MdLooks5,  MdLooks6,} from 'react-icons/md';
@@ -68,6 +69,8 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   }
 
   const { id, name, rune, imagen, vidaMax, movimiento, ataque, color, comportamiento, categoria, inmunidad, tipo_ataque, capacidadesOriginales } = enemy;
+  const isSoulHarvester = enemy.id === 'soul_harvester_boss';
+  const activeBossRune = enemy.bossRune || 'gris';
   const isBoar = enemy.specialBehavior === 'flickering_boar' || id === 'flickering_boar';
   const boarCardSide = isBoar && enemy.cara === 'B';
 
@@ -525,6 +528,14 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               {mostrarAccionesCapacidad(capacidadesAjustadas, tt, tte, ti)}
               
             </div>
+
+            {isSoulHarvester && (
+              <BossRunesColumn
+                selected={activeBossRune}
+                labels={ti}
+                texts={enemy.bossRuneTexts || {}}
+              />
+            )}
           </div>
 
           {/* Submenú Estados Alterados: paleta fija, siempre visible */}

@@ -1135,6 +1135,10 @@ const InitTracker = () => {
     const isBig = selected.size === 'grande';
     const colorId = forcedColorId === 'noColor' ? undefined : assignColorToEnemy(uuid, isBig, forcedColorId);
     const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
+    if (selected.tiempo > 0) {
+      const tiempoState = initialStates.find(estado => estado.id === 'TIEMPO');
+      if (tiempoState) tiempoState.count = selected.tiempo;
+    }
     if (selected.categoria === 'comandante') {
       const createAndPlaceCommander = (pcValue = null, deckOverride = null) => {
         const totalVida = commanderNoPc.includes(selected.id)

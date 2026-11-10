@@ -3620,6 +3620,23 @@ Unit       217 tests
 E2E        85/85
 ```
 
+### 205.ª tanda — Cosechador de Almas: nombre, tiempo y runas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Traducciones** | Jefe Cosechador de Almas / Soul Harvester Boss | i18n |
+| **Ficha de Tiempo** | El jefe inicializa su estado TIEMPO para gestionarlo como el resto | `enemies`, `InitTracker` |
+| **Runas de jefe** | Columna de cinco rombos a la derecha, con espacio para texto futuro | `BossRunesColumn`, `BossBanner` |
+| **Vista ampliada** | La misma columna aparece en la ficha ampliada | `ModalEnemyCard` |
+| **Pruebas** | 217 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
