@@ -3339,6 +3339,20 @@ Unit       217 tests
 E2E        78/78
 ```
 
+### 187.ª tanda — Nombre inglés de Furia del Cosechador
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Inglés** | La carta de runa pasa a llamarse **Harvester's Rage** | `i18n/en.json` |
+| **Pruebas** | 217 unitarios · 78 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        78/78
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
