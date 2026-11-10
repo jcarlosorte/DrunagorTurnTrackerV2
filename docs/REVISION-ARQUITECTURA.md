@@ -3559,6 +3559,20 @@ Unit       217 tests
 E2E        85/85
 ```
 
+### 201.ª tanda — Separar Fichas de Generación y Cañones Mágicos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escenas** | Los cañones solo se añaden si la escena los declara explícitamente; las fichas de generación no los crean | `InitTracker` |
+| **Pruebas** | 217 unitarios · 85 E2E, con el Capítulo 6 sin cañones | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

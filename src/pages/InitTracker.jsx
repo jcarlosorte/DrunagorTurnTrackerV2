@@ -1815,9 +1815,11 @@ const InitTracker = () => {
     }
     (scene.generationColors || []).forEach((color) => {
       addGenerationPoint(color);
-      const existing = magicCannons.find((cannon) => cannon.color === color);
-      if (existing) setMagicCannonLoaded(existing.id, false);
-      else addMagicCannon(color, false);
+      if (scene.magicCannons) {
+        const existing = magicCannons.find((cannon) => cannon.color === color);
+        if (existing) setMagicCannonLoaded(existing.id, false);
+        else addMagicCannon(color, false);
+      }
     });
     if (scene.corruptShip) addCorruptShipEvent();
     if (scene.swanShip) addSwanShipEvent();

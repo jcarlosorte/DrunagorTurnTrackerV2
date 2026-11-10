@@ -174,12 +174,14 @@ test.describe('Escenas de Despertar', () => {
         used: (game.usedTiles || []).length,
         enemies: (enemiesState.placedEnemies || []).length,
         summons: log.filter((entry) => entry.kind === 'summon').map((entry) => entry.badge?.label),
+        cannons: (game.magicCannons || []).length,
       };
     })).toEqual({
       cards: ['runa_despertar_influencia'],
       used: 25,
       enemies: 2,
       summons: ['B1', 'G2'],
+      cannons: 0,
     });
   });
 
