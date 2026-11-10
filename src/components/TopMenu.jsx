@@ -90,7 +90,7 @@ const TopMenu = ({
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
-  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent } = useGame();
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent, siegeEvent, addSiegeEvent, resetSiegeEvent } = useGame();
   const { trackerData, setTrackerData } = useTracker();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
@@ -1635,6 +1635,34 @@ const TopMenu = ({
                   </button>
                   <button type="button" onClick={resetSwanShipEvent} className="rounded bg-red-900 px-2 py-1 text-[0.65rem] font-bold text-white">
                     {t.removeDeck || 'Quitar'}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-3">
+              <p className="text-sm font-bold text-amber-100">{t.siegeTitle || 'Asedio de Limiternia'}</p>
+              <p className="mt-1 text-xs text-amber-200/80">
+                {t.siegeDescription || 'Baraja de 10 cartas que se roban en orden y se resuelven al final de la ronda.'}
+              </p>
+              {!siegeEvent.active ? (
+                <button
+                  type="button"
+                  onClick={addSiegeEvent}
+                  className="mt-3 min-h-9 rounded-lg bg-amber-700 px-3 text-xs font-bold text-white hover:bg-amber-600"
+                >
+                  ➕ {t.siegeAdd || 'Añadir Asedio de Limiternia'}
+                </button>
+              ) : (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-amber-700 bg-slate-950/50 px-2 py-1 text-[0.65rem] text-amber-100">
+                    {t.siegeRemaining || 'Cartas restantes'}: {siegeEvent.deck.length}/10
+                  </span>
+                  <button type="button" onClick={addSiegeEvent} className="min-h-8 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600">
+                    {t.siegeReset || 'Reiniciar mazo'}
+                  </button>
+                  <button type="button" onClick={resetSiegeEvent} className="min-h-8 rounded-lg bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800">
+                    {t.siegeRemove || 'Quitar evento'}
                   </button>
                 </div>
               )}

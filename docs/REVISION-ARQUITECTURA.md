@@ -3446,6 +3446,23 @@ Unit       217 tests
 E2E        81/81
 ```
 
+### 194.ª tanda — Baraja de evento Asedio de Limiternia
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Evento** | Nueva baraja ordenada 1–10 en el menú de Eventos, al final de la iniciativa | `siegeOfEveredge`, `GameContext`, `TURN_ORDER` |
+| **Turno** | Al llegar al Asedio se roba la carta superior y se muestra en ventana | `InitTracker`, `SiegeCardModal` |
+| **Efectos** | Invocaciones por fichas de generación con confirmación, Concentración 2, trampas y activación de Matones | `InitTracker` |
+| **Pistas** | La baraja aparece en la ranura de runas del track con sus cartas restantes | `TrackSlot` |
+| **Pruebas** | 217 unitarios · 82 E2E | tests |
+
+**Medición**
+
+```text
+Unit       217 tests
+E2E        82/82
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

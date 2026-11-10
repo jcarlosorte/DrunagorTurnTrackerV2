@@ -75,6 +75,7 @@ export function indexOfEntityInOrder(order, entity) {
       return step.rune === entity.rune && step.index === entity.position && step.position === entity.runePosition;
     }
     if (step.type === 'rune') return step.index === entity.colorIndex && step.position === entity.posicion;
+    if (step.type === 'event') return step.id === entity.id;
     if (step.type === 'companion') return step.uid === entity.uid;
     if (step.type === 'follower') return step.uid === entity.uid;
     return false;
@@ -85,7 +86,7 @@ export function indexOfEntityInOrder(order, entity) {
  * Primera entidad activa a partir de un índice (con vuelta al principio).
  * Recibe las listas ya colocadas en el tablero.
  */
-export function findNextActiveEntity({ order, startIndex = 0, heroes = [], enemies = [], runes = [], companions = [], followers = [] }) {
+export function findNextActiveEntity({ order, startIndex = 0, heroes = [], enemies = [], runes = [], companions = [], followers = [], events = [] }) {
   if (!Array.isArray(order) || order.length === 0) return null;
   const start = ((startIndex % order.length) + order.length) % order.length;
 
@@ -113,6 +114,8 @@ export function findNextActiveEntity({ order, startIndex = 0, heroes = [], enemi
         .filter((entry) => entry.rune.colorIndex === step.index && entry.rune.posicion === step.position)
         .map((entry) => entry.rune);
       if (group.length > 0) return { ...group[0], type: 'rune', group };
+    } else if (step.type === 'event') {
+      if (events.includes(step.id)) return { type: 'event', id: step.id, name: step.id };
     } else if (step.type === 'companion') {
       const companion = companions.find((entry) => entry.uid === step.uid);
       if (companion) {

@@ -42,4 +42,6 @@ export const TURN_ORDER = [
   { type: 'hero', role: 'embaucador', position: 'abajo', index: 8 },
   { type: 'enemy', rune: 'gris', position: 'abajo', index: 9 },
   { type: 'rune', position: 'abajo', index: 10 },
+  // El Asedio de Limiternia actúa después de las cartas de runa.
+  { type: 'event', id: 'siege', position: 'abajo', index: 10 },
 ];

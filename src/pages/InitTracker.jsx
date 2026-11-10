@@ -14,6 +14,7 @@ import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
 import { INCURSION } from '@/data/incursion';
 import { INCURSION_DESPERTAR } from '@/data/incursionDespertar';
 import { FLICKERING_BOAR_CARDS } from '@/data/flickeringBoarDeck';
+import { SIEGE_CARDS } from '@/data/siegeOfEveredge';
 import { DEFENSA } from '@/data/defensa';
 import { ESTADOS_ALTERADOS, getEnemyStatusCatalog } from '@/data/estadosAlterados';
 import { CARTAS_COMANDANTE, CARTAS_JEFE, CARTAS_HEROE_CAIDO, ASALTO_GUSANO, ACECHO, IRA, getOverlordDeck } from '@/data/cartasEspeciales';
@@ -54,6 +55,7 @@ import SpecialEventBar from '@/components/track/SpecialEventBar';
 import StoryDeckBar from '@/components/track/StoryDeckBar';
 import TerribleCannonsBar from '@/components/track/TerribleCannonsBar';
 import FlickeringBoarCardModal from '@/components/track/FlickeringBoarCardModal';
+import SiegeCardModal from '@/components/track/SiegeCardModal';
 import TerribleCannonDialog from '@/components/track/TerribleCannonDialog';
 import VisionClaraModal from '@/components/track/VisionClaraModal';
 import EventCardModal from '@/components/track/EventCardModal';
@@ -235,6 +237,10 @@ const InitTracker = () => {
   const [manualCampaign, setManualCampaign] = useState('all');
   const [showAllScenario, setShowAllScenario] = useState(false);
 
+  const [pendingSiegeCard, setPendingSiegeCard] = useState(null);
+  const [siegeResolving, setSiegeResolving] = useState(false);
+  const siegeActiveRef = useRef(false);
+  const processedSiegeTurnRef = useRef(new Set());
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
   const [pendingBoarCard, setPendingBoarCard] = useState(null);
   const [pendingResolutionCard, setPendingResolutionCard] = useState(null);
@@ -257,7 +263,8 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, drawSiegeCard, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
   const { executedRunes, setExecutedRunes } = useInitRunes();
@@ -1907,6 +1914,71 @@ const InitTracker = () => {
     setPendingBoarCard(null);
   };
 
+  const resolveSiegeCard = async () => {
+    const card = pendingSiegeCard;
+    if (!card || siegeResolving) return;
+    setSiegeResolving(true);
+
+    const heroCount = trackerData.placedHeroes?.length || trackerData.heroes?.length || 0;
+    const spawns = (card.spawns || []).filter((spawn) => heroCount >= (spawn.minHeroes || 1));
+    let totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
+    const sameCounts = {};
+    for (const spawn of spawns) {
+      const sameMonster = sameCounts[spawn.enemyId]
+        ?? placedEnemies.filter((entry) => entry.enemy.id === spawn.enemyId).length;
+      if (totalMonsters >= 12 || sameMonster >= 4) {
+        showScenarioToast(`⚠️ ${ti.siegeNoCapacity || 'No hay espacio para invocar más monstruos'}`);
+        continue;
+      }
+      const generation = generationPoints.find((point) => point.color === spawn.color);
+      if (!generation) {
+        showScenarioToast(`⚠️ ${ti.siegeNoPoint || 'No hay Ficha de Generación de ese color'}`);
+        continue;
+      }
+      const enemy = ENEMIES.find((entry) => entry.id === spawn.enemyId && entry.cara !== 'B');
+      const name = tee?.[spawn.enemyId] || enemy?.nombre || spawn.enemyId;
+      const colorLabel = ti.colores?.[spawn.color] || spawn.color;
+      const confirmed = await appConfirm(
+        (ti.siegeConfirmSpawn || '¿Colocar {name} en la Ficha de Generación {color}?')
+          .replace('{name}', name)
+          .replace('{color}', colorLabel),
+        { title: ti.siegeTitle || 'Asedio de Limiternia' },
+      );
+      if (!confirmed) continue;
+      await handleManualEnemyAdd(spawn.enemyId, enemy?.comportamiento, 'escenario', 'NoShow');
+      totalMonsters += 1;
+      sameCounts[spawn.enemyId] = sameMonster + 1;
+      showScenarioToast(`🐾 ${name} · ${colorLabel}`);
+    }
+
+    if (card.concentration > 0) {
+      (trackerData.heroes || []).forEach((heroId) => {
+        const extras = getHeroExtras(heroId) || {};
+        const states = [...(extras.estadosAlterados || [])];
+        const index = states.findIndex((state) => state.id === 'CONCENTRACION');
+        if (index === -1) states.push({ id: 'CONCENTRACION', count: 2 });
+        else states[index] = { ...states[index], count: Math.min(4, (states[index].count || 0) + 2) };
+        updateHeroExtras(heroId, { estadosAlterados: states });
+      });
+      showScenarioToast(`✨ ${ti.siegeConcentration || 'Cada héroe gana Concentración 2'}`);
+    }
+    if (card.traps) {
+      showScenarioToast(`🪤 ${ti.siegeTrap || 'Coloca 2 trampas defensivas'}`);
+      appendGameLog('event', ti.siegeTrap || 'Coloca 2 trampas defensivas', { round: roundRef.current, turn: turnIndex });
+    }
+    if (card.activateViolent) {
+      showScenarioToast(`⚔️ ${ti.siegeActivate || 'Todos los Matones Violentos se activan'}`);
+      appendGameLog('event', ti.siegeActivate || 'Todos los Matones Violentos se activan', { round: roundRef.current, turn: turnIndex });
+    }
+    if (card.adventureEnd) {
+      showScenarioToast(`🏁 ${ti.siegeAdventureEnd || 'Fin de la aventura: Se disipa el humo (página 105)'}`);
+      appendGameLog('event', ti.siegeAdventureEnd || 'Fin de la aventura: Se disipa el humo', { round: roundRef.current, turn: turnIndex });
+    }
+
+    setSiegeResolving(false);
+    setPendingSiegeCard(null);
+  };
+
   const updateEnemyEstados = (uuid, updatedStates) => {    setPlacedEnemies(prev =>
       prev.map(e =>
         e.enemy?.uuid === uuid
@@ -3187,6 +3259,22 @@ const InitTracker = () => {
     }
     
     // 🔍 ENEMIES
+    if (step.type === 'event' && step.id === 'siege') {
+      setCurrentTurnEntity({ type: 'event', id: 'siege', name: ti.siegeTitle || 'Asedio de Limiternia' });
+      if (!siegeActiveRef.current) return;
+      const key = `siege-${roundRef.current}-${turnIndex}`;
+      if (processedSiegeTurnRef.current.has(key)) return;
+      processedSiegeTurnRef.current.add(key);
+      const number = drawSiegeCard();
+      const card = SIEGE_CARDS.find((entry) => entry.number === number);
+      if (!card) {
+        showScenarioToast(`🎴 ${ti.siegeExhausted || 'La baraja de Asedio está agotada'}`);
+        return;
+      }
+      setPendingSiegeCard(card);
+      return;
+    }
+
     if (step.type === 'enemy') {
        // 🔹 Cogemos los enemigos de este paso normalmente
       let group = placedEnemies
@@ -3722,6 +3810,7 @@ const InitTracker = () => {
     runes: placedRunes,
     companions: trackerData.companions || [],
     followers: trackerData.followers || [],
+    events: siegeEvent.active ? ['siege'] : [],
   });
   const handleNextTurn = () => {
     // Guardamos el cursor de turno para poder deshacer el último avance.
@@ -4026,6 +4115,22 @@ const InitTracker = () => {
           setGroupTurnTracker({ group: enemies, index: 0 });
           return;
         }
+      } else if (step.type === 'event' && step.id === 'siege') {
+        if (siegeActiveRef.current) {
+          setTurnIndex(idx);
+          setLastRealTurnIndex(idx);
+          setCurrentTurnEntity({ type: 'event', id: 'siege', name: ti.siegeTitle || 'Asedio de Limiternia' });
+          setGroupTurnTracker({ group: [], index: 0 });
+          const key = `siege-${roundRef.current}-${idx}`;
+          if (!processedSiegeTurnRef.current.has(key)) {
+            processedSiegeTurnRef.current.add(key);
+            const number = drawSiegeCard();
+            const card = SIEGE_CARDS.find((entry) => entry.number === number);
+            if (card) setPendingSiegeCard(card);
+            else showScenarioToast(`🎴 ${ti.siegeExhausted || 'La baraja de Asedio está agotada'}`);
+          }
+          return;
+        }
       } else if (step.type === 'rune') {
         const runes = placedRunes
           .filter(r => r.rune.colorIndex === step.index && r.rune.posicion === step.position)
@@ -4241,6 +4346,7 @@ const InitTracker = () => {
     placedRunes,
     placedFollowers: trackerData.followers || [],
     openFollower: setSelectedFollowerUid,
+    siegeEvent,
     rolesOnTop,
     rolesOnBottom,
     currentTurnEntity,
@@ -5088,6 +5194,12 @@ const InitTracker = () => {
             boarResolve: ti.boarResolve || 'Aceptar',
           }}
           onResolve={resolvePendingBoarCard}
+        />
+        <SiegeCardModal
+          card={pendingSiegeCard}
+          labels={ti}
+          resolving={siegeResolving}
+          onResolve={resolveSiegeCard}
         />
         <EventCardModal
           card={drawnEventCard}

@@ -45,6 +45,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     onOpenCompanion,
     placedFollowers = [],
     openFollower,
+    siegeEvent,
     RuneCard,
   } = deps;
 
@@ -260,6 +261,19 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       {renderStack(stackBelow, 'bottom', 'hero')}
       {isRune && renderStack(enemiesBelow, 'bottom', 'enemy')}
       {isRuneTextSlot && renderStack(runesBelow.map((r) => r.rune), 'bottom', 'rune')}
+
+      {isRuneTextSlot && siegeEvent?.active && (
+        <div className="absolute bottom-1 left-1/2 z-30 w-[108px] -translate-x-1/2">
+          <div className={`rounded-lg border-2 bg-amber-950/90 px-1.5 py-1 text-center text-amber-100 shadow-lg ${
+            currentTurnEntity?.type === 'event' ? 'border-white ring-2 ring-amber-300' : 'border-amber-600/70'
+          }`}>
+            <p className="truncate text-[0.6rem] font-black uppercase leading-tight">
+              {ti.siegeTitle || 'Asedio de Limiternia'}
+            </p>
+            <p className="text-[0.55rem] text-amber-200">{siegeEvent.deck.length}/10</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
