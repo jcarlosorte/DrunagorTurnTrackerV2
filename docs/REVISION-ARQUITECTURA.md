@@ -3708,6 +3708,23 @@ Unit       221 tests
 E2E        85/85
 ```
 
+### 210.ª tanda — Ajustes visuales y Marcha del Corrompido
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Ficha de Tiempo** | En la vista principal solo aparece si su contador es mayor que 0 | `BossBanner` |
+| **Inmunidades** | La vista principal muestra la lista completa; la ampliada usa una rejilla compacta con scroll | `BossBanner`, `ModalEnemyCard` |
+| **Imagen** | Retrato ampliado y ajustado con `object-contain` para no recortar la parte superior | `ModalEnemyCard` |
+| **Marcha** | La carta especial comprueba `invoca` y genera 1/2/3 esbirros si no hay ninguno | `InitTracker` |
+| **Pruebas** | 221 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       221 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

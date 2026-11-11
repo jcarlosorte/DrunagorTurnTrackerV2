@@ -448,7 +448,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               <img 
                 src={imagen}
                 alt={name}
-                className={`w-32 h-32 object-cover rounded border-2 ${borderColorMap[color] || ''}`} loading="lazy" decoding="async" />
+                className={`w-40 h-40 sm:w-48 sm:h-48 object-contain rounded border-2 ${borderColorMap[color] || ''}`} loading="lazy" decoding="async" />
               {/* Estados alterados sobre la imagen */}
               <div className="absolute top-1 left-1 grid grid-rows-4 grid-flow-col gap-1">
                 {estadosLocal
@@ -513,14 +513,14 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               )}
               <div className="flex items-start gap-2">
                 <GiShieldReflect className="text-purple-700 mt-1 text-2xl cursor-help" title={ti.inmunidad || ''} />
-                <div className="flex flex-wrap gap-2">
+                <div className="grid max-h-20 flex-1 grid-cols-2 gap-1 overflow-y-auto pr-1 text-[0.62rem] leading-tight sm:grid-cols-3">
                   {Array.isArray(todasInmunidades) && todasInmunidades.length > 0
-                    ? todasInmunidades.map((clave, idx) => (
-                        <span key={clave} className="inline-flex items-center gap-1 mr-2">
-                          {tt[clave] || clave}
+                    ? todasInmunidades.map((clave) => (
+                        <span key={clave} className="inline-flex min-w-0 items-center gap-1 rounded bg-slate-800/60 px-1 py-0.5">
+                          <span className="truncate">{tt[clave] || clave}</span>
                           <FiInfo
                             title={tte[clave] || ''}
-                            className="text-gray-500 hover:text-gray-800 cursor-help"
+                            className="shrink-0 text-gray-500 hover:text-gray-800 cursor-help"
                           />
                         </span>
                       ))

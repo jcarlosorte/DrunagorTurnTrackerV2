@@ -2837,6 +2837,20 @@ const InitTracker = () => {
     
   };
 
+  const applyBossMarchSummon = (enemy, allEnemies) => {
+    if (enemy?.id !== 'boss_22') return;
+    const boss = allEnemies.find((entry) => entry.enemy.uuid === enemy.sourceEnemyUUID)?.enemy;
+    const minionId = boss?.invoca || 'fallen_woodcutter';
+    const hasMinion = allEnemies.some((entry) => entry.enemy.id === minionId);
+    if (hasMinion) return;
+    const totalHeroes = trackerData.placedHeroes?.length || trackerData.heroes?.length || 0;
+    const quantity = totalHeroes <= 2 ? 1 : totalHeroes <= 4 ? 2 : 3;
+    for (let i = 0; i < quantity; i += 1) {
+      handleManualEnemyAdd(minionId, undefined, 'esbirro', 'NoShow');
+    }
+    showScenarioToast(`🐾 ${quantity} × ${tee?.[minionId] || minionId}`);
+  };
+
   const procesarInicioTurnoEnemy = (enemy) => {
     // ✅ Control de TIEMPO
     if (!processedTiempoRef.current.has(enemy.uuid)) {
@@ -2877,19 +2891,7 @@ const InitTracker = () => {
 
       // Marcha del Corrompido: si no hay esbirros del tipo que invoca el jefe,
       // genera el grupo de asalto según el número de héroes.
-      if (enemy.id === 'boss_22') {
-        const boss = placedEnemies.find((entry) => entry.enemy.uuid === enemy.sourceEnemyUUID)?.enemy;
-        const minionId = boss?.invoca || 'fallen_woodcutter';
-        const hasMinion = placedEnemies.some((entry) => entry.enemy.id === minionId);
-        if (!hasMinion) {
-          const totalHeroes = trackerData.placedHeroes?.length || trackerData.heroes?.length || 0;
-          const quantity = totalHeroes <= 2 ? 1 : totalHeroes <= 4 ? 2 : 3;
-          for (let i = 0; i < quantity; i += 1) {
-            handleManualEnemyAdd(minionId, undefined, 'esbirro', 'NoShow');
-          }
-          showScenarioToast(`🐾 ${quantity} × ${tee?.[minionId] || minionId}`);
-        }
-      }
+      applyBossMarchSummon(enemy, placedEnemies);
   
       // Estados (fase inicio)
       const { enemy: actualizadoEstados, logs: logsEstados } = aplicarEfectosEstados(enemy, "inicio");
@@ -3443,6 +3445,7 @@ const InitTracker = () => {
                 setPendingResolutionQuestion(true);
                 return;
               }
+              applyBossMarchSummon(current, placedEnemies);
               aplicarCapacidadesCartaEspecial(current).then(({ logs }) => {
                 logs.forEach(log =>
                   showScenarioToast(`🃏 ${current.nombreEnemy || current.nombre}: ${log}`)
@@ -3466,6 +3469,8 @@ const InitTracker = () => {
               }, 900); 
               return;
             }
+
+            applyBossMarchSummon(current, placedEnemies);
             
             // 🔹 Efectos de estados (fase inicio)
             const { enemy: actualizadoEstados, logs: logsEstados } = aplicarEfectosEstados(current, "inicio");

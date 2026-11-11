@@ -33,7 +33,7 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
           const isSoulHarvester = enemy.id === 'soul_harvester_boss';
           const activeBossRune = enemy.bossRune || 'gris';
           const visibleStatuses = (enemy.estadosAlterados || []).filter(
-            (estado) => (estado.count || 0) > 0 || estado.id === 'TIEMPO',
+            (estado) => (estado.count || 0) > 0,
           );
 
           return (
@@ -102,7 +102,7 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
 
                 {(enemy.inmunidad || []).length > 0 && (
                   <span className="flex flex-wrap items-center gap-1">
-                    {(enemy.inmunidad || []).slice(0, 8).map((immunityId) => {
+                    {(enemy.inmunidad || []).map((immunityId) => {
                       const config = INMUNIDADES.find((item) => item.id === immunityId);
                       if (!config) return null;
                       const text = immunityLabels[immunityId] || immunityId;
