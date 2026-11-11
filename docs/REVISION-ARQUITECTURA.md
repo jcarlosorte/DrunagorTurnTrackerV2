@@ -4164,6 +4164,23 @@ Unit       228 tests
 E2E        86/86
 ```
 
+### 239.ª tanda — Capítulo 9: La Resistencia
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escena** | Añadido Capítulo 9 con Despertar de la Oscuridad y 6 runas por color | `scenes` |
+| **Generación** | Fichas Gris, Verde, Roja y Naranja | `scenes` |
+| **Enemigos** | 2 Pesadillas y el Jefe Rey Avivado | `scenes` |
+| **Orden** | El jefe se coloca antes para no eliminar la preparación posterior | `InitTracker` |
+| **Pruebas** | 228 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       228 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

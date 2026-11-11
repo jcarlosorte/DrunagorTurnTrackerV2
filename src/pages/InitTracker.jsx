@@ -1828,6 +1828,14 @@ const InitTracker = () => {
         const monster = ENEMIES.find((entry) => entry.id === scene.scenarioMonsterId && entry.cara !== 'B');
         if (monster) setScenarioMonster(monster);
       }
+      (scene.generationColors || []).forEach((color) => {
+        addGenerationPoint(color);
+        if (scene.magicCannons) {
+          const existing = magicCannons.find((cannon) => cannon.color === color);
+          if (existing) setMagicCannonLoaded(existing.id, false);
+          else addMagicCannon(color, false);
+        }
+      });
       (scene.cannonColors || []).forEach((color) => {
         const existing = magicCannons.find((cannon) => cannon.color === color);
         if (existing) setMagicCannonLoaded(existing.id, true);

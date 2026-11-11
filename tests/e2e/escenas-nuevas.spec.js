@@ -265,4 +265,29 @@ test.describe('Escenas de Despertar', () => {
       enemies: 3,
     });
   });
+
+  test('Capítulo 9 prepara La Resistencia', async ({ page }) => {
+    await seedStorage(page, awakeningsSeed());
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await page.getByTestId('scene-chapter9').getByRole('button', { name: /Activar capítulo/ }).click();
+
+    await expect.poll(async () => page.evaluate(() => {
+      const game = JSON.parse(localStorage.getItem('gameState') || '{}');
+      const enemiesState = JSON.parse(localStorage.getItem('initEnemiesState') || '{}');
+      const runesState = JSON.parse(localStorage.getItem('initRunesState') || '{}');
+      return {
+        cards: (runesState.placedRunes || []).map((entry) => entry.rune.id).sort(),
+        generation: (game.generationPoints || []).map((point) => point.color).sort(),
+        used: (game.usedTiles || []).length,
+        enemies: (enemiesState.placedEnemies || []).filter((entry) => entry.enemy.tipo !== 'especial').length,
+      };
+    })).toEqual({
+      cards: ['runa_despertar_oscuridad'],
+      generation: ['gris', 'naranja', 'rojo', 'verde'],
+      used: 30,
+      enemies: 3,
+    });
+  });
 });

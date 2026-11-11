@@ -212,6 +212,22 @@ export const SCENES = [
     ],
     enemiesByHeroes: {},
   },
+  {
+    id: 'chapter9',
+    titleKey: 'sceneChapter9',
+    titleEn: 'Chapter 09 – The Stand',
+    descriptionKey: 'sceneChapter9Description',
+    runeId: 'runa_despertar_oscuridad',
+    runesPerColor: 6,
+    nodes: 0,
+    generationColors: ['gris', 'verde', 'rojo', 'naranja'],
+    setupAfterEnemies: true,
+    fixedEnemies: [
+      { enemyId: 'wakened_king_boss', color: 'jefe', category: 'jefe', quantity: 1, label: 'Jefe Rey Avivado' },
+      { enemyId: 'nightmare', color: 'esbirro', category: 'esbirro', quantity: 2, label: 'Monstruo de Escenario Pesadilla', allowScenarioMonster: true },
+    ],
+    enemiesByHeroes: {},
+  },
 ];
 
 export default SCENES;
