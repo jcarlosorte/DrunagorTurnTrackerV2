@@ -1,4 +1,5 @@
 import { GiSwapBag } from 'react-icons/gi';
+import { COLOR_RUNAS } from '@/data/fichas';
 
 const RUNE_COLORS = [
   { id: 'naranja', color: '#ff8c00' },
@@ -24,18 +25,26 @@ export default function BagStatusPanel({ usedTiles = [], availableTiles = [], la
         {labels.total || 'Total'} <b className="text-slate-100">{availableTiles.length + usedTiles.length}</b>
       </p>
 
-      <ul className="grid grid-cols-2 gap-1">
+      <ul className="flex flex-nowrap items-center justify-between gap-1">
         {RUNE_COLORS.map(({ id, color }) => {
           const used = usedTiles.filter((tile) => tile.runa === id).length;
           const available = availableTiles.filter((tile) => tile.runa === id).length;
+          const total = used + available;
+          const runeIcon = COLOR_RUNAS.find((rune) => rune.id === id)?.imagenSin;
           return (
-            <li
-              key={id}
-              className="flex items-center justify-between gap-1 rounded-md px-1.5 py-1 text-[0.65rem] font-semibold text-white"
-              style={{ backgroundColor: color }}
-            >
-              <span className="truncate">{colors[id] || id}</span>
-              <span className="shrink-0 tabular-nums opacity-90">{used}/{used + available}</span>
+            <li key={id} className="flex min-w-0 items-center gap-0.5">
+              <span
+                className="flex h-6 w-6 shrink-0 rotate-45 items-center justify-center rounded-[3px] border border-white/60 shadow-sm"
+                style={{ backgroundColor: color }}
+                title={colors[id] || id}
+              >
+                {runeIcon ? (
+                  <img src={runeIcon} alt="" className="h-4 w-4 -rotate-45 object-contain" loading="lazy" decoding="async" />
+                ) : null}
+              </span>
+              <span className="whitespace-nowrap text-[0.55rem] font-bold tabular-nums text-white/90">
+                {used}/{total}
+              </span>
             </li>
           );
         })}

@@ -4047,6 +4047,21 @@ Unit       227 tests
 E2E        86/86
 ```
 
+### 232.ª tanda — Bolsa de runas compacta
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Formato** | Cada color es un rombo con el icono de runa y su contador al lado | `BagStatusPanel` |
+| **Una línea** | Los cinco colores caben en una sola fila sin nombres | `BagStatusPanel` |
+| **Pruebas** | 227 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       227 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
