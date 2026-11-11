@@ -4096,6 +4096,21 @@ Unit       227 tests
 E2E        86/86
 ```
 
+### 235.ª tanda — Jefe Rey Avivado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigo** | Añadido `wakened_king_boss`, jefe de Despertar que invoca Pesadillas | `enemies` |
+| **Traducciones** | Rey Avivado / Awakened King | i18n |
+| **Pruebas** | 227 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       227 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
