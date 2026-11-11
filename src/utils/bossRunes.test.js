@@ -37,6 +37,7 @@ describe('runas del Cosechador', () => {
     const blue = applyBossRuneEffect(baseBoss, 'azul');
     expect(blue.capacidades).not.toContain('ARMADURA');
     expect(blue.estadosAlterados.find((estado) => estado.id === 'ATURDIMIENTO_I')?.count).toBe(1);
+    expect(applyBossRuneEffect(blue, 'azul').estadosAlterados.find((estado) => estado.id === 'ATURDIMIENTO_I')?.count).toBe(1);
     expect(blue.inmunidad).toContain('GRANDE');
   });
 

@@ -452,7 +452,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               {/* Estados alterados sobre la imagen */}
               <div className="absolute top-1 left-1 grid grid-rows-4 grid-flow-col gap-1">
                 {estadosLocal
-                  .filter(estado => estado.count > 0 || (categoria === 'jefe' && estado.id === 'TIEMPO'))
+                  .filter(estado => estado.count > 0)
                   .map((estado) => {
                     const estadoConfig = ESTADOS_ALTERADOS.find(e => e.id === estado.id);
                     if (!estadoConfig) return null;
@@ -599,7 +599,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                   if (runeId !== 'azul') return prev;
                   const index = prev.findIndex((estado) => estado.id === 'ATURDIMIENTO_I');
                   if (index === -1) return [...prev, { id: 'ATURDIMIENTO_I', count: 1 }];
-                  return prev.map((estado, i) => (i === index ? { ...estado, count: (estado.count || 0) + 1 } : estado));
+                  return prev.map((estado, i) => (i === index ? { ...estado, count: 1 } : estado));
                 });
               }}
             />

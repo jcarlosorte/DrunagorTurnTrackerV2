@@ -3798,6 +3798,22 @@ Unit       222 tests
 E2E        85/85
 ```
 
+### 216.ª tanda — Aturdimiento y Ficha de Tiempo en el Cosechador
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Inmunidad** | Se retira la inmunidad explícita a ATURDIMIENTO; queda implícita por GRANDE | `enemies` |
+| **Estado** | La runa azul muestra ATURDIMIENTO sobre la imagen y lo limita a 1 | `bossRunes`, `ModalEnemyCard` |
+| **Ficha de Tiempo** | A 0 no se muestra sobre la imagen de la vista ampliada | `ModalEnemyCard` |
+| **Pruebas** | 222 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       222 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

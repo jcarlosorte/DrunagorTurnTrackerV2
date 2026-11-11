@@ -26,7 +26,7 @@ export function applyBossRuneEffect(enemy, runeId) {
     if (runeId === 'azul') {
       const index = estados.findIndex((estado) => estado.id === 'ATURDIMIENTO_I');
       if (index === -1) estados.push({ id: 'ATURDIMIENTO_I', count: 1 });
-      else estados[index] = { ...estados[index], count: (estados[index].count || 0) + 1 };
+      else estados[index] = { ...estados[index], count: 1 };
     }
   }
 
