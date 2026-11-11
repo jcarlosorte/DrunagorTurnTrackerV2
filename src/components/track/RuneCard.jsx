@@ -5,6 +5,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { useInitRunes } from '@/context/initRunesContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
+import { appendGameLog } from '@/utils/gameLog';
+import { resolveSoulHarvesterTimeZero, getSoulHarvesterTime } from '@/utils/soulHarvester';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { RUNAS } from '@/data/runas';
 import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
@@ -74,14 +76,28 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
 
   const reduceFuriaTime = () => {
     setTiempo(tiempoCount - 1);
-    setPlacedEnemies((prev) => prev.map((entry) => {
-      if (entry.enemy?.id !== 'soul_harvester_boss') return entry;
-      const estados = [...(entry.enemy.estadosAlterados || [])];
-      const index = estados.findIndex((estado) => estado.id === 'TIEMPO');
-      if (index === -1) estados.push({ id: 'TIEMPO', count: 0 });
-      else estados[index] = { ...estados[index], count: Math.max(0, (estados[index].count || 0) - 1) };
-      return { ...entry, enemy: { ...entry.enemy, estadosAlterados: estados } };
-    }));
+    const bossEntry = placedEnemies.find((entry) => entry.enemy?.id === 'soul_harvester_boss');
+    if (!bossEntry || getSoulHarvesterTime(bossEntry.enemy) <= 0) return;
+    const estados = [...(bossEntry.enemy.estadosAlterados || [])];
+    const index = estados.findIndex((estado) => estado.id === 'TIEMPO');
+    if (index === -1) estados.push({ id: 'TIEMPO', count: 0 });
+    else estados[index] = { ...estados[index], count: Math.max(0, (estados[index].count || 0) - 1) };
+    const decremented = { ...bossEntry.enemy, estadosAlterados: estados };
+    const result = getSoulHarvesterTime(decremented) === 0
+      ? resolveSoulHarvesterTimeZero(decremented)
+      : { enemy: decremented, triggered: false };
+    setPlacedEnemies((prev) => prev.map((entry) => (
+      entry.enemy?.uuid === bossEntry.enemy.uuid ? { ...entry, enemy: result.enemy } : entry
+    )));
+    if (result.triggered) {
+      const statesText = result.states.length > 0
+        ? result.states.map((estado) => `${estado.id} ×${estado.count}`).join(', ')
+        : 'sin estados alterados';
+      appendGameLog(
+        'event',
+        `⏳ Cosechador de Almas: Ficha de Tiempo a 0. Estados: ${statesText}. Pierde ${result.damage} de vida (${result.vidaAntes} → ${result.vidaDespues}). Se selecciona la runa gris.`,
+      );
+    }
   };
 
   const canFlip = tipo === 'runa' || tipo === 'incursion';

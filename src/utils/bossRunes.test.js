@@ -33,11 +33,11 @@ describe('runas del Cosechador', () => {
     expect(gray.inmunidad).toEqual(baseBoss.inmunidad);
   });
 
-  it('la runa azul añade ATURDIMIENTO sin quitar esa inmunidad', () => {
+  it('la runa azul pierde ARMADURA y la inmunidad a ATURDIMIENTO', () => {
     const blue = applyBossRuneEffect(baseBoss, 'azul');
     expect(blue.capacidades).not.toContain('ARMADURA');
-    expect(blue.estadosAlterados.find((estado) => estado.id === 'ATURDIMIENTO_I')?.count).toBe(1);
-    expect(applyBossRuneEffect(blue, 'azul').estadosAlterados.find((estado) => estado.id === 'ATURDIMIENTO_I')?.count).toBe(1);
+    expect(blue.bossRuneLostImmunities).toContain('ATURDIMIENTO_I');
+    expect(blue.estadosAlterados.some((estado) => estado.id === 'ATURDIMIENTO_I')).toBe(false);
     expect(blue.inmunidad).toContain('GRANDE');
   });
 

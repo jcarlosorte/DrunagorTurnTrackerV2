@@ -3829,6 +3829,22 @@ Unit       223 tests
 E2E        85/85
 ```
 
+### 218.ª tanda — Runa azul y Ficha de Tiempo a cero
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Runa azul** | Pierde ARMADURA y la inmunidad a ATURDIMIENTO; ya no añade el estado | `bossRunes`, `BossRunesColumn` |
+| **Tiempo a 0** | Selecciona la runa gris, calcula el daño por estados (sin TIEMPO), lo aplica y limpia los estados | `soulHarvester`, `InitTracker` |
+| **Historial** | Registra estados, daño, vida y cambio a runa gris | `InitTracker`, `RuneCard`, `ModalEnemyCard` |
+| **Pruebas** | 225 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       225 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

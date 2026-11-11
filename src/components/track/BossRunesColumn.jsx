@@ -12,6 +12,7 @@ const RUNE_IMMUNITY = {
   naranja: 'QUEMADURA_I',
   rojo: 'HEMORRAGIA_I',
   verde: 'VENENO_I',
+  azul: 'ATURDIMIENTO_I',
 };
 
 export default function BossRunesColumn({
@@ -26,7 +27,7 @@ export default function BossRunesColumn({
     naranja: labels.bossRuneOrange || 'Pierde ARMADURA y ya no es inmune a',
     rojo: labels.bossRuneRed || 'Pierde ARMADURA y ya no es inmune a',
     verde: labels.bossRuneGreen || 'Pierde ARMADURA y ya no es inmune a',
-    azul: labels.bossRuneBlue || 'Sufre ATURDIMIENTO y pierde ARMADURA',
+    azul: labels.bossRuneBlue || 'Pierde ARMADURA y ya no es inmune a',
   };
 
   return (

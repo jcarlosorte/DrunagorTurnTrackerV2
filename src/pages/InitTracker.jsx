@@ -102,6 +102,7 @@ import RestartGameDialog from '@/components/track/RestartGameDialog';
 import { boardSlotHeightFrom } from '@/components/track/trackLayout';
 import { CAMPAIGN_EXPANSIONS, getExpansionCampaigns, getScenarioExpansionIds } from '@/data/boxes';
 import { getCommanderCandidates } from '@/utils/commanderSelection';
+import { resolveSoulHarvesterTimeZero, getSoulHarvesterTime } from '@/utils/soulHarvester';
 
 
 const rolesPositionMap = {
@@ -2857,15 +2858,34 @@ const InitTracker = () => {
     showScenarioToast(`🐾 ${quantity} × ${tee?.[minionId] || minionId}`);
   };
 
+  const logSoulTimeZero = (result) => {
+    if (!result?.triggered) return;
+    const name = getEnemyName('soul_harvester_boss');
+    const statesText = result.states.length > 0
+      ? result.states.map((estado) => `${estado.id} ×${estado.count}`).join(', ')
+      : 'sin estados alterados';
+    appendGameLog(
+      'event',
+      `⏳ ${name}: Ficha de Tiempo a 0. Estados: ${statesText}. Pierde ${result.damage} de vida (${result.vidaAntes} → ${result.vidaDespues}). Se selecciona la runa gris: recupera ARMADURA e inmunidades y elimina los estados.`,
+      { round: roundRef.current, turn: turnIndex },
+    );
+  };
+
   const reduceSoulHarvesterTime = () => {
-    setPlacedEnemies((prev) => prev.map((entry) => {
-      if (entry.enemy?.id !== 'soul_harvester_boss') return entry;
-      const estados = [...(entry.enemy.estadosAlterados || [])];
-      const index = estados.findIndex((estado) => estado.id === 'TIEMPO');
-      if (index === -1) estados.push({ id: 'TIEMPO', count: 0 });
-      else estados[index] = { ...estados[index], count: Math.max(0, (estados[index].count || 0) - 1) };
-      return { ...entry, enemy: { ...entry.enemy, estadosAlterados: estados } };
-    }));
+    const bossEntry = placedEnemies.find((entry) => entry.enemy?.id === 'soul_harvester_boss');
+    if (!bossEntry || getSoulHarvesterTime(bossEntry.enemy) <= 0) return;
+    const estados = [...(bossEntry.enemy.estadosAlterados || [])];
+    const index = estados.findIndex((estado) => estado.id === 'TIEMPO');
+    if (index === -1) estados.push({ id: 'TIEMPO', count: 0 });
+    else estados[index] = { ...estados[index], count: Math.max(0, (estados[index].count || 0) - 1) };
+    const decremented = { ...bossEntry.enemy, estadosAlterados: estados };
+    const result = getSoulHarvesterTime(decremented) === 0
+      ? resolveSoulHarvesterTimeZero(decremented)
+      : { enemy: decremented, triggered: false };
+    setPlacedEnemies((prev) => prev.map((entry) => (
+      entry.enemy?.uuid === bossEntry.enemy.uuid ? { ...entry, enemy: result.enemy } : entry
+    )));
+    logSoulTimeZero(result);
   };
 
   const procesarInicioTurnoEnemy = (enemy) => {
@@ -2874,13 +2894,17 @@ const InitTracker = () => {
       processedTiempoRef.current.add(enemy.uuid);
       const skippedData = checkTiempoSkip(enemy);
       if (skippedData?.skipped) {
+        const timeZero = enemy.id === 'soul_harvester_boss' && skippedData.finished
+          ? resolveSoulHarvesterTimeZero({ ...enemy, estadosAlterados: skippedData.nuevosEstados })
+          : null;
         setPlacedEnemies(prev =>
           prev.map(e =>
             e.enemy.uuid === enemy.uuid
-              ? { ...e, enemy: { ...e.enemy, estadosAlterados: skippedData.nuevosEstados } }
+              ? { ...e, enemy: timeZero?.enemy || { ...e.enemy, estadosAlterados: skippedData.nuevosEstados } }
               : e
           )
         );
+        if (timeZero) logSoulTimeZero(timeZero);
         const nombreEnemy = tee?.[enemy.id] || enemy.nombre || enemy.id;
         if (mainBox === 'awakenings') {
           showScenarioToast(`⏳ ${nombreEnemy}: ${ti.tiempoReducido || 'Se reduce 1 Ficha de Tiempo'}`);
@@ -3427,14 +3451,18 @@ const InitTracker = () => {
           processedTiempoRef.current.add(current.uuid);
           const skippedData = checkTiempoSkip(current);
           if (skippedData?.skipped) {
+            const timeZero = current.id === 'soul_harvester_boss' && skippedData.finished
+              ? resolveSoulHarvesterTimeZero({ ...current, estadosAlterados: skippedData.nuevosEstados })
+              : null;
             setPlacedEnemies(prev => {
               const updated = prev.map(e =>
                 e.enemy.uuid === current.uuid
-                  ? { ...e, enemy: { ...e.enemy, estadosAlterados: skippedData.nuevosEstados } }
+                  ? { ...e, enemy: timeZero?.enemy || { ...e.enemy, estadosAlterados: skippedData.nuevosEstados } }
                   : e
               );
               return updated;
             });
+            if (timeZero) logSoulTimeZero(timeZero);
             const nombreEnemy =
             current.tipo === "especial" || current.tipo === "fallenHero"
               ? ta.nombre?.[current.id] || current.nombre || current.id

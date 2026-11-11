@@ -2,6 +2,7 @@ const RUNE_IMMUNITY = {
   naranja: 'QUEMADURA_I',
   rojo: 'HEMORRAGIA_I',
   verde: 'VENENO_I',
+  azul: 'ATURDIMIENTO_I',
 };
 
 /**
@@ -23,11 +24,6 @@ export function applyBossRuneEffect(enemy, runeId) {
     estados = estados.filter((estado) => estado.id === 'TIEMPO');
   } else {
     if (RUNE_IMMUNITY[runeId]) lost.add(RUNE_IMMUNITY[runeId]);
-    if (runeId === 'azul') {
-      const index = estados.findIndex((estado) => estado.id === 'ATURDIMIENTO_I');
-      if (index === -1) estados.push({ id: 'ATURDIMIENTO_I', count: 1 });
-      else estados[index] = { ...estados[index], count: 1 };
-    }
   }
 
   const capacities = runeId === 'gris'

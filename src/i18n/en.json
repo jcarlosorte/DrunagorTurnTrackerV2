@@ -486,7 +486,7 @@
     "bossRuneOrange": "Loses ARMOR and is no longer immune to",
     "bossRuneRed": "Loses ARMOR and is no longer immune to",
     "bossRuneGreen": "Loses ARMOR and is no longer immune to",
-    "bossRuneBlue": "Suffers STUN and loses ARMOR",
+    "bossRuneBlue": "Loses ARMOR and is no longer immune to",
     "contadorCartaTerminado": "The counter on card {carta} has ended.",
     "tiempoReducido": "1 Time Token is removed",
     "reduce": "Condition is reduced by",

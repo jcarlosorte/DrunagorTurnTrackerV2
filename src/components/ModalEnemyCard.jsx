@@ -13,6 +13,8 @@ import { getAbilityColor } from '@/components/track/enemyVisuals';
 import { useGame } from '@/context/GameContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { applyBossRuneEffect } from '@/utils/bossRunes';
+import { resolveSoulHarvesterTimeZero } from '@/utils/soulHarvester';
+import { appendGameLog } from '@/utils/gameLog';
 import BossRunesColumn from '@/components/track/BossRunesColumn';
 import boarBackground from '@/assets/interactions/runic.avif';
 import { GiHealthPotion, GiRunningNinja, GiSwordClash, GiShieldReflect, GiSteeltoeBoots, GiBloodySword, GiArcheryTarget, GiMoebiusTrefoil } from "react-icons/gi";
@@ -397,11 +399,32 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
         ...(delta > 0 && newCount > currentMax ? { max: newCount } : {}),
       };
     });
-  
-    setEstadosLocal(updatedStates);
-  
+
+    const timeZero = enemy.id === 'soul_harvester_boss'
+      && estadoId === 'TIEMPO'
+      && (target?.count || 0) > 0
+      && newCount === 0
+      ? resolveSoulHarvesterTimeZero({ ...enemy, estadosAlterados: updatedStates })
+      : null;
+    const finalStates = timeZero?.enemy.estadosAlterados || updatedStates;
+
+    setEstadosLocal(finalStates);
+
     if (onEstadoChange) {
-      onEstadoChange(enemy.uuid, updatedStates);
+      onEstadoChange(enemy.uuid, finalStates);
+    }
+
+    if (timeZero?.triggered) {
+      setPlacedEnemies((prev) => prev.map((entry) => (
+        entry.enemy.uuid === enemy.uuid ? { ...entry, enemy: timeZero.enemy } : entry
+      )));
+      const statesText = timeZero.states.length > 0
+        ? timeZero.states.map((estado) => `${estado.id} ×${estado.count}`).join(', ')
+        : 'sin estados alterados';
+      appendGameLog(
+        'event',
+        `⏳ Cosechador de Almas: Ficha de Tiempo a 0. Estados: ${statesText}. Pierde ${timeZero.damage} de vida (${timeZero.vidaAntes} → ${timeZero.vidaDespues}). Se selecciona la runa gris.`,
+      );
     }
   };
 
