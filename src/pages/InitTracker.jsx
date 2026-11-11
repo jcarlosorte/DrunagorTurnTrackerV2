@@ -268,7 +268,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -4740,7 +4740,6 @@ const InitTracker = () => {
             
             <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 lg:flex-row">
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                <SpecialEventBar onDraw={handleDrawErradenCard} />
                 {visionClaraActive && (
                   <div className="mb-2 flex flex-wrap items-center gap-2 rounded-xl border border-cyan-700/60 bg-cyan-950/40 p-2 text-cyan-100">
                     <span className="text-xs font-bold">👁 Visión Clara</span>
@@ -4756,20 +4755,6 @@ const InitTracker = () => {
                     </button>
                   </div>
                 )}
-                <div className="mb-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <StoryDeckBar
-                    title={ti.corruptShipDeck || 'PS del Navío Corrupto'}
-                    event={corruptShipEvent}
-                    onDraw={() => drawStoryDeck('corrupt')}
-                    accent="amber"
-                  />
-                  <StoryDeckBar
-                    title={ti.swanShipDeck || 'PS del Buque Cisne'}
-                    event={swanShipEvent}
-                    onDraw={() => drawStoryDeck('swan')}
-                    accent="cyan"
-                  />
-                </div>
                 <PassiveCardsPanel
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}
@@ -4889,8 +4874,8 @@ const InitTracker = () => {
 
               {(diceOpen || bagOpen || historyOpen || pilas.length > 0 || pilasConcentrada.length > 0
                 || generationPoints.length > 0 || magicCannons.length > 0
-                || corruptShipEvent?.active || terribleCannons.some((cannon) => cannon.time > 0)) && (
-                <aside className="flex min-h-0 w-full max-h-[70dvh] flex-col gap-3 overflow-hidden lg:max-h-none lg:w-64 lg:shrink-0">
+                || corruptShipEvent?.active || swanShipEvent.active || erradenEvent?.active) && (
+                <aside className="flex min-h-0 w-full max-h-[70dvh] flex-col gap-3 overflow-y-auto lg:max-h-none lg:w-64 lg:shrink-0">
                   {diceOpen && (
                     <DiceRoller
                       inline
@@ -4943,6 +4928,22 @@ const InitTracker = () => {
                   <GenerationPointsBar />
                   <MagicCannonsBar />
                   <TerribleCannonsBar />
+
+                  <SpecialEventBar onDraw={handleDrawErradenCard} />
+                  <div className="mb-2 grid grid-cols-1 gap-2">
+                    <StoryDeckBar
+                      title={ti.corruptShipDeck || 'PS del Navío Corrupto'}
+                      event={corruptShipEvent}
+                      onDraw={() => drawStoryDeck('corrupt')}
+                      accent="amber"
+                    />
+                    <StoryDeckBar
+                      title={ti.swanShipDeck || 'PS del Buque Cisne'}
+                      event={swanShipEvent}
+                      onDraw={() => drawStoryDeck('swan')}
+                      accent="cyan"
+                    />
+                  </div>
 
                   <PilaStatusPanel />
 

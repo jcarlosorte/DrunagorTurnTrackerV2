@@ -3955,6 +3955,22 @@ Unit       226 tests
 E2E        86/86
 ```
 
+### 226.ª tanda — Barajas de Despertar bajo la bolsa
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Barajas** | Erradren, Navío Corrupto y Buque Cisne se muestran en la columna lateral | `InitTracker` |
+| **Bolsa** | Quedan debajo de las Fichas de Generación y los cañones | `InitTracker` |
+| **Scroll** | La columna lateral permite desplazamiento si acumula paneles | `InitTracker` |
+| **Pruebas** | 226 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       226 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
