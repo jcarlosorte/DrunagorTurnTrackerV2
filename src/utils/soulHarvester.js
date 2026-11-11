@@ -6,6 +6,13 @@ export function getSoulHarvesterTime(enemy) {
   return (enemy?.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
 }
 
+/** Fichas de Tiempo que concede un Disparo de Cañón. */
+export function getCannonShotTimeTokens(heroCount) {
+  if (heroCount <= 2) return { rune: 4, boss: 3 };
+  if (heroCount === 3) return { rune: 3, boss: 2 };
+  return { rune: 2, boss: 1 };
+}
+
 /**
  * Si la Ficha de Tiempo ha llegado a 0, antes de limpiar los estados se
  * calcula el daño por el total de fichas de estados (sin TIEMPO). Después se

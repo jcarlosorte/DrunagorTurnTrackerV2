@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { resolveSoulHarvesterTimeZero } from '@/utils/soulHarvester';
+import { getCannonShotTimeTokens, resolveSoulHarvesterTimeZero } from '@/utils/soulHarvester';
 
 const boss = {
   id: 'soul_harvester_boss',
@@ -40,5 +40,13 @@ describe('Ficha de Tiempo del Cosechador', () => {
     const result = resolveSoulHarvesterTimeZero(pending);
     expect(result.triggered).toBe(false);
     expect(result.enemy).toBe(pending);
+  });
+
+  it('calcula las fichas de tiempo del Disparo de Cañón por número de héroes', () => {
+    expect(getCannonShotTimeTokens(1)).toEqual({ rune: 4, boss: 3 });
+    expect(getCannonShotTimeTokens(2)).toEqual({ rune: 4, boss: 3 });
+    expect(getCannonShotTimeTokens(3)).toEqual({ rune: 3, boss: 2 });
+    expect(getCannonShotTimeTokens(4)).toEqual({ rune: 2, boss: 1 });
+    expect(getCannonShotTimeTokens(5)).toEqual({ rune: 2, boss: 1 });
   });
 });

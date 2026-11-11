@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { GiCannon } from 'react-icons/gi';
 import { useGame } from '@/context/GameContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
+import { useTracker } from '@/context/TrackerContext';
+import { useInitRunes } from '@/context/initRunesContext';
 import { applyBossRuneEffect } from '@/utils/bossRunes';
+import { getCannonShotTimeTokens } from '@/utils/soulHarvester';
 import { appendGameLog } from '@/utils/gameLog';
 
 const SHOT_COLORS = [
@@ -15,6 +18,8 @@ const SHOT_COLORS = [
 export default function CannonShotControl({ onEndRound, className = '', labels = {}, compact = false }) {
   const { magicCannons, setMagicCannonLoaded } = useGame();
   const { placedEnemies, setPlacedEnemies } = useInitEnemies();
+  const { trackerData } = useTracker();
+  const { placedRunes, setRuneEstadoCount } = useInitRunes();
   const [open, setOpen] = useState(false);
 
   const bossEntry = placedEnemies.find((entry) => entry.enemy?.id === 'soul_harvester_boss');
@@ -40,13 +45,30 @@ export default function CannonShotControl({ onEndRound, className = '', labels =
       vida: Math.max(0, (withRune.vida || 0) - 5),
       estadosAlterados: estados,
     };
+
+    const heroCount = trackerData.placedHeroes?.length || trackerData.heroes?.length || 0;
+    const timeTokens = getCannonShotTimeTokens(heroCount);
+    const furia = placedRunes.find((entry) => entry.rune.id === 'runa_despertar_furia');
+    if (furia) {
+      const currentTime = (furia.rune.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
+      setRuneEstadoCount(furia.rune.uuid, 'TIEMPO', Math.min(4, currentTime + timeTokens.rune));
+    }
+    const bossTimeIndex = updated.estadosAlterados.findIndex((estado) => estado.id === 'TIEMPO');
+    if (bossTimeIndex === -1) updated.estadosAlterados.push({ id: 'TIEMPO', count: timeTokens.boss });
+    else {
+      updated.estadosAlterados[bossTimeIndex] = {
+        ...updated.estadosAlterados[bossTimeIndex],
+        count: Math.min(4, (updated.estadosAlterados[bossTimeIndex].count || 0) + timeTokens.boss),
+      };
+    }
+
     setPlacedEnemies((prev) => prev.map((entry) => (
       entry.enemy.uuid === bossEntry.enemy.uuid ? { ...entry, enemy: updated } : entry
     )));
 
     appendGameLog(
       'event',
-      `💥 Disparo de Cañón (${color.label}): se descargan ${loadedCannons.length} cañones, el Cosechador cambia a la runa ${color.label}, pierde 5 de vida y recibe ${color.condition} ${color.count}. Se termina la ronda.`,
+      `💥 Disparo de Cañón (${color.label}): se descargan ${loadedCannons.length} cañones, el Cosechador cambia a la runa ${color.label}, pierde 5 de vida y recibe ${color.condition} ${color.count}. Se añaden ${timeTokens.rune} Fichas de Tiempo a Furia y ${timeTokens.boss} al Cosechador. Se termina la ronda.`,
     );
     setOpen(false);
     onEndRound?.();

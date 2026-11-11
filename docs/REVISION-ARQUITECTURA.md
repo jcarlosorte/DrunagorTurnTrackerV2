@@ -3877,6 +3877,22 @@ Unit       225 tests
 E2E        85/85
 ```
 
+### 221.ª tanda — Fichas de Tiempo tras el Disparo de Cañón
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Fichas** | Tras disparar se añaden fichas a Furia y al Cosechador según el número de héroes | `CannonShotControl` |
+| **Cantidades** | 1–2 héroes: 4/3; 3 héroes: 3/2; 4–5 héroes: 2/1 | `soulHarvester` |
+| **Historial** | Se registran las fichas añadidas | `CannonShotControl` |
+| **Pruebas** | 226 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       226 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
