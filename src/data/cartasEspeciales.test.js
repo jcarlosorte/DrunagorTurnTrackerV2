@@ -60,3 +60,15 @@ describe('cartas del Cosechador de Almas', () => {
     expect(deck.find((carta) => carta.id === 'boss_22')?.invoca).toBe('fallen_woodcutter');
   });
 });
+
+describe('cartas del Rey Avivado', () => {
+  it('incluye cinco cartas de anverso y los reversos de las dos cartas dobles', () => {
+    const deck = CARTAS_JEFE.filter((carta) => carta.idJefe === 'wakened_king_boss');
+    const fronts = deck.filter((carta) => !carta.cara || carta.cara === 'A');
+    expect(fronts.map((carta) => carta.id)).toEqual([
+      'boss_26', 'boss_27', 'boss_28', 'boss_29', 'boss_30',
+    ]);
+    expect(deck.filter((carta) => carta.cara === 'B').map((carta) => carta.id))
+      .toEqual(['boss_26', 'boss_27']);
+  });
+});

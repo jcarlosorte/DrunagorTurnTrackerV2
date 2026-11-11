@@ -4128,6 +4128,23 @@ Unit       227 tests
 E2E        86/86
 ```
 
+### 237.ª tanda — Mazo del Rey Avivado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cartas** | Añadidas las cinco cartas del jefe y los reversos de las dos cartas de doble cara | `cartasEspeciales` |
+| **Anverso inicial** | Solo se colocan las caras A al invocar al jefe | `InitTracker` |
+| **Traducciones** | Títulos y descripciones en español e inglés | i18n |
+| **Mecánicas** | Pendientes de confirmación carta por carta | — |
+| **Pruebas** | 228 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       228 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -1620,7 +1620,7 @@ const InitTracker = () => {
     const enemyCat = enemy.categoria;
   
     // 🔍 Filtrar cartas de este jefe según su id
-    const cartasJefe = CARTAS_JEFE.filter(c => c.idJefe === enemyId);
+    const cartasJefe = CARTAS_JEFE.filter(c => c.idJefe === enemyId && (!c.cara || c.cara === 'A'));
   
     // Estados iniciales
     const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
@@ -1632,6 +1632,7 @@ const InitTracker = () => {
         uuid: createId(),
         id: carta.id,
         nombre: carta.nombre,
+        cara: carta.cara,
         capacidades: carta.capacidades,
         lista_capacidad: carta.lista_capacidad,
         maxHeal: carta.maxHeal,
@@ -4625,7 +4626,8 @@ const InitTracker = () => {
         const source = entry.enemy.sourceEnemyUUID
           ? placedEnemies.find((candidate) => candidate.enemy.uuid === entry.enemy.sourceEnemyUUID)?.enemy
           : null;
-        const cardName = translations.cartas_ataque?.nombre?.[entry.enemy.id]
+        const cardName = translations.cartas_ataque?.nombre?.[entry.enemy.capacidades]
+          || translations.cartas_ataque?.nombre?.[entry.enemy.id]
           || entry.enemy.nombre
           || entry.enemy.id;
         return {

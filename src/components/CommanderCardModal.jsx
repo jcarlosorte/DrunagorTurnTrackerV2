@@ -33,7 +33,7 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   const selectedHeroes = trackerData.heroes;
   const numHeroes = Math.min(selectedHeroes.length, 4);
   const numRunasColor = getRuneCount(carta.id === 'cmd_12' ? 'azul' : carta.rune);
-  const nombre = ta.nombre?.[carta.id] || carta.nombre;
+  const nombre = ta.nombre?.[carta.capacidades] || ta.nombre?.[carta.id] || carta.nombre;
   const nombreEnemy = carta.nombreEnemy;
   
   let capacidad = ta.capacidad?.[carta.id] || carta.capacidad;

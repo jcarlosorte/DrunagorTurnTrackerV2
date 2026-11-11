@@ -14,7 +14,7 @@ const CommanderCard = ({ carta }) => {
   const ta = translations.cartas_ataque || {};
   const tea = translations.estadosAlterados || {};
   
-  const nombre = ta.nombre?.[carta.id] || carta.nombre;
+  const nombre = ta.nombre?.[carta.capacidades] || ta.nombre?.[carta.id] || carta.nombre;
   const nombreEnemy = carta.nombreEnemy;
   const tone = getEnemyTone(carta.color, carta.categoria);
   // 🎨 Clases visuales condicionales por tipo

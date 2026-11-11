@@ -602,6 +602,77 @@ export const CARTAS_JEFE = [
     idJefe: 'soul_harvester_boss',
     capacidades: 'boss_25',
     lista_capacidad: []
+  },
+  // Mazo del Rey Avivado. Las cartas dobles se colocan por su anverso.
+  {
+    id: 'boss_26',
+    nombre: 'boss_26',
+    cara: 'A',
+    rune: 'gris',
+    runePosition: 'abajo',
+    idJefe: 'wakened_king_boss',
+    capacidades: 'boss_26_A',
+    lista_capacidad: []
+  },
+  {
+    id: 'boss_26',
+    nombre: 'boss_26',
+    cara: 'B',
+    rune: 'gris',
+    runePosition: 'abajo',
+    idJefe: 'wakened_king_boss',
+    capacidades: 'boss_26_B',
+    lista_capacidad: []
+  },
+  {
+    id: 'boss_27',
+    nombre: 'boss_27',
+    cara: 'A',
+    rune: 'rojo',
+    runePosition: 'abajo',
+    idJefe: 'wakened_king_boss',
+    capacidades: 'boss_27_A',
+    lista_capacidad: []
+  },
+  {
+    id: 'boss_27',
+    nombre: 'boss_27',
+    cara: 'B',
+    rune: 'rojo',
+    runePosition: 'abajo',
+    idJefe: 'wakened_king_boss',
+    capacidades: 'boss_27_B',
+    lista_capacidad: []
+  },
+  {
+    id: 'boss_28',
+    nombre: 'boss_28',
+    cara: 'A',
+    rune: 'verde',
+    runePosition: 'abajo',
+    idJefe: 'wakened_king_boss',
+    capacidades: 'boss_28',
+    lista_capacidad: []
+  },
+  {
+    id: 'boss_29',
+    nombre: 'boss_29',
+    cara: 'A',
+    rune: 'naranja',
+    runePosition: 'arriba',
+    idJefe: 'wakened_king_boss',
+    capacidades: 'boss_29',
+    lista_capacidad: []
+  },
+  {
+    id: 'boss_30',
+    nombre: 'boss_30',
+    cara: 'A',
+    rune: 'azul',
+    runePosition: 'arriba',
+    idJefe: 'wakened_king_boss',
+    capacidades: 'boss_30',
+    lista_capacidad: []
   }
 ];
 
