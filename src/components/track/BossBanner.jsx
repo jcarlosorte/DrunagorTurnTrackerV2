@@ -24,7 +24,7 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
 
   return (
     <section
-      className={`boss-banner relative mb-2 shrink-0 rounded-2xl border-2 border-red-500/60 bg-gradient-to-b from-red-950/70 via-slate-950 to-slate-950 shadow-xl shadow-red-950/40 ${compact ? 'p-1' : 'p-2'}`}
+      className={`boss-banner relative mb-2 max-w-full shrink-0 overflow-hidden rounded-2xl border-2 border-red-500/60 bg-gradient-to-b from-red-950/70 via-slate-950 to-slate-950 shadow-xl shadow-red-950/40 ${compact ? 'p-1' : 'p-2'}`}
       aria-label={labels.boss || 'Jefe'}
     >
       <button
@@ -85,7 +85,7 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
               key={enemy.uuid}
               type="button"
               onClick={() => onOpen?.(enemy.uuid)}
-              className="boss-banner__card group flex items-center gap-3 rounded-xl border border-red-400/40 bg-slate-950/70 p-2 text-left transition hover:border-red-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
+              className="boss-banner__card group flex flex-wrap items-center gap-3 rounded-xl border border-red-400/40 bg-slate-950/70 p-2 text-left transition hover:border-red-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
               aria-label={`${labels.open || 'Abrir'} ${nombre}`}
             >
               <span className="boss-banner__portrait relative block h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-red-500/50 bg-slate-900 sm:h-32 sm:w-32">

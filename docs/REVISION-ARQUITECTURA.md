@@ -4031,6 +4031,22 @@ Unit       227 tests
 E2E        86/86
 ```
 
+### 231.ª tanda — Vista de lista de turnos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Traducciones** | Runas, incursiones y cartas especiales usan su nombre traducido | `InitTracker` |
+| **Imágenes** | Las cartas de jefe, comandante y Señor Supremo muestran la imagen del enemigo asociado | `InitTracker` |
+| **Móvil** | El desplegable de cada turno deja de imponer un ancho fijo y el panel de jefe permite ajuste | `TurnTrackBoard`, `BossBanner` |
+| **Pruebas** | 227 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       227 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

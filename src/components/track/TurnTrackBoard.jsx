@@ -446,7 +446,7 @@ export default function TurnTrackBoard({
 
               {isOpen && (
                 <div id={`turn-slot-${index}`} className="overflow-x-auto border-t border-slate-700/70 p-2">
-                  <div className="min-w-[520px]">{renderSlot(index, { compact: true })}</div>
+                  <div className="w-full min-w-0">{renderSlot(index, { compact: true })}</div>
                 </div>
               )}
             </div>

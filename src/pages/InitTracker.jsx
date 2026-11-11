@@ -4621,14 +4621,24 @@ const InitTracker = () => {
       }));
     const enemyEntities = placedEnemies
       .filter((entry) => entry.enemy.position === index)
-      .map((entry) => ({
-        kind: 'enemy',
-        name: getEnemyName(entry.enemy.id, entry.enemy.color),
-        image: entry.enemy.imagen,
-        color: entry.enemy.categoria === 'jefe'
-          ? '#a21caf'
-          : (entry.enemy.tipo === 'especial' ? '#b45309' : '#b91c1c'),
-      }));
+      .map((entry) => {
+        const source = entry.enemy.sourceEnemyUUID
+          ? placedEnemies.find((candidate) => candidate.enemy.uuid === entry.enemy.sourceEnemyUUID)?.enemy
+          : null;
+        const cardName = translations.cartas_ataque?.nombre?.[entry.enemy.id]
+          || entry.enemy.nombre
+          || entry.enemy.id;
+        return {
+          kind: 'enemy',
+          name: entry.enemy.tipo === 'especial'
+            ? cardName
+            : (getEnemyName(entry.enemy.id, entry.enemy.color) || cardName),
+          image: entry.enemy.imagen || source?.imagen,
+          color: source?.categoria === 'jefe' || entry.enemy.categoria === 'jefe'
+            ? '#a21caf'
+            : (entry.enemy.tipo === 'especial' ? '#b45309' : '#b91c1c'),
+        };
+      });
     const runeEntities = placedRunes
       .filter((entry) => entry.rune.colorIndex === index)
       .map((entry) => {
@@ -4636,7 +4646,7 @@ const InitTracker = () => {
         const runeColor = COLOR_RUNAS.find((color) => color.id === colorName);
         return {
           kind: 'rune',
-          name: entry.rune.id,
+          name: translations.scenarioCard?.[entry.rune.id] || entry.rune.nombre || entry.rune.id,
           image: runeColor?.imagenSin,
           color: RUNE_HEX[colorName] || '#94a3b8',
         };
