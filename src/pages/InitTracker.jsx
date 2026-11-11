@@ -4740,11 +4740,6 @@ const InitTracker = () => {
             
             <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 lg:flex-row">
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                <div className="mb-2 grid grid-cols-1 items-start gap-2 sm:grid-cols-3">
-                  <GenerationPointsBar />
-                  <MagicCannonsBar />
-                  <TerribleCannonsBar />
-                </div>
                 <SpecialEventBar onDraw={handleDrawErradenCard} />
                 {visionClaraActive && (
                   <div className="mb-2 flex flex-wrap items-center gap-2 rounded-xl border border-cyan-700/60 bg-cyan-950/40 p-2 text-cyan-100">
@@ -4892,7 +4887,9 @@ const InitTracker = () => {
                 />
               </div>
 
-              {(diceOpen || bagOpen || historyOpen || pilas.length > 0 || pilasConcentrada.length > 0) && (
+              {(diceOpen || bagOpen || historyOpen || pilas.length > 0 || pilasConcentrada.length > 0
+                || generationPoints.length > 0 || magicCannons.length > 0
+                || corruptShipEvent?.active || terribleCannons.some((cannon) => cannon.time > 0)) && (
                 <aside className="flex min-h-0 w-full max-h-[70dvh] flex-col gap-3 overflow-hidden lg:max-h-none lg:w-64 lg:shrink-0">
                   {diceOpen && (
                     <DiceRoller
@@ -4942,6 +4939,10 @@ const InitTracker = () => {
                       colors={ti.colores || {}}
                     />
                   )}
+
+                  <GenerationPointsBar />
+                  <MagicCannonsBar />
+                  <TerribleCannonsBar />
 
                   <PilaStatusPanel />
 

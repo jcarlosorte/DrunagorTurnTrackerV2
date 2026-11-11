@@ -3939,6 +3939,22 @@ Unit       226 tests
 E2E        86/86
 ```
 
+### 225.ª tanda — Fichas y cañones bajo la bolsa de runas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nodos** | Fichas de Generación, Cañones Mágicos y Cañones Terroríficos se mueven a la columna lateral | `InitTracker` |
+| **Bolsa** | Se muestran debajo del panel de la bolsa de runas | `InitTracker` |
+| **Track** | El track recupera el espacio superior que ocupaban las barras | `InitTracker` |
+| **Pruebas** | 226 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       226 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
