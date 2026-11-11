@@ -554,6 +554,8 @@
     "sceneChapter7Description": "Adds the Siege of Everedge deck, the 5 Generation Tokens, followers to choose and the scene enemies.",
     "sceneChapter8": "Chapter 08 – No Regrets",
     "sceneChapter8Description": "Adds Growing Influence, 5 runes of each color and the scene enemies.",
+    "sceneChapter8b": "Chapter 08b – Final Showdown",
+    "sceneChapter8bDescription": "Removes runes and incursions, returns active Nodes, adds Fury, Atrocious Incursion, 2 Nodes, cannons and the final enemies.",
     "chapter4Title": "Chapter 04 – Battle On The High Sea",
     "chapter4Description": "Adds the naval rune and incursion, 5 runes of each color, generation, unloaded cannons, both PS decks and the scene enemies.",
     "activateChapter": "Activate chapter",

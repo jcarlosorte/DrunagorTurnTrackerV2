@@ -3893,6 +3893,23 @@ Unit       226 tests
 E2E        85/85
 ```
 
+### 222.ª tanda — Capítulo 8b: Enfrentamiento Final
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escena** | Añadida la escena final con Nodos, Furia, Incursión Atroz, cañones y enemigos fijos | `scenes` |
+| **Orden** | El jefe se coloca primero para que su limpieza no elimine lo preparado después | `InitTracker` |
+| **Nodos** | Devuelve las runas de los Nodos activos y crea 2 Nodos nuevos | `InitTracker` |
+| **Enemigos** | 2 Leñadores Caídos y el Jefe Cosechador de Almas | `scenes` |
+| **Pruebas** | 226 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       226 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

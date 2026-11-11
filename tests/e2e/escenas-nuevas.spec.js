@@ -238,4 +238,31 @@ test.describe('Escenas de Despertar', () => {
       enemies: 1,
     });
   });
+
+  test('Capítulo 8b prepara el enfrentamiento final', async ({ page }) => {
+    await seedStorage(page, awakeningsSeed());
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await page.getByTestId('scene-chapter8b').getByRole('button', { name: /Activar capítulo/ }).click();
+
+    await expect.poll(async () => page.evaluate(() => {
+      const game = JSON.parse(localStorage.getItem('gameState') || '{}');
+      const enemiesState = JSON.parse(localStorage.getItem('initEnemiesState') || '{}');
+      const runesState = JSON.parse(localStorage.getItem('initRunesState') || '{}');
+      return {
+        cards: (runesState.placedRunes || []).map((entry) => entry.rune.id).sort(),
+        nodes: (game.nodosOscuridad || []).filter((nodo) => nodo.estado === 'activa').length,
+        nodeTiles: (game.nodosOscuridad || []).reduce((total, nodo) => total + (nodo.tiles?.length || 0), 0),
+        cannons: (game.magicCannons || []).filter((cannon) => cannon.loaded).map((cannon) => cannon.color).sort(),
+        enemies: (enemiesState.placedEnemies || []).filter((entry) => entry.enemy.tipo !== 'especial').length,
+      };
+    })).toEqual({
+      cards: ['incursion_despertar_atroz', 'runa_despertar_furia'],
+      nodes: 2,
+      nodeTiles: 10,
+      cannons: ['naranja', 'verde'],
+      enemies: 3,
+    });
+  });
 });

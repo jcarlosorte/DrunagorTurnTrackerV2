@@ -268,7 +268,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -1736,7 +1736,7 @@ const InitTracker = () => {
       && entry.color === group.color
       && entry.categoria === group.category
       && allowed.has(entry.id)
-      && entry.id !== scenarioMonster?.id
+      && (group.allowScenarioMonster || entry.id !== scenarioMonster?.id)
       && (!group.enemyId || entry.id === group.enemyId)
     ));
   };
@@ -1748,8 +1748,10 @@ const InitTracker = () => {
     // escena reciba un color distinto y el siguiente pueda seguir asignando.
     const simulatedSmall = [...usedColors];
     const simulatedBig = [...usedColorsBig];
-    for (let heroCount = 1; heroCount <= totalHeroes; heroCount += 1) {
-      const groups = scene.enemiesByHeroes?.[heroCount] || [];
+    const groupSets = Array.isArray(scene.fixedEnemies) && scene.fixedEnemies.length > 0
+      ? [scene.fixedEnemies]
+      : Array.from({ length: totalHeroes }, (_, index) => scene.enemiesByHeroes?.[index + 1] || []);
+    for (const groups of groupSets) {
       for (const group of groups) {
         const pool = getSceneEnemyPool(group);
         for (let copy = 0; copy < (group.quantity || 1); copy += 1) {
@@ -1794,6 +1796,44 @@ const InitTracker = () => {
   };
 
   const activateScene = async (scene) => {
+    if (scene.returnActiveNodes) {
+      nodosOscuridad
+        .filter((nodo) => nodo.estado === 'activa')
+        .forEach((nodo) => placeTilesFromNodoOscuridadToTrack(nodo.id));
+    }
+    if (scene.clearRunes) resetPlacedRunes();
+
+    // En el enfrentamiento final el jefe limpia runas y monstruos al colocarse;
+    // por eso su preparación se hace después de invocar a los enemigos.
+    if (scene.setupAfterEnemies) {
+      await spawnSceneEnemies(scene);
+
+      const runeCard = scene.runeId
+        ? RUNAS_DESPERTAR.find((card) => card.id === scene.runeId && card.cara === 'A')
+        : null;
+      if (runeCard) handleAddRuneCard(runeCard, false, scene.timeTokens || 0);
+
+      const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0);
+
+      if (scene.incursionId) {
+        const incursion = INCURSION_DESPERTAR.find((card) => card.id === scene.incursionId && card.cara === 'A');
+        if (incursion) handleAddRuneCard(incursion);
+      }
+      if (scene.scenarioMonsterId) {
+        const monster = ENEMIES.find((entry) => entry.id === scene.scenarioMonsterId && entry.cara !== 'B');
+        if (monster) setScenarioMonster(monster);
+      }
+      (scene.cannonColors || []).forEach((color) => {
+        const existing = magicCannons.find((cannon) => cannon.color === color);
+        if (existing) setMagicCannonLoaded(existing.id, true);
+        else addMagicCannon(color, true);
+      });
+
+      const title = scene.titleKey ? (ti[scene.titleKey] || scene.titleEn) : scene.titleEn;
+      showScenarioToast(`🎬 ${title}${prepared.placed.length ? ` · ${prepared.placed.length} runas en el track` : ''}${prepared.nodes.length ? ` · ${prepared.nodes.length} Nodos activos` : ''}`);
+      return;
+    }
+
     const runeCard = scene.runeId
       ? RUNAS_DESPERTAR.find((card) => card.id === scene.runeId && card.cara === 'A')
       : null;
@@ -1836,6 +1876,11 @@ const InitTracker = () => {
         if (existing) setMagicCannonLoaded(existing.id, false);
         else addMagicCannon(color, false);
       }
+    });
+    (scene.cannonColors || []).forEach((color) => {
+      const existing = magicCannons.find((cannon) => cannon.color === color);
+      if (existing) setMagicCannonLoaded(existing.id, true);
+      else addMagicCannon(color, true);
     });
     if (scene.corruptShip) addCorruptShipEvent();
     if (scene.swanShip) addSwanShipEvent();

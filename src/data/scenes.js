@@ -192,6 +192,26 @@ export const SCENES = [
       5: [{ color: 'gris', category: 'campeon', quantity: 1 }],
     },
   },
+  {
+    id: 'chapter8b',
+    titleKey: 'sceneChapter8b',
+    titleEn: 'Chapter 08b – Final Showdown',
+    descriptionKey: 'sceneChapter8bDescription',
+    runeId: 'runa_despertar_furia',
+    incursionId: 'incursion_despertar_atroz',
+    scenarioMonsterId: 'fallen_woodcutter',
+    runesPerColor: 2,
+    nodes: 2,
+    returnActiveNodes: true,
+    clearRunes: true,
+    setupAfterEnemies: true,
+    cannonColors: ['naranja', 'verde'],
+    fixedEnemies: [
+      { enemyId: 'soul_harvester_boss', color: 'jefe', category: 'jefe', quantity: 1, label: 'Jefe Cosechador de Almas' },
+      { enemyId: 'fallen_woodcutter', color: 'esbirro', category: 'esbirro', quantity: 2, label: 'Leñador Caído', allowScenarioMonster: true },
+    ],
+    enemiesByHeroes: {},
+  },
 ];
 
 export default SCENES;
