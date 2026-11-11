@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { GiCannon } from 'react-icons/gi';
 import { useGame } from '@/context/GameContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
@@ -97,25 +98,25 @@ export default function CannonShotControl({ onEndRound, className = '', labels =
         {!compact && <span>{labels.cannonShot || 'Disparo de Cañón'}</span>}
       </button>
 
-      {open && (
+      {open && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-4" role="presentation">
           <div
             role="dialog"
             aria-modal="true"
             aria-label={labels.cannonShot || 'Disparo de Cañón'}
-            className="w-full max-w-sm rounded-2xl border-2 border-amber-600 bg-slate-900 p-4 text-slate-100 shadow-2xl"
+            className="w-full max-w-md rounded-2xl border-2 border-amber-600 bg-slate-900 p-5 text-slate-100 shadow-2xl"
           >
-            <h2 className="text-lg font-black text-amber-100">{labels.cannonShot || 'Disparo de Cañón'}</h2>
-            <p className="mt-1 text-xs text-slate-300">
+            <h2 className="text-xl font-black text-amber-100">{labels.cannonShot || 'Disparo de Cañón'}</h2>
+            <p className="mt-1 text-sm text-slate-300">
               {labels.cannonShotColor || 'Elige el color del cubo de acción.'}
             </p>
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="mt-4 grid grid-cols-2 gap-3">
               {SHOT_COLORS.map((color) => (
                 <button
                   key={color.id}
                   type="button"
                   onClick={() => fire(color.id)}
-                  className={`min-h-10 rounded-xl px-3 text-sm font-bold text-white ${color.className}`}
+                  className={`min-h-14 rounded-xl px-4 text-base font-bold text-white ${color.className}`}
                 >
                   {color.label}
                 </button>
@@ -124,12 +125,13 @@ export default function CannonShotControl({ onEndRound, className = '', labels =
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="mt-3 min-h-8 w-full rounded-lg bg-slate-700 text-xs font-bold text-white hover:bg-slate-600"
+              className="mt-4 min-h-10 w-full rounded-lg bg-slate-700 text-sm font-bold text-white hover:bg-slate-600"
             >
               {labels.cancel || 'Cancelar'}
             </button>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );

@@ -3910,6 +3910,21 @@ Unit       226 tests
 E2E        86/86
 ```
 
+### 223.ª tanda — Ventana de selección del Disparo de Cañón
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Portal** | La ventana se renderiza directamente en `document.body`, fuera del track transformado | `CannonShotControl` |
+| **Estilo** | Ventana más ancha, con botones de color más grandes | `CannonShotControl` |
+| **Pruebas** | 226 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       226 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
