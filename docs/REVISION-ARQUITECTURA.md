@@ -4202,6 +4202,23 @@ Unit       228 tests
 E2E        87/87
 ```
 
+### 241.ª tanda — Correcciones de interfaz del Rey Avivado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Textos** | Las caras de Marcha/Sabotaje usan su clave `id_cara` si falta `capacidades` | `CommanderCardModal`, `CommanderCard` |
+| **Nombres** | Los avisos muestran el nombre traducido de la carta | `InitTracker` |
+| **Inmunidad** | Texto ajustado a «El Rey Avivado es inmune a estados y daño.» | `BossBanner`, i18n |
+| **Comandante** | La derrota del Cosechador se detecta aunque se elimine fuera del track | `InitTracker` |
+| **Pruebas** | 228 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       228 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

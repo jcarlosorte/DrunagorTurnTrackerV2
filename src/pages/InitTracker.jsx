@@ -244,6 +244,7 @@ const InitTracker = () => {
   const [siegeResolving, setSiegeResolving] = useState(false);
   const [siegeDeckOpen, setSiegeDeckOpen] = useState(false);
   const [siegeAlertQueue, setSiegeAlertQueue] = useState([]);
+  const wakenedCommanderRef = useRef(false);
   const siegeActiveRef = useRef(false);
   const processedSiegeTurnRef = useRef(new Set());
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
@@ -1934,6 +1935,20 @@ const InitTracker = () => {
       turn: turnIndex,
     });
   };
+
+  useEffect(() => {
+    const commanderAlive = placedEnemies.some((entry) => entry.enemy.id === 'soul_harvester');
+    const desesperacionB = placedEnemies.some((entry) => (
+      entry.enemy.id === 'boss_26'
+      && entry.enemy.cara === 'B'
+      && (entry.enemy.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count > 0
+    ));
+    if (wakenedCommanderRef.current && !commanderAlive && desesperacionB) {
+      handleWakenedCommanderDefeat();
+    }
+    wakenedCommanderRef.current = commanderAlive;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placedEnemies]);
 
   const onRemove = (uuid) => {
     const removed = placedEnemies.find((entry) => entry.enemy.uuid === uuid)?.enemy;
@@ -3772,8 +3787,13 @@ const InitTracker = () => {
               }
               applyBossMarchSummon(currentForResolution, placedEnemies);
               aplicarCapacidadesCartaEspecial(currentForResolution).then(({ logs }) => {
+                const cardLabel = ta.nombre?.[currentForResolution.capacidades]
+                  || ta.nombre?.[`${currentForResolution.id}_${currentForResolution.cara}`]
+                  || ta.nombre?.[currentForResolution.id]
+                  || currentForResolution.nombreEnemy
+                  || currentForResolution.nombre;
                 logs.forEach(log =>
-                  showScenarioToast(`🃏 ${current.nombreEnemy || current.nombre}: ${log}`)
+                  showScenarioToast(`🃏 ${cardLabel}: ${log}`)
                 );
               });
         
@@ -5029,7 +5049,7 @@ const InitTracker = () => {
                         open: ti.abrirFicha || 'Abrir ficha',
                         compactBoss: ti.compactBoss || 'Compactar jefe',
                         expandBoss: ti.expandBoss || 'Expandir jefe',
-                        kingInvulnerable: ti.kingInvulnerable || 'El Rey Avivado es inmune a estados y daño hasta nuevo aviso.',
+                        kingInvulnerable: ti.kingInvulnerable || 'El Rey Avivado es inmune a estados y daño.',
                         kingCriticalAttacks: ti.kingCriticalAttacks || 'Todos los Ataques con Arma, Hechizo y Purga son críticos si golpean.',
                       }}
                     />

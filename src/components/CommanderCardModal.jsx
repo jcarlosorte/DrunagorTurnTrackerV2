@@ -34,7 +34,7 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   const selectedHeroes = trackerData.heroes;
   const numHeroes = Math.min(selectedHeroes.length, 4);
   const numRunasColor = getRuneCount(carta.id === 'cmd_12' ? 'azul' : carta.rune);
-  const nombre = ta.nombre?.[carta.capacidades] || ta.nombre?.[carta.id] || carta.nombre;
+  const nombre = ta.nombre?.[carta.capacidades] || ta.nombre?.[`${carta.id}_${carta.cara}`] || ta.nombre?.[carta.id] || carta.nombre;
   const nombreEnemy = carta.nombreEnemy;
   const isWakenedCard = ['boss_26', 'boss_27', 'boss_28', 'boss_29', 'boss_30'].includes(carta.id);
   const timeCount = (carta.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
@@ -79,7 +79,7 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
     }));
   };
   
-  let capacidad = ta.capacidad?.[carta.capacidades] || ta.capacidad?.[carta.id] || carta.capacidad;
+  let capacidad = ta.capacidad?.[carta.capacidades] || ta.capacidad?.[`${carta.id}_${carta.cara}`] || ta.capacidad?.[carta.id] || carta.capacidad;
   
   if (capacidad) {
     // 1. Sustituimos valores numéricos dinámicos

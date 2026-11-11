@@ -14,7 +14,7 @@ const CommanderCard = ({ carta }) => {
   const ta = translations.cartas_ataque || {};
   const tea = translations.estadosAlterados || {};
   
-  const nombre = ta.nombre?.[carta.capacidades] || ta.nombre?.[carta.id] || carta.nombre;
+  const nombre = ta.nombre?.[carta.capacidades] || ta.nombre?.[`${carta.id}_${carta.cara}`] || ta.nombre?.[carta.id] || carta.nombre;
   const nombreEnemy = carta.nombreEnemy;
   const tiempoCount = (carta.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
   const tone = getEnemyTone(carta.color, carta.categoria);
