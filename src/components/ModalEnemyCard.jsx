@@ -531,31 +531,11 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               {mostrarAccionesCapacidad(capacidadesAjustadas, tt, tte, ti)}
               
             </div>
-
-            {isSoulHarvester && (
-              <BossRunesColumn
-                selected={activeBossRune}
-                labels={ti}
-                texts={enemy.bossRuneTexts || {}}
-                onSelect={(runeId) => {
-                  setPlacedEnemies((prev) => prev.map((entry) => (
-                    entry.enemy.uuid === enemy.uuid
-                      ? { ...entry, enemy: applyBossRuneEffect(entry.enemy, runeId) }
-                      : entry
-                  )));
-                  setEstadosLocal((prev) => {
-                    if (runeId !== 'azul') return prev;
-                    const index = prev.findIndex((estado) => estado.id === 'ATURDIMIENTO_I');
-                    if (index === -1) return [...prev, { id: 'ATURDIMIENTO_I', count: 1 }];
-                    return prev.map((estado, i) => (i === index ? { ...estado, count: (estado.count || 0) + 1 } : estado));
-                  });
-                }}
-              />
-            )}
           </div>
 
-          {/* Submenú Estados Alterados: paleta fija, siempre visible */}
-          <div className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900/60 p-2">
+          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-start">
+            {/* Submenú Estados Alterados: paleta fija, siempre visible */}
+            <div className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900/60 p-2">
             <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
             <div className="flex flex-wrap items-stretch justify-center gap-1">
             {getEnemyStatusCatalog(rulesVersion)
@@ -601,6 +581,29 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               })
             }
             </div>
+          </div>
+
+          {isSoulHarvester && (
+            <BossRunesColumn
+              selected={activeBossRune}
+              labels={ti}
+              texts={enemy.bossRuneTexts || {}}
+              className="sm:ml-2"
+              onSelect={(runeId) => {
+                setPlacedEnemies((prev) => prev.map((entry) => (
+                  entry.enemy.uuid === enemy.uuid
+                    ? { ...entry, enemy: applyBossRuneEffect(entry.enemy, runeId) }
+                    : entry
+                )));
+                setEstadosLocal((prev) => {
+                  if (runeId !== 'azul') return prev;
+                  const index = prev.findIndex((estado) => estado.id === 'ATURDIMIENTO_I');
+                  if (index === -1) return [...prev, { id: 'ATURDIMIENTO_I', count: 1 }];
+                  return prev.map((estado, i) => (i === index ? { ...estado, count: (estado.count || 0) + 1 } : estado));
+                });
+              }}
+            />
+          )}
           </div>
 
           
