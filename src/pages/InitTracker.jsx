@@ -2845,8 +2845,14 @@ const InitTracker = () => {
     if (hasMinion) return;
     const totalHeroes = trackerData.placedHeroes?.length || trackerData.heroes?.length || 0;
     const quantity = totalHeroes <= 2 ? 1 : totalHeroes <= 4 ? 2 : 3;
+    const minion = ENEMIES.find((entry) => entry.id === minionId && entry.cara !== 'B');
+    const isBig = minion?.size === 'grande';
+    const simulatedSmall = [...usedColors];
+    const simulatedBig = [...usedColorsBig];
     for (let i = 0; i < quantity; i += 1) {
-      handleManualEnemyAdd(minionId, undefined, 'esbirro', 'NoShow');
+      const ringColor = getNextAvailableColorSimulated(isBig, simulatedSmall, simulatedBig) || 'noColor';
+      if (ringColor !== 'noColor') (isBig ? simulatedBig : simulatedSmall).push(ringColor);
+      handleManualEnemyAdd(minionId, undefined, 'esbirro', 'NoShow', ringColor);
     }
     showScenarioToast(`🐾 ${quantity} × ${tee?.[minionId] || minionId}`);
   };

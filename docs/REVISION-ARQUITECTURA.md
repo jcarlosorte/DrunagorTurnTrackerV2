@@ -3784,6 +3784,20 @@ Unit       222 tests
 E2E        85/85
 ```
 
+### 215.ª tanda — Anillos de los esbirros de Marcha del Corrompido
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Anillos** | Los esbirros invocados por Marcha del Corrompido reciben anillos distintos entre sí | `InitTracker` |
+| **Pruebas** | 222 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       222 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
