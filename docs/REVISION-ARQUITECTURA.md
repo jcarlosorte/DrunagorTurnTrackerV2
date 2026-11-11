@@ -4015,6 +4015,22 @@ Unit       227 tests
 E2E        86/86
 ```
 
+### 230.ª tanda — Paneles laterales con título e iconos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Fichas** | Título en una línea y fichas debajo | `GenerationPointsBar` |
+| **Cañones** | Título en una línea y cañones debajo | `MagicCannonsBar`, `TerribleCannonsBar` |
+| **Barajas** | Título en una línea y controles debajo | `SpecialEventBar`, `StoryDeckBar` |
+| **Pruebas** | 227 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       227 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
