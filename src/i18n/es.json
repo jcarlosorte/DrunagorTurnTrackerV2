@@ -1046,6 +1046,8 @@
     "ASESINAR": "ASESINAR",
     "CONTROL MENTAL": "CONTROL MENTAL",
     "FRAGIL": "FRÁGIL",
+    "POLIMORFISMO": "POLIMORFISMO",
+    "RESTRICCION": "RESTRICCIÓN",
     "PIEL GRUESA": "PIEL GRUESA",
     "ROMPRECRANEOS": "ROMPECRÁNEOS",
     "SOBREPRESION": "SOBREPRESIÓN",
@@ -1187,6 +1189,9 @@
   },
   "condiciones_d": {
     "ABSORCION": "Absorber es robar recursos. Cuando un personaje absorbe algo de un objetivo, el personaje que lo sufre pierde lo absorbido y se lo da al personaje que absorbe. Absorber Salud no es igual que infligir daño, así que no se puede responder a este efecto con reacciones",
+    "FRAGIL": "Inmune a FRÁGIL",
+    "POLIMORFISMO": "Inmune a POLIMORFISMO",
+    "RESTRICCION": "Inmune a RESTRICCIÓN",
     "ABSORBER_SALUD_X": "Absorber es robar recursos. Cuando un personaje absorbe algo de un objetivo, el personaje que lo sufre pierde lo absorbido y se lo da al personaje que absorbe. Absorber Salud {x} no es igual que infligir daño, así que no se puede responder a este efecto con reacciones",
     "AC_ALCANCE_DE_CUBO": "Este termino se refiere al Alcance de un efecto, definido por el color del cubo gastado para usar la Habilidad o reaccion",
     "ACCION_DE_CUBO": "Este es el nombre de las acciones que un Héroe realiza gastando 1 cubo de acción. Durante su turno, un Héroe puede realizar hasta 2 acciones de cubo. Algunas acciones especiales pueden considerarse acciones de cubo, como activar una acción de Mover adicional gastando un CA. Las reacciones no se consideran acciones de cubo.",

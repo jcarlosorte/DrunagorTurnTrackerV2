@@ -3814,6 +3814,21 @@ Unit       222 tests
 E2E        85/85
 ```
 
+### 217.ª tanda — Iconos de inmunidades de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Iconos** | Añadidos POLIMORFISMO, MARCA DE MONTARAZ, FRÁGIL y RESTRICCIÓN a la lista de inmunidades | `estadosAlterados` |
+| **Traducciones** | Nombres y descripciones «Inmune a …» en español e inglés | i18n |
+| **Pruebas** | 223 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       223 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

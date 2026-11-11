@@ -134,7 +134,11 @@ export const INMUNIDADES = [
   { id: "VENENO_I", texto: "veneno", imagen: veneno },
   { id: "INTIMIDAR_I", imagen: intimidar },
   { id: "QUEMADURA_I", imagen: quemadura },
-  { id: "GRANDE", imagen: grande }
+  { id: "GRANDE", imagen: grande },
+  { id: "POLIMORFISMO", imagen: polimorfismo },
+  { id: "MARCA_DE_MONTARAZ", imagen: marca },
+  { id: "FRAGIL", imagen: fragil },
+  { id: "RESTRICCION", imagen: restriccion }
 ];
 
 export const CAPACIDADES_ACTIVADAS = [

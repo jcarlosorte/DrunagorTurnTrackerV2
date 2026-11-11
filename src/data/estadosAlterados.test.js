@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ESTADOS_ALTERADOS,
+  INMUNIDADES,
   getAllyStatusCatalog,
   getEnemyStatusCatalog,
   getHeroStatusCatalog,
@@ -90,5 +91,14 @@ describe('estados de la versión 2.0', () => {
       expect(ESTADOS_ALTERADOS.find((estado) => estado.id === id)?.max).toBe(1);
     });
     expect(ESTADOS_ALTERADOS.find((estado) => estado.id === 'SEMILLA_DEL_CAOS')?.max).toBe(4);
+  });
+});
+
+describe('inmunidades con icono', () => {
+  it('incluye las inmunidades de Despertar que no tenían icono', () => {
+    const idsInmunidad = INMUNIDADES.map((inmunidad) => inmunidad.id);
+    ['POLIMORFISMO', 'MARCA_DE_MONTARAZ', 'FRAGIL', 'RESTRICCION'].forEach((id) => {
+      expect(idsInmunidad).toContain(id);
+    });
   });
 });
