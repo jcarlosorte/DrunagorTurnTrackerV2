@@ -12,6 +12,7 @@ import { resolveCapabilityLabel } from '@/utils/enemyCapability';
 import { getAbilityColor } from '@/components/track/enemyVisuals';
 import { useGame } from '@/context/GameContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
+import EnemyRingControl from '@/components/EnemyRingControl';
 import { applyBossRuneEffect } from '@/utils/bossRunes';
 import { resolveSoulHarvesterTimeZero, formatEstadoAlterado } from '@/utils/soulHarvester';
 import { appendGameLog } from '@/utils/gameLog';
@@ -663,6 +664,8 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                 ))}
               </div>
             </section>
+
+            <EnemyRingControl enemy={enemy} labels={ti} />
 
           
         </div>

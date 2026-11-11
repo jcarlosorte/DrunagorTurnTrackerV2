@@ -4111,6 +4111,23 @@ Unit       227 tests
 E2E        86/86
 ```
 
+### 236.ª tanda — Gestión de anillos de enemigos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cambio** | Permite cambiar el anillo por otro libre del mismo tamaño | `EnemyRingControl` |
+| **Quitar** | Elimina el anillo y libera su color | `EnemyRingControl` |
+| **Intercambio** | Intercambia anillos con otro enemigo del mismo tamaño | `EnemyRingControl` |
+| **Vista** | El panel aparece al final de la ficha ampliada de los enemigos con anillo | `ModalEnemyCard` |
+| **Pruebas** | 227 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       227 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
