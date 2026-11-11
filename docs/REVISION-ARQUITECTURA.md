@@ -4193,13 +4193,13 @@ E2E        87/87
 | **Palabras clave** | Términos principales en mayúscula en las cartas del mazo | `CommanderCardModal` |
 | **Volteo** | Botón de voltear al pie de la ficha ampliada de estas cartas | `CommanderCardModal` |
 | **Fichas de Tiempo** | Gestión manual en ambas caras de Desesperación | `CommanderCardModal` |
-| **Pruebas** | 228 unitarios · 86 E2E | tests |
+| **Pruebas** | 228 unitarios · 87 E2E | tests |
 
 **Medición**
 
 ```text
 Unit       228 tests
-E2E        86/86
+E2E        87/87
 ```
 
 ### Pendiente / pospuesto
