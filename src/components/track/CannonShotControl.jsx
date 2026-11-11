@@ -6,7 +6,7 @@ import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { useTracker } from '@/context/TrackerContext';
 import { useInitRunes } from '@/context/initRunesContext';
 import { applyBossRuneEffect } from '@/utils/bossRunes';
-import { getCannonShotTimeTokens } from '@/utils/soulHarvester';
+import { getCannonShotTimeTokens, formatEstadoAlterado } from '@/utils/soulHarvester';
 import { appendGameLog } from '@/utils/gameLog';
 
 const SHOT_COLORS = [
@@ -69,7 +69,7 @@ export default function CannonShotControl({ onEndRound, className = '', labels =
 
     appendGameLog(
       'event',
-      `💥 Disparo de Cañón (${color.label}): se descargan ${loadedCannons.length} cañones, el Cosechador cambia a la runa ${color.label}, pierde 5 de vida y recibe ${color.condition} ${color.count}. Se añaden ${timeTokens.rune} Fichas de Tiempo a Furia y ${timeTokens.boss} al Cosechador. Se termina la ronda.`,
+      `💥 Disparo de Cañón (${color.label}): se descargan ${loadedCannons.length} cañones, el Cosechador cambia a la runa ${color.label}, pierde 5 de vida y recibe ${formatEstadoAlterado(color.condition, labels.estadosAlterados)} ${color.count}. Se añaden ${timeTokens.rune} Fichas de Tiempo a Furia y ${timeTokens.boss} al Cosechador. Se termina la ronda.`,
     );
     setOpen(false);
     onEndRound?.();

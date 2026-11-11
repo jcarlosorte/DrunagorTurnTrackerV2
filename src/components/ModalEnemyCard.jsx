@@ -13,7 +13,7 @@ import { getAbilityColor } from '@/components/track/enemyVisuals';
 import { useGame } from '@/context/GameContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { applyBossRuneEffect } from '@/utils/bossRunes';
-import { resolveSoulHarvesterTimeZero } from '@/utils/soulHarvester';
+import { resolveSoulHarvesterTimeZero, formatEstadoAlterado } from '@/utils/soulHarvester';
 import { appendGameLog } from '@/utils/gameLog';
 import BossRunesColumn from '@/components/track/BossRunesColumn';
 import boarBackground from '@/assets/interactions/runic.avif';
@@ -419,7 +419,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
         entry.enemy.uuid === enemy.uuid ? { ...entry, enemy: timeZero.enemy } : entry
       )));
       const statesText = timeZero.states.length > 0
-        ? timeZero.states.map((estado) => `${estado.id} ×${estado.count}`).join(', ')
+        ? timeZero.states.map((estado) => `${formatEstadoAlterado(estado.id, tea)} ×${estado.count}`).join(', ')
         : 'sin estados alterados';
       appendGameLog(
         'event',

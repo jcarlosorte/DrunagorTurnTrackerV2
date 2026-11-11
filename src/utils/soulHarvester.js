@@ -13,6 +13,37 @@ export function getCannonShotTimeTokens(heroCount) {
   return { rune: 2, boss: 1 };
 }
 
+const STATE_TRANSLATION_KEYS = {
+  ATURDIMIENTO_I: 'aturdimiento',
+  HEMORRAGIA_I: 'hemorragia',
+  QUEMADURA_I: 'quemadura',
+  VENENO_I: 'veneno',
+  DERRIBO_I: 'derribo',
+  LENTITUD_I: 'lentitud',
+  MARCA_DE_MONTARAZ: 'marca',
+  FRAGIL: 'fragil',
+  RESTRICCION: 'restriccion',
+  POLIMORFISMO: 'polimorfismo',
+};
+
+const STATE_FALLBACK_LABELS = {
+  ATURDIMIENTO_I: 'Aturdimiento',
+  HEMORRAGIA_I: 'Hemorragia',
+  QUEMADURA_I: 'Quemadura',
+  VENENO_I: 'Veneno',
+  DERRIBO_I: 'Derribo',
+  LENTITUD_I: 'Lentitud',
+  MARCA_DE_MONTARAZ: 'Marca de Montaraz',
+  FRAGIL: 'Frágil',
+  RESTRICCION: 'Restricción',
+  POLIMORFISMO: 'Polimorfismo',
+};
+
+/** Nombre visible de un estado alterado, sin confundirlo con su inmunidad. */
+export function formatEstadoAlterado(id, labels = {}) {
+  return labels[STATE_TRANSLATION_KEYS[id]] || STATE_FALLBACK_LABELS[id] || id;
+}
+
 /**
  * Si la Ficha de Tiempo ha llegado a 0, antes de limpiar los estados se
  * calcula el daño por el total de fichas de estados (sin TIEMPO). Después se

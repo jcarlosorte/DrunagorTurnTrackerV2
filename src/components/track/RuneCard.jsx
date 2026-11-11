@@ -7,7 +7,7 @@ import { useGame } from '@/context/GameContext';
 import { useInitRunes } from '@/context/initRunesContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { appendGameLog } from '@/utils/gameLog';
-import { resolveSoulHarvesterTimeZero, getSoulHarvesterTime } from '@/utils/soulHarvester';
+import { resolveSoulHarvesterTimeZero, getSoulHarvesterTime, formatEstadoAlterado } from '@/utils/soulHarvester';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { RUNAS } from '@/data/runas';
 import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
@@ -101,7 +101,7 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
     )));
     if (result.triggered) {
       const statesText = result.states.length > 0
-        ? result.states.map((estado) => `${estado.id} ×${estado.count}`).join(', ')
+        ? result.states.map((estado) => `${formatEstadoAlterado(estado.id, translations.estadosAlterados)} ×${estado.count}`).join(', ')
         : 'sin estados alterados';
       appendGameLog(
         'event',

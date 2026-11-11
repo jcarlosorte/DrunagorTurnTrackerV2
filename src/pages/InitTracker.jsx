@@ -102,7 +102,7 @@ import RestartGameDialog from '@/components/track/RestartGameDialog';
 import { boardSlotHeightFrom } from '@/components/track/trackLayout';
 import { CAMPAIGN_EXPANSIONS, getExpansionCampaigns, getScenarioExpansionIds } from '@/data/boxes';
 import { getCommanderCandidates } from '@/utils/commanderSelection';
-import { resolveSoulHarvesterTimeZero, getSoulHarvesterTime } from '@/utils/soulHarvester';
+import { resolveSoulHarvesterTimeZero, getSoulHarvesterTime, formatEstadoAlterado } from '@/utils/soulHarvester';
 
 
 const rolesPositionMap = {
@@ -2907,7 +2907,7 @@ const InitTracker = () => {
     if (!result?.triggered) return;
     const name = getEnemyName('soul_harvester_boss');
     const statesText = result.states.length > 0
-      ? result.states.map((estado) => `${estado.id} ×${estado.count}`).join(', ')
+      ? result.states.map((estado) => `${formatEstadoAlterado(estado.id, translations.estadosAlterados)} ×${estado.count}`).join(', ')
       : 'sin estados alterados';
     appendGameLog(
       'event',
