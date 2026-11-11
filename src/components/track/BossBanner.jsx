@@ -70,7 +70,7 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                             loading="lazy"
                             decoding="async"
                           />
-                          {(estado.count > 1 || estado.id === 'TIEMPO') && (
+                          {(estado.count > 1 || estado.id === 'ATURDIMIENTO_I') && (
                             <span className="absolute -right-1 -top-1 rounded-full bg-red-700 px-1 text-[0.55rem] font-black leading-3 text-white">
                               {estado.count || 0}
                             </span>

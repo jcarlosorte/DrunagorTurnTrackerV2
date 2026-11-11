@@ -22,8 +22,8 @@ export function applyBossRuneEffect(enemy, runeId) {
   } else {
     if (RUNE_IMMUNITY[runeId]) lost.add(RUNE_IMMUNITY[runeId]);
     if (runeId === 'azul') {
-      const index = estados.findIndex((estado) => estado.id === 'ATURDIMIENTO');
-      if (index === -1) estados.push({ id: 'ATURDIMIENTO', count: 1 });
+      const index = estados.findIndex((estado) => estado.id === 'ATURDIMIENTO_I');
+      if (index === -1) estados.push({ id: 'ATURDIMIENTO_I', count: 1 });
       else estados[index] = { ...estados[index], count: (estados[index].count || 0) + 1 };
     }
   }

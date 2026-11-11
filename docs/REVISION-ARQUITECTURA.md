@@ -3740,6 +3740,21 @@ Unit       221 tests
 E2E        85/85
 ```
 
+### 212.ª tanda — Aturdimiento visible en el Cosechador
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Estado** | La runa azul usa el identificador correcto de ATURDIMIENTO | `bossRunes`, `ModalEnemyCard` |
+| **Icono** | El estado aparece sobre el retrato con su contador visible | `BossBanner`, `ModalEnemyCard` |
+| **Pruebas** | 221 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       221 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

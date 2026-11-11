@@ -463,7 +463,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                           src={logo || estadoConfig.imagen}
                           alt={estadoConfig.texto}
                           className="w-6 h-6 border border-white rounded-full shadow-md" loading="lazy" decoding="async" />
-                        {(estado.count > 1 || (categoria === 'jefe' && estado.id === 'TIEMPO')) && (
+                        {(estado.count > 1 || (categoria === 'jefe' && estado.id === 'ATURDIMIENTO_I')) && (
                           <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1 rounded-full">
                             {estado.count}
                           </span>
@@ -545,8 +545,8 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                   )));
                   setEstadosLocal((prev) => {
                     if (runeId !== 'azul') return prev;
-                    const index = prev.findIndex((estado) => estado.id === 'ATURDIMIENTO');
-                    if (index === -1) return [...prev, { id: 'ATURDIMIENTO', count: 1 }];
+                    const index = prev.findIndex((estado) => estado.id === 'ATURDIMIENTO_I');
+                    if (index === -1) return [...prev, { id: 'ATURDIMIENTO_I', count: 1 }];
                     return prev.map((estado, i) => (i === index ? { ...estado, count: (estado.count || 0) + 1 } : estado));
                   });
                 }}
