@@ -3845,6 +3845,21 @@ Unit       225 tests
 E2E        85/85
 ```
 
+### 219.ª tanda — Recarga de cañones con Furia del Cosechador
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Furia** | Al llegar su Ficha de Tiempo a 0, recarga todos los cañones mágicos descargados | `RuneCard`, `InitTracker` |
+| **Historial** | Se registra cuántos cañones se recargan | `RuneCard`, `InitTracker` |
+| **Pruebas** | 225 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       225 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

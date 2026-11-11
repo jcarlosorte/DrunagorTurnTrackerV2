@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { RiArrowTurnBackLine, RiArrowTurnForwardLine } from 'react-icons/ri';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
+import { useGame } from '@/context/GameContext';
 import { useInitRunes } from '@/context/initRunesContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { appendGameLog } from '@/utils/gameLog';
@@ -41,6 +42,7 @@ const TONES = {
 export default function RuneCard({ rune, onRemove, flipped = false }) {
   const { translations } = useLanguage();
   const { trackerData } = useTracker();
+  const { magicCannons, setMagicCannonLoaded } = useGame();
   const { toggleRuneEffect, setRuneEstadoCount, setPlacedRunes } = useInitRunes();
   const { placedEnemies, setPlacedEnemies } = useInitEnemies();
   const [expanded, setExpanded] = useState(false);
@@ -75,7 +77,15 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
   };
 
   const reduceFuriaTime = () => {
-    setTiempo(tiempoCount - 1);
+    const nextTiempo = Math.max(0, tiempoCount - 1);
+    setTiempo(nextTiempo);
+    if (tiempoCount > 0 && nextTiempo === 0) {
+      const unloaded = magicCannons.filter((cannon) => !cannon.loaded);
+      unloaded.forEach((cannon) => setMagicCannonLoaded(cannon.id, true));
+      if (unloaded.length > 0) {
+        appendGameLog('event', `🔥 Furia del Cosechador: se recargan ${unloaded.length} cañones mágicos.`);
+      }
+    }
     const bossEntry = placedEnemies.find((entry) => entry.enemy?.id === 'soul_harvester_boss');
     if (!bossEntry || getSoulHarvesterTime(bossEntry.enemy) <= 0) return;
     const estados = [...(bossEntry.enemy.estadosAlterados || [])];

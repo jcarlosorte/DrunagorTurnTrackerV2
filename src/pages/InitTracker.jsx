@@ -3605,7 +3605,20 @@ const InitTracker = () => {
                 return updated;
             });
             const runeName = translations.scenarioCard?.[currentRune.id] || currentRune.nombre || currentRune.id;
-            if (currentRune.id === 'runa_despertar_furia') reduceSoulHarvesterTime();
+            if (currentRune.id === 'runa_despertar_furia') {
+              reduceSoulHarvesterTime();
+              if (skippedData.finished) {
+                const unloaded = magicCannons.filter((cannon) => !cannon.loaded);
+                unloaded.forEach((cannon) => setMagicCannonLoaded(cannon.id, true));
+                if (unloaded.length > 0) {
+                  appendGameLog(
+                    'event',
+                    `🔥 ${runeName}: se recargan ${unloaded.length} cañones mágicos.`,
+                    { round: roundRef.current, turn: turnIndex },
+                  );
+                }
+              }
+            }
             const template = ti.contadorCartaTerminado || 'El contador sobre la carta {carta} ha terminado.';
             if (mainBox === 'awakenings') {
               showScenarioToast(`⏳ ${runeName}: ${ti.tiempoReducido || 'Se reduce 1 Ficha de Tiempo'}`);
