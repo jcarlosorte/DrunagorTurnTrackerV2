@@ -489,6 +489,8 @@
     "bossRuneRed": "Pierde ARMADURA y ya no es inmune a",
     "bossRuneGreen": "Pierde ARMADURA y ya no es inmune a",
     "bossRuneBlue": "Pierde ARMADURA y ya no es inmune a",
+    "compactBoss": "Compactar jefe",
+    "expandBoss": "Expandir jefe",
     "contadorCartaTerminado": "El contador sobre la carta {carta} ha terminado.",
     "tiempoReducido": "Se reduce 1 Ficha de Tiempo",
     "reduce": "la Condición se reduce en",

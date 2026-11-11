@@ -4788,7 +4788,12 @@ const InitTracker = () => {
                       enemies={placedEnemies}
                       getEnemyName={getEnemyName}
                       onOpen={(uuid) => openEnemyModal?.(uuid)}
-                      labels={{ boss: ti.jefe || 'Jefe', open: ti.abrirFicha || 'Abrir ficha' }}
+                      labels={{
+                        boss: ti.jefe || 'Jefe',
+                        open: ti.abrirFicha || 'Abrir ficha',
+                        compactBoss: ti.compactBoss || 'Compactar jefe',
+                        expandBoss: ti.expandBoss || 'Expandir jefe',
+                      }}
                     />
                   )}
                   carousel={(
