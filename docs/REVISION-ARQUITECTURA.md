@@ -4079,6 +4079,23 @@ Unit       227 tests
 E2E        86/86
 ```
 
+### 234.ª tanda — Nodos compactos junto al track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Menú** | El panel de gestión vuelve a su formato completo | `NodosOscuridadPanel` |
+| **Track** | El panel lateral usa «Nodos de Oscuridad», «Nodo n» y hasta 3 por fila | `PilaStatusPanel` |
+| **Nodos** | Sin botón de añadir runa y sin distintivo de activo | `PilaStatusPanel` |
+| **Losetas** | Se mantiene «Loseta» en todas las pilas | i18n |
+| **Pruebas** | 227 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       227 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

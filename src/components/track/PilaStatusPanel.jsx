@@ -51,10 +51,10 @@ export default function PilaStatusPanel() {
       <div className="mb-2 flex items-center gap-1.5">
         <img src={pilaRunasIcon} alt="" className="h-5 w-5 rounded-full" />
         <h3 className="text-[0.7rem] font-bold uppercase tracking-wide text-yellow-300">
-          {t.gestionPila || 'Pilas y nodos'}
+          {t.trackNodesPanel || 'Nodos de Oscuridad'}
         </h3>
       </div>
-      <div className="grid grid-cols-2 gap-1.5">
+      <div className="grid grid-cols-3 gap-1.5">
         {entries.map((pila) => {
           const tiles = Array.isArray(pila.tiles) ? pila.tiles : [];
           const sortedTiles = [...tiles].sort((a, b) => (
@@ -66,6 +66,9 @@ export default function PilaStatusPanel() {
             : pila.kind === 'niebla'
               ? (t.nodo || 'Nodo')
               : (t.nodoOscuridad || 'Nodo de Oscuridad');
+          const displayLabel = pila.kind === 'oscuridad'
+            ? (t.nodoNumero || 'Nodo {n}').replace('{n}', pila.numPila)
+            : `${label} ${pila.numPila}`;
 
           const activate = () => {
             if (pila.kind === 'pila') activarPila(pila.id);
@@ -95,17 +98,19 @@ export default function PilaStatusPanel() {
                   onClick={activate}
                   className="w-full rounded bg-emerald-700 px-1.5 py-1 text-[0.55rem] font-bold text-white"
                 >
-                  {t.activar || 'Activar'} {label} {pila.numPila}
+                  {t.activar || 'Activar'} {displayLabel}
                 </button>
               ) : (
                 <>
                   <div className="flex items-center justify-between gap-1">
                     <span className="text-[0.6rem] font-bold text-slate-100">
-                      {label} {pila.numPila}
+                      {displayLabel}
                     </span>
-                    <span className="rounded bg-emerald-800 px-1 text-[0.5rem] font-bold text-emerald-100">
-                      {pila.estado}
-                    </span>
+                    {pila.kind !== 'oscuridad' && (
+                      <span className="rounded bg-emerald-800 px-1 text-[0.5rem] font-bold text-emerald-100">
+                        {pila.estado}
+                      </span>
+                    )}
                   </div>
 
                   <label className="mt-1 block text-[0.5rem] text-slate-400">
@@ -137,13 +142,15 @@ export default function PilaStatusPanel() {
                   </div>
 
                   <div className="mt-1 flex flex-wrap gap-1">
-                    <button
-                      type="button"
-                      onClick={addTile}
-                      className="rounded bg-sky-700 px-1.5 py-0.5 text-[0.5rem] font-bold text-white"
-                    >
-                      + {t.addRunaToPila || 'Runa'}
-                    </button>
+                    {pila.kind !== 'oscuridad' && (
+                      <button
+                        type="button"
+                        onClick={addTile}
+                        className="rounded bg-sky-700 px-1.5 py-0.5 text-[0.5rem] font-bold text-white"
+                      >
+                        + {t.addRunaToPila || 'Runa'}
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={romper}

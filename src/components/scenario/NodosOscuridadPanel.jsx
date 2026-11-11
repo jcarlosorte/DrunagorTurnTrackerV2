@@ -12,6 +12,7 @@ export default function NodosOscuridadPanel() {
     nodosOscuridad,
     addNewNodoOscuridad,
     activarNodoOscuridad,
+    addTileToNodoOscuridad,
     placeTilesFromNodoOscuridadToTrack,
     codigosPilas,
     handleCodigoChange,
@@ -35,18 +36,15 @@ export default function NodosOscuridadPanel() {
         ➕ {t.addNodoOscuridad || 'Añadir Nodo de Oscuridad'}
       </button>
 
-      <div className="grid grid-cols-3 justify-center gap-1">
-        {nodosOscuridad.map((nodo, index) => {
-          const numero = nodo.numPila || index + 1;
-          const titulo = (t.nodoNumero || 'Nodo {n}').replace('{n}', numero);
-          return (
-          <div key={nodo.id} className="track-surface-raised min-w-0 p-1.5 text-center text-white">
+      <div className="grid grid-cols-2 justify-center gap-2 md:grid-cols-3">
+        {nodosOscuridad.map((nodo) => (
+          <div key={nodo.id} className="track-surface-raised p-2 text-center text-white">
             {nodo.estado === 'reserva' ? (
               <>
-                <div className="mb-1 truncate text-[0.65rem] font-bold">{titulo} 🗃️</div>
+                <div className="mb-2 font-bold">{t.nodoOscuridad || 'Nodo de Oscuridad'} 🗃️</div>
                 <button
                   type="button"
-                  className="state-btn-add rounded px-1.5 py-0.5 text-[0.6rem] text-white"
+                  className="state-btn-add rounded px-3 py-1 text-xs text-white"
                   onClick={() => activarNodoOscuridad(nodo.id)}
                 >
                   ✅ {t.activaNodoOscuridad || 'Activar Nodo de Oscuridad'}
@@ -54,32 +52,39 @@ export default function NodosOscuridadPanel() {
               </>
             ) : (
               <>
-                <div className="mb-1 flex flex-col items-center gap-0.5">
-                  <span className="truncate text-[0.65rem] font-bold">{titulo} 🗃️</span>
+                <div className="mb-1 font-bold">
+                  <span>{t.nodoOscuridad || 'Nodo de Oscuridad'} 🗃️</span>
                   <input
                     type="text"
                     maxLength={5}
                     value={codigosPilas[nodo.id] || ''}
                     onChange={(event) => handleCodigoChange(nodo.id, event.target.value)}
-                    className="min-h-8 w-16 rounded border border-slate-600 bg-slate-900 px-1 text-center text-[0.65rem] text-white"
+                    className="min-h-11 w-[80px] rounded-lg border border-slate-600 bg-slate-900 px-2 text-center text-xs text-white"
                     placeholder="ABC12"
                     title={t.codigoPila}
                   />
                 </div>
-                <div className="mb-1 text-[0.6rem] text-slate-300">
+                <div className="mb-2 text-xs text-slate-300">
                   {t.tamano}: {nodo.tiles.length}
                 </div>
-                <div className="flex flex-col items-center gap-0.5">
+                <div className="flex flex-col items-center gap-1">
                   <button
                     type="button"
-                    className="state-btn-remove rounded px-1.5 py-0.5 text-[0.6rem] text-white"
+                    className="state-btn-add rounded px-3 py-1 text-xs text-white"
+                    onClick={() => addTileToNodoOscuridad(nodo.id)}
+                  >
+                    {t.addRunaToPila}
+                  </button>
+                  <button
+                    type="button"
+                    className="state-btn-remove rounded px-3 py-1 text-xs text-white"
                     onClick={() => openRompenodo('oscuridad', nodo)}
                   >
                     {t.rompenodo || 'Rompenodo'}
                   </button>
                   <button
                     type="button"
-                    className="rounded bg-red-900 px-1.5 py-0.5 text-[0.6rem] text-white hover:bg-red-800"
+                    className="rounded bg-red-900 px-3 py-1 text-xs text-white hover:bg-red-800"
                     onClick={() => {
                       const tiles = placeTilesFromNodoOscuridadToTrack(nodo.id);
                       if (!tiles || tiles.length === 0) alert(t.emptyPila || 'Pila vacía');
@@ -91,8 +96,7 @@ export default function NodosOscuridadPanel() {
               </>
             )}
           </div>
-          );
-        })}
+        ))}
       </div>
       {rompenodoDialog}
     </div>
