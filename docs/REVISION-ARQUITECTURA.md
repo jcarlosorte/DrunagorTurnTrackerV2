@@ -3670,6 +3670,24 @@ Unit       218 tests
 E2E        85/85
 ```
 
+### 208.ª tanda — Estados e inmunidades del Cosechador
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Estados** | Los estados de los jefes se muestran sobre el retrato, incluida la Ficha de Tiempo a 0 | `BossBanner`, `ModalEnemyCard` |
+| **Furia** | La runa Furia retira 1 Ficha de Tiempo a la carta y al Cosechador | `RuneCard` |
+| **Marcha** | Comprueba el `invoca` del jefe y genera 1/2/3 esbirros si no hay ninguno | `InitTracker`, `cartasEspeciales` |
+| **Semilla/Lazo** | Solo disponibles para héroes mientras el Cosechador esté en juego | `ModalHeroCard` |
+| **Inmunidades** | ARMADURA descrita; GRANDE implica POLIMORFISMO en Despertar; inmunidades del Cosechador ampliadas | `enemies`, i18n |
+| **Pruebas** | 218 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       218 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

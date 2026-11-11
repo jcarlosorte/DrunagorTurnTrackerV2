@@ -11,7 +11,6 @@ import BossRunesColumn from './BossRunesColumn';
 export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels = {} }) {
   const { translations } = useLanguage();
   const immunityLabels = translations.condiciones_d || {};
-  const tiempoConfig = ESTADOS_ALTERADOS.find((estado) => estado.id === 'TIEMPO');
   const jefes = enemies.filter((entry) => (
     entry?.enemy?.categoria === 'jefe' && entry.enemy.tipo !== 'especial'
   ));
@@ -30,7 +29,9 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
           const nombre = getEnemyName?.(enemy.id, enemy.color) || enemy.nombre || enemy.id;
           const isSoulHarvester = enemy.id === 'soul_harvester_boss';
           const activeBossRune = enemy.bossRune || 'gris';
-          const tiempoCount = (enemy.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
+          const visibleStatuses = (enemy.estadosAlterados || []).filter(
+            (estado) => (estado.count || 0) > 0 || estado.id === 'TIEMPO',
+          );
 
           return (
             <button
@@ -52,6 +53,30 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                 ) : (
                   <span className="flex h-full w-full items-center justify-center text-slate-600">☠</span>
                 )}
+                {visibleStatuses.length > 0 && (
+                  <span className="absolute left-1 top-1 flex flex-col gap-0.5">
+                    {visibleStatuses.map((estado) => {
+                      const config = ESTADOS_ALTERADOS.find((item) => item.id === estado.id);
+                      if (!config) return null;
+                      return (
+                        <span key={estado.id} className="relative block">
+                          <img
+                            src={config.imagen}
+                            alt=""
+                            className="h-5 w-5 rounded-full border border-white/80 bg-slate-950/80 shadow"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          {(estado.count > 1 || estado.id === 'TIEMPO') && (
+                            <span className="absolute -right-1 -top-1 rounded-full bg-red-700 px-1 text-[0.55rem] font-black leading-3 text-white">
+                              {estado.count || 0}
+                            </span>
+                          )}
+                        </span>
+                      );
+                    })}
+                  </span>
+                )}
               </span>
 
               <span className="flex min-w-0 flex-col gap-1">
@@ -70,12 +95,6 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                   <span className="font-mono text-xs font-bold tabular-nums text-white sm:text-sm">
                     {vida}/{vidaMax}
                   </span>
-                  {tiempoConfig && (
-                    <span className="flex items-center gap-1 rounded bg-slate-900/80 px-1.5 py-0.5" title={labels.tiempo || 'Ficha de Tiempo'}>
-                      <img src={tiempoConfig.imagen} alt="" className="h-4 w-4 rounded-full border border-white/70" />
-                      <span className="font-mono text-[0.65rem] font-bold tabular-nums text-white">{tiempoCount}</span>
-                    </span>
-                  )}
                 </span>
 
                 {(enemy.inmunidad || []).length > 0 && (
@@ -96,18 +115,6 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                         />
                       );
                     })}
-                  </span>
-                )}
-                {(enemy.estadosAlterados || []).filter((estado) => (estado?.count || 0) > 0).length > 0 && (
-                  <span className="flex flex-wrap gap-1 text-[0.65rem] font-semibold text-slate-300">
-                    {(enemy.estadosAlterados || [])
-                      .filter((estado) => (estado?.count || 0) > 0)
-                      .slice(0, 4)
-                      .map((estado) => (
-                        <span key={estado.id} className="rounded bg-red-900/70 px-1.5 py-0.5 text-red-100">
-                          {estado.id.replace(/_[IV]+$/, '')} ×{estado.count}
-                        </span>
-                      ))}
                   </span>
                 )}
               </span>

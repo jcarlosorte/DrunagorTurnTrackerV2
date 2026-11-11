@@ -2872,6 +2872,22 @@ const InitTracker = () => {
         removeEnemyByUUID(enemy.uuid);
         return false;
       }
+
+      // Marcha del Corrompido: si no hay esbirros del tipo que invoca el jefe,
+      // genera el grupo de asalto según el número de héroes.
+      if (enemy.id === 'boss_22') {
+        const boss = placedEnemies.find((entry) => entry.enemy.uuid === enemy.sourceEnemyUUID)?.enemy;
+        const minionId = boss?.invoca || 'fallen_woodcutter';
+        const hasMinion = placedEnemies.some((entry) => entry.enemy.id === minionId);
+        if (!hasMinion) {
+          const totalHeroes = trackerData.placedHeroes?.length || trackerData.heroes?.length || 0;
+          const quantity = totalHeroes <= 2 ? 1 : totalHeroes <= 4 ? 2 : 3;
+          for (let i = 0; i < quantity; i += 1) {
+            handleManualEnemyAdd(minionId, undefined, 'esbirro', 'NoShow');
+          }
+          showScenarioToast(`🐾 ${quantity} × ${tee?.[minionId] || minionId}`);
+        }
+      }
   
       // Estados (fase inicio)
       const { enemy: actualizadoEstados, logs: logsEstados } = aplicarEfectosEstados(enemy, "inicio");

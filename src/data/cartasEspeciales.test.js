@@ -57,5 +57,6 @@ describe('cartas del Cosechador de Almas', () => {
       'gris-abajo',
       'azul-abajo',
     ]);
+    expect(deck.find((carta) => carta.id === 'boss_22')?.invoca).toBe('fallen_woodcutter');
   });
 });

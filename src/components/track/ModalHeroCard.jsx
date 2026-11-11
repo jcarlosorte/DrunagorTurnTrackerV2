@@ -4,6 +4,7 @@ import useGlossary from '@/hooks/useGlossary';
 import { useRules } from '@/context/RulesContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
+import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { HEROES } from '@/data/heroes';
 import { getHeroClass } from '@/data/heroClasses';
 import HeroPortrait from '@/components/HeroPortrait';
@@ -82,6 +83,7 @@ const STAT_LABELS = {
 export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpenCompanion }) {
   const { language, translations } = useLanguage();
   const { trackerData, setTrackerData } = useTracker();
+  const { placedEnemies } = useInitEnemies();
   const { mainBox } = useExpansions();
   const dialogRef = useRef(null);
   const closeRef = useRef(null);
@@ -166,7 +168,13 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
 
   // Iconos de estado alterado (quemadura, veneno, escudo…), igual que en enemigos.
   const estadosActivos = (extras.estadosAlterados || []).filter((estado) => estado.count > 0);
-  const estadosAlteradosDisponibles = getHeroStatusCatalog(heroId, rulesVersion);
+  const estadosAlteradosDisponibles = getHeroStatusCatalog(heroId, rulesVersion)
+    .filter((estado) => {
+      const soulBossOnly = ['SEMILLA_DEL_CAOS', 'LAZO_DE_ALMA'].includes(estado.id);
+      if (!soulBossOnly) return true;
+      const alreadyActive = (extras.estadosAlterados || []).some((item) => item.id === estado.id && (item.count || 0) > 0);
+      return alreadyActive || placedEnemies.some((entry) => entry.enemy?.id === 'soul_harvester_boss');
+    });
   const countAlterado = (id) => (extras.estadosAlterados || []).find((item) => item.id === id)?.count || 0;
   // Inmunidades: solo si los datos del héroe las definen.
   const inmunidades = Array.isArray(hero?.inmunidad) ? hero.inmunidad : [];

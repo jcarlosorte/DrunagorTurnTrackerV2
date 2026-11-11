@@ -4,6 +4,7 @@ import { RiArrowTurnBackLine, RiArrowTurnForwardLine } from 'react-icons/ri';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
 import { useInitRunes } from '@/context/initRunesContext';
+import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { RUNAS } from '@/data/runas';
 import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
@@ -39,6 +40,7 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
   const { translations } = useLanguage();
   const { trackerData } = useTracker();
   const { toggleRuneEffect, setRuneEstadoCount, setPlacedRunes } = useInitRunes();
+  const { placedEnemies, setPlacedEnemies } = useInitEnemies();
   const [expanded, setExpanded] = useState(false);
 
   const tipo = rune.tipo;
@@ -68,6 +70,18 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
   const setTiempo = (next) => {
     const max = tiempoConfig?.max || 4;
     setRuneEstadoCount(rune.uuid, 'TIEMPO', Math.max(0, Math.min(max, next)));
+  };
+
+  const reduceFuriaTime = () => {
+    setTiempo(tiempoCount - 1);
+    setPlacedEnemies((prev) => prev.map((entry) => {
+      if (entry.enemy?.id !== 'soul_harvester_boss') return entry;
+      const estados = [...(entry.enemy.estadosAlterados || [])];
+      const index = estados.findIndex((estado) => estado.id === 'TIEMPO');
+      if (index === -1) estados.push({ id: 'TIEMPO', count: 0 });
+      else estados[index] = { ...estados[index], count: Math.max(0, (estados[index].count || 0) - 1) };
+      return { ...entry, enemy: { ...entry.enemy, estadosAlterados: estados } };
+    }));
   };
 
   const canFlip = tipo === 'runa' || tipo === 'incursion';
@@ -209,6 +223,16 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
                   <p className="mt-2 text-[0.7rem] leading-relaxed text-amber-100/70">
                     {ti.tiempoCartaAyuda || 'Al llegar el turno de esta carta se retira 1 ficha de tiempo.'}
                   </p>
+                  {rune.id === 'runa_despertar_furia' && (
+                    <button
+                      type="button"
+                      onClick={reduceFuriaTime}
+                      disabled={tiempoCount <= 0 && !placedEnemies.some((entry) => entry.enemy?.id === 'soul_harvester_boss')}
+                      className="mt-2 min-h-8 w-full rounded-lg bg-amber-700 px-2 text-[0.65rem] font-bold text-white hover:bg-amber-600 disabled:opacity-40"
+                    >
+                      {ti.runaFuriaTime || 'Retirar 1 Ficha de Tiempo de esta carta y del Cosechador'}
+                    </button>
+                  )}
                 </div>
               )}
 
