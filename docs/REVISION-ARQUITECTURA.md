@@ -4181,6 +4181,27 @@ Unit       228 tests
 E2E        87/87
 ```
 
+### 240.ª tanda — Ajustes de texto y presentación del Rey Avivado
+
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **X calculada** | Las cartas muestran el valor de X según las runas | `CommanderCardModal` |
+| **Resúmenes** | Los avisos usan el daño calculado y ya no dicen «resuelve manualmente» | `InitTracker` |
+| **Invocaciones** | Las Pesadillas respetan máximo 4 por tipo y 12 totales, con aviso si no caben | `InitTracker` |
+| **CONDICIONES** | La Oscuridad se Extiende resuelve las condiciones del Rey Avivado | `InitTracker` |
+| **Palabras clave** | Términos principales en mayúscula en las cartas del mazo | `CommanderCardModal` |
+| **Volteo** | Botón de voltear al pie de la ficha ampliada de estas cartas | `CommanderCardModal` |
+| **Fichas de Tiempo** | Gestión manual en ambas caras de Desesperación | `CommanderCardModal` |
+| **Pruebas** | 228 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       228 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

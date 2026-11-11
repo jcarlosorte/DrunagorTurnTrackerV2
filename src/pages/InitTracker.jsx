@@ -2350,6 +2350,7 @@ const InitTracker = () => {
     const cardEntry = placedEnemies.find((entry) => entry.enemy.uuid === cartaEspecial.uuid);
     const card = { ...(cardEntry?.enemy || {}), ...cartaEspecial };
     const time = (card.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
+    const runeCount = getRuneCount(card.rune);
     const logs = [];
 
     const setKing = (patch) => setPlacedEnemies((prev) => prev.map((entry) => (
@@ -2390,13 +2391,21 @@ const InitTracker = () => {
     };
 
     const summonNightmares = (count) => {
+      const existing = placedEnemies.filter((entry) => entry.enemy.id === 'nightmare').length;
+      const totalMonsters = placedEnemies.filter((entry) => entry.enemy.tipo !== 'especial').length;
+      const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
+      const actual = Math.min(count, capacity);
+      if (actual < count) {
+        showScenarioToast(`⚠️ ${ti.siegeNoCapacity || 'No hay espacio para invocar más monstruos'}`);
+      }
       let small = [...usedColors];
-      for (let index = 0; index < count; index += 1) {
+      for (let index = 0; index < actual; index += 1) {
         const ring = getNextAvailableColorSimulated(false, small, []) || 'noColor';
         if (ring !== 'noColor') small.push(ring);
         handleManualEnemyAdd('nightmare', undefined, 'esbirro', 'NoShow', ring);
       }
-      logs.push(`🐾 Se generan ${count} Pesadillas.`);
+      logs.push(`🐾 Se generan ${actual} Pesadillas${actual < count ? ` (${count - actual} sin espacio)` : ''}.`);
+      return actual;
     };
 
     const summonCommander = async () => {
@@ -2461,7 +2470,7 @@ const InitTracker = () => {
         processedCardsRef.current.delete(card.uuid);
         logs.push('🃏 La carta se voltea a Sabotaje de Cadáveres.');
       } else {
-        logs.push('💥 Sabotaje de Cadáveres: resuelve manualmente activación, explosión y retirada del esbirro.');
+        logs.push(`💥 Sabotaje de Cadáveres: activa al esbirro más débil, inflige ${runeCount} de DAÑO a cada héroe adyacente y retíralo del tablero.`);
         setPlacedEnemies((prev) => prev.map((entry) => (
           entry.enemy.uuid === card.uuid ? flipCard(entry, 'A') : entry
         )));
@@ -2477,29 +2486,29 @@ const InitTracker = () => {
         { title: 'Extenuar' },
       ), 10) || 0;
       const count = Math.max(0, Math.min(numHeroes, input));
-      summonNightmares(count);
-      logs.push(`⚡ Extenuar: daño X y Fatiga 2 a todos los héroes. Se generan ${count} Pesadillas.`);
+      const summoned = summonNightmares(count);
+      logs.push(`⚡ Extenuar: ${runeCount} de DAÑO y FATIGA 2 a todos los héroes. Se generan ${summoned} Pesadillas.`);
       return { logs };
     }
 
     if (card.id === 'boss_29') {
-      const commander = placedEnemies.find((entry) => entry.enemy.id === 'soul_harvester')?.enemy;
-      if (commander) {
-        const { enemy: withStates, logs: stateLogs } = aplicarEfectosEstados(commander, 'inicio');
+      const conditionTarget = kingEntry.enemy;
+      if (conditionTarget) {
+        const { enemy: withStates, logs: stateLogs } = aplicarEfectosEstados(conditionTarget, 'inicio');
         const { vida, estados, logs: capacityLogs } = aplicarCapacidadesActivadas(withStates, placedEnemies);
         setPlacedEnemies((prev) => prev.map((entry) => (
-          entry.enemy.uuid === commander.uuid
+          entry.enemy.uuid === conditionTarget.uuid
             ? { ...entry, enemy: { ...withStates, vida, estadosAlterados: estados } }
             : entry
         )));
         logs.push(...stateLogs, ...capacityLogs);
       }
-      logs.push('🌑 La Oscuridad se Extiende: resuelve manualmente asalto, daño X y Aura Sombría.');
+      logs.push(`🌑 La Oscuridad se Extiende: activa CONDICIONES del Rey Avivado, asalta al héroe más corrompido e inflige ${runeCount} de DAÑO y AURA SOMBRÍA a los héroes apartados.`);
       return { logs };
     }
 
     if (card.id === 'boss_30') {
-      logs.push('🌱 Esparce las Semillas: resuelve manualmente el área, daño X y Maldición 2.');
+      logs.push(`🌱 Esparce las Semillas: ataca a los personajes del área del héroe menos corrompido e inflige ${runeCount} de DAÑO y MALDICIÓN 2.`);
       return { logs };
     }
 

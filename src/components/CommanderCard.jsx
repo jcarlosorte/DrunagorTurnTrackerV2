@@ -16,6 +16,7 @@ const CommanderCard = ({ carta }) => {
   
   const nombre = ta.nombre?.[carta.capacidades] || ta.nombre?.[carta.id] || carta.nombre;
   const nombreEnemy = carta.nombreEnemy;
+  const tiempoCount = (carta.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
   const tone = getEnemyTone(carta.color, carta.categoria);
   // 🎨 Clases visuales condicionales por tipo
   const ringClass =
@@ -79,6 +80,11 @@ const CommanderCard = ({ carta }) => {
           className={`cursor-custom relative w-full aspect-square overflow-hidden p-2 rounded-lg border-2 shadow-md hover:scale-105 transition
             ${carta.highlight ? ringClass : borderClass}`}
         >
+          {tiempoCount > 0 && (
+            <span className="absolute right-1 top-1 z-10 flex items-center gap-0.5 rounded-full bg-slate-950/90 px-1 py-0.5 text-[0.55rem] font-bold text-amber-100">
+              ⏳ {tiempoCount}
+            </span>
+          )}
 
           {/* Fondo al estilo de los héroes, con el tono del enemigo */}
           <div className="absolute inset-0 overflow-hidden rounded-lg" aria-hidden="true">

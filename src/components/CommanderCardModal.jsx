@@ -5,7 +5,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useGame } from '@/context/GameContext';
 import { useTracker } from '@/context/TrackerContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
-import { CARTAS_COMANDANTE } from '@/data/cartasEspeciales';
+import { CARTAS_COMANDANTE, CARTAS_JEFE } from '@/data/cartasEspeciales';
 import { formatCardText } from '@/utils/cardText';
 
 const CommanderCardModal = ({ carta, onClose, onDelete }) => {
@@ -27,7 +27,8 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   }, [onClose]);
   const ta = translations.cartas_ataque || {};
   const ttr = translations.defensaCard.cartas_trad || {};
-  const { placedEnemies } = useInitEnemies();
+  const ti = translations.trackerInit || {};
+  const { placedEnemies, setPlacedEnemies } = useInitEnemies();
   const commander = placedEnemies.find((entry) => entry.enemy.uuid === carta.sourceEnemyUUID)?.enemy;
   const baseAttack = Number(commander?.ataque) || 0;
   const selectedHeroes = trackerData.heroes;
@@ -35,8 +36,50 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   const numRunasColor = getRuneCount(carta.id === 'cmd_12' ? 'azul' : carta.rune);
   const nombre = ta.nombre?.[carta.capacidades] || ta.nombre?.[carta.id] || carta.nombre;
   const nombreEnemy = carta.nombreEnemy;
+  const isWakenedCard = ['boss_26', 'boss_27', 'boss_28', 'boss_29', 'boss_30'].includes(carta.id);
+  const timeCount = (carta.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
+  const setTime = (next) => {
+    const count = Math.max(0, Math.min(4, next));
+    setPlacedEnemies((prev) => prev.map((entry) => {
+      if (entry.enemy.uuid !== carta.uuid) return entry;
+      const estados = [...(entry.enemy.estadosAlterados || [])];
+      const index = estados.findIndex((estado) => estado.id === 'TIEMPO');
+      if (index === -1) estados.push({ id: 'TIEMPO', count });
+      else estados[index] = { ...estados[index], count };
+      return { ...entry, enemy: { ...entry.enemy, estadosAlterados: estados } };
+    }));
+  };
+  const flipWakenedCard = () => {
+    const hasBack = CARTAS_JEFE.some((item) => item.id === carta.id && item.cara === 'B');
+    if (!hasBack) {
+      setPlacedEnemies((prev) => prev.map((entry) => (
+        entry.enemy.uuid === carta.uuid
+          ? { ...entry, enemy: { ...entry.enemy, bocaAbajo: !entry.enemy.bocaAbajo } }
+          : entry
+      )));
+      return;
+    }
+    const nextFace = carta.cara === 'A' ? 'B' : 'A';
+    const definition = CARTAS_JEFE.find((item) => item.id === carta.id && item.cara === nextFace);
+    setPlacedEnemies((prev) => prev.map((entry) => {
+      if (entry.enemy.uuid !== carta.uuid) return entry;
+      const estados = (entry.enemy.estadosAlterados || []).map((estado) => (
+        estado.id === 'TIEMPO' ? { ...estado, count: 2 } : estado
+      ));
+      return {
+        ...entry,
+        enemy: {
+          ...entry.enemy,
+          cara: nextFace,
+          capacidades: definition?.capacidades || entry.enemy.capacidades,
+          bocaAbajo: false,
+          estadosAlterados: estados,
+        },
+      };
+    }));
+  };
   
-  let capacidad = ta.capacidad?.[carta.id] || carta.capacidad;
+  let capacidad = ta.capacidad?.[carta.capacidades] || ta.capacidad?.[carta.id] || carta.capacidad;
   
   if (capacidad) {
     // 1. Sustituimos valores numéricos dinámicos
@@ -47,6 +90,12 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
       .replaceAll('{2*X}', numRunasColor * 2)
       .replaceAll('{3*X}', numRunasColor * 3)
       .replaceAll('{4*X}', numRunasColor * 4);
+    if (isWakenedCard) {
+      capacidad = capacidad
+        .replace(/\bX\b/g, String(numRunasColor))
+        .replace(/\b(daño|fatiga|aura sombría|maldición|pesadillas?|condiciones)\b/gi, (word) => word.toUpperCase())
+        .replace(/\b(damage|fatigue|dark aura|curse|nightmares?|conditions)\b/gi, (word) => word.toUpperCase());
+    }
   
     // 2. Buscamos todas las palabras entre {}
     const regex = /\{([^}]+)\}/g;
@@ -243,7 +292,24 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
           )}
         </div>
 
+        {isWakenedCard && carta.id === 'boss_26' && (
+          <div className="mx-4 mb-2 flex flex-wrap items-center justify-center gap-2 rounded-lg border border-sky-700/60 bg-sky-950/40 px-2 py-1.5 text-xs text-sky-100">
+            <span className="font-bold uppercase">{ti.fichasTiempo || 'Fichas de Tiempo'}: {timeCount}</span>
+            <button type="button" onClick={() => setTime(timeCount - 1)} disabled={timeCount <= 0} className="rounded bg-slate-700 px-2 py-0.5 font-bold disabled:opacity-40">−</button>
+            <button type="button" onClick={() => setTime(timeCount + 1)} className="rounded bg-sky-700 px-2 py-0.5 font-bold">+</button>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-700/80 px-5 py-3">
+          {isWakenedCard && (
+            <button
+              type="button"
+              onClick={flipWakenedCard}
+              className="min-h-9 rounded-lg border border-violet-500/50 bg-violet-900/50 px-3 text-xs font-bold text-violet-100 hover:bg-violet-800/60"
+            >
+              🔄 {ti.flipCard || 'Voltear carta'}
+            </button>
+          )}
           {onDelete && (
             <button
               type="button"
