@@ -4000,6 +4000,21 @@ Unit       227 tests
 E2E        86/86
 ```
 
+### 229.ª tanda — Reducción manual de Furia unificada
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Vista ampliada** | Reducir la Ficha de Tiempo desde el contador aplica también la reducción al Cosechador y la recarga de cañones al llegar a 0 | `RuneCard` |
+| **Botón** | El botón específico de Furia usa la misma lógica | `RuneCard` |
+| **Pruebas** | 227 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       227 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

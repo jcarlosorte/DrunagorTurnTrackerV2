@@ -73,12 +73,18 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
   const tiempoCount = tiempoEstado?.count || 0;
   const setTiempo = (next) => {
     const max = tiempoConfig?.max || 4;
-    setRuneEstadoCount(rune.uuid, 'TIEMPO', Math.max(0, Math.min(max, next)));
+    const clamped = Math.max(0, Math.min(max, next));
+    setRuneEstadoCount(rune.uuid, 'TIEMPO', clamped);
+    if (
+      rune.id === 'runa_despertar_furia'
+      && clamped < tiempoCount
+      && tiempoCount > 0
+    ) {
+      applyFuriaDecrease(clamped);
+    }
   };
 
-  const reduceFuriaTime = () => {
-    const nextTiempo = Math.max(0, tiempoCount - 1);
-    setTiempo(nextTiempo);
+  const applyFuriaDecrease = (nextTiempo) => {
     if (tiempoCount > 0 && nextTiempo === 0) {
       const unloaded = magicCannons.filter((cannon) => !cannon.loaded);
       unloaded.forEach((cannon) => setMagicCannonLoaded(cannon.id, true));
@@ -108,6 +114,10 @@ export default function RuneCard({ rune, onRemove, flipped = false }) {
         `⏳ Cosechador de Almas: Ficha de Tiempo a 0. Estados: ${statesText}. Pierde ${result.damage} de vida (${result.vidaAntes} → ${result.vidaDespues}). Se selecciona la runa gris.`,
       );
     }
+  };
+
+  const reduceFuriaTime = () => {
+    setTiempo(tiempoCount - 1);
   };
 
   const canFlip = tipo === 'runa' || tipo === 'incursion';
