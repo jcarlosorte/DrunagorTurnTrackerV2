@@ -3925,6 +3925,20 @@ Unit       226 tests
 E2E        86/86
 ```
 
+### 224.ª tanda — Eventos de incursión en su turno del historial
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Historial** | El encabezado del turno se registra antes de los avisos de runa/incursión y se evita duplicarlo | `InitTracker` |
+| **Pruebas** | 226 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       226 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

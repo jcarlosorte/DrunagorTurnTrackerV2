@@ -3207,23 +3207,33 @@ const InitTracker = () => {
   // Registro del turno activo: quién actúa y en qué ronda.
   // Se declara antes de los efectos del turno para que el historial abra el
   // grupo de la carta antes de registrar sus avisos de runa o incursión.
+  const loggedTurnHeaderRef = useRef(null);
+  const logCurrentTurnHeader = (entity = currentTurnEntity) => {
+    if (!entity) return;
+    const entityId = entity.id || entity.uuid;
+    const signature = `${roundRef.current}-${turnIndex}-${entityId}`;
+    if (loggedTurnHeaderRef.current === signature) return;
+    loggedTurnHeaderRef.current = signature;
+    const label = resolveEntityLabel({ id: entity.id, name: entity.name, translations });
+    appendGameLog('turn', `Turno de ${label}`, {
+      round: roundRef.current,
+      turn: turnIndex,
+      type: entity.type,
+    });
+  };
+
   useEffect(() => {
     if (!currentTurnEntity) return;
     const id = currentTurnEntity.id || currentTurnEntity.uuid;
-    const label = resolveEntityLabel({ id: currentTurnEntity.id, name: currentTurnEntity.name, translations });
 
     // Rastro para el carrusel: solo cuando cambia la entidad.
     const trail = turnTrailRef.current;
     if (trail[trail.length - 1]?.id !== id) {
-      trail.push({ id, name: label, type: currentTurnEntity.type });
+      trail.push({ id, name: resolveEntityLabel({ id: currentTurnEntity.id, name: currentTurnEntity.name, translations }), type: currentTurnEntity.type });
       if (trail.length > 6) trail.shift();
     }
 
-    appendGameLog('turn', `Turno de ${label}`, {
-      round: roundRef.current,
-      turn: turnIndex,
-      type: currentTurnEntity.type,
-    });
+    logCurrentTurnHeader(currentTurnEntity);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTurnEntity?.uuid, currentTurnEntity?.id]);
 
@@ -4444,6 +4454,7 @@ const InitTracker = () => {
   }, [turnSignature]);
 
   const showScenarioToast = (message, action = null, action2 = null, extra = null) => {
+    logCurrentTurnHeader();
     const id = createId();
     // Máximo 5 avisos visibles y cierre automático para no tapar el tablero.
     setScenarioToasts(prev => [...prev, { id, message, action, action2, extra }].slice(-5));
