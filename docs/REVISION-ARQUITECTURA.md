@@ -4062,6 +4062,23 @@ Unit       227 tests
 E2E        86/86
 ```
 
+### 233.ª tanda — Panel de Nodos de Oscuridad compacto
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Título** | El panel pasa a llamarse Nodos de Oscuridad | i18n |
+| **Nodos** | Cada nodo se llama «Nodo {n}» | `NodosOscuridadPanel` |
+| **Losetas** | «Pieza de tablero» cambia a «Loseta» en todas las pilas | i18n |
+| **Compacto** | Eliminado el botón de añadir runa y se permite una fila de 3 Nodos | `NodosOscuridadPanel` |
+| **Pruebas** | 227 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       227 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
