@@ -3725,6 +3725,21 @@ Unit       221 tests
 E2E        85/85
 ```
 
+### 211.ª tanda — Runas del Cosechador y Ficha de Tiempo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Click de runa** | Seleccionar una runa no abre la ficha ampliada | `BossRunesColumn` |
+| **Furia** | Al llegar su turno, la runa Furia también reduce 1 Ficha de Tiempo del Cosechador | `InitTracker` |
+| **Pruebas** | 221 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       221 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

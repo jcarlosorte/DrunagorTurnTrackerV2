@@ -42,7 +42,10 @@ export default function BossRunesColumn({
           <button
             key={rune.id}
             type="button"
-            onClick={() => onSelect?.(rune.id)}
+            onClick={(event) => {
+              event.stopPropagation();
+              onSelect?.(rune.id);
+            }}
             aria-pressed={active}
             className={`flex min-h-4 items-center gap-1.5 rounded px-1 text-left transition ${
               active ? 'bg-amber-950/60' : 'hover:bg-slate-800/70'

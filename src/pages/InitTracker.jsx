@@ -2851,6 +2851,17 @@ const InitTracker = () => {
     showScenarioToast(`🐾 ${quantity} × ${tee?.[minionId] || minionId}`);
   };
 
+  const reduceSoulHarvesterTime = () => {
+    setPlacedEnemies((prev) => prev.map((entry) => {
+      if (entry.enemy?.id !== 'soul_harvester_boss') return entry;
+      const estados = [...(entry.enemy.estadosAlterados || [])];
+      const index = estados.findIndex((estado) => estado.id === 'TIEMPO');
+      if (index === -1) estados.push({ id: 'TIEMPO', count: 0 });
+      else estados[index] = { ...estados[index], count: Math.max(0, (estados[index].count || 0) - 1) };
+      return { ...entry, enemy: { ...entry.enemy, estadosAlterados: estados } };
+    }));
+  };
+
   const procesarInicioTurnoEnemy = (enemy) => {
     // ✅ Control de TIEMPO
     if (!processedTiempoRef.current.has(enemy.uuid)) {
@@ -3560,6 +3571,7 @@ const InitTracker = () => {
                 return updated;
             });
             const runeName = translations.scenarioCard?.[currentRune.id] || currentRune.nombre || currentRune.id;
+            if (currentRune.id === 'runa_despertar_furia') reduceSoulHarvesterTime();
             const template = ti.contadorCartaTerminado || 'El contador sobre la carta {carta} ha terminado.';
             if (mainBox === 'awakenings') {
               showScenarioToast(`⏳ ${runeName}: ${ti.tiempoReducido || 'Se reduce 1 Ficha de Tiempo'}`);
