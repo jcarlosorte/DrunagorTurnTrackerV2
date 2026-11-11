@@ -13,6 +13,8 @@ const CAMPOS = [
   'comportamiento',
   'specialBehavior',
   'bossRune',
+  'bossBaseImmunities',
+  'bossRuneLostImmunities',
   'vida',
   'vidaMax',
   'movimiento',

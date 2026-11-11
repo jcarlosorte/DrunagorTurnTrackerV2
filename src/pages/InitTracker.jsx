@@ -1322,6 +1322,8 @@ const InitTracker = () => {
             categoria: category,
             comportamiento: behaviorType,
             bossRune: selected.id === 'soul_harvester_boss' ? 'gris' : undefined,
+            bossBaseImmunities: selected.id === 'soul_harvester_boss' ? [...(selected.inmunidad || [])] : undefined,
+            bossRuneLostImmunities: selected.id === 'soul_harvester_boss' ? [] : undefined,
             vida: totalVida,
             vidaMax: totalVida,
             movimiento: null,

@@ -11,6 +11,8 @@ import { adjustCapabilitiesByRunes } from '@/components/adjustCapabilitiesByRune
 import { resolveCapabilityLabel } from '@/utils/enemyCapability';
 import { getAbilityColor } from '@/components/track/enemyVisuals';
 import { useGame } from '@/context/GameContext';
+import { useInitEnemies } from '@/context/InitEnemiesContext';
+import { applyBossRuneEffect } from '@/utils/bossRunes';
 import BossRunesColumn from '@/components/track/BossRunesColumn';
 import boarBackground from '@/assets/interactions/runic.avif';
 import { GiHealthPotion, GiRunningNinja, GiSwordClash, GiShieldReflect, GiSteeltoeBoots, GiBloodySword, GiArcheryTarget, GiMoebiusTrefoil } from "react-icons/gi";
@@ -34,6 +36,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   const tca = translations.cartas_ataque || {};
   const ttr = translations.defensaCard.cartas_trad || {};
   const { getRuneCount } = useGame();
+  const { setPlacedEnemies } = useInitEnemies();
   const closeRef = useRef(null);
   const dialogRef = useRef(null);
   const titleId = useId();
@@ -534,6 +537,19 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                 selected={activeBossRune}
                 labels={ti}
                 texts={enemy.bossRuneTexts || {}}
+                onSelect={(runeId) => {
+                  setPlacedEnemies((prev) => prev.map((entry) => (
+                    entry.enemy.uuid === enemy.uuid
+                      ? { ...entry, enemy: applyBossRuneEffect(entry.enemy, runeId) }
+                      : entry
+                  )));
+                  setEstadosLocal((prev) => {
+                    if (runeId !== 'azul') return prev;
+                    const index = prev.findIndex((estado) => estado.id === 'ATURDIMIENTO');
+                    if (index === -1) return [...prev, { id: 'ATURDIMIENTO', count: 1 }];
+                    return prev.map((estado, i) => (i === index ? { ...estado, count: (estado.count || 0) + 1 } : estado));
+                  });
+                }}
               />
             )}
           </div>

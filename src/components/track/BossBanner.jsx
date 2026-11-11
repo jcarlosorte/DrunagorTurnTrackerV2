@@ -1,5 +1,7 @@
 import { INMUNIDADES, ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { useLanguage } from '@/context/LanguageContext';
+import { useInitEnemies } from '@/context/InitEnemiesContext';
+import { applyBossRuneEffect } from '@/utils/bossRunes';
 import BossRunesColumn from './BossRunesColumn';
 
 /**
@@ -10,6 +12,7 @@ import BossRunesColumn from './BossRunesColumn';
  */
 export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels = {} }) {
   const { translations } = useLanguage();
+  const { setPlacedEnemies } = useInitEnemies();
   const immunityLabels = translations.condiciones_d || {};
   const jefes = enemies.filter((entry) => (
     entry?.enemy?.categoria === 'jefe' && entry.enemy.tipo !== 'especial'
@@ -125,6 +128,11 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                   labels={labels}
                   texts={enemy.bossRuneTexts || {}}
                   className="ml-auto"
+                  onSelect={(runeId) => setPlacedEnemies((prev) => prev.map((entry) => (
+                    entry.enemy.uuid === enemy.uuid
+                      ? { ...entry, enemy: applyBossRuneEffect(entry.enemy, runeId) }
+                      : entry
+                  )))}
                 />
               )}
             </button>

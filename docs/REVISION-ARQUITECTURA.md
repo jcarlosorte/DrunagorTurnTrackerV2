@@ -3688,6 +3688,26 @@ Unit       218 tests
 E2E        85/85
 ```
 
+### 209.ª tanda — Efectos de las runas del Cosechador
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Runa gris** | Mantiene ARMADURA y restaura todas las inmunidades perdidas | `bossRunes` |
+| **Runa naranja** | Pierde ARMADURA y la inmunidad a QUEMADURA | `bossRunes` |
+| **Runa roja** | Pierde ARMADURA y la inmunidad a HEMORRAGIA | `bossRunes` |
+| **Runa verde** | Pierde ARMADURA y la inmunidad a VENENO | `bossRunes` |
+| **Runa azul** | Pierde ARMADURA y gana ATURDIMIENTO | `bossRunes` |
+| **Acumulación** | Las inmunidades perdidas se acumulan hasta volver a la runa gris | `bossRunes` |
+| **Textos** | Cada runa muestra su efecto con el icono de la inmunidad | `BossRunesColumn`, i18n |
+| **Pruebas** | 221 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       221 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
