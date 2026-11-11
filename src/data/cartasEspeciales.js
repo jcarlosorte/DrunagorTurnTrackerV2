@@ -612,6 +612,7 @@ export const CARTAS_JEFE = [
     runePosition: 'abajo',
     idJefe: 'wakened_king_boss',
     capacidades: 'boss_26_A',
+    tiempoInicial: 2,
     lista_capacidad: []
   },
   {
@@ -622,6 +623,7 @@ export const CARTAS_JEFE = [
     runePosition: 'abajo',
     idJefe: 'wakened_king_boss',
     capacidades: 'boss_26_B',
+    tiempoInicial: 2,
     lista_capacidad: []
   },
   {

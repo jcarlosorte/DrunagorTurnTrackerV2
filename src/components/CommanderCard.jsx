@@ -8,7 +8,7 @@ import CommanderCardModal from '@/components/CommanderCardModal';
 
 const CommanderCard = ({ carta }) => {
   const { translations } = useLanguage();
-  const { removeEnemyByUUID } = useInitEnemies();
+  const { removeEnemyByUUID, setPlacedEnemies } = useInitEnemies();
   const [showModal, setShowModal] = useState(false);
   const [estadosLocal, setEstadosLocal] = useState(carta?.estadosAlterados || []);
   const ta = translations.cartas_ataque || {};
@@ -50,6 +50,25 @@ const CommanderCard = ({ carta }) => {
   useEffect(() => {
     setEstadosLocal(carta?.estadosAlterados ? [...carta.estadosAlterados] : []);
   }, [carta?.estadosAlterados]);
+
+  if (carta?.bocaAbajo) {
+    return (
+      <div className="flex flex-col items-center mx-1">
+        <div
+          onClick={() => setPlacedEnemies((prev) => prev.map((entry) => (
+            entry.enemy.uuid === carta.uuid
+              ? { ...entry, enemy: { ...entry.enemy, bocaAbajo: false } }
+              : entry
+          )))}
+          className="relative flex aspect-square w-full max-w-[140px] cursor-pointer items-center justify-center rounded-lg border-2 border-slate-500 bg-slate-900 text-4xl text-slate-500 shadow-md hover:border-sky-400"
+          title="Voltear carta"
+        >
+          🂠
+        </div>
+        <p className="mt-1 text-center text-[0.6rem] font-bold uppercase text-slate-400">Boca abajo</p>
+      </div>
+    );
+  }
   
   return (
     <div className="flex flex-col items-center mx-1">

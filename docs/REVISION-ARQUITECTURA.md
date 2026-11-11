@@ -4145,6 +4145,25 @@ Unit       228 tests
 E2E        86/86
 ```
 
+### 238.ª tanda — Mecánicas del Rey Avivado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Desesperación A** | 2 Fichas de Tiempo, invocación del Comandante PC 3, inmunidad, volteo del mazo y Nodo | `InitTracker`, `cartasEspeciales` |
+| **Desesperación B** | Derrota o agotamiento del Comandante, absorción de vida, escenas y panel crítico | `InitTracker`, `BossBanner` |
+| **Cartas dobles** | Anverso inicial, reversos, cartas boca abajo bloqueadas y volteo manual | `CommanderCard`, `InitTracker` |
+| **Marcha/Sabotaje** | Invocación de Pesadillas y resolución manual del sabotaje | `InitTracker` |
+| **Extenuar** | Aviso de daño/Fatiga y generación según héroes dañados | `InitTracker` |
+| **Oscuridad/Semillas** | Condiciones del Comandante y avisos manuales | `InitTracker` |
+| **Pruebas** | 228 unitarios · 86 E2E | tests |
+
+**Medición**
+
+```text
+Unit       228 tests
+E2E        86/86
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

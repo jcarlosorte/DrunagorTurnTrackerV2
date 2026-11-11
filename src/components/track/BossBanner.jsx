@@ -183,6 +183,16 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
           );
         })}
       </div>
+      {jefes.some(({ enemy }) => enemy.kingInvulnerable) && (
+        <p className="mt-1 rounded-lg border border-amber-500/60 bg-amber-950/70 px-2 py-1 text-center text-[0.65rem] font-bold text-amber-100">
+          🛡 {labels.kingInvulnerable || 'El Rey Avivado es inmune a estados y daño hasta nuevo aviso.'}
+        </p>
+      )}
+      {jefes.some(({ enemy }) => enemy.kingCriticalAttacks) && (
+        <p className="mt-1 rounded-lg border border-red-500/60 bg-red-950/70 px-2 py-1 text-center text-[0.65rem] font-bold text-red-100">
+          ⚔️ {labels.kingCriticalAttacks || 'Todos los Ataques con Arma, Hechizo y Purga son críticos si golpean.'}
+        </p>
+      )}
     </section>
   );
 }

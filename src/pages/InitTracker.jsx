@@ -1646,7 +1646,11 @@ const InitTracker = () => {
         sourceEnemyUUID: bossUUID, // 👈 enlace al jefe original
         nombreEnemy: nombreBoss,
         highlight: true,
-        estadosAlterados: initialStates,
+        estadosAlterados: initialStates.map((estado) => (
+          estado.id === 'TIEMPO' && carta.tiempoInicial
+            ? { ...estado, count: carta.tiempoInicial }
+            : estado
+        )),
       },
     }));
     
@@ -1894,8 +1898,38 @@ const InitTracker = () => {
     showScenarioToast(`🎬 ${title}${placedCount ? ` · ${placedCount} runas en el track` : ''}${nodeCount ? ` · ${nodeCount} Nodos activos` : ''}`);
   };
 
+  const handleWakenedCommanderDefeat = () => {
+    const kingEntry = placedEnemies.find((entry) => entry.enemy?.id === 'wakened_king_boss');
+    const desesperacion = placedEnemies.find((entry) => (
+      entry.enemy?.id === 'boss_26'
+      && entry.enemy?.cara === 'B'
+      && (entry.enemy?.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count > 0
+    ));
+    if (!kingEntry || !desesperacion) return;
+    setPlacedEnemies((prev) => prev
+      .filter((entry) => entry.enemy.uuid !== desesperacion.enemy.uuid)
+      .map((entry) => {
+        if (entry.enemy.sourceEnemyUUID !== kingEntry.enemy.uuid || entry.enemy.id === 'boss_27') return entry;
+        const hasBack = CARTAS_JEFE.some((item) => item.id === entry.enemy.id && item.cara === 'B');
+        return hasBack
+          ? { ...entry, enemy: { ...entry.enemy, cara: entry.enemy.cara === 'A' ? 'B' : 'A', bocaAbajo: false } }
+          : { ...entry, enemy: { ...entry.enemy, bocaAbajo: true } };
+      }));
+    setPlacedEnemies((prev) => prev.map((entry) => (
+      entry.enemy.uuid === kingEntry.enemy.uuid
+        ? { ...entry, enemy: { ...entry.enemy, kingCriticalAttacks: true } }
+        : entry
+    )));
+    placeSceneRunes(1, 1);
+    appendGameLog('event', '📖 Lee la ESCENA: SIGUIENTE EN LA FILA. Los ataques con Arma, Hechizo y Purga son críticos si golpean.', {
+      round: roundRef.current,
+      turn: turnIndex,
+    });
+  };
+
   const onRemove = (uuid) => {
     const removed = placedEnemies.find((entry) => entry.enemy.uuid === uuid)?.enemy;
+    if (removed?.id === 'soul_harvester') handleWakenedCommanderDefeat();
     const hiloCard = placedEnemies.find(
       (entry) => entry.enemy.id === 'cmd_18' && entry.enemy.tipo === 'especial',
     );
@@ -1924,6 +1958,7 @@ const InitTracker = () => {
     setPlacedEnemies(prev =>
       prev.map(e => {
         if (e.enemy.uuid === uuid) {
+          if (e.enemy.kingInvulnerable && nuevaVida < e.enemy.vida) return e;
           const actualMax = e.enemy.vidaMax;
           const nuevoVidaMax = nuevoMax !== undefined && nuevoMax !== null
             ? nuevoMax
@@ -2300,9 +2335,178 @@ const InitTracker = () => {
     };
   };
 
+  const resolveWakenedKingCard = async (cartaEspecial) => {
+    const kingEntry = placedEnemies.find((entry) => entry.enemy?.id === 'wakened_king_boss');
+    if (!kingEntry || cartaEspecial.sourceEnemyUUID !== kingEntry.enemy.uuid) return null;
+
+    const cardEntry = placedEnemies.find((entry) => entry.enemy.uuid === cartaEspecial.uuid);
+    const card = { ...(cardEntry?.enemy || {}), ...cartaEspecial };
+    const time = (card.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
+    const logs = [];
+
+    const setKing = (patch) => setPlacedEnemies((prev) => prev.map((entry) => (
+      entry.enemy.uuid === kingEntry.enemy.uuid
+        ? { ...entry, enemy: { ...entry.enemy, ...patch } }
+        : entry
+    )));
+
+    const flipCard = (entry, face) => {
+      const definition = CARTAS_JEFE.find((item) => item.id === entry.enemy.id && item.cara === face);
+      if (!definition) return { ...entry, enemy: { ...entry.enemy, bocaAbajo: true } };
+      return {
+        ...entry,
+        enemy: {
+          ...entry.enemy,
+          cara: face,
+          capacidades: definition.capacidades,
+          bocaAbajo: false,
+          estadosAlterados: (entry.enemy.estadosAlterados || []).map((estado) => (
+            estado.id === 'TIEMPO' && face === 'B' && entry.enemy.id === 'boss_26'
+              ? { ...estado, count: 2 }
+              : estado
+          )),
+        },
+      };
+    };
+
+    const flipDeck = (exceptId) => setPlacedEnemies((prev) => prev.map((entry) => {
+      if (entry.enemy.sourceEnemyUUID !== kingEntry.enemy.uuid || entry.enemy.id === exceptId) return entry;
+      const hasBack = CARTAS_JEFE.some((item) => item.id === entry.enemy.id && item.cara === 'B');
+      if (!hasBack) return { ...entry, enemy: { ...entry.enemy, bocaAbajo: true } };
+      return flipCard(entry, entry.enemy.cara === 'A' ? 'B' : 'A');
+    }));
+
+    const addNode = () => {
+      placeSceneRunes(1, 1);
+      logs.push('🌑 Se coloca 1 Nodo de Oscuridad activo.');
+    };
+
+    const summonNightmares = (count) => {
+      let small = [...usedColors];
+      for (let index = 0; index < count; index += 1) {
+        const ring = getNextAvailableColorSimulated(false, small, []) || 'noColor';
+        if (ring !== 'noColor') small.push(ring);
+        handleManualEnemyAdd('nightmare', undefined, 'esbirro', 'NoShow', ring);
+      }
+      logs.push(`🐾 Se generan ${count} Pesadillas.`);
+    };
+
+    const summonCommander = async () => {
+      await handleManualEnemyAdd(
+        'soul_harvester',
+        undefined,
+        'comandante',
+        'NoShow',
+        null,
+        null,
+        3,
+      );
+      logs.push('☠ Se invoca al Comandante Cosechador de Almas con PC 3.');
+    };
+
+    if (card.id === 'boss_26') {
+      if (card.cara === 'B') {
+        if (time > 0) {
+          logs.push(`⏳ Desesperación (B): quedan ${time} Fichas de Tiempo.`);
+          return { logs };
+        }
+        const commander = placedEnemies.find((entry) => entry.enemy.id === 'soul_harvester')?.enemy;
+        if (commander) {
+          const nextVida = Math.min(
+            kingEntry.enemy.vidaMax || kingEntry.enemy.vida,
+            (kingEntry.enemy.vida || 0) + (commander.vida || 0),
+          );
+          setKing({ vida: nextVida });
+          removeEnemyByUUID(commander.uuid);
+          logs.push(`❤️ El Rey Avivado absorbe ${commander.vida} de vida del Comandante (${nextVida}).`);
+        }
+        setPlacedEnemies((prev) => prev.filter((entry) => entry.enemy.uuid !== card.uuid));
+        flipDeck('boss_27');
+        addNode();
+        return { logs: [...logs, '📖 Lee la ESCENA: INDEMNE (página 128).'] };
+      }
+
+      if (time > 0) {
+        logs.push(`⏳ Desesperación (A): quedan ${time} Fichas de Tiempo.`);
+        return { logs };
+      }
+      await summonCommander();
+      setKing({
+        kingInvulnerable: true,
+        estadosAlterados: (kingEntry.enemy.estadosAlterados || []).map((estado) => ({ ...estado, count: 0 })),
+      });
+      flipDeck('boss_27');
+      processedCardsRef.current.delete(card.uuid);
+      addNode();
+      logs.push('📖 Lee la ESCENA: EL PODER DE LA OSCURIDAD (página 127).');
+      logs.push('🛡 El Rey Avivado es inmune temporalmente a estados y daño.');
+      return { logs };
+    }
+
+    if (card.id === 'boss_27') {
+      if (card.cara === 'A') {
+        const count = numHeroes <= 2 ? 1 : numHeroes <= 4 ? 2 : 3;
+        summonNightmares(count);
+        setPlacedEnemies((prev) => prev.map((entry) => (
+          entry.enemy.uuid === card.uuid ? flipCard(entry, 'B') : entry
+        )));
+        processedCardsRef.current.delete(card.uuid);
+        logs.push('🃏 La carta se voltea a Sabotaje de Cadáveres.');
+      } else {
+        logs.push('💥 Sabotaje de Cadáveres: resuelve manualmente activación, explosión y retirada del esbirro.');
+        setPlacedEnemies((prev) => prev.map((entry) => (
+          entry.enemy.uuid === card.uuid ? flipCard(entry, 'A') : entry
+        )));
+        processedCardsRef.current.delete(card.uuid);
+      }
+      return { logs };
+    }
+
+    if (card.id === 'boss_28') {
+      const input = parseInt(await appPrompt(
+        ti.wakenedKingDamagedHeroes || '¿Cuántos héroes han perdido salud por Extenuar?',
+        '0',
+        { title: 'Extenuar' },
+      ), 10) || 0;
+      const count = Math.max(0, Math.min(numHeroes, input));
+      summonNightmares(count);
+      logs.push(`⚡ Extenuar: daño X y Fatiga 2 a todos los héroes. Se generan ${count} Pesadillas.`);
+      return { logs };
+    }
+
+    if (card.id === 'boss_29') {
+      const commander = placedEnemies.find((entry) => entry.enemy.id === 'soul_harvester')?.enemy;
+      if (commander) {
+        const { enemy: withStates, logs: stateLogs } = aplicarEfectosEstados(commander, 'inicio');
+        const { vida, estados, logs: capacityLogs } = aplicarCapacidadesActivadas(withStates, placedEnemies);
+        setPlacedEnemies((prev) => prev.map((entry) => (
+          entry.enemy.uuid === commander.uuid
+            ? { ...entry, enemy: { ...withStates, vida, estadosAlterados: estados } }
+            : entry
+        )));
+        logs.push(...stateLogs, ...capacityLogs);
+      }
+      logs.push('🌑 La Oscuridad se Extiende: resuelve manualmente asalto, daño X y Aura Sombría.');
+      return { logs };
+    }
+
+    if (card.id === 'boss_30') {
+      logs.push('🌱 Esparce las Semillas: resuelve manualmente el área, daño X y Maldición 2.');
+      return { logs };
+    }
+
+    return null;
+  };
+
   const aplicarCapacidadesCartaEspecial = async (cartaEspecial, options = {}) => {
     const { applyConditional = true } = options;
     const logs = [];
+    if (cartaEspecial.bocaAbajo) {
+      logs.push('La carta está boca abajo y no se resuelve.');
+      return { logs };
+    }
+    const wakenedResult = await resolveWakenedKingCard(cartaEspecial);
+    if (wakenedResult) return { logs: wakenedResult.logs };
     const capacidades = cartaEspecial.lista_capacidad || [];
     const runeColor = cartaEspecial.id === 'cmd_12' ? 'azul' : cartaEspecial.rune;
     const runeCount = getRuneCount(runeColor);
@@ -3503,10 +3707,12 @@ const InitTracker = () => {
         }
         
         // ✅ Controlar TIEMPO solo si no está procesado este turno
+        let currentForResolution = current;
         if (!processedTiempoRef.current.has(current.uuid)) {
           processedTiempoRef.current.add(current.uuid);
           const skippedData = checkTiempoSkip(current);
           if (skippedData?.skipped) {
+            currentForResolution = { ...current, estadosAlterados: skippedData.nuevosEstados };
             const timeZero = current.id === 'soul_harvester_boss' && skippedData.finished
               ? resolveSoulHarvesterTimeZero({ ...current, estadosAlterados: skippedData.nuevosEstados })
               : null;
@@ -3539,6 +3745,7 @@ const InitTracker = () => {
 
           // ✅ Si es carta especial → ejecutar lógica y salir
           if (current.tipo === 'especial' || current.tipo === 'fallenHero') {
+            if (currentForResolution.bocaAbajo) return;
             if (!processedCardsRef.current.has(current.uuid)) {
               processedCardsRef.current.add(current.uuid);
               if (current.id === 'cmd_17') {
@@ -3546,8 +3753,8 @@ const InitTracker = () => {
                 setPendingResolutionQuestion(true);
                 return;
               }
-              applyBossMarchSummon(current, placedEnemies);
-              aplicarCapacidadesCartaEspecial(current).then(({ logs }) => {
+              applyBossMarchSummon(currentForResolution, placedEnemies);
+              aplicarCapacidadesCartaEspecial(currentForResolution).then(({ logs }) => {
                 logs.forEach(log =>
                   showScenarioToast(`🃏 ${current.nombreEnemy || current.nombre}: ${log}`)
                 );
@@ -4805,6 +5012,8 @@ const InitTracker = () => {
                         open: ti.abrirFicha || 'Abrir ficha',
                         compactBoss: ti.compactBoss || 'Compactar jefe',
                         expandBoss: ti.expandBoss || 'Expandir jefe',
+                        kingInvulnerable: ti.kingInvulnerable || 'El Rey Avivado es inmune a estados y daño hasta nuevo aviso.',
+                        kingCriticalAttacks: ti.kingCriticalAttacks || 'Todos los Ataques con Arma, Hechizo y Purga son críticos si golpean.',
                       }}
                     />
                   )}

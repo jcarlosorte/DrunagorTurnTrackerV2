@@ -229,6 +229,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   };
 
   const handleVidaChange = async (delta) => {
+    if (delta < 0 && enemy.kingInvulnerable) {
+      mostrarAviso(ti.kingNoDamage || 'El Rey Avivado no puede recibir daño ahora mismo.');
+      return;
+    }
     let vidaTentativa = vidaLocal + delta;
   
     if (delta < 0) {
@@ -368,6 +372,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   };
 
   const handleEstadoChangeLocal = async (estadoId, delta) => {
+    if (delta > 0 && enemy.kingInvulnerable) {
+      mostrarAviso(ti.kingNoStates || 'El Rey Avivado es inmune a estados alterados ahora mismo.');
+      return;
+    }
     // Si el estado ya no está activo (se consumió en el turno) el botón + debe
     // poder volver a añadirlo; antes solo se recorrían los estados existentes.
     if (!estadosLocal.some((estado) => estado.id === estadoId)) {
