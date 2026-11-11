@@ -3860,6 +3860,23 @@ Unit       225 tests
 E2E        85/85
 ```
 
+### 220.ª tanda — Disparo de Cañón
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Runa amarilla** | La antigua runa naranja de jefe pasa a amarilla | `BossRunesColumn`, `bossRunes` |
+| **Botón** | Cada héroe muestra un botón de Disparo de Cañón sobre su imagen | `CannonShotControl`, `TrackSlot`, `ModalHeroCard` |
+| **Disparo** | Consume cubo de color, descarga cañones, cambia la runa del jefe, aplica 5 de daño y el estado correspondiente | `CannonShotControl` |
+| **Ronda** | Tras disparar se salta al primer turno disponible de la siguiente ronda | `InitTracker` |
+| **Pruebas** | 225 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       225 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

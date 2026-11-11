@@ -484,6 +484,7 @@
     "runaFuriaTime": "Remove 1 Time Token from this card and the Harvester",
     "bossRuneGray": "ARMOR",
     "bossRuneOrange": "Loses ARMOR and is no longer immune to",
+    "bossRuneYellow": "Loses ARMOR and is no longer immune to",
     "bossRuneRed": "Loses ARMOR and is no longer immune to",
     "bossRuneGreen": "Loses ARMOR and is no longer immune to",
     "bossRuneBlue": "Loses ARMOR and is no longer immune to",

@@ -2,14 +2,14 @@ import { INMUNIDADES } from '@/data/estadosAlterados';
 
 const BOSS_RUNES = [
   { id: 'gris', className: 'bg-slate-400 border-slate-200' },
-  { id: 'naranja', className: 'bg-orange-500 border-orange-200' },
+  { id: 'amarillo', className: 'bg-yellow-400 border-yellow-200' },
   { id: 'rojo', className: 'bg-red-500 border-red-200' },
   { id: 'verde', className: 'bg-emerald-500 border-emerald-200' },
   { id: 'azul', className: 'bg-blue-500 border-blue-200' },
 ];
 
 const RUNE_IMMUNITY = {
-  naranja: 'QUEMADURA_I',
+  amarillo: 'QUEMADURA_I',
   rojo: 'HEMORRAGIA_I',
   verde: 'VENENO_I',
   azul: 'ATURDIMIENTO_I',
@@ -24,7 +24,7 @@ export default function BossRunesColumn({
 }) {
   const defaultTexts = {
     gris: labels.bossRuneGray || 'ARMADURA',
-    naranja: labels.bossRuneOrange || 'Pierde ARMADURA y ya no es inmune a',
+    amarillo: labels.bossRuneYellow || 'Pierde ARMADURA y ya no es inmune a',
     rojo: labels.bossRuneRed || 'Pierde ARMADURA y ya no es inmune a',
     verde: labels.bossRuneGreen || 'Pierde ARMADURA y ya no es inmune a',
     azul: labels.bossRuneBlue || 'Pierde ARMADURA y ya no es inmune a',

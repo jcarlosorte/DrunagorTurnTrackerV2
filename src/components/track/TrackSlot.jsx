@@ -6,6 +6,7 @@ import EnemyCard from '@/components/track/EnemyCard';
 import CharacterCard from '@/components/track/CharacterCard';
 import CompanionTrackCard from '@/components/track/CompanionTrackCard';
 import FollowerCard from '@/components/track/FollowerCard';
+import CannonShotControl from '@/components/track/CannonShotControl';
 import { cardDistance, compactSlotHeight } from '@/components/track/trackLayout';
 
 /**
@@ -48,6 +49,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     openFollower,
     siegeEvent,
     openSiegeDeck,
+    onCannonShotEndRound,
     RuneCard,
   } = deps;
 
@@ -203,16 +205,24 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
             ) : type === 'rune' ? (
               <RuneCard rune={item} onRemove={removeRuneByUUID} flipped={flippedCards.includes(item.uuid)} />
             ) : (
-              <CharacterCard
-                name={getHeroName(item.id)}
-                image={item.image}
-                prof={getHeroProf(item.id)}
-                heroId={item.id}
-                clickable={heroManagementEnabled}
-                extras={heroManagementEnabled ? getHeroExtras(item.id) : null}
-                estadosLabels={tea}
-                onOpen={() => setSelectedHeroId(item.id)}
-              />
+              <div className="relative">
+                <CharacterCard
+                  name={getHeroName(item.id)}
+                  image={item.image}
+                  prof={getHeroProf(item.id)}
+                  heroId={item.id}
+                  clickable={heroManagementEnabled}
+                  extras={heroManagementEnabled ? getHeroExtras(item.id) : null}
+                  estadosLabels={tea}
+                  onOpen={() => setSelectedHeroId(item.id)}
+                />
+                <CannonShotControl
+                  compact
+                  labels={ti}
+                  onEndRound={onCannonShotEndRound}
+                  className="absolute -right-1 -top-1 z-30"
+                />
+              </div>
             )}
           </div>
         </div>

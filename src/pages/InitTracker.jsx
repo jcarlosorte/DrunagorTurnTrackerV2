@@ -3916,6 +3916,23 @@ const InitTracker = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turnIndex]);
 
+  const endRoundAfterCannonShot = () => {
+    setExtraTurnsQueue([]);
+    setExtraTurnIndex(0);
+    setExtraTurnTotal(0);
+    setGroupTurnTracker({ group: [], index: 0 });
+    const next = getNextActiveEntity(0);
+    const idx = next ? indexOfEntityInOrder(effectiveTurnOrder, next) : -1;
+    if (idx === -1) {
+      showScenarioToast(ti.noNextTurn || 'No hay siguiente turno disponible');
+      return;
+    }
+    // Fuerza la detección de nueva ronda al pasar al primer turno disponible.
+    previousTurnIndexRef.current = effectiveTurnOrder.length - 1;
+    setTurnIndex(idx);
+    setLastRealTurnIndex(idx);
+  };
+
   const addExtraTurn = (enemyUUID) => {
     setExtraTurnsQueue(prev => {
       const updated = [...prev, enemyUUID];
@@ -4472,6 +4489,7 @@ const InitTracker = () => {
     openFollower: setSelectedFollowerUid,
     siegeEvent,
     openSiegeDeck: () => setSiegeDeckOpen(true),
+    onCannonShotEndRound: endRoundAfterCannonShot,
     rolesOnTop,
     rolesOnBottom,
     currentTurnEntity,
@@ -5285,6 +5303,7 @@ const InitTracker = () => {
             role={trackerData.roles?.[selectedHeroId]}
             onClose={() => setSelectedHeroId(null)}
             onChanged={refreshHeroExtras}
+            onCannonShotEndRound={endRoundAfterCannonShot}
             onOpenCompanion={(uid) => {
               setSelectedHeroId(null);
               setSelectedCompanionUid(uid);

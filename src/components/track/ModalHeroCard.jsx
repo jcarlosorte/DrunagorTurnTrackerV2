@@ -8,6 +8,7 @@ import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { HEROES } from '@/data/heroes';
 import { getHeroClass } from '@/data/heroClasses';
 import HeroPortrait from '@/components/HeroPortrait';
+import CannonShotControl from '@/components/track/CannonShotControl';
 import heroBackground from '@/assets/interactions/draconian-altar.avif';
 import { getCompanion, getCompanionImage } from '@/data/companions';
 import { ESTADOS_ALTERADOS, INMUNIDADES, getHeroStatusCatalog } from '@/data/estadosAlterados';
@@ -80,7 +81,7 @@ const STAT_LABELS = {
   vida: { es: 'Vida', en: 'Life' },
 };
 
-export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpenCompanion }) {
+export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpenCompanion, onCannonShotEndRound }) {
   const { language, translations } = useLanguage();
   const { trackerData, setTrackerData } = useTracker();
   const { placedEnemies } = useInitEnemies();
@@ -206,13 +207,20 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
         >
           <div className="flex items-center gap-3">
             {hero?.image && (
-              <HeroPortrait
-                heroId={heroId}
-                fallback={hero.image}
-                alt=""
-                className="h-24 w-24 shrink-0 rounded-xl border-2"
-                style={{ borderColor: classColor }}
-              />
+              <div className="relative shrink-0">
+                <HeroPortrait
+                  heroId={heroId}
+                  fallback={hero.image}
+                  alt=""
+                  className="h-24 w-24 rounded-xl border-2"
+                  style={{ borderColor: classColor }}
+                />
+                <CannonShotControl
+                  labels={translations.trackerInit || {}}
+                  onEndRound={onCannonShotEndRound}
+                  className="absolute -bottom-1 -right-1 z-30"
+                />
+              </div>
             )}
             <div className="min-w-0 flex-1">
               <h2 id={titleId} className="truncate text-xl font-bold text-white">{heroName}</h2>
