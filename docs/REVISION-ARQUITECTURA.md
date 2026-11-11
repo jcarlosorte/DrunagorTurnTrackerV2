@@ -3755,6 +3755,20 @@ Unit       221 tests
 E2E        85/85
 ```
 
+### 213.ª tanda — Limpieza de estados al restaurar ARMADURA
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Runa gris** | Restaura ARMADURA e inmunidades y elimina todos los estados alterados salvo TIEMPO | `bossRunes` |
+| **Pruebas** | 222 unitarios · 85 E2E | tests |
+
+**Medición**
+
+```text
+Unit       222 tests
+E2E        85/85
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

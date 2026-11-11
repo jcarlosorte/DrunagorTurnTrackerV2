@@ -15,10 +15,12 @@ export function applyBossRuneEffect(enemy, runeId) {
   const baseCapabilities = enemy.capacidadesOriginales || enemy.capacidades || [];
   const baseImmunities = enemy.bossBaseImmunities || enemy.inmunidad || [];
   const lost = new Set(enemy.bossRuneLostImmunities || []);
-  const estados = [...(enemy.estadosAlterados || [])];
+  let estados = [...(enemy.estadosAlterados || [])];
 
   if (runeId === 'gris') {
     lost.clear();
+    // Al restaurar ARMADURA se limpian los estados, salvo la Ficha de Tiempo.
+    estados = estados.filter((estado) => estado.id === 'TIEMPO');
   } else {
     if (RUNE_IMMUNITY[runeId]) lost.add(RUNE_IMMUNITY[runeId]);
     if (runeId === 'azul') {

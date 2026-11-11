@@ -39,4 +39,16 @@ describe('runas del Cosechador', () => {
     expect(blue.estadosAlterados.find((estado) => estado.id === 'ATURDIMIENTO_I')?.count).toBe(1);
     expect(blue.inmunidad).toContain('GRANDE');
   });
+
+  it('la runa gris limpia los estados salvo la Ficha de Tiempo', () => {
+    const withStates = {
+      ...baseBoss,
+      estadosAlterados: [
+        { id: 'ATURDIMIENTO_I', count: 1 },
+        { id: 'TIEMPO', count: 2 },
+      ],
+    };
+    const gray = applyBossRuneEffect(withStates, 'gris');
+    expect(gray.estadosAlterados).toEqual([{ id: 'TIEMPO', count: 2 }]);
+  });
 });
