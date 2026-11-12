@@ -17,7 +17,7 @@ import lady_claw from "@/assets/enemies/LadyClaw.avif";
 import rotten_flesh from "@/assets/enemies/RottenFlesh.avif";
 import shadow_guardian from "@/assets/enemies/ShadowGuardian.avif";
 import dark_vampire from "@/assets/enemies/ShadowVampire.avif";
-import jabali from "@/assets/enemies/jabali.png";
+import jabali from "@/assets/enemies/flickering_boarV2.png";
 // Negros
 import abomination from "@/assets/enemies/Abomination.avif";
 import shadow_knight from "@/assets/enemies/ShadowKnight.avif";

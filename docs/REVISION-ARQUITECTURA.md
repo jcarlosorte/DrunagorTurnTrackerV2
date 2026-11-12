@@ -4419,6 +4419,22 @@ Unit       230 tests
 E2E        87/87
 ```
 
+### 255.ª tanda — V2 de Lasse, Demon Lord y Cosechador
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nuevos V2** | Lasse, Demon Lord, Cosechador, Cosechador Jefe y Jabalí usan su nueva imagen | assets, `enemies` |
+| **Variantes** | Generadas AVIF 320/640 para las nuevas imágenes | `imageVariants` |
+| **Jabalí** | Sustituida la imagen antigua `jabali.png` por `flickering_boarV2.png` | `enemies` |
+| **Pruebas** | 230 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       230 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
