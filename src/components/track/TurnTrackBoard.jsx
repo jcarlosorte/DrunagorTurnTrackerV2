@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { GiCardPick } from 'react-icons/gi';
 import HeroPortrait from '@/components/HeroPortrait';
 import { readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import trackBackground from '@/assets/backgrounds/track.avif';
@@ -227,7 +228,7 @@ export default function TurnTrackBoard({
                 : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
             }`}
           >
-            <span aria-hidden="true" className="text-sm leading-none">▣</span>
+            <GiCardPick className="text-base" aria-hidden="true" />
           </button>
 
           <button

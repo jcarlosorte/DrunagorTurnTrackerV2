@@ -4691,13 +4691,13 @@ E2E        87/87
 | **Sin solape** | Los enemigos compactos se separan en filas | `TrackSlot` |
 | **Botón** | Solo icono, con descripción al pasar por encima | `TurnTrackBoard` |
 | **Nombres** | Los avisos de tiempo usan el nombre traducido de la carta, no su ID | `InitTracker` |
-| **Pruebas** | 231 unitarios · 87 E2E | tests |
+| **Pruebas** | 231 unitarios · 88 E2E | tests |
 
 **Medición**
 
 ```text
 Unit       231 tests
-E2E        87/87
+E2E        88/88
 ```
 
 ### 273.ª tanda — Derrota del Comandante y icono de tiempo

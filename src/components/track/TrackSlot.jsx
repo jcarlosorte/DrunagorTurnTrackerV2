@@ -140,6 +140,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
           >
             <button
               type="button"
+              data-simplified-enemy="true"
               onClick={() => openEnemyModal(item.enemy.uuid)}
               className={`flex h-8 w-full min-w-0 items-center gap-1 rounded border bg-slate-950/90 px-1 text-left transition hover:border-sky-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-sky-300 ${
                 isCurrentTurn ? 'border-amber-300 ring-1 ring-amber-300/70' : 'border-slate-600/80'

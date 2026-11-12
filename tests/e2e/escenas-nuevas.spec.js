@@ -290,4 +290,18 @@ test.describe('Escenas de Despertar', () => {
       enemies: 3,
     });
   });
+
+  test('la vista simplificada solo compacta a los enemigos normales', async ({ page }) => {
+    await seedStorage(page, awakeningsSeed());
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await page.getByTestId('scene-chapter9').getByRole('button', { name: /Activar capítulo/ }).click();
+    await page.getByTestId('simplified-toggle').click();
+
+    await expect(page.locator('[data-simplified-enemy="true"]')).toHaveCount(2);
+    await expect(page.getByText('Vorn', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText(/la oscuridad se extiende/i).first()).toBeVisible();
+    await expect(page.getByTestId('simplified-toggle')).toHaveAttribute('title', 'Vista normal');
+  });
 });
