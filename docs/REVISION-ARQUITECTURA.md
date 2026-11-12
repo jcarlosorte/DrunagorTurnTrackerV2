@@ -4375,6 +4375,21 @@ Unit       230 tests
 E2E        87/87
 ```
 
+### 252.ª tanda — Más altura para el track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Altura** | El área del track tiene mínimo 560 px y las pilas compactas 500 px | `TurnTrackBoard`, `trackLayout` |
+| **Fondo** | El fondo artístico cubre todo el contenedor, no solo la rejilla de cartas | `TurnTrackBoard` |
+| **Pruebas** | 230 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       230 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

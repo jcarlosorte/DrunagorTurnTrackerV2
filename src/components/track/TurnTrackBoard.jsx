@@ -335,7 +335,13 @@ export default function TurnTrackBoard({
   const boardView = (
     <div
       ref={viewportRef}
-      className="min-h-0 flex-1 overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
+      className="min-h-[560px] flex-1 overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
+      style={{
+        backgroundImage: `linear-gradient(rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.35)), url(${trackBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       role="region"
@@ -347,12 +353,6 @@ export default function TurnTrackBoard({
           <div
             ref={gridRef}
             className="grid snap-x snap-mandatory grid-cols-11 auto-rows-auto items-start gap-0 p-2"
-            style={{
-              backgroundImage: `linear-gradient(rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.35)), url(${trackBackground})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-            }}
           >
             {summaries.map(({ index }) => (
               <div key={index} className="min-w-0">{renderSlot(index, { density, overlap })}</div>

@@ -10,8 +10,8 @@ export const BASE_GAP = 28;
 export const MAX_STACK_HEIGHT = 460;
 export const MIN_STEP = 44;
 /** Altura mínima del slot del tablero: la justa para una carta a cada lado. */
-export const MIN_SLOT_HEIGHT = 460;
-export const MIN_COMPACT_SLOT_HEIGHT = 420;
+export const MIN_SLOT_HEIGHT = 560;
+export const MIN_COMPACT_SLOT_HEIGHT = 500;
 
 /** Solape entre cartas consecutivas para que la pila quepa en MAX_STACK_HEIGHT. */
 export function overlapFor(count) {
