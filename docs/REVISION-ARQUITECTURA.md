@@ -4344,6 +4344,22 @@ Unit       230 tests
 E2E        87/87
 ```
 
+### 250.ª tanda — Tonos diferenciados blanco, gris y negro
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Blanco** | Fondo marfil muy claro | `enemyVisuals` |
+| **Gris** | Fondo pizarra medio | `enemyVisuals` |
+| **Negro** | Fondo carbón azulado oscuro | `enemyVisuals` |
+| **Pruebas** | 230 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       230 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
