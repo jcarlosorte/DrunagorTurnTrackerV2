@@ -4435,6 +4435,22 @@ Unit       230 tests
 E2E        87/87
 ```
 
+### 256.ª tanda — Archivo de arte antiguo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Archivo** | Las imágenes sustituidas por V2 se mueven a `src/assets/enemies_old` | assets |
+| **Manifiesto** | `imageVariants` se regenera solo con las imágenes que siguen en uso | `imageVariants` |
+| **Conservadas** | Solo quedan las imágenes sin V2 que aún se usan (Jinetes) | assets |
+| **Pruebas** | 230 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       230 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

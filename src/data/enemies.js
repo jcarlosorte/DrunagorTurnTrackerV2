@@ -1,61 +1,61 @@
 // @/data/enemies.js
 // Blancos
-import corrupted_farmer from "@/assets/enemies/CorruptedFarmer.avif";
-import ravager from "@/assets/enemies/Ravager.avif";
-import scout_darkness from "@/assets/enemies/ScoutOfDarkness.avif";
-import shadow_cultist from "@/assets/enemies/ShadowCultist.avif";
-import shadow_mistress from "@/assets/enemies/ShadowMistress.avif";
-import shadow_pain from "@/assets/enemies/ShadowPain.avif";
-import skeleton_archer from "@/assets/enemies/SkeletonArcher.avif";
-import walking_horror from "@/assets/enemies/WalkingHorror.avif";
+import corrupted_farmer from "@/assets/enemies/CorruptedFarmerV2.png";
+import ravager from "@/assets/enemies/RavagerV2.png";
+import scout_darkness from "@/assets/enemies/ScoutOfDarknessV2.png";
+import shadow_cultist from "@/assets/enemies/ShadowCultistV2.png";
+import shadow_mistress from "@/assets/enemies/ShadowMistressV2.png";
+import shadow_pain from "@/assets/enemies/ShadowPainV2.png";
+import skeleton_archer from "@/assets/enemies/SkeletonArcherV2.png";
+import walking_horror from "@/assets/enemies/WalkingHorrorV2.png";
 // Grises
-import bone_reaper from "@/assets/enemies/BoneReaper.avif";
-import corrupted_worm from "@/assets/enemies/CorruptedWorm.avif";
-import death_messenger from "@/assets/enemies/DeathMessenger.avif";
-import executioner from "@/assets/enemies/Executioner.avif";
-import lady_claw from "@/assets/enemies/LadyClaw.avif";
-import rotten_flesh from "@/assets/enemies/RottenFlesh.avif";
-import shadow_guardian from "@/assets/enemies/ShadowGuardian.avif";
-import dark_vampire from "@/assets/enemies/ShadowVampire.avif";
+import bone_reaper from "@/assets/enemies/BoneReaperV2.png";
+import corrupted_worm from "@/assets/enemies/CorruptedWormV2.png";
+import death_messenger from "@/assets/enemies/DeathMessengerV2.png";
+import executioner from "@/assets/enemies/ExecutionerV2.png";
+import lady_claw from "@/assets/enemies/LadyClawV2.png";
+import rotten_flesh from "@/assets/enemies/RottenFleshV2.png";
+import shadow_guardian from "@/assets/enemies/ShadowGuardianV2.png";
+import dark_vampire from "@/assets/enemies/ShadowVampireV2.png";
 import jabali from "@/assets/enemies/flickering_boarV2.png";
 // Negros
-import abomination from "@/assets/enemies/Abomination.avif";
-import shadow_knight from "@/assets/enemies/ShadowKnight.avif";
+import abomination from "@/assets/enemies/AbominationV2.png";
+import shadow_knight from "@/assets/enemies/ShadowKnightV2.png";
 // Dorados/Comandantes
-import commander_thern from "@/assets/enemies/Thern.avif";
-import commander_twins from "@/assets/enemies/Twin.avif";
+import commander_thern from "@/assets/enemies/ThernV2.png";
+import commander_twins from "@/assets/enemies/TwinV2.png";
 // Jefes
-import demon_lord from "@/assets/enemies/DemonLord.png";
-import undead_king_boss from "@/assets/enemies/Lich.avif";
-import aralhezec from "@/assets/enemies/Dragon.avif";
-import wermunggdir from "@/assets/enemies/Wurm.avif";
+import demon_lord from "@/assets/enemies/DemonLordV2.png";
+import undead_king_boss from "@/assets/enemies/LichV2.png";
+import aralhezec from "@/assets/enemies/DragonV2.png";
+import wermunggdir from "@/assets/enemies/WurmV2.webp";
 import wermunggdir2 from "@/assets/enemies/WurmV2.avif";
 
 // Apocalipsis
-import skeleton_knight from "@/assets/enemies/skeleton_knight.avif";
-import shadow_witch from "@/assets/enemies/shadow_witch.avif";
-import dream_titan from "@/assets/enemies/dream_titan.avif";
-import hellish_flayer from "@/assets/enemies/hellish_flayer.avif";
-import faceless_conjurer from "@/assets/enemies/faceless_conjurer.avif";
+import skeleton_knight from "@/assets/enemies/skeleton_knightV2.png";
+import shadow_witch from "@/assets/enemies/shadow_witchV2.png";
+import dream_titan from "@/assets/enemies/dream_titanV2.png";
+import hellish_flayer from "@/assets/enemies/hellish_flayerV2.png";
+import faceless_conjurer from "@/assets/enemies/faceless_conjurerV2.png";
 import war_horsemen from "@/assets/enemies/war_horsemen.avif";
 import death_horsemen from "@/assets/enemies/death_horsemen.avif";
 import plague_horsemen from "@/assets/enemies/plague_horsemen.avif";
 import famine_horsemen from "@/assets/enemies/famine_horsemen.avif";
 
 // Despertar
-import gremlin_horde from "@/assets/enemies/gremlin_horde.avif";
-import gorgoness_witch from "@/assets/enemies/gorgoness_witch.avif";
-import grim_doctor from "@/assets/enemies/grim_doctor.avif";
-import nagian_hunter from "@/assets/enemies/nagian_hunter.avif";
-import hellspawn_brute from "@/assets/enemies/hellspawn_brute.avif";
-import night_stalker from "@/assets/enemies/night_stalker.avif";
-import gorgon_hexer from "@/assets/enemies/gorgon_hexer.avif";
-import soul_harvester from "@/assets/enemies/soul_harvester.avif";
-import fell_asteris from "@/assets/enemies/FellAsteris.avif";
+import gremlin_horde from "@/assets/enemies/gremlin_hordeV2.png";
+import gorgoness_witch from "@/assets/enemies/gorgoness_witchV2.png";
+import grim_doctor from "@/assets/enemies/grim_doctorV2.png";
+import nagian_hunter from "@/assets/enemies/nagian_hunterV2.png";
+import hellspawn_brute from "@/assets/enemies/hellspawn_bruteV2.png";
+import night_stalker from "@/assets/enemies/night_stalkerV2.png";
+import gorgon_hexer from "@/assets/enemies/gorgon_hexerV2.png";
+import soul_harvester from "@/assets/enemies/soul_harvesterV2.png";
+import fell_asteris from "@/assets/enemies/FellAsterisV2.png";
 import minerva from '@/assets/followers/minerva_seguidor.webp';
 
 // Hermanas caidas
-import fallen_sisters from "@/assets/enemies/fallen_sister.png";
+import fallen_sisters from "@/assets/enemies/fallen_sisterV2.png";
 
 //heroes caidos
 import lorelai from "@/assets/heroes/Lorelai.avif";
@@ -67,9 +67,9 @@ import vorn from "@/assets/heroes/Vorn.avif";
 
 //Especiales
 import { getEnemyArt } from '@/data/enemyArt';
-import corrupted_archer from "@/assets/enemies/corrupted_archer.avif";
+import corrupted_archer from "@/assets/enemies/corrupted_archerV2.png";
 
-import lasse from "@/assets/enemies/lasse.avif";
+import lasse from "@/assets/enemies/lasseV2.png";
 
 const BASE_ENEMIES = [
   { id: "undead_king_boss_1", nombre: "Undead King Boss", invoca: "skeleton_archer_esbirro1", numInvoca: 4, catInvoca: "esbirro", robaRunas: 0, vida: 30, cubo_T: 5, cubo_M: 2, movimiento: 0, color: "jefe", categoria: "jefe", tipo: "enemigo", expansionId: "base", imagen: undead_king_boss, rune: "jefe", runePosition: "jefe", comportamiento: "jefe", inmunidad: ["GRANDE", "INTIMIDAR_I", "SIGILO_I", "VENENO_I"], tipo_ataque: "", capacidades: []  },
