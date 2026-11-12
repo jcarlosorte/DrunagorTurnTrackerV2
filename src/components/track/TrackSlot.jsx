@@ -7,6 +7,7 @@ import CharacterCard from '@/components/track/CharacterCard';
 import CompanionTrackCard from '@/components/track/CompanionTrackCard';
 import FollowerCard from '@/components/track/FollowerCard';
 import CannonShotControl from '@/components/track/CannonShotControl';
+import ResponsiveImage from '@/components/track/ResponsiveImage';
 import { cardDistance, compactSlotHeight } from '@/components/track/trackLayout';
 
 /**
@@ -16,7 +17,7 @@ import { cardDistance, compactSlotHeight } from '@/components/track/trackLayout'
  * Toda la información y las acciones llegan en `deps` para no acoplar el
  * componente al estado global del tracker.
  */
-export default function TrackSlot({ index, compact = false, density = 'normal', overlap = 'normal', deps }) {
+export default function TrackSlot({ index, compact = false, density = 'normal', overlap = 'normal', simplified = false, deps }) {
   const {
     runesColorMap,
     getRuneColorFromIndex,
@@ -25,6 +26,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     tr = {},
     ti = {},
     tea = {},
+    ta = {},
     placedHeroes = [],
     placedEnemies = [],
     placedRunes = [],
@@ -229,6 +231,116 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       );
     });
   };
+
+  if (simplified) {
+    const compactAbove = [
+      ...stackAbove,
+      ...(isRune ? enemiesAbove : []),
+      ...(isRuneTextSlot ? runesAbove.map((entry) => ({ kind: 'rune', ...entry.rune })) : []),
+    ];
+    const compactBelow = [
+      ...stackBelow,
+      ...(isRune ? enemiesBelow : []),
+      ...(isRuneTextSlot ? runesBelowItems : []),
+    ];
+
+    const itemInfo = (item) => {
+      if (item.enemy) {
+        const enemy = item.enemy;
+        const specialName = enemy.tipo === 'especial'
+          ? ta.nombre?.[enemy.capacidades]
+            || ta.nombre?.[`${enemy.id}_${enemy.cara}`]
+            || ta.nombre?.[enemy.id]
+          : null;
+        return {
+          key: enemy.uuid,
+          label: specialName || getEnemyName(enemy.id, enemy.color),
+          image: enemy.imagen,
+          onClick: () => openEnemyModal(enemy.uuid),
+        };
+      }
+      if (item.rune || item.kind === 'rune' || item.runa) {
+        const rune = item.rune || item;
+        return {
+          key: rune.uuid || rune.id,
+          label: rune.nombre || rune.name || rune.id,
+          image: COLOR_RUNAS.find((entry) => entry.id === rune.runa)?.imagenSin,
+          onClick: undefined,
+        };
+      }
+      if (item.kind === 'siege') {
+        return { key: 'siege', label: ti.siegeTitle || 'Asedio', onClick: openSiegeDeck };
+      }
+      if (item.kind === 'follower') {
+        return {
+          key: item.uid,
+          label: item.nombre || item.name || item.id,
+          image: item.imagen,
+          onClick: () => openFollower?.(item.uid),
+        };
+      }
+      if (item.kind === 'companion') {
+        return {
+          key: item.uid,
+          label: item.nombre || item.name || item.id,
+          image: item.imagen,
+          onClick: () => onOpenCompanion?.(item.uid),
+        };
+      }
+      return {
+        key: item.id,
+        label: getHeroName(item.id),
+        image: item.imagen || item.image,
+        onClick: () => setSelectedHeroId(item.id),
+      };
+    };
+
+    const renderCompactRow = (item) => {
+      const info = itemInfo(item);
+      return (
+        <button
+          key={info.key}
+          type="button"
+          onClick={info.onClick}
+          className="flex h-8 w-full min-w-0 items-center gap-1 rounded border border-slate-600/80 bg-slate-950/85 px-1 text-left transition hover:border-sky-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-sky-300"
+          title={info.label}
+        >
+          {info.image ? (
+            <ResponsiveImage
+              src={info.image}
+              alt=""
+              sizes="28px"
+              className="h-7 w-5 shrink-0 object-contain object-bottom"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <span className="flex h-7 w-5 shrink-0 items-center justify-center text-[0.55rem] text-slate-500">•</span>
+          )}
+          <span className="min-w-0 flex-1 truncate text-[0.55rem] font-semibold leading-tight text-slate-100">{info.label}</span>
+        </button>
+      );
+    };
+
+    return (
+      <div className="track-slot relative w-full min-w-0" style={{ height: 'auto' }}>
+        <div className="flex flex-col items-center gap-0.5 px-1 pb-1 pt-1">
+          {compactAbove.map(renderCompactRow)}
+        </div>
+        <div className="my-0.5 flex h-7 w-full items-center justify-center bg-slate-700 px-1 text-center text-[0.55rem] font-semibold uppercase tracking-wide text-slate-100">
+          {index === 0 && tr.defensor
+            || index === 2 && tr.apoyo
+            || index === 4 && tr.lider
+            || index === 6 && tr.agresor
+            || index === 8 && tr.controlador
+            || index === 10 && ti.rune}
+        </div>
+        <div className="flex flex-col items-center gap-0.5 px-1 pb-1 pt-1">
+          {compactBelow.map(renderCompactRow)}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

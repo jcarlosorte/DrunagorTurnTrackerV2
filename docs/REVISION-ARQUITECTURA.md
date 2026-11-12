@@ -4590,6 +4590,22 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 266.ª tanda — Vista simplificada del track y fondo dinámico
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Vista simplificada** | Nuevo botón en la barra del track con tarjetas compactas de imagen y nombre | `TurnTrackBoard`, `TrackSlot` |
+| **Sin solapes** | Las cartas adicionales se apilan en filas, sin taparse | `TrackSlot` |
+| **Fondo** | El contenedor crece con la altura real del tablero y deja de recortar el hover | `TurnTrackBoard` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

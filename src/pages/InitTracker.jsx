@@ -4809,6 +4809,7 @@ const InitTracker = () => {
     tr,
     ti,
     tea,
+    ta: translations.cartas_ataque || {},
     placedHeroes: trackerData.placedHeroes || [],
     placedEnemies,
     placedRunes,
@@ -4843,6 +4844,7 @@ const InitTracker = () => {
       compact={Boolean(options.compact)}
       density={options.density || density}
       overlap={options.overlap || overlap}
+      simplified={Boolean(options.simplified)}
       deps={slotDeps}
     />
   );

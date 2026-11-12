@@ -41,6 +41,7 @@ export default function TurnTrackBoard({
   const pinchRef = useRef({ distance: 0, scale: 1 });
   const [scale, setScale] = useState(1);
   const [contentHeight, setContentHeight] = useState(0);
+  const [simplified, setSimplified] = useState(false);
   const [manualHeight, setManualHeight] = useState(() => {
     if (typeof window === 'undefined') return null;
     const stored = readJsonStorage(
@@ -213,6 +214,23 @@ export default function TurnTrackBoard({
 
           <button
             type="button"
+            data-testid="simplified-toggle"
+            onClick={() => setSimplified((prev) => !prev)}
+            aria-pressed={simplified}
+            title={simplified ? (labels.simplifiedOff || 'Vista normal') : (labels.simplifiedOn || 'Vista simplificada')}
+            aria-label={labels.simplified || 'Vista simplificada'}
+            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              simplified
+                ? 'border-sky-400/80 bg-sky-700 text-white'
+                : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <span aria-hidden="true" className="text-sm leading-none">▤</span>
+            <span className="hidden sm:inline">{labels.simplified || 'Simplificada'}</span>
+          </button>
+
+          <button
+            type="button"
             data-testid="overlap-toggle"
             onClick={onToggleOverlap}
             aria-pressed={overlap === 'compact'}
@@ -351,6 +369,7 @@ export default function TurnTrackBoard({
       ref={viewportRef}
       className="flex min-h-[560px] flex-1 items-start justify-center overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
       style={{
+        minHeight: contentHeight ? `${Math.max(560, contentHeight * scale + 32)}px` : '560px',
         backgroundColor: '#1e293b',
         backgroundImage: `linear-gradient(rgba(203, 213, 225, 0.18), rgba(15, 23, 42, 0.10)), url(${trackBackground})`,
         backgroundSize: 'cover',
@@ -364,7 +383,7 @@ export default function TurnTrackBoard({
       tabIndex={0}
     >
       <div
-        className="my-auto overflow-hidden"
+        className="my-auto"
         style={{
           width: `${BASE_WIDTH * scale}px`,
           height: contentHeight ? `${contentHeight * scale}px` : undefined,
@@ -376,7 +395,7 @@ export default function TurnTrackBoard({
             className="grid snap-x snap-mandatory grid-cols-11 auto-rows-auto items-start gap-0 p-2"
           >
             {summaries.map(({ index }) => (
-              <div key={index} className="min-w-0">{renderSlot(index, { density, overlap })}</div>
+              <div key={index} className="min-w-0">{renderSlot(index, { density, overlap, simplified })}</div>
             ))}
           </div>
         </div>
