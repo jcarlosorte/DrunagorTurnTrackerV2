@@ -4621,6 +4621,22 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 268.ª tanda — Restaurar inmunidad A y absorber vida del Comandante
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Inmunidad A** | Al pasar a la cara B vuelve a activarse la inmunidad temporal | `InitTracker` |
+| **Vida** | La absorción de vida se aplica después de retirar al Comandante, evitando que el estado anterior la sobrescriba | `InitTracker` |
+| **Cara B** | La inmunidad se retira al agotar fichas o al derrotar al Comandante | `InitTracker` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
