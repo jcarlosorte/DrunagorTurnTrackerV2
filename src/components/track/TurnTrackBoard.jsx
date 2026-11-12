@@ -40,6 +40,7 @@ export default function TurnTrackBoard({
   const sectionRef = useRef(null);
   const pinchRef = useRef({ distance: 0, scale: 1 });
   const [scale, setScale] = useState(1);
+  const [contentHeight, setContentHeight] = useState(0);
   const [manualHeight, setManualHeight] = useState(() => {
     if (typeof window === 'undefined') return null;
     const stored = readJsonStorage(
@@ -71,6 +72,19 @@ export default function TurnTrackBoard({
   useEffect(() => {
     if (view === 'board') fitToViewport();
   }, [view, fitToViewport]);
+
+  // La escala se aplica con transform, así que el contenedor exterior necesita
+  // la altura ya escalada para poder centrarse verticalmente.
+  useEffect(() => {
+    const element = gridRef.current;
+    if (!element) return undefined;
+    const update = () => setContentHeight(element.offsetHeight);
+    update();
+    if (typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [view, density, overlap, summaries]);
 
   // El panel lateral o la altura de la ventana cambian el espacio disponible.
   useEffect(() => {
@@ -335,7 +349,7 @@ export default function TurnTrackBoard({
   const boardView = (
     <div
       ref={viewportRef}
-      className="min-h-[560px] flex-1 overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
+      className="flex min-h-[560px] flex-1 items-start justify-center overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
       style={{
         backgroundColor: '#1e293b',
         backgroundImage: `linear-gradient(rgba(203, 213, 225, 0.18), rgba(15, 23, 42, 0.10)), url(${trackBackground})`,
@@ -349,7 +363,13 @@ export default function TurnTrackBoard({
       aria-label={labels.track || 'Orden de iniciativa'}
       tabIndex={0}
     >
-      <div className="mx-auto" style={{ width: `${BASE_WIDTH * scale}px` }}>
+      <div
+        className="my-auto overflow-hidden"
+        style={{
+          width: `${BASE_WIDTH * scale}px`,
+          height: contentHeight ? `${contentHeight * scale}px` : undefined,
+        }}
+      >
         <div style={{ width: `${BASE_WIDTH}px`, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
           <div
             ref={gridRef}

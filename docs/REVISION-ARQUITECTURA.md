@@ -4513,6 +4513,21 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 261.ª tanda — Centrado vertical real del track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Altura** | El contenedor exterior usa la altura escalada del tablero | `TurnTrackBoard` |
+| **Centrado** | El tablero queda centrado vertical y horizontalmente, con sus márgenes automáticos | `TurnTrackBoard` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
