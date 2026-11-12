@@ -4716,6 +4716,20 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 274.ª tanda — Botón de paneles solo con icono
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Botón** | «Paneles debajo» muestra solo el icono ⇩; la descripción aparece al pasar por encima | `TurnTrackBoard` |
+| **Pruebas** | 231 unitarios · 88 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        88/88
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

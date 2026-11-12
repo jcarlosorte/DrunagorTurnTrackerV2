@@ -300,14 +300,13 @@ export default function TurnTrackBoard({
             aria-pressed={panelsBelow}
             title={panelsBelow ? (labels.panelsBeside || 'Paneles al lado') : (labels.panelsBelow || 'Paneles debajo del track')}
             aria-label={labels.panelsBelow || 'Paneles debajo del track'}
-            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+            className={`flex h-9 w-9 items-center justify-center rounded-lg border text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
               panelsBelow
                 ? 'border-amber-400 bg-amber-700 text-white'
                 : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
             }`}
           >
             <span aria-hidden="true" className="text-sm leading-none">⇩</span>
-            <span className="hidden sm:inline">{panelsBelow ? (labels.panelsBeside || 'Al lado') : (labels.panelsBelow || 'Debajo')}</span>
           </button>
         </div>
 
