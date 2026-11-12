@@ -221,14 +221,13 @@ export default function TurnTrackBoard({
             aria-pressed={simplified}
             title={simplified ? (labels.simplifiedOff || 'Vista normal') : (labels.simplifiedOn || 'Vista simplificada')}
             aria-label={labels.simplified || 'Vista simplificada'}
-            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+            className={`flex h-9 w-9 items-center justify-center rounded-lg border text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
               simplified
                 ? 'border-sky-400/80 bg-sky-700 text-white'
                 : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
             }`}
           >
-            <span aria-hidden="true" className="text-sm leading-none">▤</span>
-            <span className="hidden sm:inline">{labels.simplified || 'Simplificada'}</span>
+            <span aria-hidden="true" className="text-sm leading-none">▣</span>
           </button>
 
           <button

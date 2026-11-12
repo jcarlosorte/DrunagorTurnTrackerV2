@@ -4683,6 +4683,23 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 272.ª tanda — Vista simplificada solo para enemigos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Alcance** | La vista simplificada solo compacta enemigos normales; héroes, runas y cartas especiales no cambian | `TrackSlot` |
+| **Sin solape** | Los enemigos compactos se separan en filas | `TrackSlot` |
+| **Botón** | Solo icono, con descripción al pasar por encima | `TurnTrackBoard` |
+| **Nombres** | Los avisos de tiempo usan el nombre traducido de la carta, no su ID | `InitTracker` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

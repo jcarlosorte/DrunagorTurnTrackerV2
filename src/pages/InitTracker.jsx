@@ -3207,7 +3207,14 @@ const InitTracker = () => {
           )
         );
         if (timeZero) logSoulTimeZero(timeZero);
-        const nombreEnemy = tee?.[enemy.id] || enemy.nombre || enemy.id;
+        const nombreEnemy = enemy.tipo === 'especial' || enemy.tipo === 'fallenHero'
+          ? ta.nombre?.[enemy.capacidades]
+            || ta.nombre?.[`${enemy.id}_${enemy.cara}`]
+            || ta.nombre?.[enemy.id]
+            || enemy.nombreEnemy
+            || enemy.nombre
+            || enemy.id
+          : tee?.[enemy.id] || enemy.nombre || enemy.id;
         if (mainBox === 'awakenings') {
           showScenarioToast(`⏳ ${nombreEnemy}: ${ti.tiempoReducido || 'Se reduce 1 Ficha de Tiempo'}`);
           if (skippedData.finished) {
@@ -3779,9 +3786,14 @@ const InitTracker = () => {
             });
             if (timeZero) logSoulTimeZero(timeZero);
             const nombreEnemy =
-            current.tipo === "especial" || current.tipo === "fallenHero"
-              ? ta.nombre?.[current.id] || current.nombre || current.id
-              : tee?.[current.id] || current.nombre || current.id;
+              current.tipo === "especial" || current.tipo === "fallenHero"
+                ? ta.nombre?.[current.capacidades]
+                  || ta.nombre?.[`${current.id}_${current.cara}`]
+                  || ta.nombre?.[current.id]
+                  || current.nombreEnemy
+                  || current.nombre
+                  || current.id
+                : tee?.[current.id] || current.nombre || current.id;
             if (mainBox === 'awakenings') {
               showScenarioToast(`⏳ ${nombreEnemy}: ${ti.tiempoReducido || 'Se reduce 1 Ficha de Tiempo'}`);
               if (skippedData.finished) {
