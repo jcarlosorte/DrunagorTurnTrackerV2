@@ -4745,6 +4745,21 @@ Unit       231 tests
 E2E        88/88
 ```
 
+### 276.ª tanda — Sin Nodo al agotar Desesperación B
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nodo** | Al agotar las fichas de tiempo de Desesperación B ya no se coloca un Nodo de Oscuridad | `InitTracker` |
+| **Derrota** | La derrota del Comandante antes de agotar las fichas sigue colocando su Nodo | `InitTracker` |
+| **Pruebas** | 231 unitarios · 88 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        88/88
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

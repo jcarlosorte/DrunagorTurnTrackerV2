@@ -2470,7 +2470,6 @@ const InitTracker = () => {
         setKing({ kingInvulnerable: false, kingStateImmune: false });
         setPlacedEnemies((prev) => prev.filter((entry) => entry.enemy.uuid !== card.uuid));
         flipDeck('boss_27');
-        addNode();
         return { logs: [...logs, '📖 Lee la ESCENA: INDEMNE (página 128).'] };
       }
 
