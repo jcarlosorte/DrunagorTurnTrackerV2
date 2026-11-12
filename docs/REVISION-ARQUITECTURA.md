@@ -4327,6 +4327,23 @@ Unit       230 tests
 E2E        87/87
 ```
 
+### 249.ª tanda — Variantes ligeras del arte V2
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Variantes** | Generadas AVIF 320/640 para las 38 imágenes V2 | `generate-image-variants` |
+| **Carga** | Track, selector, configuración, banner y ficha usan `ResponsiveImage` | `EnemyCard`, `Tracker`, `BossBanner`, `ModalEnemyCard` |
+| **Peso** | Las miniaturas V2 pasan de ~1 MB a ~18-25 KB | assets |
+| **Pendientes** | 16 enemigos sin archivo V2 | — |
+| **Pruebas** | 230 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       230 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

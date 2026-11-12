@@ -14,6 +14,7 @@ import { useGame } from '@/context/GameContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
 import EnemyRingControl from '@/components/EnemyRingControl';
 import EnemyPortraitBackdrop from '@/components/track/EnemyPortraitBackdrop';
+import ResponsiveImage from '@/components/track/ResponsiveImage';
 import { applyBossRuneEffect } from '@/utils/bossRunes';
 import { resolveSoulHarvesterTimeZero, formatEstadoAlterado } from '@/utils/soulHarvester';
 import { appendGameLog } from '@/utils/gameLog';
@@ -483,9 +484,10 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               className={`relative w-40 shrink-0 rounded-lg border-2 sm:w-48 ${borderColorMap[color] || 'border-slate-600'}`}
             >
               <div className="aspect-[567/827]">
-                <img 
+                <ResponsiveImage 
                   src={imagen}
                   alt={name}
+                  sizes="220px"
                   className="absolute inset-0 h-full w-full object-contain object-bottom p-1" loading="lazy" decoding="async" />
               </div>
               {/* Estados alterados sobre la imagen */}

@@ -7,6 +7,7 @@ import { clearCampFollowers } from '@/utils/campFollowers';
 import { HEROES } from '@/data/heroes';
 import { ENEMIES } from '@/data/enemies';
 import EnemyPortraitBackdrop from '@/components/track/EnemyPortraitBackdrop';
+import ResponsiveImage from '@/components/track/ResponsiveImage';
 import { OPPOSITE_ROLES, getRolesForExpansions } from '@/data/roles';
 import { COLORS } from '@/data/color';
 import { getHeroClassGroups } from '@/data/heroClasses';
@@ -819,9 +820,10 @@ const TrackerSelect = () => {
                                   className="aspect-[567/827] w-full"
                                 >
                                   {enemy.imagen ? (
-                                    <img
+                                    <ResponsiveImage
                                       src={enemy.imagen}
                                       alt=""
+                                      sizes="240px"
                                       loading="lazy"
                                       decoding="async"
                                       className="absolute inset-0 h-full w-full object-contain object-bottom p-1"

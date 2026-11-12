@@ -4,6 +4,7 @@ import { INMUNIDADES, ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { useLanguage } from '@/context/LanguageContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
 import EnemyPortraitBackdrop from './EnemyPortraitBackdrop';
+import ResponsiveImage from './ResponsiveImage';
 import { applyBossRuneEffect } from '@/utils/bossRunes';
 import BossRunesColumn from './BossRunesColumn';
 
@@ -67,7 +68,7 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                   className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-red-500/50"
                 >
                   {enemy.imagen ? (
-                    <img src={enemy.imagen} alt="" className="h-full w-full object-contain object-bottom p-0.5" loading="eager" decoding="async" />
+                    <ResponsiveImage src={enemy.imagen} alt="" sizes="80px" className="h-full w-full object-contain object-bottom p-0.5" loading="eager" decoding="async" />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center text-slate-600">☠</span>
                   )}
@@ -99,9 +100,10 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                 className="boss-banner__portrait relative flex h-24 w-20 shrink-0 items-center justify-center rounded-lg border border-red-500/50 sm:h-32 sm:w-24"
               >
                 {enemy.imagen ? (
-                  <img
+                  <ResponsiveImage
                     src={enemy.imagen}
                     alt=""
+                    sizes="160px"
                     className="h-full w-full object-contain object-bottom p-1"
                     loading="eager"
                     decoding="async"

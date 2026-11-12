@@ -23,7 +23,10 @@ const entries = [];
 
 for (const { dir, prefix } of DIRS) {
   const files = readdirSync(dir)
-    .filter((name) => name.toLowerCase().endsWith('.avif') && !isVariant(name))
+    .filter((name) => (
+      (name.toLowerCase().endsWith('.avif') && !isVariant(name))
+      || /V2\.png$/i.test(name)
+    ))
     .sort();
 
   for (const name of files) {
@@ -33,7 +36,7 @@ for (const { dir, prefix } of DIRS) {
 
     for (const size of SIZES) {
       if (!meta.width || meta.width <= size) continue;
-      const outName = name.replace(/\.avif$/i, `-${size}.avif`);
+      const outName = name.replace(/\.(avif|png)$/i, `-${size}.avif`);
       await sharp(file)
         .resize({ width: size, withoutEnlargement: true })
         .avif({ quality: QUALITY, effort: 5 })

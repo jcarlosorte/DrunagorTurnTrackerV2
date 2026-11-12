@@ -32,6 +32,7 @@ import TopMenu from '@/components/TopMenu';
 
 import AnimatedEnemyToast from '@/components/AnimatedEnemyToast';
 import EnemyPortraitBackdrop from '@/components/track/EnemyPortraitBackdrop';
+import ResponsiveImage from '@/components/track/ResponsiveImage';
 import PageTransition from "@/components/PageTransition";
 import ModalCommanderPC from '@/components/ModalCommanderPC';
 import { ModalEnemyCard } from '@/components/ModalEnemyCard';
@@ -5469,7 +5470,14 @@ const InitTracker = () => {
                               categoria={sampleEnemy.categoria}
                               className="h-16 w-12 shrink-0 rounded border border-slate-600"
                             >
-                              <img src={sampleEnemy.imagen} alt="" className="h-full w-full object-contain object-bottom p-0.5" loading="lazy" decoding="async" />
+                              <ResponsiveImage
+                                src={sampleEnemy.imagen}
+                                alt=""
+                                sizes="60px"
+                                className="h-full w-full object-contain object-bottom p-0.5"
+                                loading="lazy"
+                                decoding="async"
+                              />
                             </EnemyPortraitBackdrop>
                             <span className="min-w-0 flex-1 truncate text-sm font-bold text-white" title={getEnemyName(enemyId, sampleEnemy.color)}>
                               {getEnemyName(enemyId, sampleEnemy.color)}
