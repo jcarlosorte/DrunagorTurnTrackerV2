@@ -1922,11 +1922,19 @@ const InitTracker = () => {
         const hasBack = CARTAS_JEFE.some((item) => item.id === entry.enemy.id && item.cara === 'B');
         return hasBack
           ? { ...entry, enemy: { ...entry.enemy, cara: entry.enemy.cara === 'A' ? 'B' : 'A', bocaAbajo: false } }
-          : { ...entry, enemy: { ...entry.enemy, bocaAbajo: true } };
+          : { ...entry, enemy: { ...entry.enemy, bocaAbajo: !entry.enemy.bocaAbajo } };
       }));
     setPlacedEnemies((prev) => prev.map((entry) => (
       entry.enemy.uuid === kingEntry.enemy.uuid
-        ? { ...entry, enemy: { ...entry.enemy, kingCriticalAttacks: true } }
+        ? {
+          ...entry,
+          enemy: {
+            ...entry.enemy,
+            kingInvulnerable: false,
+            kingStateImmune: true,
+            kingCriticalAttacks: true,
+          },
+        }
         : entry
     )));
     addActiveNodeFromTrack();
@@ -2401,7 +2409,7 @@ const InitTracker = () => {
     const flipDeck = (exceptId) => setPlacedEnemies((prev) => prev.map((entry) => {
       if (entry.enemy.sourceEnemyUUID !== kingEntry.enemy.uuid || entry.enemy.id === exceptId) return entry;
       const hasBack = CARTAS_JEFE.some((item) => item.id === entry.enemy.id && item.cara === 'B');
-      if (!hasBack) return { ...entry, enemy: { ...entry.enemy, bocaAbajo: true } };
+      if (!hasBack) return { ...entry, enemy: { ...entry.enemy, bocaAbajo: !entry.enemy.bocaAbajo } };
       return flipCard(entry, entry.enemy.cara === 'A' ? 'B' : 'A');
     }));
 
@@ -5062,6 +5070,7 @@ const InitTracker = () => {
                         compactBoss: ti.compactBoss || 'Compactar jefe',
                         expandBoss: ti.expandBoss || 'Expandir jefe',
                         kingInvulnerable: ti.kingInvulnerable || 'El Rey Avivado es inmune a estados y daño.',
+                        kingStateImmune: ti.kingStateImmune || 'El Rey Avivado es inmune a estados.',
                         kingCriticalAttacks: ti.kingCriticalAttacks || 'Todos los Ataques con Arma, Hechizo y Purga son críticos si golpean.',
                       }}
                     />

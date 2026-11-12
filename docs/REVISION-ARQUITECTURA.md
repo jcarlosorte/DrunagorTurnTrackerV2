@@ -4293,6 +4293,22 @@ Unit       229 tests
 E2E        87/87
 ```
 
+### 247.ª tanda — Volteo de cartas y paneles del Rey Avivado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Volteo** | Al desaparecer Desesperación B, las cartas boca abajo se voltean de nuevo y las de doble cara cambian de cara | `InitTracker` |
+| **Panel** | Al activarse los ataques críticos se muestra solo la inmunidad a estados, no a daño | `BossBanner`, `ModalEnemyCard` |
+| **Daño** | El Rey Avivado vuelve a poder recibir daño, pero sigue inmune a estados | `InitTracker` |
+| **Pruebas** | 229 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       229 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

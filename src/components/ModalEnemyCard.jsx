@@ -372,7 +372,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   };
 
   const handleEstadoChangeLocal = async (estadoId, delta) => {
-    if (delta > 0 && enemy.kingInvulnerable) {
+    if (delta > 0 && (enemy.kingInvulnerable || enemy.kingStateImmune)) {
       mostrarAviso(ti.kingNoStates || 'El Rey Avivado es inmune a estados alterados ahora mismo.');
       return;
     }

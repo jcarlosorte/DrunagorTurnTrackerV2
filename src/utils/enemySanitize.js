@@ -29,6 +29,7 @@ const CAMPOS = [
   'cara',
   'bocaAbajo',
   'kingInvulnerable',
+  'kingStateImmune',
   'kingCriticalAttacks',
   'estadosAlterados',
   'respaldoA',

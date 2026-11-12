@@ -501,6 +501,7 @@
     "ringNoAvailable": "No rings available",
     "ringSizeMismatch": "Only rings of the same size can be swapped.",
     "kingInvulnerable": "The Awakened King is immune to states and damage.",
+    "kingStateImmune": "The Awakened King is immune to states.",
     "kingCriticalAttacks": "All Weapon, Spell and Purge attacks are critical if they hit.",
     "kingNoDamage": "The Awakened King cannot take damage right now.",
     "kingNoStates": "The Awakened King is immune to altered states right now.",
