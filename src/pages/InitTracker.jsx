@@ -5468,6 +5468,7 @@ const InitTracker = () => {
                             <EnemyPortraitBackdrop
                               color={sampleEnemy.color}
                               categoria={sampleEnemy.categoria}
+                              subtle
                               className="h-16 w-12 shrink-0 rounded border border-slate-600"
                             >
                               <ResponsiveImage

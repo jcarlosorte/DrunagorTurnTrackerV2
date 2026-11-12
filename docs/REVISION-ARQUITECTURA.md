@@ -4360,6 +4360,21 @@ Unit       230 tests
 E2E        87/87
 ```
 
+### 251.ª tanda — Quitar neblina en los selectores manuales
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Selector** | Las miniaturas manuales usan un fondo limpio sin plantilla ni halo | `EnemyPortraitBackdrop`, `Tracker`, `InitTracker` |
+| **Imagen** | La imagen se coloca por encima del fondo | selector manual |
+| **Pruebas** | 230 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       230 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -817,6 +817,7 @@ const TrackerSelect = () => {
                                 <EnemyPortraitBackdrop
                                   color={enemy.color}
                                   categoria={enemy.categoria}
+                                  subtle
                                   className="aspect-[567/827] w-full"
                                 >
                                   {enemy.imagen ? (
@@ -826,7 +827,7 @@ const TrackerSelect = () => {
                                       sizes="240px"
                                       loading="lazy"
                                       decoding="async"
-                                      className="absolute inset-0 h-full w-full object-contain object-bottom p-1"
+                                      className="absolute inset-0 z-10 h-full w-full object-contain object-bottom p-1"
                                     />
                                   ) : (
                                     <span className="flex h-full w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
