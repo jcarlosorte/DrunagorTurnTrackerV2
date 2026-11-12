@@ -1933,7 +1933,7 @@ const InitTracker = () => {
           enemy: {
             ...entry.enemy,
             kingInvulnerable: false,
-            kingStateImmune: true,
+            kingStateImmune: false,
             kingCriticalAttacks: true,
           },
         }
@@ -2467,6 +2467,7 @@ const InitTracker = () => {
           removeEnemyByUUID(commander.uuid);
           logs.push(`❤️ El Rey Avivado absorbe ${commander.vida} de vida del Comandante (${nextVida}).`);
         }
+        setKing({ kingInvulnerable: false, kingStateImmune: false });
         setPlacedEnemies((prev) => prev.filter((entry) => entry.enemy.uuid !== card.uuid));
         flipDeck('boss_27');
         addNode();
@@ -2479,14 +2480,14 @@ const InitTracker = () => {
       }
       await summonCommander();
       setKing({
-        kingInvulnerable: true,
+        kingInvulnerable: false,
+        kingStateImmune: false,
         estadosAlterados: (kingEntry.enemy.estadosAlterados || []).map((estado) => ({ ...estado, count: 0 })),
       });
       flipDeck('boss_27');
       processedCardsRef.current.delete(card.uuid);
       addNode();
       logs.push('📖 Lee la ESCENA: EL PODER DE LA OSCURIDAD (página 127).');
-      logs.push('🛡 El Rey Avivado es inmune temporalmente a estados y daño.');
       return { logs };
     }
 

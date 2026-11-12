@@ -4544,6 +4544,22 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 263.ª tanda — Retirar las inmunidades temporales del Rey Avivado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cara A** | Al pasar a la cara B ya no deja inmunidad temporal | `InitTracker` |
+| **Cara B** | Al agotarse las fichas desaparece la inmunidad y vuelve a recibir daño | `InitTracker` |
+| **Derrota** | El aviso de críticos ya no mantiene la inmunidad a estados | `InitTracker` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
