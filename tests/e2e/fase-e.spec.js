@@ -52,6 +52,12 @@ test.describe('Fase E · campamento y reinicio', () => {
     await expect.poll(async () => (await readStorage(page, 'initEnemiesState', {})).placedEnemies?.length || 0).toBe(0);
     await expect.poll(async () => (await readStorage(page, 'gameState', {})).usedTiles?.length || 0).toBe(0);
 
+    const session = await readStorage(page, 'trackerSession', {});
+    expect(session.turnIndex).toBe(0);
+    expect(session.roundNumber).toBe(1);
+    await expect(page.getByTestId('undo-turn')).toBeDisabled();
+    await expect(page.getByText('Ronda 1', { exact: false }).first()).toBeVisible();
+
     await expect.poll(async () => (await readStorage(page, 'heroExtras', {})).vorn?.vida).toBe(12);
     const extras = await readStorage(page, 'heroExtras', {});
     expect(extras.vorn.estadosAlterados).toEqual([]);

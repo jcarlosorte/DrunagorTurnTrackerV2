@@ -4775,6 +4775,22 @@ Unit       231 tests
 E2E        88/88
 ```
 
+### 278.ª tanda — Reinicio completo de turno e historial
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Turno** | Reinicia cursor, ronda, entidad actual, cola de turnos, cronómetro y rastro | `InitTracker` |
+| **Historial** | Borra el historial, deshacer y la sesión persistida | `InitTracker` |
+| **Mecánicas** | Reinicia también barajas activas, Asedio, escenario, generación y cañones | `InitTracker` |
+| **Pruebas** | 231 unitarios · 88 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        88/88
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

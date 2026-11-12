@@ -71,7 +71,7 @@ import AppDialogHost from '@/components/AppDialogHost';
 
 import { createId } from '@/utils/id';
 import { appNotify, appConfirm, appPrompt } from '@/utils/appDialogs';
-import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
+import { isPlainObject, readJsonStorage, removeStorage, writeJsonStorage } from '@/utils/storage';
 import { healSurvivors } from '@/utils/hiloDeVida';
 import { formatCardText } from '@/utils/cardText';
 import { appendGameLog, clearGameLog, replaceLastGameLog } from '@/utils/gameLog';
@@ -4640,11 +4640,12 @@ const InitTracker = () => {
     setCurrentTurnEntity(snapshot.currentTurnEntity);
     showScenarioToast(ti.undoDone || 'Turno anterior restaurado');
   };
-  const restartTurnOrder = () => {
+  const resetTurnAndHistory = () => {
     resetCursor();
     previousTurnIndexRef.current = null;
     roundRef.current = 1;
     setCurrentTurnEntity(null);
+    setLastRealTurnIndex(null);
     setExecutedRunes([]);
     processedVoragineRef.current = new Set();
     processedDefenseTurnRef.current = new Set();
@@ -4653,8 +4654,17 @@ const InitTracker = () => {
     processedCardsRef.current.clear();
     processedTiempoRef.current = new Set();
     processedHeroEffectsRef.current = new Set();
+    processedCompanionEffectsRef.current = new Set();
+    processedBoarTurnRef.current = new Set();
+    processedSiegeTurnRef.current.clear();
     lastHeroTurnRef.current = null;
-  
+    turnTrailRef.current = [];
+    turnTimerRef.current = { entity: null, startedAt: Date.now() };
+    setTurnSeconds(0);
+  };
+
+  const restartTurnOrder = () => {
+    resetTurnAndHistory();
     showScenarioToast(`🔁 ${ti.rondaInicial}`);
   };
   
@@ -4947,11 +4957,15 @@ const InitTracker = () => {
   });
 
   const handleRestartGame = ({ runas = false, heroes = false } = {}) => {
-    resetCursor();
+    resetTurnAndHistory();
     clearGameLog();
+    removeStorage('trackerSession');
     resetEnemySession();
     resetGenerationPoints();
     resetMagicCannons();
+    resetFlickeringBoarDeck();
+    resetSiegeEvent();
+    setScenarioMonster(null);
 
     if (runas) {
       resetPlacedRunes();
