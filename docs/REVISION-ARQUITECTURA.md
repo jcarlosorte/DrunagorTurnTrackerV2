@@ -4560,6 +4560,21 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 264.ª tanda — Evitar Nodos duplicados al derrotar al Comandante
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Duplicado** | La derrota del Comandante solo procesa una vez la desaparición de Desesperación B | `InitTracker` |
+| **Nodo** | Se coloca un único Nodo de Oscuridad activo | `InitTracker` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

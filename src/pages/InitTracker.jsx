@@ -247,6 +247,7 @@ const InitTracker = () => {
   const [siegeDeckOpen, setSiegeDeckOpen] = useState(false);
   const [siegeAlertQueue, setSiegeAlertQueue] = useState([]);
   const wakenedCommanderRef = useRef(false);
+  const wakenedDefeatHandledRef = useRef(null);
   const siegeActiveRef = useRef(false);
   const processedSiegeTurnRef = useRef(new Set());
   const [selectedEnemyUuid, setSelectedEnemyUuid] = useState(null);
@@ -1917,6 +1918,8 @@ const InitTracker = () => {
       && (entry.enemy?.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count > 0
     ));
     if (!kingEntry || !desesperacion) return;
+    if (wakenedDefeatHandledRef.current === desesperacion.enemy.uuid) return;
+    wakenedDefeatHandledRef.current = desesperacion.enemy.uuid;
     setPlacedEnemies((prev) => prev
       .filter((entry) => entry.enemy.uuid !== desesperacion.enemy.uuid)
       .map((entry) => {
