@@ -4451,6 +4451,21 @@ Unit       230 tests
 E2E        87/87
 ```
 
+### 257.ª tanda — Centrar el track en el espacio disponible
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Centrado** | El tablero escalado se centra horizontalmente dentro del contenedor | `TurnTrackBoard` |
+| **Fondo** | La imagen se mantiene centrada y cubriendo el contenedor | `TurnTrackBoard` |
+| **Pruebas** | 230 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       230 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

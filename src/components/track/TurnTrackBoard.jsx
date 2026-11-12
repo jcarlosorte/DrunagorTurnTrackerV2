@@ -349,7 +349,7 @@ export default function TurnTrackBoard({
       aria-label={labels.track || 'Orden de iniciativa'}
       tabIndex={0}
     >
-      <div style={{ width: `${BASE_WIDTH * scale}px` }}>
+      <div className="mx-auto" style={{ width: `${BASE_WIDTH * scale}px` }}>
         <div style={{ width: `${BASE_WIDTH}px`, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
           <div
             ref={gridRef}
