@@ -269,7 +269,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -1929,7 +1929,7 @@ const InitTracker = () => {
         ? { ...entry, enemy: { ...entry.enemy, kingCriticalAttacks: true } }
         : entry
     )));
-    placeSceneRunes(1, 1);
+    addActiveNodeFromTrack();
     appendGameLog('event', '📖 Lee la ESCENA: SIGUIENTE EN LA FILA. Los ataques con Arma, Hechizo y Purga son críticos si golpean.', {
       round: roundRef.current,
       turn: turnIndex,
@@ -2358,6 +2358,11 @@ const InitTracker = () => {
     };
   };
 
+  const addActiveNodeFromTrack = () => {
+    const node = addNewNodoOscuridad();
+    if (node) activarNodoOscuridad(node.id);
+  };
+
   const resolveWakenedKingCard = async (cartaEspecial) => {
     const kingEntry = placedEnemies.find((entry) => entry.enemy?.id === 'wakened_king_boss');
     if (!kingEntry || cartaEspecial.sourceEnemyUUID !== kingEntry.enemy.uuid) return null;
@@ -2401,7 +2406,7 @@ const InitTracker = () => {
     }));
 
     const addNode = () => {
-      placeSceneRunes(1, 1);
+      addActiveNodeFromTrack();
       logs.push('🌑 Se coloca 1 Nodo de Oscuridad activo.');
     };
 

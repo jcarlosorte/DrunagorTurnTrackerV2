@@ -4278,6 +4278,21 @@ Unit       229 tests
 E2E        87/87
 ```
 
+### 246.ª tanda — Nodo de Oscuridad del Rey Avivado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nodo** | Al colocar el Nodo de Desesperación se consumen las runas del track y se reduce el contador | `InitTracker` |
+| **Derrota** | La escena de derrota del Comandante usa el mismo consumo | `InitTracker` |
+| **Pruebas** | 229 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       229 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
