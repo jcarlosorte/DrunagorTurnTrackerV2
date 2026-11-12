@@ -1915,7 +1915,6 @@ const InitTracker = () => {
     const desesperacion = placedEnemies.find((entry) => (
       entry.enemy?.id === 'boss_26'
       && entry.enemy?.cara === 'B'
-      && (entry.enemy?.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count > 0
     ));
     if (!kingEntry || !desesperacion) return;
     if (wakenedDefeatHandledRef.current === desesperacion.enemy.uuid) return;
@@ -1954,7 +1953,6 @@ const InitTracker = () => {
     const desesperacionB = placedEnemies.some((entry) => (
       entry.enemy.id === 'boss_26'
       && entry.enemy.cara === 'B'
-      && (entry.enemy.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count > 0
     ));
     if (wakenedCommanderRef.current && !commanderAlive && desesperacionB) {
       handleWakenedCommanderDefeat();
@@ -1965,7 +1963,6 @@ const InitTracker = () => {
 
   const onRemove = (uuid) => {
     const removed = placedEnemies.find((entry) => entry.enemy.uuid === uuid)?.enemy;
-    if (removed?.id === 'soul_harvester') handleWakenedCommanderDefeat();
     const hiloCard = placedEnemies.find(
       (entry) => entry.enemy.id === 'cmd_18' && entry.enemy.tipo === 'especial',
     );

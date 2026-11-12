@@ -80,7 +80,7 @@ const CommanderCard = ({ carta }) => {
           className={`cursor-custom relative w-full aspect-square overflow-hidden p-2 rounded-lg border-2 shadow-md hover:scale-105 transition
             ${carta.highlight ? ringClass : borderClass}`}
         >
-          {tiempoCount > 0 && (
+          {tiempoCount > 0 && carta.id !== 'boss_26' && (
             <span className="absolute right-1 top-1 z-10 flex items-center gap-0.5 rounded-full bg-slate-950/90 px-1 py-0.5 text-[0.55rem] font-bold text-amber-100">
               ⏳ {tiempoCount}
             </span>

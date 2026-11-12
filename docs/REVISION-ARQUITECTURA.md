@@ -4700,6 +4700,22 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 273.ª tanda — Derrota del Comandante y icono de tiempo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Derrota** | La retirada del Comandante se procesa después de actualizar el estado, evitando que la carta B quede en el track | `InitTracker` |
+| **Nodos** | Se mantiene un único Nodo y el volteo del mazo | `InitTracker` |
+| **Tiempo** | Desesperación ya no muestra el icono de tiempo superior derecho | `CommanderCard` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
