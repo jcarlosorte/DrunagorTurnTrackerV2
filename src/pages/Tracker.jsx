@@ -853,6 +853,9 @@ const TrackerSelect = () => {
                               </span>
                               <span className="flex flex-1 flex-col justify-center gap-0.5 px-2 py-2 text-center">
                                 <span className="line-clamp-2 text-sm font-bold text-slate-100">{getEnemyName(enemy.id)}</span>
+                                <span className="mx-auto mt-0.5 rounded-full border border-sky-700/70 bg-sky-950/70 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-sky-200">
+                                  {translations.enemies?.categoria?.[enemy.categoria] || enemy.categoria}
+                                </span>
                                 <span className="truncate text-[0.7rem] text-slate-400">{getExpansionName(enemy.expansionId)}</span>
                               </span>
                             </label>

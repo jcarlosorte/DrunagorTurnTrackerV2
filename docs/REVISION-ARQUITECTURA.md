@@ -4498,6 +4498,21 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 260.ª tanda — Etiquetas de tipo bajo el nombre
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Fuera de la imagen** | Eliminadas las etiquetas de tipo superpuestas en cartas y track | `EnemyPortraitBackdrop` |
+| **Selector** | El tipo aparece bajo el nombre, junto a la imagen, en configuración y selector manual | `Tracker`, `InitTracker` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -5480,8 +5480,13 @@ const InitTracker = () => {
                                 decoding="async"
                               />
                             </EnemyPortraitBackdrop>
-                            <span className="min-w-0 flex-1 truncate text-sm font-bold text-white" title={getEnemyName(enemyId, sampleEnemy.color)}>
-                              {getEnemyName(enemyId, sampleEnemy.color)}
+                            <span className="flex min-w-0 flex-1 flex-col">
+                              <span className="truncate text-sm font-bold text-white" title={getEnemyName(enemyId, sampleEnemy.color)}>
+                                {getEnemyName(enemyId, sampleEnemy.color)}
+                              </span>
+                              <span className="mt-0.5 w-fit rounded-full border border-sky-700/70 bg-sky-950/70 px-1.5 py-0.5 text-[0.55rem] font-bold uppercase tracking-wide text-sky-200">
+                                {tc[sampleEnemy.categoria] || sampleEnemy.categoria}
+                              </span>
                             </span>
                           </div>
                     

@@ -2,14 +2,6 @@ import cardTemplate from '@/assets/enemies/Template_Card_Monster.webp';
 import trackBackground from '@/assets/backgrounds/track.avif';
 import { getEnemyTone } from './enemyVisuals';
 
-const CATEGORY_LABELS = {
-  jefe: 'JEFE',
-  overlord: 'OVERLORD',
-  comandante: 'COMANDANTE',
-  esbirro: 'ESBIRRO',
-  escenario: 'ESCENARIO',
-};
-
 /**
  * Fondo común de las cartas de enemigo: plantilla de calavera, color del tipo
  * y un halo difuminado. La imagen del enemigo se coloca encima con `children`.
@@ -17,10 +9,6 @@ const CATEGORY_LABELS = {
 export default function EnemyPortraitBackdrop({ color, categoria, className = '', subtle = false, children }) {
   const tone = getEnemyTone(color, categoria);
   const isBoss = categoria === 'jefe';
-  const isOverlord = categoria === 'overlord';
-  const isCommander = categoria === 'comandante';
-  const isMinion = categoria === 'esbirro';
-  const isScenario = categoria === 'escenario';
 
   return (
     <div
@@ -63,11 +51,6 @@ export default function EnemyPortraitBackdrop({ color, categoria, className = ''
           }}
           aria-hidden="true"
         />
-      )}
-      {(isBoss || isOverlord || isCommander || isMinion || isScenario) && (
-        <span className="pointer-events-none absolute right-1 top-1 z-10 rounded bg-slate-950/70 px-1 py-0.5 text-[0.45rem] font-black uppercase tracking-wider text-white/85">
-          {CATEGORY_LABELS[categoria] || categoria}
-        </span>
       )}
       {children}
     </div>
