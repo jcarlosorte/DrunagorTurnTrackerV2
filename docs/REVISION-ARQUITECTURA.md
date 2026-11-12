@@ -4390,6 +4390,20 @@ Unit       230 tests
 E2E        87/87
 ```
 
+### 253.ª tanda — Fondo del track más claro
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Fondo** | Se sustituye el oscurecido por una capa clara que deja ver mejor la textura | `TurnTrackBoard` |
+| **Pruebas** | 230 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       230 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -337,7 +337,8 @@ export default function TurnTrackBoard({
       ref={viewportRef}
       className="min-h-[560px] flex-1 overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
       style={{
-        backgroundImage: `linear-gradient(rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.35)), url(${trackBackground})`,
+        backgroundColor: '#1e293b',
+        backgroundImage: `linear-gradient(rgba(203, 213, 225, 0.18), rgba(15, 23, 42, 0.10)), url(${trackBackground})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
