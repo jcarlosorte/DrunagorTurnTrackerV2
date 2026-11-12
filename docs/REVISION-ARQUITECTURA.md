@@ -4233,6 +4233,21 @@ Unit       228 tests
 E2E        87/87
 ```
 
+### 243.ª tanda — Palabras clave resaltadas del Rey Avivado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Palabras** | Añadidas héroe menos/más corrompido, héroes a cualquier alcance, ficha de tiempo y genera | `CommanderCardModal` |
+| **Color** | Las palabras clave se muestran en mayúscula y azul | `CommanderCardModal` |
+| **Pruebas** | 228 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       228 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

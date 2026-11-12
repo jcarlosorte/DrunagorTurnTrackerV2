@@ -8,6 +8,54 @@ import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { CARTAS_COMANDANTE, CARTAS_JEFE } from '@/data/cartasEspeciales';
 import { formatCardText } from '@/utils/cardText';
 
+const WAKENED_KEYWORDS = [
+  'héroe menos corrompido',
+  'héroe más corrompido',
+  'héroes a cualquier alcance',
+  'ficha de tiempo',
+  'aura sombría',
+  'least corrupted hero',
+  'most corrupted hero',
+  'heroes at any range',
+  'time token',
+  'dark aura',
+  'daño',
+  'fatiga',
+  'maldición',
+  'pesadillas',
+  'pesadilla',
+  'condiciones',
+  'genera',
+  'damage',
+  'fatigue',
+  'curse',
+  'nightmares',
+  'nightmare',
+  'conditions',
+  'generate',
+];
+
+const WAKENED_KEYWORD_PATTERN = new RegExp(
+  `\\b(${WAKENED_KEYWORDS.sort((a, b) => b.length - a.length).join('|')})\\b`,
+  'gi',
+);
+
+const pushWakenedKeywords = (target, text, keyPrefix) => {
+  const parts = text.split(WAKENED_KEYWORD_PATTERN);
+  parts.forEach((part, index) => {
+    if (!part) return;
+    if (index % 2 === 1) {
+      target.push(
+        <span key={`${keyPrefix}-kw-${index}`} className="font-bold text-sky-400">
+          {part.toUpperCase()}
+        </span>,
+      );
+    } else {
+      target.push(part);
+    }
+  });
+};
+
 const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   const { translations } = useLanguage();
   const { getRuneCount } = useGame();
@@ -142,7 +190,8 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
             finalPartes.push(token); // Agregamos el punto original
             finalPartes.push(<br key={`br-${i}-${idx}`} />); // Luego el salto
           } else if (token.trim() !== "") {
-            finalPartes.push(token);
+            if (isWakenedCard) pushWakenedKeywords(finalPartes, token, `${i}-${idx}`);
+            else finalPartes.push(token);
           }
         });
       } else {
