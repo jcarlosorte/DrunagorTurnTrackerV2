@@ -4466,6 +4466,21 @@ Unit       230 tests
 E2E        87/87
 ```
 
+### 258.ª tanda — Alias de arte V2 para enemigos especiales
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Alias** | Guardia, Matón, Contramaestre, Reyes, Vampiros, comandantes y jefes usan su V2 aunque su ID no coincida | `enemyArt` |
+| **Casos** | SkeletonArcher, Abomination, Executioner, Lich, ShadowVampire, Ravager, Dragon, Wurm, ScoutOfDarkness, Twin y Thern | `enemyArt` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
