@@ -4404,6 +4404,21 @@ Unit       230 tests
 E2E        87/87
 ```
 
+### 254.ª tanda — Fondo de track para los jefes
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Jefes** | Usan `track.avif` como fondo, teñido con su color magenta | `EnemyPortraitBackdrop` |
+| **Resto** | Los demás enemigos conservan la plantilla de calavera | `EnemyPortraitBackdrop` |
+| **Pruebas** | 230 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       230 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

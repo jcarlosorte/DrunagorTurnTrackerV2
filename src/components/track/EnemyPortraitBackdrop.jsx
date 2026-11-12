@@ -1,4 +1,5 @@
 import cardTemplate from '@/assets/enemies/Template_Card_Monster.webp';
+import trackBackground from '@/assets/backgrounds/track.avif';
 import { getEnemyTone } from './enemyVisuals';
 
 const CATEGORY_LABELS = {
@@ -26,12 +27,17 @@ export default function EnemyPortraitBackdrop({ color, categoria, className = ''
       className={`relative overflow-hidden bg-slate-950 ${className}`}
       style={{
         backgroundColor: '#020617',
-        backgroundImage: subtle
-          ? `linear-gradient(180deg, ${tone}55 0%, #020617 82%)`
-          : [
-            `radial-gradient(ellipse at 50% 18%, ${tone}${isBoss ? 'cc' : '99'} 0%, ${tone}55 38%, transparent 72%)`,
-            `linear-gradient(180deg, ${tone}44 0%, #020617 72%)`,
-          ].join(', '),
+        backgroundImage: isBoss
+          ? `linear-gradient(155deg, ${tone}dd 0%, ${tone}66 42%, rgba(2, 6, 23, 0.88) 100%), url(${trackBackground})`
+          : subtle
+            ? `linear-gradient(180deg, ${tone}55 0%, #020617 82%)`
+            : [
+              `radial-gradient(ellipse at 50% 18%, ${tone}${isBoss ? 'cc' : '99'} 0%, ${tone}55 38%, transparent 72%)`,
+              `linear-gradient(180deg, ${tone}44 0%, #020617 72%)`,
+            ].join(', '),
+        backgroundSize: isBoss ? 'cover' : undefined,
+        backgroundPosition: isBoss ? 'center' : undefined,
+        backgroundRepeat: isBoss ? 'no-repeat' : undefined,
       }}
     >
       <div
@@ -39,7 +45,7 @@ export default function EnemyPortraitBackdrop({ color, categoria, className = ''
         style={{ background: `radial-gradient(circle at 50% 28%, ${tone}88 0%, transparent 65%)` }}
         aria-hidden="true"
       />
-      {!subtle && (
+      {!isBoss && !subtle && (
         <img
           src={cardTemplate}
           alt=""
