@@ -4606,6 +4606,21 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 267.ª tanda — Paneles debajo del track y scroll horizontal
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Paneles** | Nuevo botón junto a presentación para mover los paneles laterales debajo del track | `TurnTrackBoard`, `InitTracker` |
+| **Scroll** | El tablero ancho queda desplazable horizontalmente sin perder el centrado | `TurnTrackBoard` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

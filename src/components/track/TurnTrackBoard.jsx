@@ -14,6 +14,8 @@ export default function TurnTrackBoard({
   summaries = [],
   currentSlotIndex = -1,
   presentation = false,
+  panelsBelow = false,
+  onTogglePanelsBelow,
   onTogglePresentation,
   onNextTurn,
   onUndoTurn,
@@ -290,6 +292,23 @@ export default function TurnTrackBoard({
             <span aria-hidden="true">🖵</span>
             
           </button>
+
+          <button
+            type="button"
+            data-testid="panels-below-toggle"
+            onClick={onTogglePanelsBelow}
+            aria-pressed={panelsBelow}
+            title={panelsBelow ? (labels.panelsBeside || 'Paneles al lado') : (labels.panelsBelow || 'Paneles debajo del track')}
+            aria-label={labels.panelsBelow || 'Paneles debajo del track'}
+            className={`flex h-9 items-center gap-1.5 rounded-lg border px-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              panelsBelow
+                ? 'border-amber-400 bg-amber-700 text-white'
+                : 'border-transparent text-slate-200 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <span aria-hidden="true" className="text-sm leading-none">⇩</span>
+            <span className="hidden sm:inline">{panelsBelow ? (labels.panelsBeside || 'Al lado') : (labels.panelsBelow || 'Debajo')}</span>
+          </button>
         </div>
 
         <div className="flex items-center gap-0.5 rounded-xl border border-slate-700 bg-slate-950/70 p-0.5" role="group" aria-label={labels.panels || 'Paneles'}>
@@ -367,7 +386,7 @@ export default function TurnTrackBoard({
   const boardView = (
     <div
       ref={viewportRef}
-      className="flex min-h-[560px] flex-1 items-start justify-center overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
+      className="flex min-h-[560px] flex-1 items-start overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
       style={{
         minHeight: contentHeight ? `${Math.max(560, contentHeight * scale + 32)}px` : '560px',
         backgroundColor: '#1e293b',
@@ -383,7 +402,7 @@ export default function TurnTrackBoard({
       tabIndex={0}
     >
       <div
-        className="my-auto"
+        className="mx-auto my-auto"
         style={{
           width: `${BASE_WIDTH * scale}px`,
           height: contentHeight ? `${contentHeight * scale}px` : undefined,

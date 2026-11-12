@@ -3346,6 +3346,7 @@ const InitTracker = () => {
   const processedBoarTurnRef = useRef(new Set());
   const processedTiempoRef = useRef(toSet(persistedSession?.processed?.tiempo));
   const [presentation, setPresentation] = useState(false);
+  const [panelsBelow, setPanelsBelow] = useState(false);
   // En móvil la bolsa arranca cerrada: libera altura para el tablero.
   const [bagOpen, setBagOpen] = useState(() => (
     typeof window === 'undefined' ? true : window.innerWidth >= 1024
@@ -5022,7 +5023,7 @@ const InitTracker = () => {
               </div>
             )}
             
-            <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 lg:flex-row">
+            <div className={`mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 ${panelsBelow ? '' : 'lg:flex-row'}`}>
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
                 {visionClaraActive && (
                   <div className="mb-2 flex flex-wrap items-center gap-2 rounded-xl border border-cyan-700/60 bg-cyan-950/40 p-2 text-cyan-100">
@@ -5057,6 +5058,8 @@ const InitTracker = () => {
                   summaries={slotSummaries}
                   currentSlotIndex={currentSlotIndex}
                   presentation={presentation}
+                  panelsBelow={panelsBelow}
+                  onTogglePanelsBelow={() => setPanelsBelow((prev) => !prev)}
                   onTogglePresentation={() => setPresentation((prev) => !prev)}
                   onNextTurn={() => setTimeout(() => handleNextTurn(), 300)}
                   onUndoTurn={undoTurn}
@@ -5144,6 +5147,8 @@ const InitTracker = () => {
                     fit: ti.fitWidth || 'Ajustar',
                     presentation: ti.presentation || 'Modo presentación',
                     exitPresentation: ti.exitPresentation || 'Salir de presentación',
+                    panelsBelow: ti.panelsBelow || 'Paneles debajo',
+                    panelsBeside: ti.panelsBeside || 'Paneles al lado',
                     current: ti.currentTurn || 'Turno actual',
                     empty: ti.noCharacters || 'Sin personajes',
                     undoTurn: ti.undoTurn || 'Deshacer',
@@ -5167,8 +5172,10 @@ const InitTracker = () => {
               {(diceOpen || bagOpen || historyOpen || pilas.length > 0 || pilasConcentrada.length > 0
                 || generationPoints.length > 0 || magicCannons.length > 0
                 || corruptShipEvent?.active || swanShipEvent.active || erradenEvent?.active) && (
-                <aside className="flex min-h-0 w-full max-h-[70dvh] flex-col gap-3 overflow-y-auto lg:max-h-none lg:w-64 lg:shrink-0">
-                  {diceOpen && (
+                <aside className={panelsBelow
+                  ? 'grid w-full grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3'
+                  : 'flex min-h-0 w-full max-h-[70dvh] flex-col gap-3 overflow-y-auto lg:max-h-none lg:w-64 lg:shrink-0'}>
+                {diceOpen && (
                     <DiceRoller
                       inline
                       open
