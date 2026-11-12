@@ -4637,6 +4637,21 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 269.ª tanda — Imagen de enemigo a todo el ancho
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Ancho** | La imagen ocupa todo el ancho de la carta sin deformarse | `EnemyCard` |
+| **Alineación** | La imagen queda pegada al borde superior | `EnemyCard` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -120,10 +120,10 @@ export default function EnemyCard({
             loading="lazy"
             decoding="async"
             className={classNames(
-              'absolute inset-0 h-full w-full rounded-xl',
+              'absolute left-0 top-0 rounded-xl',
               isBoss
-                ? 'scale-110 object-cover object-top'
-                : 'object-contain object-bottom px-1 pb-10 pt-2',
+                ? 'h-full w-full scale-110 object-cover object-top'
+                : 'h-auto w-full object-contain object-top',
               'drop-shadow-[0_8px_12px_rgba(0,0,0,0.8)]',
             )}
           />
