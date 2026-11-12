@@ -4248,6 +4248,21 @@ Unit       228 tests
 E2E        87/87
 ```
 
+### 244.ª tanda — Avisos de cartas en su turno correcto
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Historial** | Los avisos de una carta se agrupan por ronda y turno aunque se registren después de avanzar | `HistoryPanel` |
+| **Contexto** | Los avisos de resolución conservan el turno de la carta que los originó | `InitTracker` |
+| **Pruebas** | 228 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       228 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

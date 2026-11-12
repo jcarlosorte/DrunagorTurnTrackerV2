@@ -3786,6 +3786,8 @@ const InitTracker = () => {
                 return;
               }
               applyBossMarchSummon(currentForResolution, placedEnemies);
+              const cardRound = roundRef.current;
+              const cardTurn = turnIndex;
               aplicarCapacidadesCartaEspecial(currentForResolution).then(({ logs }) => {
                 const cardLabel = ta.nombre?.[currentForResolution.capacidades]
                   || ta.nombre?.[`${currentForResolution.id}_${currentForResolution.cara}`]
@@ -3793,7 +3795,11 @@ const InitTracker = () => {
                   || currentForResolution.nombreEnemy
                   || currentForResolution.nombre;
                 logs.forEach(log =>
-                  showScenarioToast(`🃏 ${cardLabel}: ${log}`)
+                  showScenarioToast(`🃏 ${cardLabel}: ${log}`, null, null, null, {
+                    round: cardRound,
+                    turn: cardTurn,
+                    type: 'enemy',
+                  })
                 );
               });
         
@@ -4698,7 +4704,7 @@ const InitTracker = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turnSignature]);
 
-  const showScenarioToast = (message, action = null, action2 = null, extra = null) => {
+  const showScenarioToast = (message, action = null, action2 = null, extra = null, context = null) => {
     logCurrentTurnHeader();
     const id = createId();
     // Máximo 5 avisos visibles y cierre automático para no tapar el tablero.
@@ -4708,8 +4714,9 @@ const InitTracker = () => {
     }, 9000);
     // Historial exportable: registra el evento junto al guardado de la partida.
     appendGameLog('event', [message, action, action2].filter(Boolean).join(' · '), {
-      round: roundRef.current,
-      turn: turnIndex,
+      round: context?.round ?? roundRef.current,
+      turn: context?.turn ?? turnIndex,
+      type: context?.type,
     });
   };
 

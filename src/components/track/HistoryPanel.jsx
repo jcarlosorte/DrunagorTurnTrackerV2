@@ -41,9 +41,13 @@ const FILTERS = [
 /** Agrupa el historial bajo el turno al que pertenece cada entrada. */
 function groupByTurn(entries) {
   const groups = [];
+  const groupsByTurn = new Map();
   let current = { key: 'start', title: 'Inicio de la partida', round: null, items: [] };
 
   entries.forEach((entry) => {
+    const turnKey = entry.round != null && entry.turn != null
+      ? `${entry.round}:${entry.turn}`
+      : null;
     if (entry.kind === 'turn') {
       if (current.items.length > 0) groups.push(current);
       current = {
@@ -52,9 +56,11 @@ function groupByTurn(entries) {
         round: entry.round ?? null,
         items: [entry],
       };
+      if (turnKey) groupsByTurn.set(turnKey, current);
       return;
     }
-    current.items.push(entry);
+    const target = turnKey ? groupsByTurn.get(turnKey) : null;
+    (target || current).items.push(entry);
   });
 
   if (current.items.length > 0) groups.push(current);
