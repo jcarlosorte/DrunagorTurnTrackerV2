@@ -4760,6 +4760,21 @@ Unit       231 tests
 E2E        88/88
 ```
 
+### 277.ª tanda — Ficha de jefe compacta
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Formato** | Imagen a la izquierda y paneles de inmunidades/estados a la derecha | `ModalEnemyCard` |
+| **Imagen** | Retrato de jefe algo más ancho y de menor altura | `ModalEnemyCard` |
+| **Pruebas** | 231 unitarios · 88 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        88/88
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

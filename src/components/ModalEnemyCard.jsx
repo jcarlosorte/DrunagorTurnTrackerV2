@@ -477,15 +477,18 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
           </header>
 
           {/* Imagen y stats */}
-          <div className={`mt-2 flex w-full gap-1 ${categoria === 'jefe' ? 'flex-col' : 'items-center'}`}>
-            <EnemyPortraitBackdrop
-              color={color}
-              categoria={categoria}
-              className={`relative shrink-0 rounded-lg border-2 ${
-                categoria === 'jefe' ? 'w-full' : 'w-40 sm:w-48'
-              } ${borderColorMap[color] || 'border-slate-600'}`}
-            >
-              <div className={categoria === 'jefe' ? 'h-64 sm:h-80' : 'aspect-[567/827]'}>
+          <div className={categoria === 'jefe'
+            ? 'mt-2 grid grid-cols-[1.1fr_0.9fr] items-start gap-2'
+            : 'mt-2'}>
+            <div className={`flex w-full gap-1 ${categoria === 'jefe' ? 'contents' : 'items-center'}`}>
+              <EnemyPortraitBackdrop
+                color={color}
+                categoria={categoria}
+                className={`relative shrink-0 rounded-lg border-2 ${
+                  categoria === 'jefe' ? 'w-full' : 'w-40 sm:w-48'
+                } ${borderColorMap[color] || 'border-slate-600'}`}
+              >
+                <div className={categoria === 'jefe' ? 'h-56 sm:h-64' : 'aspect-[567/827]'}>
                 <ResponsiveImage 
                   src={imagen}
                   alt={name}
@@ -580,7 +583,9 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
             </div>
           </div>
 
-          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-start">
+          <div className={categoria === 'jefe'
+            ? 'col-start-2 row-start-2 min-w-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2'
+            : 'mt-2 flex flex-col gap-2 sm:flex-row sm:items-start'}>
             {/* Submenú Estados Alterados: paleta fija, siempre visible */}
             <div className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900/60 p-2">
             <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
@@ -651,6 +656,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               }}
             />
           )}
+          </div>
           </div>
 
           
