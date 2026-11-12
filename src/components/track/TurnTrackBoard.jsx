@@ -4,7 +4,7 @@ import HeroPortrait from '@/components/HeroPortrait';
 import { readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import trackBackground from '@/assets/backgrounds/track.avif';
 
-const BASE_WIDTH = 1100;
+const BASE_WIDTH = 1480;
 const MIN_SCALE = 0.45;
 const MAX_SCALE = 1.5;
 const clamp = (value) => Math.min(MAX_SCALE, Math.max(MIN_SCALE, value));

@@ -3,6 +3,7 @@ import { FiMaximize2, FiMinimize2 } from 'react-icons/fi';
 import { INMUNIDADES, ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { useLanguage } from '@/context/LanguageContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
+import EnemyPortraitBackdrop from './EnemyPortraitBackdrop';
 import { applyBossRuneEffect } from '@/utils/bossRunes';
 import BossRunesColumn from './BossRunesColumn';
 
@@ -60,13 +61,17 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                 aria-label={`${labels.open || 'Abrir'} ${nombre}`}
                 className="boss-banner__card flex items-center gap-2 rounded-lg border border-red-400/40 bg-slate-950/70 p-1 text-left transition hover:border-red-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
               >
-                <span className="block h-14 w-14 shrink-0 overflow-hidden rounded-md border border-red-500/50 bg-slate-900">
+                <EnemyPortraitBackdrop
+                  color={enemy.color}
+                  categoria={enemy.categoria}
+                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-red-500/50"
+                >
                   {enemy.imagen ? (
-                    <img src={enemy.imagen} alt="" className="h-full w-full object-cover object-top" loading="eager" decoding="async" />
+                    <img src={enemy.imagen} alt="" className="h-full w-full object-contain object-bottom p-0.5" loading="eager" decoding="async" />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center text-slate-600">☠</span>
                   )}
-                </span>
+                </EnemyPortraitBackdrop>
                 <span className="flex w-24 flex-col gap-1">
                   <span className="h-2 w-full overflow-hidden rounded-full bg-slate-800">
                     <span
@@ -88,12 +93,16 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
               className="boss-banner__card group flex flex-wrap items-center gap-3 rounded-xl border border-red-400/40 bg-slate-950/70 p-2 text-left transition hover:border-red-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
               aria-label={`${labels.open || 'Abrir'} ${nombre}`}
             >
-              <span className="boss-banner__portrait relative block h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-red-500/50 bg-slate-900 sm:h-32 sm:w-32">
+              <EnemyPortraitBackdrop
+                color={enemy.color}
+                categoria={enemy.categoria}
+                className="boss-banner__portrait relative flex h-24 w-20 shrink-0 items-center justify-center rounded-lg border border-red-500/50 sm:h-32 sm:w-24"
+              >
                 {enemy.imagen ? (
                   <img
                     src={enemy.imagen}
                     alt=""
-                    className="h-full w-full object-cover object-top"
+                    className="h-full w-full object-contain object-bottom p-1"
                     loading="eager"
                     decoding="async"
                   />
@@ -124,7 +133,7 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                     })}
                   </span>
                 )}
-              </span>
+              </EnemyPortraitBackdrop>
 
               <span className="flex min-w-0 flex-col gap-1">
                 <span className="text-[0.6rem] font-black uppercase tracking-[0.25em] text-red-300">

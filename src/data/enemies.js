@@ -33,10 +33,10 @@ import wermunggdir2 from "@/assets/enemies/WurmV2.avif";
 
 // Apocalipsis
 import skeleton_knight from "@/assets/enemies/skeleton_knight.avif";
-import the_witch from "@/assets/enemies/the_witch.avif";
+import shadow_witch from "@/assets/enemies/shadow_witch.avif";
 import dream_titan from "@/assets/enemies/dream_titan.avif";
-import chain_master from "@/assets/enemies/chain_master.avif";
-import larua_mage from "@/assets/enemies/larua_mage.avif";
+import hellish_flayer from "@/assets/enemies/hellish_flayer.avif";
+import faceless_conjurer from "@/assets/enemies/faceless_conjurer.avif";
 import war_horsemen from "@/assets/enemies/war_horsemen.avif";
 import death_horsemen from "@/assets/enemies/death_horsemen.avif";
 import plague_horsemen from "@/assets/enemies/plague_horsemen.avif";
@@ -66,10 +66,12 @@ import vorn from "@/assets/heroes/Vorn.avif";
 
 
 //Especiales
+import { getEnemyArt } from '@/data/enemyArt';
 import corrupted_archer from "@/assets/enemies/corrupted_archer.avif";
+
 import lasse from "@/assets/enemies/lasse.avif";
 
-export const ENEMIES = [
+const BASE_ENEMIES = [
   { id: "undead_king_boss_1", nombre: "Undead King Boss", invoca: "skeleton_archer_esbirro1", numInvoca: 4, catInvoca: "esbirro", robaRunas: 0, vida: 30, cubo_T: 5, cubo_M: 2, movimiento: 0, color: "jefe", categoria: "jefe", tipo: "enemigo", expansionId: "base", imagen: undead_king_boss, rune: "jefe", runePosition: "jefe", comportamiento: "jefe", inmunidad: ["GRANDE", "INTIMIDAR_I", "SIGILO_I", "VENENO_I"], tipo_ataque: "", capacidades: []  },
   { id: "undead_king_boss_2", nombre: "Undead King Boss", invoca: "skeleton_archer_esbirro2", numInvoca: 4, catInvoca: "esbirro", robaRunas: 0, consecuencias: "SI", vida: 60, cubo_T: 10, cubo_M: 5, movimiento: 0, color: "jefe", categoria: "jefe", tipo: "enemigo", expansionId: "base", imagen: undead_king_boss, rune: "jefe", runePosition: "jefe", comportamiento: "jefe", inmunidad: ["GRANDE", "INTIMIDAR_I", "SIGILO_I", "VENENO_I"], tipo_ataque: "", capacidades: []  },
   { id: "undead_king_boss_Acecho_1", nombre: "Undead King Boss", vida: 12, movimiento: 0, color: "jefe", categoria: "jefe", tipo: "enemigo", expansionId: "base", imagen: undead_king_boss, rune: "acecho", runePosition: "jefe", comportamiento: "jefe", inmunidad: ["GRANDE", "INTIMIDAR_I", "SIGILO_I", "VENENO_I"], tipo_ataque: "", capacidades: []  },
@@ -395,10 +397,10 @@ export const ENEMIES = [
 
 // Apocalipsis
   { id: "dream_titan", nombre: "Dream Titan", vida: 0, movimiento: 0, color: "shadow", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: dream_titan, rune: "naranja", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
-  { id: "chain_master", nombre: "Chain Master", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: chain_master, rune: "verde", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
-  { id: "the_witch", nombre: "The Witch", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: the_witch, rune: "azul", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
+  { id: "hellish_flayer", nombre: "Hellish Flayer", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: hellish_flayer, rune: "verde", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
+  { id: "shadow_witch", nombre: "Shadow Witch", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: shadow_witch, rune: "azul", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
   { id: "skeleton_knight", nombre: "Skeleton Knight", vida: 0, movimiento: 0, color: "dark", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: skeleton_knight, rune: "rojo", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
-  { id: "larua_mage", nombre: "Larua Mage", vida: 0, movimiento: 0, color: "shadow", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: larua_mage, rune: "gris", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
+  { id: "faceless_conjurer", nombre: "Faceless Conjurer", vida: 0, movimiento: 0, color: "shadow", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: faceless_conjurer, rune: "gris", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
   { id: "war_horsemen", nombre: "War Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: war_horsemen, rune: "rojo", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
 { id: "death_horsemen", nombre: "Death Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: death_horsemen, rune: "gris", runePosition: "abajo", inmunidad: [], tipo_ataque: "", capacidades: "" },
 { id: "plague_horsemen", nombre: "Plague Horsemen", vida: 0, movimiento: 0, color: "jefe", tipo: "enemigo", expansionId: "apocalypse_adventures", imagen: plague_horsemen, rune: "verde", runePosition: "arriba", inmunidad: [], tipo_ataque: "", capacidades: "" },
@@ -407,6 +409,11 @@ export const ENEMIES = [
 // Hermanas Caidas
 { id: "fallen_sisters", nombre: "Fallen Sisters", vida: 8, movimiento: 3, ataque: 5, color: "overlord", categoria: "overlord", tipo: "enemigo", expansionId: "apocalypse_sisters", imagen: fallen_sisters, rune: "rojo", runePosition: "arriba", inmunidad: ["GRANDE", "QUEMADURA_I", "INTIMIDAR_I"], tipo_ataque: "cuerpo", capacidades: ["VORAGINE", ";", "EMBATE 1", ",", "HEMORRAGIA X", "Y", "INTIMIDAR X"] }
 ];
+
+export const ENEMIES = BASE_ENEMIES.map((enemy) => ({
+  ...enemy,
+  imagen: getEnemyArt(enemy.id, enemy.imagen),
+}));
 
 // En Despertar, todo enemigo inmune a GRANDE también lo es a POLIMORFISMO.
 ENEMIES.forEach((enemy) => {

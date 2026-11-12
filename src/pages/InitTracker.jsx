@@ -31,6 +31,7 @@ import { useInitRunes } from '@/context/initRunesContext';
 import TopMenu from '@/components/TopMenu';
 
 import AnimatedEnemyToast from '@/components/AnimatedEnemyToast';
+import EnemyPortraitBackdrop from '@/components/track/EnemyPortraitBackdrop';
 import PageTransition from "@/components/PageTransition";
 import ModalCommanderPC from '@/components/ModalCommanderPC';
 import { ModalEnemyCard } from '@/components/ModalEnemyCard';
@@ -5463,7 +5464,13 @@ const InitTracker = () => {
                       return (
                         <div key={enemyId} className="state-chip flex flex-col gap-1.5 rounded-xl border p-2">
                           <div className="flex items-center gap-2">
-                            <img src={sampleEnemy.imagen} alt="" className="h-12 w-12 shrink-0 rounded object-cover object-top" loading="lazy" decoding="async" />
+                            <EnemyPortraitBackdrop
+                              color={sampleEnemy.color}
+                              categoria={sampleEnemy.categoria}
+                              className="h-16 w-12 shrink-0 rounded border border-slate-600"
+                            >
+                              <img src={sampleEnemy.imagen} alt="" className="h-full w-full object-contain object-bottom p-0.5" loading="lazy" decoding="async" />
+                            </EnemyPortraitBackdrop>
                             <span className="min-w-0 flex-1 truncate text-sm font-bold text-white" title={getEnemyName(enemyId, sampleEnemy.color)}>
                               {getEnemyName(enemyId, sampleEnemy.color)}
                             </span>

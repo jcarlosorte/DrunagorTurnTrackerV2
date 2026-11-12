@@ -4309,6 +4309,24 @@ Unit       229 tests
 E2E        87/87
 ```
 
+### 248.ª tanda — Arte V2 y fondos de enemigos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Arte V2** | Los enemigos usan su imagen V2 de formato alargado en track, selector, configuración y fichas | `enemyArt`, `enemies` |
+| **Fondo** | Plantilla de calavera, color por tipo y halo difuminado | `EnemyPortraitBackdrop` |
+| **Track** | Cartas más altas y contenedor ampliado, con pilas y separación adaptadas | `EnemyCard`, `trackLayout`, `TrackSlot`, `TurnTrackBoard` |
+| **Configuración** | La selección de enemigos usa el nuevo arte y fondo | `Tracker` |
+| **Jefes** | Banner y ficha ampliada con el nuevo tratamiento visual | `BossBanner`, `ModalEnemyCard` |
+| **Pruebas** | 230 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       230 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

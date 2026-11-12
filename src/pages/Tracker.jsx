@@ -6,6 +6,7 @@ import { MAIN_BOXES, isBoxUnlocked } from '@/data/boxes';
 import { clearCampFollowers } from '@/utils/campFollowers';
 import { HEROES } from '@/data/heroes';
 import { ENEMIES } from '@/data/enemies';
+import EnemyPortraitBackdrop from '@/components/track/EnemyPortraitBackdrop';
 import { OPPOSITE_ROLES, getRolesForExpansions } from '@/data/roles';
 import { COLORS } from '@/data/color';
 import { getHeroClassGroups } from '@/data/heroClasses';
@@ -812,17 +813,23 @@ const TrackerSelect = () => {
                                 aria-label={getEnemyName(enemy.id)}
                               />
                               <span className="relative block">
-                                {enemy.imagen ? (
-                                  <img
-                                    src={enemy.imagen}
-                                    alt=""
-                                    loading="lazy"
-                                    decoding="async"
-                                    className="h-28 w-full object-cover object-top sm:h-32"
-                                  />
-                                ) : (
-                                  <span className="flex h-28 w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
-                                )}
+                                <EnemyPortraitBackdrop
+                                  color={enemy.color}
+                                  categoria={enemy.categoria}
+                                  className="aspect-[567/827] w-full"
+                                >
+                                  {enemy.imagen ? (
+                                    <img
+                                      src={enemy.imagen}
+                                      alt=""
+                                      loading="lazy"
+                                      decoding="async"
+                                      className="absolute inset-0 h-full w-full object-contain object-bottom p-1"
+                                    />
+                                  ) : (
+                                    <span className="flex h-full w-full items-center justify-center bg-slate-800 text-slate-500">—</span>
+                                  )}
+                                </EnemyPortraitBackdrop>
                                 <span className="absolute left-2 top-2 z-10">
                                   <ExpansionIcon
                                     expansionId={enemy.expansionId}

@@ -126,7 +126,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       return (
         <div
           key={isSiege ? `siege-${siegeEvent.current ?? 'none'}-${siegeEvent.deck.length}` : type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : isFollower ? item.uid : isCompanion ? item.uid : `${type}-${item.id}`}
-          className="absolute left-1/2 w-[108px] max-w-full transition-transform duration-300"
+          className="absolute left-1/2 w-[132px] max-w-full transition-transform duration-300"
           style={{
             ...(isTop
               ? { bottom: `calc(50% + ${distance}px)` }

@@ -5,13 +5,13 @@
  * BASE_GAP de la barra central y cada carta siguiente se aleja un paso más.
  * El paso se reduce al acumular cartas para que el tablero no se estire.
  */
-export const CARD_HEIGHT = 128;
-export const BASE_GAP = 26;
-export const MAX_STACK_HEIGHT = 320;
-export const MIN_STEP = 30;
+export const CARD_HEIGHT = 190;
+export const BASE_GAP = 28;
+export const MAX_STACK_HEIGHT = 460;
+export const MIN_STEP = 44;
 /** Altura mínima del slot del tablero: la justa para una carta a cada lado. */
-export const MIN_SLOT_HEIGHT = 340;
-export const MIN_COMPACT_SLOT_HEIGHT = 300;
+export const MIN_SLOT_HEIGHT = 460;
+export const MIN_COMPACT_SLOT_HEIGHT = 420;
 
 /** Solape entre cartas consecutivas para que la pila quepa en MAX_STACK_HEIGHT. */
 export function overlapFor(count) {

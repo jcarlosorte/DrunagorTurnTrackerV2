@@ -13,6 +13,7 @@ import { getAbilityColor } from '@/components/track/enemyVisuals';
 import { useGame } from '@/context/GameContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
 import EnemyRingControl from '@/components/EnemyRingControl';
+import EnemyPortraitBackdrop from '@/components/track/EnemyPortraitBackdrop';
 import { applyBossRuneEffect } from '@/utils/bossRunes';
 import { resolveSoulHarvesterTimeZero, formatEstadoAlterado } from '@/utils/soulHarvester';
 import { appendGameLog } from '@/utils/gameLog';
@@ -476,11 +477,17 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
 
           {/* Imagen y stats */}
           <div className="flex w-full items-center gap-1 mt-2">
-            <div className="relative">
-              <img 
-                src={imagen}
-                alt={name}
-                className={`w-40 h-40 sm:w-48 sm:h-48 object-contain rounded border-2 ${borderColorMap[color] || ''}`} loading="lazy" decoding="async" />
+            <EnemyPortraitBackdrop
+              color={color}
+              categoria={categoria}
+              className={`relative w-40 shrink-0 rounded-lg border-2 sm:w-48 ${borderColorMap[color] || 'border-slate-600'}`}
+            >
+              <div className="aspect-[567/827]">
+                <img 
+                  src={imagen}
+                  alt={name}
+                  className="absolute inset-0 h-full w-full object-contain object-bottom p-1" loading="lazy" decoding="async" />
+              </div>
               {/* Estados alterados sobre la imagen */}
               <div className="absolute top-1 left-1 grid grid-rows-4 grid-flow-col gap-1">
                 {estadosLocal
@@ -505,7 +512,7 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                   })}
               </div>
 
-            </div>
+            </EnemyPortraitBackdrop>
               
             <div className={`flex-1 grid grid-cols-1 gap-1 text-gray-800 font-semibold text-sm bg-gray-200 rounded-lg`}>
               {/* Vida + Movimiento + Ataque en la misma línea */}

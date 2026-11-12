@@ -6,6 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { borderColorMap, categoryTextGlowMap, textBgColorMap } from './enemyVisuals';
 import FitText from './FitText';
 import ResponsiveImage from './ResponsiveImage';
+import EnemyPortraitBackdrop from './EnemyPortraitBackdrop';
 import boarBackground from '@/assets/interactions/runic.avif';
 
 // Los ayudas usan `title` nativo: el tablero tiene scroll y `overflow`, así que
@@ -99,23 +100,27 @@ export default function EnemyCard({
     >
       <div
         className={classNames(
-          'relative w-full rounded-lg shadow-[0_6px_12px_rgba(0,0,0,0.5)] transition-transform hover:scale-110',
-          !isBoss && ringClass,
-          isBoss ? 'max-h-[250px]' : 'max-w-[140px]',
+          'relative w-full transition-transform hover:scale-105',
+          isBoss ? 'w-[190px] max-w-[46vw]' : 'max-w-[136px]',
         )}
-        style={isBoss ? { width: '20%' } : {}}
       >
-        <ResponsiveImage
-          src={image}
-          alt={name}
-          sizes={isBoss ? '250px' : '(max-width: 640px) 22vw, 140px'}
-          loading="lazy"
-          decoding="async"
+        <EnemyPortraitBackdrop
+          color={color}
+          categoria={categoria}
           className={classNames(
-            'h-full w-full rounded-lg object-cover',
-            isBoss ? 'max-h-[250px] object-top' : `border-2 ${borderColorMap[color] || ''}`,
+            'aspect-[567/827] w-full rounded-xl border-2 shadow-[0_6px_16px_rgba(0,0,0,0.65)]',
+            !isBoss && ringClass,
+            borderColorMap[color] || 'border-slate-600',
           )}
-        />
+        >
+          <ResponsiveImage
+            src={image}
+            alt={name}
+            sizes={isBoss ? '280px' : '(max-width: 640px) 30vw, 150px'}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full rounded-xl object-contain object-bottom px-1 pb-10 pt-2 drop-shadow-[0_8px_12px_rgba(0,0,0,0.8)]"
+          />
 
         {/* Estados alterados */}
         <div className={`absolute left-1 top-1 grid ${isBoss ? 'grid-rows-5' : 'grid-rows-3'} grid-flow-col gap-1`}>
@@ -183,6 +188,7 @@ export default function EnemyCard({
             </div>
           </div>
         )}
+        </EnemyPortraitBackdrop>
       </div>
     </div>
   );

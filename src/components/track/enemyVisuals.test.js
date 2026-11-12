@@ -44,8 +44,8 @@ describe('colores de capacidades de enemigo', () => {
 
 describe('tonos de fondo de enemigos', () => {
   it('asigna el tono por color o por categoría', () => {
-    expect(getEnemyTone(undefined, 'overlord')).toBe('#a855f7');
-    expect(getEnemyTone(undefined, 'comandante')).toBe('#f59e0b');
+    expect(getEnemyTone(undefined, 'overlord')).toBe('#8b5cf6');
+    expect(getEnemyTone(undefined, 'comandante')).toBe('#d97706');
     expect(getEnemyTone('blanco')).toBe('#cbd5e1');
     expect(getEnemyTone(undefined, 'desconocido')).toBe('#475569');
   });
