@@ -30,10 +30,10 @@ export default function EnemyPortraitBackdrop({ color, categoria, className = ''
         backgroundImage: isBoss
           ? `linear-gradient(155deg, ${tone}dd 0%, ${tone}66 42%, rgba(2, 6, 23, 0.88) 100%), url(${trackBackground})`
           : subtle
-            ? `linear-gradient(180deg, ${tone}55 0%, #020617 82%)`
+            ? `linear-gradient(180deg, ${tone} 0%, ${tone}dd 70%, #020617 100%)`
             : [
-              `radial-gradient(ellipse at 50% 18%, ${tone}${isBoss ? 'cc' : '99'} 0%, ${tone}55 38%, transparent 72%)`,
-              `linear-gradient(180deg, ${tone}44 0%, #020617 72%)`,
+              `radial-gradient(ellipse at 50% 18%, ${tone} 0%, ${tone}aa 45%, transparent 78%)`,
+              `linear-gradient(180deg, ${tone} 0%, ${tone}55 58%, #020617 100%)`,
             ].join(', '),
         backgroundSize: isBoss ? 'cover' : undefined,
         backgroundPosition: isBoss ? 'center' : undefined,
@@ -49,7 +49,9 @@ export default function EnemyPortraitBackdrop({ color, categoria, className = ''
         <img
           src={cardTemplate}
           alt=""
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.22] mix-blend-screen"
+          className={`pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.45] ${
+            color === 'negro' ? 'invert mix-blend-screen' : 'mix-blend-multiply'
+          }`}
           aria-hidden="true"
         />
       )}

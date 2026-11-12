@@ -79,9 +79,9 @@ export function getAbilityColor(claveGeneral) {
 }
 
 const ENEMY_TONES = {
-  blanco: '#f8fafc',
+  blanco: '#ffffff',
   gris: '#64748b',
-  negro: '#1f2937',
+  negro: '#000000',
   comandante: '#d97706',
   dorado: '#f59e0b',
   overlord: '#8b5cf6',

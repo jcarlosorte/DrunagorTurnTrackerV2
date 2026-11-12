@@ -46,9 +46,9 @@ describe('tonos de fondo de enemigos', () => {
   it('asigna el tono por color o por categoría', () => {
     expect(getEnemyTone(undefined, 'overlord')).toBe('#8b5cf6');
     expect(getEnemyTone(undefined, 'comandante')).toBe('#d97706');
-    expect(getEnemyTone('blanco')).toBe('#f8fafc');
+    expect(getEnemyTone('blanco')).toBe('#ffffff');
     expect(getEnemyTone('gris')).toBe('#64748b');
-    expect(getEnemyTone('negro')).toBe('#1f2937');
+    expect(getEnemyTone('negro')).toBe('#000000');
     expect(getEnemyTone(undefined, 'desconocido')).toBe('#475569');
   });
 });

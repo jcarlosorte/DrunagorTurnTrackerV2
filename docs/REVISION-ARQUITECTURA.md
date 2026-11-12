@@ -4481,6 +4481,23 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 259.ª tanda — Fondos y líneas de enemigos más visibles
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Blanco** | Fondo blanco puro | `enemyVisuals` |
+| **Negro** | Fondo negro puro y líneas invertidas en modo screen | `enemyVisuals`, `EnemyPortraitBackdrop` |
+| **Líneas** | La plantilla usa multiply para hacerse visible sobre el color | `EnemyPortraitBackdrop` |
+| **Escenario** | El menú de monstruos de escenario usa el nuevo fondo y formato alargado | `TopMenu` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

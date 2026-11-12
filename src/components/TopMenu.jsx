@@ -32,6 +32,7 @@ import mecanicaEspecialIcon from '@/assets/assets_logo/mecanica_especial.png';
 import ScenarioPanels from '@/components/scenario/ScenarioPanels';
 import NodosOscuridadPanel from '@/components/scenario/NodosOscuridadPanel';
 import ResponsiveImage from '@/components/track/ResponsiveImage';
+import EnemyPortraitBackdrop from '@/components/track/EnemyPortraitBackdrop';
 import { useGame } from '@/context/GameContext';
 import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
@@ -1429,21 +1430,27 @@ const TopMenu = ({
                         aria-pressed={selected}
                         aria-label={nombre}
                         onClick={() => setScenarioMonster(prev => prev?.id === monstruo.id ? null : monstruo)}
-                        className={`relative mx-auto aspect-square w-full max-w-[190px] overflow-hidden rounded-lg border-2 transition hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200 ${
+                        className={`relative mx-auto aspect-[567/827] w-full max-w-[190px] overflow-hidden rounded-lg border-2 transition hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200 ${
                           selected ? 'border-emerald-400 ring-2 ring-emerald-300' : 'border-slate-600'
                         }`}
                       >
-                        <ResponsiveImage
-                          src={monstruo.imagen}
-                          alt=""
-                          sizes="190px"
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                        <span className="absolute inset-x-0 bottom-0 truncate bg-black/70 px-1 py-0.5 text-[0.65rem] font-semibold text-white">
-                          {nombre}
-                        </span>
+                        <EnemyPortraitBackdrop
+                          color={monstruo.color || 'escenario'}
+                          categoria={monstruo.categoria || 'escenario'}
+                          className="h-full w-full"
+                        >
+                          <ResponsiveImage
+                            src={monstruo.imagen}
+                            alt=""
+                            sizes="190px"
+                            className="absolute inset-0 h-full w-full object-contain object-bottom p-1"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          <span className="absolute inset-x-0 bottom-0 z-10 truncate bg-black/70 px-1 py-0.5 text-[0.65rem] font-semibold text-white">
+                            {nombre}
+                          </span>
+                        </EnemyPortraitBackdrop>
                       </button>
                     );
                   })}
