@@ -4219,6 +4219,20 @@ Unit       228 tests
 E2E        87/87
 ```
 
+### 242.ª tanda — Aviso de activación por esbirros no invocados
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Aviso** | Si no caben todas las Pesadillas, se usa el aviso de activación por jerarquía, una vez por cada una que no se pudo generar | `InitTracker` |
+| **Pruebas** | 228 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       228 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -2411,7 +2411,7 @@ const InitTracker = () => {
       const capacity = Math.max(0, Math.min(4 - existing, 12 - totalMonsters));
       const actual = Math.min(count, capacity);
       if (actual < count) {
-        showScenarioToast(`⚠️ ${ti.siegeNoCapacity || 'No hay espacio para invocar más monstruos'}`);
+        showIncursionFailure(count - actual);
       }
       let small = [...usedColors];
       for (let index = 0; index < actual; index += 1) {
