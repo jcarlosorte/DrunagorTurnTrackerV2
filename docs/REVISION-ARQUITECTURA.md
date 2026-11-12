@@ -4263,6 +4263,21 @@ Unit       228 tests
 E2E        87/87
 ```
 
+### 245.ª tanda — Nombres de cartas de jefe en el historial
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nombres** | Las cartas de jefe se resuelven por `capacidades` y por `id_cara`, no por ID | `entityLabel` |
+| **Historial** | Encabezados de turno, carrusel y nombres actuales usan el nombre traducido | `InitTracker` |
+| **Pruebas** | 229 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       229 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

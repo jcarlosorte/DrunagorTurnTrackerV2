@@ -3451,7 +3451,7 @@ const InitTracker = () => {
     const signature = `${roundRef.current}-${turnIndex}-${entityId}`;
     if (loggedTurnHeaderRef.current === signature) return;
     loggedTurnHeaderRef.current = signature;
-    const label = resolveEntityLabel({ id: entity.id, name: entity.name, translations });
+    const label = resolveEntityLabel({ id: entity.id, name: entity.name, capacidades: entity.capacidades, cara: entity.cara, translations });
     appendGameLog('turn', `Turno de ${label}`, {
       round: roundRef.current,
       turn: turnIndex,
@@ -3466,7 +3466,7 @@ const InitTracker = () => {
     // Rastro para el carrusel: solo cuando cambia la entidad.
     const trail = turnTrailRef.current;
     if (trail[trail.length - 1]?.id !== id) {
-      trail.push({ id, name: resolveEntityLabel({ id: currentTurnEntity.id, name: currentTurnEntity.name, translations }), type: currentTurnEntity.type });
+      trail.push({ id, name: resolveEntityLabel({ id: currentTurnEntity.id, name: currentTurnEntity.name, capacidades: currentTurnEntity.capacidades, cara: currentTurnEntity.cara, translations }), type: currentTurnEntity.type });
       if (trail.length > 6) trail.shift();
     }
 
@@ -4831,7 +4831,7 @@ const InitTracker = () => {
   const currentEntityName = (() => {
     const entity = currentTurnEntity;
     if (!entity) return '';
-    return resolveEntityLabel({ id: entity.id, name: entity.name, translations });
+    return resolveEntityLabel({ id: entity.id, name: entity.name, capacidades: entity.capacidades, cara: entity.cara, translations });
   })();
 
   // Carrusel: anterior (rastro), actual y siguiente (orden de iniciativa).
@@ -4846,7 +4846,7 @@ const InitTracker = () => {
     if (turnIndex < 0) return null;
     const next = getNextActiveEntity((turnIndex + 1) % effectiveTurnOrder.length);
     if (!next) return null;
-    const name = resolveEntityLabel({ id: next.id, name: next.name, translations });
+    const name = resolveEntityLabel({ id: next.id, name: next.name, capacidades: next.capacidades, cara: next.cara, translations });
     return { name, type: next.type };
   })();
 

@@ -27,6 +27,14 @@ describe('resolveEntityLabel', () => {
     expect(resolveEntityLabel({ id: 'carta_x', name: 'Carta X', translations })).toBe('Carta X');
   });
 
+  it('resuelve las caras de cartas de jefe por su capacidad', () => {
+    expect(resolveEntityLabel({
+      id: 'boss_26',
+      capacidades: 'boss_26_A',
+      translations: { cartas_ataque: { nombre: { boss_26_A: 'DESESPERACIÓN' } } },
+    })).toBe('DESESPERACIÓN');
+  });
+
   it('cae al id si no hay nada mejor', () => {
     expect(resolveEntityLabel({ id: 'desconocido', translations })).toBe('desconocido');
     expect(resolveEntityLabel({})).toBe('');
