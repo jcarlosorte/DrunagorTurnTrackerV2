@@ -6,18 +6,22 @@
  * El paso se reduce al acumular cartas para que el tablero no se estire.
  */
 export const CARD_HEIGHT = 190;
-export const BASE_GAP = 28;
-export const MAX_STACK_HEIGHT = 460;
-export const MIN_STEP = 44;
+export const BASE_GAP = 32;
+export const MAX_STACK_HEIGHT = 620;
+export const MIN_STEP = 38;
+export const MAX_STEP = 110;
+/** Espacio libre por encima y por debajo de la pila más alta. */
+export const BOARD_PADDING = 120;
+export const COMPACT_PADDING = 16;
 /** Altura mínima del slot del tablero: la justa para una carta a cada lado. */
-export const MIN_SLOT_HEIGHT = 560;
+export const MIN_SLOT_HEIGHT = 720;
 export const MIN_COMPACT_SLOT_HEIGHT = 500;
 
 /** Solape entre cartas consecutivas para que la pila quepa en MAX_STACK_HEIGHT. */
 export function overlapFor(count) {
   if (count <= 1) return 0;
   const maxStep = (MAX_STACK_HEIGHT - BASE_GAP - CARD_HEIGHT) / (count - 1);
-  const step = Math.max(MIN_STEP, Math.min(CARD_HEIGHT - 24, maxStep));
+  const step = Math.max(MIN_STEP, Math.min(MAX_STEP, maxStep));
   return CARD_HEIGHT - step;
 }
 
@@ -38,13 +42,13 @@ export function stackHeight(count) {
  */
 export function boardSlotHeightFrom(counts = []) {
   const tallest = counts.reduce((max, count) => Math.max(max, stackHeight(count)), 0);
-  return Math.max(MIN_SLOT_HEIGHT, 2 * tallest + 16);
+  return Math.max(MIN_SLOT_HEIGHT, 2 * tallest + BOARD_PADDING);
 }
 
 /** Altura de un slot aislado (vista de lista). */
 export function compactSlotHeight(aboveCount, belowCount) {
   const tallest = Math.max(stackHeight(aboveCount), stackHeight(belowCount));
-  return Math.max(MIN_COMPACT_SLOT_HEIGHT, 2 * tallest + 16);
+  return Math.max(MIN_COMPACT_SLOT_HEIGHT, 2 * tallest + COMPACT_PADDING);
 }
 
 /** Posición (px) de la carta `index` respecto a la línea central. */

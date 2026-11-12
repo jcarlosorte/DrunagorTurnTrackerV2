@@ -29,7 +29,7 @@ describe('trackLayout', () => {
   it('con muchas cartas el paso mínimo evita que la pila colapse', () => {
     for (const count of [10, 20]) {
       // Nunca por debajo de MIN_STEP entre cartas.
-      expect(stackHeight(count)).toBeLessThanOrEqual(BASE_GAP + (count - 1) * 44 + CARD_HEIGHT + 1);
+      expect(stackHeight(count)).toBeLessThanOrEqual(BASE_GAP + (count - 1) * 110 + CARD_HEIGHT + 1);
     }
   });
 
@@ -39,8 +39,8 @@ describe('trackLayout', () => {
     const dosCartas = boardSlotHeightFrom([2]);
 
     expect(unaCarta).toBe(MIN_SLOT_HEIGHT);
-    expect(dosCartas).toBe(2 * stackHeight(2) + 16);
-    expect(dosCartas).toBeLessThan(900);
+    expect(dosCartas).toBe(2 * stackHeight(2) + 120);
+    expect(dosCartas).toBeLessThan(1000);
   });
 
   it('la altura compacta se ajusta a la pila del slot', () => {

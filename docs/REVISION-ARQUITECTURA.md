@@ -4667,6 +4667,22 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 271.ª tanda — Más espacio y solape para pilas de enemigos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Espacio** | El tablero y las pilas reservan más margen superior e inferior | `trackLayout` |
+| **Solape** | El paso máximo baja de 121 a 110 px para solapar un poco más | `trackLayout` |
+| **Fondo** | El contenedor sigue creciendo con la altura resultante | `TurnTrackBoard` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
