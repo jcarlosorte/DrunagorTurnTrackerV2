@@ -4652,6 +4652,21 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 270.ª tanda — CSP de Firefox y resolución defensiva de cartas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **CSP** | Se permite el hash concreto del script inline que Firefox bloqueaba | `vite.config.js` |
+| **TypeError** | La resolución de cartas especiales tolera resultados vacíos y captura errores | `InitTracker` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

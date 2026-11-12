@@ -3809,7 +3809,8 @@ const InitTracker = () => {
               applyBossMarchSummon(currentForResolution, placedEnemies);
               const cardRound = roundRef.current;
               const cardTurn = turnIndex;
-              aplicarCapacidadesCartaEspecial(currentForResolution).then(({ logs }) => {
+              aplicarCapacidadesCartaEspecial(currentForResolution).then((result) => {
+                const logs = result?.logs || [];
                 const cardLabel = ta.nombre?.[currentForResolution.capacidades]
                   || ta.nombre?.[`${currentForResolution.id}_${currentForResolution.cara}`]
                   || ta.nombre?.[currentForResolution.id]
@@ -3822,6 +3823,8 @@ const InitTracker = () => {
                     type: 'enemy',
                   })
                 );
+              }).catch((error) => {
+                console.error('No se pudo resolver la carta especial:', error);
               });
         
               return;

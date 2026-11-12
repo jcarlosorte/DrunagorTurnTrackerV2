@@ -8,7 +8,7 @@ ni telemetría: todos los datos de partida viven en `localStorage` del navegador
 | Defensa | Dónde | Detalle |
 |---|---|---|
 | **CSP** | `vite.config.js` (solo build) | Se inyecta como `<meta http-equiv="Content-Security-Policy">` en `index.html`; el `404.html` se copia del mismo archivo y la hereda |
-| **Sin scripts inline** | CSP | `script-src 'self'` + `script-src-attr 'none'`: React no emite `onclick`/`onerror` en el HTML |
+| **Sin scripts inline** | CSP | `script-src 'self'` + `script-src-attr 'none'`; se añade únicamente el hash concreto del script interno de Firefox que generaba el aviso, sin abrir `unsafe-inline` |
 | **Sin iframes ni workers** | CSP | `frame-src 'none'`, `worker-src 'none'`; la app no los usa |
 | **Sin plugins** | CSP | `object-src 'none'` |
 | **Formularios y base** | CSP | `form-action 'none'`, `base-uri 'self'` |
@@ -22,7 +22,7 @@ ni telemetría: todos los datos de partida viven en `localStorage` del navegador
 
 ```text
 default-src 'self';
-script-src 'self';
+script-src 'self' 'sha256-ieoeWczDHkReVBsRBqaal5AFMlBtNjMzgwKvLqi/tSU=';
 script-src-attr 'none';
 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
 font-src 'self' data: https://fonts.gstatic.com;

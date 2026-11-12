@@ -38,7 +38,7 @@ const appVersion = (() => {
  */
 const CSP_DIRECTIVES = [
   "default-src 'self'",
-  "script-src 'self'",
+  "script-src 'self' 'sha256-ieoeWczDHkReVBsRBqaal5AFMlBtNjMzgwKvLqi/tSU='",
   // React no emite atributos onclick/onerror; se bloquean explícitamente.
   "script-src-attr 'none'",
   // framer-motion y react-toastify aplican estilos en línea.
