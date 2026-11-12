@@ -477,13 +477,15 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
           </header>
 
           {/* Imagen y stats */}
-          <div className="flex w-full items-center gap-1 mt-2">
+          <div className={`mt-2 flex w-full gap-1 ${categoria === 'jefe' ? 'flex-col' : 'items-center'}`}>
             <EnemyPortraitBackdrop
               color={color}
               categoria={categoria}
-              className={`relative w-40 shrink-0 rounded-lg border-2 sm:w-48 ${borderColorMap[color] || 'border-slate-600'}`}
+              className={`relative shrink-0 rounded-lg border-2 ${
+                categoria === 'jefe' ? 'w-full' : 'w-40 sm:w-48'
+              } ${borderColorMap[color] || 'border-slate-600'}`}
             >
-              <div className="aspect-[567/827]">
+              <div className={categoria === 'jefe' ? 'h-64 sm:h-80' : 'aspect-[567/827]'}>
                 <ResponsiveImage 
                   src={imagen}
                   alt={name}

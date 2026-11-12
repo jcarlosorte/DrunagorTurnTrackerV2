@@ -4575,6 +4575,21 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 265.ª tanda — Marco de jefe a todo el ancho en la ficha
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Ficha** | El retrato del jefe ocupa todo el ancho disponible y los stats pasan debajo | `ModalEnemyCard` |
+| **Track** | La carta de jefe amplía su marco a 220 px | `EnemyCard` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

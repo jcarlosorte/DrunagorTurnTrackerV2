@@ -101,7 +101,7 @@ export default function EnemyCard({
       <div
         className={classNames(
           'relative w-full transition-transform hover:scale-105',
-          isBoss ? 'w-[190px] max-w-[46vw]' : 'max-w-[136px]',
+          isBoss ? 'w-[220px] max-w-[56vw]' : 'max-w-[136px]',
         )}
       >
         <EnemyPortraitBackdrop
