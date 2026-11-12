@@ -4730,6 +4730,21 @@ Unit       231 tests
 E2E        88/88
 ```
 
+### 275.ª tanda — Más solape en columnas de 3 enemigos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Solape** | Las pilas de enemigos de 3 o más cartas reducen su separación un 22 % | `TrackSlot` |
+| **Resto** | Héroes y demás cartas mantienen su separación normal | `TrackSlot` |
+| **Pruebas** | 231 unitarios · 88 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        88/88
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

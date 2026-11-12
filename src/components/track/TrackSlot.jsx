@@ -108,7 +108,13 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     const ordered = isTop ? [...items].reverse() : items;
 
     return ordered.map((item, i) => {
-      const distance = (i === 0 ? cardDistance(count, 0) : cardDistance(count, i) * overlapFactor) * densityFactor;
+      const rawDistance = cardDistance(count, i);
+      const enemyDistance = type === 'enemy' && count >= 3 && i > 0
+        ? BASE_GAP + (rawDistance - BASE_GAP) * 0.78
+        : rawDistance;
+      const distance = (i === 0 ? rawDistance : enemyDistance)
+        * (i === 0 ? 1 : overlapFactor)
+        * densityFactor;
       const zIndex = count - i;
 
       const isCompanion = type === 'hero' && item.kind === 'companion';
