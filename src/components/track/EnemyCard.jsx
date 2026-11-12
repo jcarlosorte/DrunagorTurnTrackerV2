@@ -119,7 +119,13 @@ export default function EnemyCard({
             sizes={isBoss ? '280px' : '(max-width: 640px) 30vw, 150px'}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 h-full w-full rounded-xl object-contain object-bottom px-1 pb-10 pt-2 drop-shadow-[0_8px_12px_rgba(0,0,0,0.8)]"
+            className={classNames(
+              'absolute inset-0 h-full w-full rounded-xl',
+              isBoss
+                ? 'scale-110 object-cover object-top'
+                : 'object-contain object-bottom px-1 pb-10 pt-2',
+              'drop-shadow-[0_8px_12px_rgba(0,0,0,0.8)]',
+            )}
           />
 
         {/* Estados alterados */}

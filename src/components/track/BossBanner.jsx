@@ -68,7 +68,7 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                   className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-red-500/50"
                 >
                   {enemy.imagen ? (
-                    <ResponsiveImage src={enemy.imagen} alt="" sizes="80px" className="h-full w-full object-contain object-bottom p-0.5" loading="eager" decoding="async" />
+                    <ResponsiveImage src={enemy.imagen} alt="" sizes="80px" className="h-full w-full scale-110 object-cover object-top" loading="eager" decoding="async" />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center text-slate-600">☠</span>
                   )}
@@ -104,7 +104,7 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
                     src={enemy.imagen}
                     alt=""
                     sizes="160px"
-                    className="h-full w-full object-contain object-bottom p-1"
+                    className="h-full w-full scale-110 object-cover object-top"
                     loading="eager"
                     decoding="async"
                   />

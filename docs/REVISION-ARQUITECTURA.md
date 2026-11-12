@@ -4528,6 +4528,22 @@ Unit       231 tests
 E2E        87/87
 ```
 
+### 262.ª tanda — Retratos de jefe más grandes
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Banner** | La imagen del jefe ocupa todo el retrato con recorte y escala | `BossBanner` |
+| **Ficha** | Los jefes usan `object-cover` y escala para llenar el fondo | `ModalEnemyCard` |
+| **Track** | La carta de jefe también amplía su imagen | `EnemyCard` |
+| **Pruebas** | 231 unitarios · 87 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        87/87
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

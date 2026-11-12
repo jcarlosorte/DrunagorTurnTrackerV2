@@ -488,7 +488,11 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                   src={imagen}
                   alt={name}
                   sizes="220px"
-                  className="absolute inset-0 h-full w-full object-contain object-bottom p-1" loading="lazy" decoding="async" />
+                  className={`absolute inset-0 h-full w-full ${
+                    categoria === 'jefe'
+                      ? 'scale-110 object-cover object-top'
+                      : 'object-contain object-bottom p-1'
+                  }`} loading="lazy" decoding="async" />
               </div>
               {/* Estados alterados sobre la imagen */}
               <div className="absolute top-1 left-1 grid grid-rows-4 grid-flow-col gap-1">
