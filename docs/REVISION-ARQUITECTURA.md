@@ -4822,6 +4822,20 @@ Unit       231 tests
 E2E        89/89
 ```
 
+### 281.ª tanda — Volver a reducir la altura del track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Altura manual** | Al arrastrar el tirador se desactiva la altura mínima automática y se permite reducir | `TurnTrackBoard` |
+| **Pruebas** | 231 unitarios · 90 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        90/90
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

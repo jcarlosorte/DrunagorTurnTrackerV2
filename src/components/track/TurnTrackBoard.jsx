@@ -405,9 +405,11 @@ export default function TurnTrackBoard({
   const boardView = (
     <div
       ref={viewportRef}
-      className="flex min-h-[560px] flex-1 items-start overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2"
+      className={`flex flex-1 items-start overflow-auto rounded-2xl border border-slate-700 bg-slate-900/80 p-2 ${
+        manualHeight ? '' : 'min-h-[560px]'
+      }`}
       style={{
-        minHeight: contentHeight ? `${Math.max(560, contentHeight * scale + 32)}px` : '560px',
+        minHeight: manualHeight ? '0px' : (contentHeight ? `${Math.max(560, contentHeight * scale + 32)}px` : '560px'),
         backgroundColor: '#1e293b',
         backgroundImage: `linear-gradient(rgba(203, 213, 225, 0.18), rgba(15, 23, 42, 0.10)), url(${trackBackground})`,
         backgroundSize: 'cover',
