@@ -45,6 +45,7 @@ export default function TurnTrackBoard({
   const [scale, setScale] = useState(1);
   const [contentHeight, setContentHeight] = useState(0);
   const [simplified, setSimplified] = useState(false);
+  const [controlsOpen, setControlsOpen] = useState(true);
   const [manualHeight, setManualHeight] = useState(() => {
     if (typeof window === 'undefined') return null;
     const stored = readJsonStorage(
@@ -197,6 +198,7 @@ export default function TurnTrackBoard({
 
       {/* Derecha: vista del tablero y paneles adicionales */}
       <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+        {controlsOpen && (
         <div className="flex items-center gap-0.5 rounded-xl border border-slate-700 bg-slate-950/70 p-0.5" role="group" aria-label={labels.boardGroup || 'Vista del tablero'}>
           <button
             type="button"
@@ -309,6 +311,7 @@ export default function TurnTrackBoard({
             <span aria-hidden="true" className="text-sm leading-none">⇩</span>
           </button>
         </div>
+        )}
 
         <div className="flex items-center gap-0.5 rounded-xl border border-slate-700 bg-slate-950/70 p-0.5" role="group" aria-label={labels.panels || 'Paneles'}>
           <button
@@ -327,6 +330,20 @@ export default function TurnTrackBoard({
             
           </button>
 
+          <button
+            type="button"
+            data-testid="controls-toggle"
+            onClick={() => setControlsOpen((prev) => !prev)}
+            aria-expanded={controlsOpen}
+            title={controlsOpen ? (labels.controlsHide || 'Ocultar controles') : (labels.controlsShow || 'Mostrar controles')}
+            aria-label={labels.controls || 'Controles del track'}
+            className="flex h-9 w-8 items-center justify-center rounded-lg text-slate-300 transition hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+          >
+            <span aria-hidden="true" className="text-sm leading-none">{controlsOpen ? '▾' : '▸'}</span>
+          </button>
+
+          {controlsOpen && (
+          <>
           <button
             type="button"
             data-testid="history-toggle"
@@ -377,6 +394,8 @@ export default function TurnTrackBoard({
             <span aria-hidden="true" className="text-sm leading-none">🎲</span>
             
           </button>
+          </>
+          )}
         </div>
       </div>
     </div>

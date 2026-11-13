@@ -4791,6 +4791,22 @@ Unit       231 tests
 E2E        88/88
 ```
 
+### 279.ª tanda — Controles del track plegables
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Botón** | Añadido un botón junto a la bolsa para mostrar u ocultar los controles | `TurnTrackBoard` |
+| **Contenido** | Oculta vista simplificada, densidad, solape, zoom, presentación, historial, turnos y dados | `TurnTrackBoard` |
+| **Siempre visible** | La bolsa de runas y el propio botón permanecen visibles | `TurnTrackBoard` |
+| **Pruebas** | 231 unitarios · 89 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        89/89
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -45,6 +45,17 @@ test.describe('Tablero de iniciativa', () => {
     expect(height).toBeLessThanOrEqual(500);
   });
 
+  test('el botón junto a la bolsa pliega y despliega los controles', async ({ page }) => {
+    await openTracker(page);
+    await page.getByTestId('controls-toggle').click();
+    await expect(page.getByTestId('density-toggle')).toHaveCount(0);
+    await expect(page.getByTestId('history-toggle')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Bolsa de runas' })).toBeVisible();
+    await page.getByTestId('controls-toggle').click();
+    await expect(page.getByTestId('density-toggle')).toBeVisible();
+    await expect(page.getByTestId('history-toggle')).toBeVisible();
+  });
+
   test('el carrusel muestra anterior, actual y siguiente', async ({ page }) => {
     await openTracker(page);
     await page.getByTestId('next-turn').click();
