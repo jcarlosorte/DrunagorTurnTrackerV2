@@ -5060,6 +5060,21 @@ Unit       233 tests
 E2E        94/94
 ```
 
+### 296.ª tanda — Permanecer en el track tras Campamento y Aventura
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Navegación** | Fase de Campamento y Aventura Secuencial ya no salen al configurador | `InitTracker` |
+| **Guardado** | La partida se guarda igualmente al terminar la fase | `InitTracker` |
+| **Pruebas** | 233 unitarios · 94 E2E | tests |
+
+**Medición**
+
+```text
+Unit       233 tests
+E2E        94/94
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

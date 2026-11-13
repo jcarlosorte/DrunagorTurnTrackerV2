@@ -77,7 +77,6 @@ import { formatCardText } from '@/utils/cardText';
 import { appendGameLog, clearGameLog, replaceLastGameLog } from '@/utils/gameLog';
 import { shouldResetSceneBoard } from '@/utils/sceneReset';
 import { saveGame } from '@/utils/saves';
-import { useNavigate } from 'react-router-dom';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
@@ -212,7 +211,6 @@ function ManualEnemyBehaviorPicker({
 }
 
 const InitTracker = () => {
-  const navigate = useNavigate();
   const { trackerData, setTrackerData } = useTracker();
   const effectiveTurnOrder = useMemo(
     () => buildTurnOrder(TURN_ORDER, trackerData.companions || [], trackerData.placedHeroes || [], trackerData.followers || []),
@@ -5031,7 +5029,6 @@ const InitTracker = () => {
       const name = `Campamento ${now.toLocaleDateString('es-ES')} ${now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
       saveGame({ name, snapshot: createStorageSnapshot('full') });
       toast.success(ti.campPhaseSaved || 'Fase de Campamento completada y partida guardada.');
-      navigate('/tracker');
     } catch (error) {
       toast.error(error?.message || ti.campPhaseSaveError || 'No se pudo guardar la partida del campamento.');
     }
@@ -5098,7 +5095,6 @@ const InitTracker = () => {
       const name = `Aventura Secuencial ${now.toLocaleDateString('es-ES')} ${now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
       saveGame({ name, snapshot: createStorageSnapshot('full') });
       toast.success(ti.sequentialAdventureSaved || 'Aventura Secuencial completada y partida guardada.');
-      navigate('/tracker');
     } catch (error) {
       toast.error(error?.message || ti.sequentialAdventureSaveError || 'No se pudo guardar la partida de la aventura secuencial.');
     }
@@ -5882,7 +5878,7 @@ const InitTracker = () => {
         <ConfirmDialog
           open={isCampPhaseOpen}
           title={ti.campPhaseTitle || 'Fase de Campamento'}
-          description={ti.campPhaseDescription || 'Se limpiará el track, se recuperarán los personajes y se guardará la partida antes de abrir la configuración de héroes y roles.'}
+          description={ti.campPhaseDescription || 'Se limpiará el track, se recuperarán los personajes y se guardará la partida sin salir de la pantalla del track.'}
           confirmLabel={ti.campPhaseAction || 'Iniciar Fase de Campamento'}
           cancelLabel={ti.cancel || 'Cancelar'}
           onConfirm={handleCampPhase}
@@ -5899,7 +5895,7 @@ const InitTracker = () => {
             <li>{ti.campPhaseHealth || 'Recuperar la salud máxima de héroes, compañeros, mascotas y seguidores.'}</li>
             <li>{ti.campPhasePets || 'Eliminar a las mascotas.'}</li>
             <li>{ti.campPhaseResetTurn || 'Reiniciar el turno.'}</li>
-            <li>{ti.campPhaseConfig || 'Abrir la configuración para cambiar héroes o roles.'}</li>
+            <li>{ti.campPhaseConfig || 'Permanecer en el track; la configuración de héroes y roles sigue disponible en el menú de juego.'}</li>
             <li>{ti.campPhaseSave || 'Guardar la partida con fecha y hora.'}</li>
           </ul>
         </ConfirmDialog>

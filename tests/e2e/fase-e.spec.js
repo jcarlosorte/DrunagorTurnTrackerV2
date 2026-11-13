@@ -50,7 +50,8 @@ test.describe('Fase E · campamento y reinicio', () => {
     await expect(dialog).toBeVisible();
     await dialog.getByRole('button', { name: 'Iniciar Fase de Campamento' }).click();
 
-    await page.waitForURL('**/tracker');
+    await expect(page).toHaveURL(/\/init/);
+    await expect.poll(async () => (await readStorage(page, 'drunagor:saves:index:v1', [])).length).toBeGreaterThan(0);
     await expect.poll(async () => (await readStorage(page, 'initEnemiesState', {})).placedEnemies?.length || 0).toBe(0);
     await expect.poll(async () => (await readStorage(page, 'gameState', {})).usedTiles?.length || 0).toBe(0);
     await expect.poll(async () => (await readStorage(page, 'heroExtras', {})).vorn?.vida).toBe(12);
@@ -111,7 +112,8 @@ test.describe('Fase E · campamento y reinicio', () => {
       .getByRole('button', { name: 'Iniciar Aventura Secuencial' }).click();
     await page.getByRole('button', { name: 'Misma distribución' }).click();
 
-    await page.waitForURL('**/tracker');
+    await expect(page).toHaveURL(/\/init/);
+    await expect.poll(async () => (await readStorage(page, 'drunagor:saves:index:v1', [])).length).toBeGreaterThan(0);
     const extras = await readStorage(page, 'heroExtras', {});
     expect(extras.vorn.vida).toBe(12);
     expect(extras.vorn.cubos).toEqual(extras.vorn.cubosMax);
