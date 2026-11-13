@@ -4836,6 +4836,22 @@ Unit       231 tests
 E2E        90/90
 ```
 
+### 282.ª tanda — Filtros de enemigos aleatorios
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Expansiones** | Botones para activar o desactivar las expansiones incluidas en el sorteo | `TopMenu` |
+| **Listado** | Desplegable con los enemigos asociados a cada expansión activa | `TopMenu` |
+| **Aleatorio** | Botón que elige un enemigo del grupo filtrado y lo coloca | `TopMenu`, `InitTracker` |
+| **Pruebas** | 231 unitarios · 91 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        91/91
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -21,7 +21,7 @@ test.describe('Selector manual de enemigos', () => {
     await page.getByRole('button', { name: 'Enemigos', exact: true }).first().click();
     const panel = page.locator('#track-menu-enemies');
 
-    const randomBoxes = await panel.locator('[data-testid="random-enemies"] button').evaluateAll((els) => els.map((el) => {
+    const randomBoxes = await panel.locator('[data-testid="random-enemies"] .grid.grid-cols-4 > button').evaluateAll((els) => els.map((el) => {
       const r = el.getBoundingClientRect();
       return { x: Math.round(r.x), y: Math.round(r.y) };
     }));

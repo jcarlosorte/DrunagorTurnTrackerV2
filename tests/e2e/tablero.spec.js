@@ -56,6 +56,21 @@ test.describe('Tablero de iniciativa', () => {
     await expect(page.getByTestId('history-toggle')).toBeVisible();
   });
 
+  test('el selector aleatorio usa las expansiones activas', async ({ page }) => {
+    await openTracker(page);
+    await page.getByRole('button', { name: 'Enemigos', exact: true }).first().click();
+
+    const randomPanel = page.getByTestId('random-enemies');
+    await expect(randomPanel.getByText('Expansiones incluidas')).toBeVisible();
+    await expect(randomPanel.getByRole('button', { name: 'Crónicas de Drunagor (Juego Base)' })).toBeVisible();
+    await randomPanel.getByRole('button', { name: /Elegir enemigo aleatorio/ }).click();
+
+    await expect.poll(async () => {
+      const state = await page.evaluate(() => JSON.parse(localStorage.getItem('initEnemiesState') || '{}'));
+      return (state.placedEnemies || []).length;
+    }).toBeGreaterThan(0);
+  });
+
   test('el carrusel muestra anterior, actual y siguiente', async ({ page }) => {
     await openTracker(page);
     await page.getByTestId('next-turn').click();

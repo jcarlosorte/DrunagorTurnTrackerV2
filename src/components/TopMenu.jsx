@@ -34,6 +34,7 @@ import NodosOscuridadPanel from '@/components/scenario/NodosOscuridadPanel';
 import ResponsiveImage from '@/components/track/ResponsiveImage';
 import EnemyPortraitBackdrop from '@/components/track/EnemyPortraitBackdrop';
 import { useGame } from '@/context/GameContext';
+import { ENEMIES } from '@/data/enemies';
 import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
 import ConfirmDialog from '@/components/ConfirmDialog';
@@ -64,6 +65,7 @@ const SpecialEventIcon = ({ size = 20 }) => (
 
 const TopMenu = ({
   onAddEnemy,
+  onAddRandomEnemy,
   onSelectCommander,
   onSelectBoss,
   onAddManual,
@@ -84,6 +86,7 @@ const TopMenu = ({
   const t = translations?.trackerInit || {};
   const { resetPlacedEnemies, activaHuesped, desactivaHuesped, huespedActivo, activaAcecho, desactivaAcecho, acechoActivo, activaInvadidos, desactivaInvadidos, invadidosActivo, oscuridadActivo, activaOscuridad, desactivaOscuridad, asaltoActivo, activaAsalto, desactivaAsalto } = useInitEnemies();
   const [enemySelect, setEnemySelect] = useState('');
+  const [randomExpansionIds, setRandomExpansionIds] = useState([]);
   const [manualSelect, setManualSelect] = useState('');
   const [showRuneFaceOptions, setShowRuneFaceOptions] = useState(false);
   const [showAssaultFaceOptions, setshowAssaultFaceOptions] = useState(false);
@@ -108,6 +111,22 @@ const TopMenu = ({
   const menuRefScenario = useRef(null);
   const menuRefNodes = useRef(null);
   const { selectedExpansions, mainBox, previewOtherBoxes, togglePreview, canPreviewOtherBoxes } = useExpansions();
+  const activeEnemyExpansions = selectedExpansions.filter((expansionId) => (
+    ENEMIES.some((enemy) => enemy.expansionId === expansionId)
+  ));
+  const activeEnemyExpansionKey = activeEnemyExpansions.join('|');
+  useEffect(() => {
+    const active = activeEnemyExpansionKey.split('|').filter(Boolean);
+    setRandomExpansionIds((prev) => {
+      const stillActive = prev.filter((id) => active.includes(id));
+      return stillActive.length > 0 ? stillActive : active;
+    });
+  }, [activeEnemyExpansionKey]);
+  const randomPool = ENEMIES.filter((enemy) => (
+    randomExpansionIds.includes(enemy.expansionId)
+    && enemy.tipo === 'enemigo'
+    && !['comandante', 'jefe', 'overlord', 'hero', 'escenario'].includes(enemy.categoria)
+  ));
   const showCoreContent = mainBox === 'core' || previewOtherBoxes;
   
   const colorMap = {
@@ -605,6 +624,69 @@ const TopMenu = ({
                       <span className="break-words text-center text-[0.6rem]">{label}</span>
                     </button>
                   ))}
+                </div>
+
+                <div className="mt-2 border-t border-slate-700/70 pt-2">
+                  <p className="mb-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
+                    {t.randomExpansions || 'Expansiones incluidas'}
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {activeEnemyExpansions.map((expansionId) => {
+                      const active = randomExpansionIds.includes(expansionId);
+                      return (
+                        <button
+                          key={expansionId}
+                          type="button"
+                          aria-pressed={active}
+                          onClick={() => setRandomExpansionIds((prev) => (
+                            prev.includes(expansionId)
+                              ? prev.filter((id) => id !== expansionId)
+                              : [...prev, expansionId]
+                          ))}
+                          className={`rounded-full border px-2 py-1 text-[0.6rem] font-semibold transition ${
+                            active
+                              ? 'border-sky-400 bg-sky-800 text-sky-100'
+                              : 'border-slate-600 bg-slate-900 text-slate-400'
+                          }`}
+                        >
+                          {translations.expansions?.[expansionId] || expansionId}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <details className="mt-2 rounded-lg border border-slate-700 bg-slate-900/70 px-2 py-1.5">
+                    <summary className="cursor-pointer text-[0.65rem] font-semibold text-slate-300">
+                      {t.randomPool || 'Ver enemigos incluidos'} ({randomPool.length})
+                    </summary>
+                    <div className="mt-1 max-h-36 space-y-1 overflow-y-auto text-[0.65rem] text-slate-300">
+                      {activeEnemyExpansions
+                        .filter((expansionId) => randomExpansionIds.includes(expansionId))
+                        .map((expansionId) => (
+                          <div key={expansionId}>
+                            <p className="font-semibold text-sky-200">{translations.expansions?.[expansionId] || expansionId}</p>
+                            <p className="text-slate-400">
+                              {randomPool
+                                .filter((enemy) => enemy.expansionId === expansionId)
+                                .map((enemy) => translations.enemies?.[enemy.id] || enemy.nombre || enemy.id)
+                                .join(' · ')}
+                            </p>
+                          </div>
+                        ))}
+                      {randomPool.length === 0 && (
+                        <p className="text-amber-300">{t.randomNoEnemies || 'No hay enemigos en las expansiones seleccionadas.'}</p>
+                      )}
+                    </div>
+                  </details>
+
+                  <button
+                    type="button"
+                    disabled={randomPool.length === 0}
+                    onClick={() => onAddRandomEnemy?.(randomPool)}
+                    className="mt-2 min-h-9 w-full rounded-lg bg-blue-700 px-2 text-xs font-bold text-white transition hover:bg-blue-600 disabled:opacity-40"
+                  >
+                    🎲 {t.randomEnemy || 'Elegir enemigo aleatorio'}
+                  </button>
                 </div>
               </div>
 
