@@ -297,9 +297,12 @@ test.describe('Escenas de Despertar', () => {
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
     await page.getByTestId('scene-chapter9').getByRole('button', { name: /Activar capítulo/ }).click();
+    const normalHeight = await page.locator('.track-slot').first().evaluate((element) => element.getBoundingClientRect().height);
     await page.getByTestId('simplified-toggle').click();
 
     await expect(page.locator('[data-simplified-enemy="true"]')).toHaveCount(2);
+    const simplifiedHeight = await page.locator('.track-slot').first().evaluate((element) => element.getBoundingClientRect().height);
+    expect(simplifiedHeight).toBeLessThan(normalHeight);
     await expect(page.getByText('Vorn', { exact: true }).first()).toBeVisible();
     await expect(page.getByText(/la oscuridad se extiende/i).first()).toBeVisible();
     await expect(page.getByTestId('simplified-toggle')).toHaveAttribute('title', 'Vista normal');

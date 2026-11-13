@@ -101,7 +101,7 @@ import TurnCarousel from '@/components/track/TurnCarousel';
 import BossBanner from '@/components/track/BossBanner';
 import CampDialog from '@/components/track/CampDialog';
 import RestartGameDialog from '@/components/track/RestartGameDialog';
-import { boardSlotHeightFrom } from '@/components/track/trackLayout';
+import { boardSlotHeightFrom, simplifiedSlotHeightFrom } from '@/components/track/trackLayout';
 import { CAMPAIGN_EXPANSIONS, getExpansionCampaigns, getScenarioExpansionIds } from '@/data/boxes';
 import { getCommanderCandidates } from '@/utils/commanderSelection';
 import { resolveSoulHarvesterTimeZero, getSoulHarvesterTime, formatEstadoAlterado } from '@/utils/soulHarvester';
@@ -3351,6 +3351,7 @@ const InitTracker = () => {
   const processedTiempoRef = useRef(toSet(persistedSession?.processed?.tiempo));
   const [presentation, setPresentation] = useState(false);
   const [panelsBelow, setPanelsBelow] = useState(false);
+  const [simplified, setSimplified] = useState(false);
   // En móvil la bolsa arranca cerrada: libera altura para el tablero.
   const [bagOpen, setBagOpen] = useState(() => (
     typeof window === 'undefined' ? true : window.innerWidth >= 1024
@@ -4797,21 +4798,41 @@ const InitTracker = () => {
     // Los seguidores se colocan en el lado contrario al de su rol.
     const followersAbove = (trackerData.followers || []).filter((f) => f.position === i && rolesOnBottom.includes(f.role)).length;
     const followersBelow = (trackerData.followers || []).filter((f) => f.position === i && rolesOnTop.includes(f.role)).length;
-    const above =
+    const enemiesAbove = isRuneSlot
+      ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'arriba')
+      : [];
+    const enemiesBelow = isRuneSlot
+      ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'abajo')
+      : [];
+    const isCompactEnemy = (enemy) => simplified
+      && enemy.enemy.tipo !== 'especial'
+      && enemy.enemy.tipo !== 'fallenHero';
+    const compactAbove = enemiesAbove.filter(isCompactEnemy).length;
+    const compactBelow = enemiesBelow.filter(isCompactEnemy).length;
+    const normalAbove =
       heroesAbove.length + companionsAbove + followersAbove +
-      (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'arriba').length : 0) +
+      enemiesAbove.length - compactAbove +
       (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'arriba').length : 0);
-    const below =
+    const normalBelow =
       heroesBelow.length + companionsBelow + followersBelow +
-      (isRuneSlot ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'abajo').length : 0) +
+      enemiesBelow.length - compactBelow +
       (isRuneText ? placedRunes.filter((r) => r.rune.colorIndex === i && r.rune.posicion === 'abajo').length : 0);
-    return Math.max(above, below);
+    return {
+      normal: Math.max(normalAbove, normalBelow),
+      compact: Math.max(compactAbove, compactBelow),
+    };
   });
   // La densidad compacta reduce cartas y separaciones un 15 %; el solape
   // compacto acerca las cartas entre sí dentro de cada pila.
   const densityFactor = density === 'compact' ? 0.85 : 1;
   const overlapFactor = overlap === 'compact' ? 0.72 : 1;
-  const boardSlotHeight = boardSlotHeightFrom(countsPerSlot) * densityFactor * overlapFactor;
+  const normalCounts = countsPerSlot.map((counts) => counts.normal);
+  const compactCounts = countsPerSlot.map((counts) => counts.compact);
+  const boardSlotHeight = (
+    simplified
+      ? simplifiedSlotHeightFrom(normalCounts, compactCounts)
+      : boardSlotHeightFrom(normalCounts)
+  ) * densityFactor * overlapFactor;
 
   const currentSlotIndex = (() => {
     if (!currentTurnEntity) return -1;
@@ -5084,6 +5105,8 @@ const InitTracker = () => {
                   summaries={slotSummaries}
                   currentSlotIndex={currentSlotIndex}
                   presentation={presentation}
+                  simplified={simplified}
+                  onToggleSimplified={() => setSimplified((prev) => !prev)}
                   panelsBelow={panelsBelow}
                   onTogglePanelsBelow={() => setPanelsBelow((prev) => !prev)}
                   onTogglePresentation={() => setPresentation((prev) => !prev)}

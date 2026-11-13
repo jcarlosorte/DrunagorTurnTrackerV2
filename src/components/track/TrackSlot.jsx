@@ -8,6 +8,8 @@ import CompanionTrackCard from '@/components/track/CompanionTrackCard';
 import FollowerCard from '@/components/track/FollowerCard';
 import CannonShotControl from '@/components/track/CannonShotControl';
 import ResponsiveImage from '@/components/track/ResponsiveImage';
+import { ENEMY_RING_COLORS } from '@/data/enemyRings';
+import { ENEMY_RING_COLORS_BIG } from '@/data/enemyRingsBig';
 import { BASE_GAP, cardDistance, compactSlotHeight } from '@/components/track/trackLayout';
 
 /**
@@ -132,6 +134,9 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       const isEntityFlipping = type === 'enemy' && flippedCards.includes(item.enemy.uuid);
 
       if (type === 'enemy' && simplified && !isSpecialEnemy) {
+        const ringClass = ENEMY_RING_COLORS.find((ring) => ring.id === item.enemy.ringColor)?.className
+          || ENEMY_RING_COLORS_BIG.find((ring) => ring.id === item.enemy.ringColor)?.className
+          || '';
         return (
           <div
             key={item.enemy.uuid}
@@ -150,7 +155,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
               onClick={() => openEnemyModal(item.enemy.uuid)}
               className={`flex h-8 w-full min-w-0 items-center gap-1 rounded border bg-slate-950/90 px-1 text-left transition hover:border-sky-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-sky-300 ${
                 isCurrentTurn ? 'border-amber-300 ring-1 ring-amber-300/70' : 'border-slate-600/80'
-              }`}
+              } ${ringClass.replace('ring-4', 'ring-2')}`}
               title={getEnemyName(item.enemy.id, item.enemy.color)}
             >
               {item.enemy.imagen ? (

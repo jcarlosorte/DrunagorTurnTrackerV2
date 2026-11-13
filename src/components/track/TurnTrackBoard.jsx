@@ -15,6 +15,8 @@ export default function TurnTrackBoard({
   summaries = [],
   currentSlotIndex = -1,
   presentation = false,
+  simplified = false,
+  onToggleSimplified,
   panelsBelow = false,
   onTogglePanelsBelow,
   onTogglePresentation,
@@ -44,7 +46,6 @@ export default function TurnTrackBoard({
   const pinchRef = useRef({ distance: 0, scale: 1 });
   const [scale, setScale] = useState(1);
   const [contentHeight, setContentHeight] = useState(0);
-  const [simplified, setSimplified] = useState(false);
   const [controlsOpen, setControlsOpen] = useState(true);
   const [manualHeight, setManualHeight] = useState(() => {
     if (typeof window === 'undefined') return null;
@@ -220,7 +221,7 @@ export default function TurnTrackBoard({
           <button
             type="button"
             data-testid="simplified-toggle"
-            onClick={() => setSimplified((prev) => !prev)}
+            onClick={onToggleSimplified}
             aria-pressed={simplified}
             title={simplified ? (labels.simplifiedOff || 'Vista normal') : (labels.simplifiedOn || 'Vista simplificada')}
             aria-label={labels.simplified || 'Vista simplificada'}

@@ -4807,6 +4807,21 @@ Unit       231 tests
 E2E        89/89
 ```
 
+### 280.ª tanda — Anillos y altura en la vista simplificada
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Anillos** | Los enemigos compactos conservan el color de su anillo | `TrackSlot` |
+| **Altura** | El tablero se adapta a las fichas compactas y reduce su altura | `InitTracker`, `trackLayout` |
+| **Pruebas** | 231 unitarios · 89 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        89/89
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -16,6 +16,9 @@ export const COMPACT_PADDING = 16;
 /** Altura mínima del slot del tablero: la justa para una carta a cada lado. */
 export const MIN_SLOT_HEIGHT = 720;
 export const MIN_COMPACT_SLOT_HEIGHT = 500;
+export const MIN_SIMPLIFIED_SLOT_HEIGHT = 420;
+export const SIMPLIFIED_PADDING = 70;
+export const SIMPLIFIED_ENEMY_STEP = 34;
 
 /** Solape entre cartas consecutivas para que la pila quepa en MAX_STACK_HEIGHT. */
 export function overlapFor(count) {
@@ -49,6 +52,17 @@ export function boardSlotHeightFrom(counts = []) {
 export function compactSlotHeight(aboveCount, belowCount) {
   const tallest = Math.max(stackHeight(aboveCount), stackHeight(belowCount));
   return Math.max(MIN_COMPACT_SLOT_HEIGHT, 2 * tallest + COMPACT_PADDING);
+}
+
+/** Altura del tablero cuando solo los enemigos usan fichas compactas. */
+export function simplifiedSlotHeightFrom(normalCounts = [], compactCounts = []) {
+  const tallestNormal = normalCounts.reduce((max, count) => Math.max(max, stackHeight(count)), 0);
+  const tallestCompact = compactCounts.reduce(
+    (max, count) => Math.max(max, count > 0 ? BASE_GAP + count * SIMPLIFIED_ENEMY_STEP : 0),
+    0,
+  );
+  const tallest = Math.max(tallestNormal, tallestCompact);
+  return Math.max(MIN_SIMPLIFIED_SLOT_HEIGHT, 2 * tallest + SIMPLIFIED_PADDING);
 }
 
 /** Posición (px) de la carta `index` respecto a la línea central. */
