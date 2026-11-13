@@ -261,6 +261,7 @@ const InitTracker = () => {
   const [navalCannonQueue, setNavalCannonQueue] = useState([]);
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampPhaseOpen, setIsCampPhaseOpen] = useState(false);
+  const [isSequentialAdventureOpen, setIsSequentialAdventureOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
   const isFlickeringBoar = (enemy) => (
@@ -276,7 +277,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -5027,6 +5028,73 @@ const InitTracker = () => {
     }
   };
 
+  const handleSequentialAdventure = async () => {
+    const runeSequence = usedTiles.map((tile) => tile.runa);
+
+    resetEnemySession();
+    resetPlacedRunes();
+    resetGameState();
+    resetNodeMechanics();
+    resetSiegeEvent();
+    resetFlickeringBoarDeck();
+    resetGenerationPoints();
+    resetMagicCannons();
+
+    const keptStates = new Set(['ESCUDO', 'KI', 'CONCENTRACION', 'FRUTO_DE_VIDA', 'FURIA', 'ENTROPIA']);
+    (trackerData.heroes || []).forEach((heroId) => {
+      const extras = getHeroExtras(heroId);
+      if (!extras) return;
+      updateHeroExtras(heroId, {
+        vida: extras.vidaMax ?? extras.vida,
+        estados: (extras.estados || []).filter((estado) => keptStates.has(estado?.id || estado)),
+        estadosAlterados: (extras.estadosAlterados || []).filter((estado) => keptStates.has(estado?.id)),
+        cubos: { ...(extras.cubosMax || {}) },
+      });
+    });
+    setTrackerData((prev) => ({
+      ...prev,
+      companions: (prev.companions || [])
+        .filter((companion) => companion.type !== 'mascota')
+        .map((companion) => ({
+          ...companion,
+          vida: companion.vidaMax ?? companion.vida,
+          estadosAlterados: [],
+          estados: [],
+        })),
+      followers: (prev.followers || []).map((follower) => ({
+        ...follower,
+        vida: follower.vidaMax ?? follower.vida,
+        estadosAlterados: [],
+        estados: [],
+      })),
+    }));
+    refreshHeroExtras();
+    setIsSequentialAdventureOpen(false);
+    resetTurnAndHistory();
+
+    const randomize = await appConfirm(
+      ti.sequentialAdventureRuneQuestion || '¿Cómo quieres colocar las runas contadas?',
+      {
+        title: ti.sequentialAdventureTitle || 'Aventura Secuencial',
+        confirmLabel: ti.sequentialAdventureRandom || 'Aleatorio',
+        cancelLabel: ti.sequentialAdventureSame || 'Misma distribución',
+      },
+    );
+    restoreRunesFromSequence(runeSequence, randomize);
+
+    await new Promise((resolve) => { window.setTimeout(resolve, 250); });
+
+    try {
+      const now = new Date();
+      const name = `Aventura Secuencial ${now.toLocaleDateString('es-ES')} ${now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
+      saveGame({ name, snapshot: createStorageSnapshot('full') });
+      toast.success(ti.sequentialAdventureSaved || 'Aventura Secuencial completada y partida guardada.');
+      navigate('/tracker');
+    } catch (error) {
+      toast.error(error?.message || ti.sequentialAdventureSaveError || 'No se pudo guardar la partida de la aventura secuencial.');
+    }
+  };
+
   const handleRestartGame = ({ runas = false, heroes = false } = {}) => {
     resetTurnAndHistory();
     clearGameLog();
@@ -5089,6 +5157,7 @@ const InitTracker = () => {
                 onOpenRestart={() => setIsRestartOpen(true)}
                 onOpenCamp={() => setIsCampOpen(true)}
                 onOpenCampPhase={() => setIsCampPhaseOpen(true)}
+                onOpenSequentialAdventure={() => setIsSequentialAdventureOpen(true)}
                 onOpenCompanion={(uid) => setSelectedCompanionUid(uid)}
                 onOpenFollower={(uid) => setSelectedFollowerUid(uid)}
                 onActivateScene={activateScene}
@@ -5823,6 +5892,29 @@ const InitTracker = () => {
             <li>{ti.campPhaseResetTurn || 'Reiniciar el turno.'}</li>
             <li>{ti.campPhaseConfig || 'Abrir la configuración para cambiar héroes o roles.'}</li>
             <li>{ti.campPhaseSave || 'Guardar la partida con fecha y hora.'}</li>
+          </ul>
+        </ConfirmDialog>
+        <ConfirmDialog
+          open={isSequentialAdventureOpen}
+          title={ti.sequentialAdventureTitle || 'Aventura Secuencial'}
+          description={ti.sequentialAdventureDescription || 'Se limpiará el track y se conservarán los recursos indicados. Después se preguntará cómo recolocar las runas contadas.'}
+          confirmLabel={ti.sequentialAdventureAction || 'Iniciar Aventura Secuencial'}
+          cancelLabel={ti.cancel || 'Cancelar'}
+          onConfirm={handleSequentialAdventure}
+          onCancel={() => setIsSequentialAdventureOpen(false)}
+        >
+          <ul className="list-disc space-y-1 pl-5 text-xs text-slate-200">
+            <li>{ti.sequentialAdventureEnemies || 'Eliminar todos los enemigos.'}</li>
+            <li>{ti.sequentialAdventureRunes || 'Retirar cartas de runa e incursión.'}</li>
+            <li>{ti.sequentialAdventureCount || 'Contar las runas del track por color.'}</li>
+            <li>{ti.sequentialAdventureResetRunes || 'Reiniciar las runas.'}</li>
+            <li>{ti.sequentialAdventureNodes || 'Resetear Nodos y áreas.'}</li>
+            <li>{ti.sequentialAdventurePets || 'Eliminar mascotas.'}</li>
+            <li>{ti.sequentialAdventureHealth || 'Recuperar la salud máxima de héroes, compañeros y seguidores.'}</li>
+            <li>{ti.sequentialAdventureCubes || 'Recobrar los cubos de acción.'}</li>
+            <li>{ti.sequentialAdventureStates || 'Quitar estados salvo Escudo, Ki, Concentración, Fruto de Vida, Furia y Entropía.'}</li>
+            <li>{ti.sequentialAdventureTurn || 'Reiniciar el turno.'}</li>
+            <li>{ti.sequentialAdventurePlaceRunes || 'Recolocar las runas contadas.'}</li>
           </ul>
         </ConfirmDialog>
         <RestartGameDialog

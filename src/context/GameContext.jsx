@@ -199,6 +199,29 @@ export const GameProvider = ({ children }) => {
   };
   
     
+  const restoreRunesFromSequence = (sequence = [], randomize = false) => {
+    const colors = ['naranja', 'verde', 'azul', 'rojo', 'gris'];
+    let available = createInitialTiles();
+    const used = [];
+    const restored = { rojo: 0, azul: 0, verde: 0, naranja: 0, gris: 0 };
+    const requested = sequence.filter((color) => colors.includes(color));
+
+    for (let index = 0; index < requested.length; index += 1) {
+      const candidates = randomize
+        ? available
+        : available.filter((tile) => tile.runa === requested[index]);
+      if (candidates.length === 0) break;
+      const tile = candidates[Math.floor(Math.random() * candidates.length)];
+      available = available.filter((entry) => entry.uuid !== tile.uuid);
+      used.push(tile);
+      restored[tile.runa] = (restored[tile.runa] || 0) + 1;
+    }
+
+    setAvailableTiles(available);
+    setUsedTiles(used);
+    setRunes(restored);
+  };
+
   const drawTileByColor = (color) => {
     const candidates = availableTiles.filter(t => t.runa === color);
     if (candidates.length === 0) return null;
@@ -1277,7 +1300,7 @@ export const GameProvider = ({ children }) => {
         discardTileRandom,
         restoreDiscardedTile,
         pilas, setPilas, addNewPila, activarPila, activarPilaConcentrada, codigosPilas, setCodigosPilas, handleCodigoChange,
-        removeTileFromPila, addRunesCascade, placeTilesFromPilaToTrack, addTileToPila, addTileToPilaConcentrada,
+        removeTileFromPila, addRunesCascade, restoreRunesFromSequence, placeTilesFromPilaToTrack, addTileToPila, addTileToPilaConcentrada,
         removeSingleTileFromPila,
         pilasConcentrada, setPilasConcentrada, addNewPilaConcentrada, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack,
         nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, addTileToNodoOscuridad,

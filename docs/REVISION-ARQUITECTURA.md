@@ -5026,6 +5026,24 @@ Unit       231 tests
 E2E        92/92
 ```
 
+### 294.ª tanda — Aventura Secuencial
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Menú** | Nueva opción «Aventura Secuencial» junto a la Fase de Campamento | `TopMenu` |
+| **Limpieza** | Enemigos, cartas de runa/incursión, runas, Nodos/áreas, mascotas y turno | `InitTracker` |
+| **Grupo** | Cura y recobra cubos; conserva Escudo, Ki, Concentración, Fruto de Vida, Furia y Entropía | `InitTracker` |
+| **Runas** | Cuenta las runas por color y permite recolocarlas igual o de forma aleatoria | `GameContext`, `InitTracker` |
+| **Guardado** | Guarda con fecha y hora antes de abrir la configuración | `InitTracker` |
+| **Pruebas** | 231 unitarios · 93 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        93/93
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
