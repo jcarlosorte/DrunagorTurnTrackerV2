@@ -71,10 +71,12 @@ import AppDialogHost from '@/components/AppDialogHost';
 
 import { createId } from '@/utils/id';
 import { appNotify, appConfirm, appPrompt } from '@/utils/appDialogs';
-import { isPlainObject, readJsonStorage, removeStorage, writeJsonStorage } from '@/utils/storage';
+import { isPlainObject, createStorageSnapshot, readJsonStorage, removeStorage, writeJsonStorage } from '@/utils/storage';
 import { healSurvivors } from '@/utils/hiloDeVida';
 import { formatCardText } from '@/utils/cardText';
 import { appendGameLog, clearGameLog, replaceLastGameLog } from '@/utils/gameLog';
+import { saveGame } from '@/utils/saves';
+import { useNavigate } from 'react-router-dom';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
@@ -209,6 +211,7 @@ function ManualEnemyBehaviorPicker({
 }
 
 const InitTracker = () => {
+  const navigate = useNavigate();
   const { trackerData, setTrackerData } = useTracker();
   const effectiveTurnOrder = useMemo(
     () => buildTurnOrder(TURN_ORDER, trackerData.companions || [], trackerData.placedHeroes || [], trackerData.followers || []),
@@ -257,6 +260,7 @@ const InitTracker = () => {
   const [incursionPlacement, setIncursionPlacement] = useState(null);
   const [navalCannonQueue, setNavalCannonQueue] = useState([]);
   const [isRestartOpen, setIsRestartOpen] = useState(false);
+  const [isCampPhaseOpen, setIsCampPhaseOpen] = useState(false);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
   const isFlickeringBoar = (enemy) => (
@@ -272,7 +276,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -4978,6 +4982,48 @@ const InitTracker = () => {
     return { index, label, count: entities.length, names: names.join(' · '), entities, slotColor };
   });
 
+  const handleCampPhase = async () => {
+    resetEnemySession();
+    resetPlacedRunes();
+    resetGameState();
+    resetNodeMechanics();
+    resetSiegeEvent();
+    resetFlickeringBoarDeck();
+    resetGenerationPoints();
+    resetMagicCannons();
+
+    (trackerData.heroes || []).forEach((heroId) => resetHeroForNewGame(heroId));
+    setTrackerData((prev) => ({
+      ...prev,
+      companions: (prev.companions || []).map((companion) => ({
+        ...companion,
+        vida: companion.vidaMax ?? companion.vida,
+        estadosAlterados: [],
+        estados: [],
+      })),
+      followers: (prev.followers || []).map((follower) => ({
+        ...follower,
+        vida: follower.vidaMax ?? follower.vida,
+        estadosAlterados: [],
+        estados: [],
+      })),
+    }));
+    refreshHeroExtras();
+    setIsCampPhaseOpen(false);
+
+    await new Promise((resolve) => { window.setTimeout(resolve, 250); });
+
+    try {
+      const now = new Date();
+      const name = `Campamento ${now.toLocaleDateString('es-ES')} ${now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
+      saveGame({ name, snapshot: createStorageSnapshot('full') });
+      toast.success(ti.campPhaseSaved || 'Fase de Campamento completada y partida guardada.');
+      navigate('/tracker');
+    } catch (error) {
+      toast.error(error?.message || ti.campPhaseSaveError || 'No se pudo guardar la partida del campamento.');
+    }
+  };
+
   const handleRestartGame = ({ runas = false, heroes = false } = {}) => {
     resetTurnAndHistory();
     clearGameLog();
@@ -5039,6 +5085,7 @@ const InitTracker = () => {
                 onTileDraw={handleTileDraw}
                 onOpenRestart={() => setIsRestartOpen(true)}
                 onOpenCamp={() => setIsCampOpen(true)}
+                onOpenCampPhase={() => setIsCampPhaseOpen(true)}
                 onOpenCompanion={(uid) => setSelectedCompanionUid(uid)}
                 onOpenFollower={(uid) => setSelectedFollowerUid(uid)}
                 onActivateScene={activateScene}
@@ -5751,6 +5798,26 @@ const InitTracker = () => {
             onClose={() => setSelectedFollowerUid(null)}
           />
         )}
+        <ConfirmDialog
+          open={isCampPhaseOpen}
+          title={ti.campPhaseTitle || 'Fase de Campamento'}
+          description={ti.campPhaseDescription || 'Se limpiará el track, se recuperarán los personajes y se guardará la partida antes de abrir la configuración de héroes y roles.'}
+          confirmLabel={ti.campPhaseAction || 'Iniciar Fase de Campamento'}
+          cancelLabel={ti.cancel || 'Cancelar'}
+          onConfirm={handleCampPhase}
+          onCancel={() => setIsCampPhaseOpen(false)}
+        >
+          <ul className="list-disc space-y-1 pl-5 text-xs text-slate-200">
+            <li>{ti.campPhaseEnemies || 'Eliminar todos los enemigos.'}</li>
+            <li>{ti.campPhaseRunes || 'Retirar cartas de runa e incursión.'}</li>
+            <li>{ti.campPhaseResetRunes || 'Reiniciar las runas.'}</li>
+            <li>{ti.campPhaseNodes || 'Resetear Nodos y áreas.'}</li>
+            <li>{ti.campPhaseStates || 'Quitar estados alterados de los héroes.'}</li>
+            <li>{ti.campPhaseHealth || 'Recuperar la salud máxima de héroes, compañeros, mascotas y seguidores.'}</li>
+            <li>{ti.campPhaseConfig || 'Abrir la configuración para cambiar héroes o roles.'}</li>
+            <li>{ti.campPhaseSave || 'Guardar la partida con fecha y hora.'}</li>
+          </ul>
+        </ConfirmDialog>
         <RestartGameDialog
           open={isRestartOpen}
           onClose={() => setIsRestartOpen(false)}

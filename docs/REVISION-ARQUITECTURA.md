@@ -4977,6 +4977,24 @@ Unit       231 tests
 E2E        91/91
 ```
 
+### 291.ª tanda — Fase de Campamento
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Menú** | Nueva opción «Fase de Campamento» encima de Reiniciar partida | `TopMenu` |
+| **Limpieza** | Elimina enemigos, cartas de runa/incursión, reinicia runas y Nodos/áreas | `InitTracker` |
+| **Grupo** | Quita estados y recupera la salud máxima de héroes, compañeros, mascotas y seguidores | `InitTracker` |
+| **Configuración** | Abre la configuración de héroes y roles | `InitTracker` |
+| **Guardado** | Guarda automáticamente con fecha y hora | `InitTracker`, `saves` |
+| **Pruebas** | 231 unitarios · 92 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        92/92
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -7,7 +7,7 @@ test.describe('Fase E · campamento y reinicio', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Menú de juego' }).click();
-    await page.getByRole('menuitem', { name: 'Campamento' }).click();
+    await page.getByRole('menuitem', { name: 'Campamento', exact: true }).click();
 
     const camp = page.getByRole('dialog', { name: 'Campamento del grupo' });
     await expect(camp).toBeVisible();
@@ -23,8 +23,31 @@ test.describe('Fase E · campamento y reinicio', () => {
     await page.reload({ waitUntil: 'networkidle' });
     await page.waitForSelector('.track-slot');
     await page.getByRole('button', { name: 'Menú de juego' }).click();
-    await page.getByRole('menuitem', { name: 'Campamento' }).click();
+    await page.getByRole('menuitem', { name: 'Campamento', exact: true }).click();
     await expect(page.getByRole('dialog', { name: 'Campamento del grupo' }).getByText('Cuerda')).toBeVisible();
+  });
+
+  test('la Fase de Campamento limpia el track, cura al grupo y guarda la partida', async ({ page }) => {
+    await seedStorage(page, {
+      ...buildSeed(),
+      initEnemiesState: buildEnemyState(),
+      heroExtras: buildHeroExtras({ vida: 3 }),
+    });
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Menú de juego' }).click();
+    await page.getByRole('menuitem', { name: 'Fase de Campamento' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Fase de Campamento' });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Iniciar Fase de Campamento' }).click();
+
+    await page.waitForURL('**/tracker');
+    await expect.poll(async () => (await readStorage(page, 'initEnemiesState', {})).placedEnemies?.length || 0).toBe(0);
+    await expect.poll(async () => (await readStorage(page, 'gameState', {})).usedTiles?.length || 0).toBe(0);
+    await expect.poll(async () => (await readStorage(page, 'heroExtras', {})).vorn?.vida).toBe(12);
+    const extras = await readStorage(page, 'heroExtras', {});
+    expect(extras.vorn.estadosAlterados).toEqual([]);
+    await expect.poll(async () => (await readStorage(page, 'drunagor:saves:index:v1', [])).length).toBeGreaterThan(0);
   });
 
   test('reiniciar partida limpia turno, historial, enemigos, runas y héroes', async ({ page }) => {
