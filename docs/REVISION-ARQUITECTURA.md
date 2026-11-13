@@ -4867,6 +4867,22 @@ Unit       231 tests
 E2E        91/91
 ```
 
+### 284.ª tanda — Plegado solo de controles de visualización
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Botón** | Situado a la izquierda de la bolsa, con icono de ajustes de visualización | `TurnTrackBoard` |
+| **Solo visualización** | Oculta densidad, vista simplificada, solape, zoom, presentación y paneles debajo | `TurnTrackBoard` |
+| **Siempre visibles** | Bolsa, historial, turnos y dados permanecen como antes | `TurnTrackBoard` |
+| **Pruebas** | 231 unitarios · 91 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        91/91
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

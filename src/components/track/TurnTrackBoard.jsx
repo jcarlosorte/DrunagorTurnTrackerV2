@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { GiCardPick } from 'react-icons/gi';
+import { MdTune } from 'react-icons/md';
 import HeroPortrait from '@/components/HeroPortrait';
 import { readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import trackBackground from '@/assets/backgrounds/track.avif';
@@ -317,6 +318,22 @@ export default function TurnTrackBoard({
         <div className="flex items-center gap-0.5 rounded-xl border border-slate-700 bg-slate-950/70 p-0.5" role="group" aria-label={labels.panels || 'Paneles'}>
           <button
             type="button"
+            data-testid="controls-toggle"
+            onClick={() => setControlsOpen((prev) => !prev)}
+            aria-expanded={controlsOpen}
+            title={controlsOpen ? (labels.controlsHide || 'Ocultar controles') : (labels.controlsShow || 'Mostrar controles')}
+            aria-label={labels.controls || 'Controles del track'}
+            className={`flex h-9 w-8 items-center justify-center rounded-lg border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 ${
+              controlsOpen
+                ? 'border-sky-400/70 bg-sky-800 text-sky-100'
+                : 'border-transparent text-slate-300 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <MdTune className="text-base" aria-hidden="true" />
+          </button>
+
+          <button
+            type="button"
             onClick={onToggleBag}
             aria-pressed={bagOpen}
             title={labels.bag || 'Bolsa de runas'}
@@ -331,20 +348,6 @@ export default function TurnTrackBoard({
             
           </button>
 
-          <button
-            type="button"
-            data-testid="controls-toggle"
-            onClick={() => setControlsOpen((prev) => !prev)}
-            aria-expanded={controlsOpen}
-            title={controlsOpen ? (labels.controlsHide || 'Ocultar controles') : (labels.controlsShow || 'Mostrar controles')}
-            aria-label={labels.controls || 'Controles del track'}
-            className="flex h-9 w-8 items-center justify-center rounded-lg text-slate-300 transition hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-          >
-            <span aria-hidden="true" className="text-sm leading-none">{controlsOpen ? '▾' : '▸'}</span>
-          </button>
-
-          {controlsOpen && (
-          <>
           <button
             type="button"
             data-testid="history-toggle"
@@ -395,8 +398,6 @@ export default function TurnTrackBoard({
             <span aria-hidden="true" className="text-sm leading-none">🎲</span>
             
           </button>
-          </>
-          )}
         </div>
       </div>
     </div>
