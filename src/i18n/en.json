@@ -724,6 +724,8 @@
     "campPhaseCubes": "Recover action cubes.",
     "campPhaseTrauma": "Remove trauma and curse cubes.",
     "campPhaseHealth": "Restore maximum health to heroes, companions, pets and followers.",
+    "campPhasePets": "Remove pets.",
+    "campPhaseResetTurn": "Reset the turn.",
     "campPhaseConfig": "Open configuration to change heroes or roles.",
     "campPhaseSave": "Save the game with date and time.",
     "campPhaseSaved": "Camp Phase completed and game saved.",

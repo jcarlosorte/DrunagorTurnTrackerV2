@@ -725,6 +725,8 @@
     "campPhaseCubes": "Recobrar los cubos de acción.",
     "campPhaseTrauma": "Eliminar cubos de trauma y maldición.",
     "campPhaseHealth": "Recuperar la salud máxima de héroes, compañeros, mascotas y seguidores.",
+    "campPhasePets": "Eliminar a las mascotas.",
+    "campPhaseResetTurn": "Reiniciar el turno.",
     "campPhaseConfig": "Abrir la configuración para cambiar héroes o roles.",
     "campPhaseSave": "Guardar la partida con fecha y hora.",
     "campPhaseSaved": "Fase de Campamento completada y partida guardada.",

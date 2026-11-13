@@ -28,12 +28,21 @@ test.describe('Fase E · campamento y reinicio', () => {
   });
 
   test('la Fase de Campamento limpia el track, cura al grupo y guarda la partida', async ({ page }) => {
+    const seed = buildSeed();
+    const tracker = JSON.parse(seed.trackerData);
+    tracker.companions = [
+      { uid: 'pet-camp', heroId: 'vorn', type: 'mascota', vida: 1, vidaMax: 5, estadosAlterados: [{ id: 'VENENO_I', count: 2 }] },
+      { uid: 'ally-camp', heroId: 'vorn', type: 'compañero', vida: 2, vidaMax: 6, estadosAlterados: [{ id: 'VENENO_I', count: 1 }] },
+    ];
+    seed.trackerData = JSON.stringify(tracker);
     await seedStorage(page, {
-      ...buildSeed(),
+      ...seed,
       initEnemiesState: buildEnemyState(),
       heroExtras: buildHeroExtras({ vida: 3, trauma: 2, maldicion: 1, cubos: { amarillo: 0, rojo: 0, verde: 0, azul: 0 } }),
     });
     await openTracker(page);
+    await page.getByTestId('next-turn').click();
+    await page.waitForTimeout(300);
 
     await page.getByRole('button', { name: 'Menú de juego' }).click();
     await page.getByRole('menuitem', { name: 'Fase de Campamento' }).click();
@@ -50,6 +59,13 @@ test.describe('Fase E · campamento y reinicio', () => {
     expect(extras.vorn.trauma).toBe(0);
     expect(extras.vorn.maldicion).toBe(0);
     expect(extras.vorn.cubos).toEqual(extras.vorn.cubosMax);
+    const savedTracker = await readStorage(page, 'trackerData', {});
+    expect(savedTracker.companions.map((entry) => entry.uid)).toEqual(['ally-camp']);
+    expect(savedTracker.companions[0].vida).toBe(6);
+    expect(savedTracker.companions[0].estadosAlterados).toEqual([]);
+    const session = await readStorage(page, 'trackerSession', {});
+    expect(session.turnIndex).toBe(0);
+    expect(session.roundNumber).toBe(1);
     await expect.poll(async () => (await readStorage(page, 'drunagor:saves:index:v1', [])).length).toBeGreaterThan(0);
   });
 

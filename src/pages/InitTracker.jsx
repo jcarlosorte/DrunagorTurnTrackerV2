@@ -4995,12 +4995,14 @@ const InitTracker = () => {
     (trackerData.heroes || []).forEach((heroId) => resetHeroForNewGame(heroId));
     setTrackerData((prev) => ({
       ...prev,
-      companions: (prev.companions || []).map((companion) => ({
-        ...companion,
-        vida: companion.vidaMax ?? companion.vida,
-        estadosAlterados: [],
-        estados: [],
-      })),
+      companions: (prev.companions || [])
+        .filter((companion) => companion.type !== 'mascota')
+        .map((companion) => ({
+          ...companion,
+          vida: companion.vidaMax ?? companion.vida,
+          estadosAlterados: [],
+          estados: [],
+        })),
       followers: (prev.followers || []).map((follower) => ({
         ...follower,
         vida: follower.vidaMax ?? follower.vida,
@@ -5010,6 +5012,7 @@ const InitTracker = () => {
     }));
     refreshHeroExtras();
     setIsCampPhaseOpen(false);
+    resetTurnAndHistory();
 
     await new Promise((resolve) => { window.setTimeout(resolve, 250); });
 
@@ -5816,6 +5819,8 @@ const InitTracker = () => {
             <li>{ti.campPhaseCubes || 'Recobrar los cubos de acción.'}</li>
             <li>{ti.campPhaseTrauma || 'Eliminar cubos de trauma y maldición.'}</li>
             <li>{ti.campPhaseHealth || 'Recuperar la salud máxima de héroes, compañeros, mascotas y seguidores.'}</li>
+            <li>{ti.campPhasePets || 'Eliminar a las mascotas.'}</li>
+            <li>{ti.campPhaseResetTurn || 'Reiniciar el turno.'}</li>
             <li>{ti.campPhaseConfig || 'Abrir la configuración para cambiar héroes o roles.'}</li>
             <li>{ti.campPhaseSave || 'Guardar la partida con fecha y hora.'}</li>
           </ul>

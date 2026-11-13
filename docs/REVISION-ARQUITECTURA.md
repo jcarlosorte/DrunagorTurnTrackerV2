@@ -5011,6 +5011,21 @@ Unit       231 tests
 E2E        92/92
 ```
 
+### 293.ª tanda — Mascotas y reinicio de turno en Campamento
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Mascotas** | Se eliminan de la partida después de recuperar la salud del grupo | `InitTracker` |
+| **Turno** | Como último paso se reinicia el cursor y el historial de turno | `InitTracker` |
+| **Pruebas** | 231 unitarios · 92 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        92/92
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
