@@ -5813,6 +5813,8 @@ const InitTracker = () => {
             <li>{ti.campPhaseResetRunes || 'Reiniciar las runas.'}</li>
             <li>{ti.campPhaseNodes || 'Resetear Nodos y áreas.'}</li>
             <li>{ti.campPhaseStates || 'Quitar estados alterados de los héroes.'}</li>
+            <li>{ti.campPhaseCubes || 'Recobrar los cubos de acción.'}</li>
+            <li>{ti.campPhaseTrauma || 'Eliminar cubos de trauma y maldición.'}</li>
             <li>{ti.campPhaseHealth || 'Recuperar la salud máxima de héroes, compañeros, mascotas y seguidores.'}</li>
             <li>{ti.campPhaseConfig || 'Abrir la configuración para cambiar héroes o roles.'}</li>
             <li>{ti.campPhaseSave || 'Guardar la partida con fecha y hora.'}</li>

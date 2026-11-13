@@ -722,6 +722,8 @@
     "campPhaseResetRunes": "Reiniciar las runas.",
     "campPhaseNodes": "Resetear Nodos y áreas.",
     "campPhaseStates": "Quitar estados alterados de los héroes.",
+    "campPhaseCubes": "Recobrar los cubos de acción.",
+    "campPhaseTrauma": "Eliminar cubos de trauma y maldición.",
     "campPhaseHealth": "Recuperar la salud máxima de héroes, compañeros, mascotas y seguidores.",
     "campPhaseConfig": "Abrir la configuración para cambiar héroes o roles.",
     "campPhaseSave": "Guardar la partida con fecha y hora.",

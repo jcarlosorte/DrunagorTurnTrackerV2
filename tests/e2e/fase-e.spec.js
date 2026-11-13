@@ -31,7 +31,7 @@ test.describe('Fase E · campamento y reinicio', () => {
     await seedStorage(page, {
       ...buildSeed(),
       initEnemiesState: buildEnemyState(),
-      heroExtras: buildHeroExtras({ vida: 3 }),
+      heroExtras: buildHeroExtras({ vida: 3, trauma: 2, maldicion: 1, cubos: { amarillo: 0, rojo: 0, verde: 0, azul: 0 } }),
     });
     await openTracker(page);
 
@@ -47,6 +47,9 @@ test.describe('Fase E · campamento y reinicio', () => {
     await expect.poll(async () => (await readStorage(page, 'heroExtras', {})).vorn?.vida).toBe(12);
     const extras = await readStorage(page, 'heroExtras', {});
     expect(extras.vorn.estadosAlterados).toEqual([]);
+    expect(extras.vorn.trauma).toBe(0);
+    expect(extras.vorn.maldicion).toBe(0);
+    expect(extras.vorn.cubos).toEqual(extras.vorn.cubosMax);
     await expect.poll(async () => (await readStorage(page, 'drunagor:saves:index:v1', [])).length).toBeGreaterThan(0);
   });
 

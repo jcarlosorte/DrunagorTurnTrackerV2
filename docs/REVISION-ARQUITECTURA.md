@@ -4995,6 +4995,22 @@ Unit       231 tests
 E2E        92/92
 ```
 
+### 292.ª tanda — Recursos en la Fase de Campamento
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cubos** | Se recobran todos los cubos de acción de los héroes | `InitTracker` |
+| **Trauma** | Se eliminan los cubos de trauma | `InitTracker` |
+| **Maldición** | Se eliminan los cubos de maldición | `InitTracker` |
+| **Pruebas** | 231 unitarios · 92 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        92/92
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
