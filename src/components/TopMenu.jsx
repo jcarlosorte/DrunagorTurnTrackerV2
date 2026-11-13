@@ -65,7 +65,6 @@ const SpecialEventIcon = ({ size = 20 }) => (
 
 const TopMenu = ({
   onAddEnemy,
-  onAddRandomEnemy,
   onSelectCommander,
   onSelectBoss,
   onAddManual,
@@ -678,15 +677,6 @@ const TopMenu = ({
                       )}
                     </div>
                   </details>
-
-                  <button
-                    type="button"
-                    disabled={randomPool.length === 0}
-                    onClick={() => onAddRandomEnemy?.(randomPool)}
-                    className="mt-2 min-h-9 w-full rounded-lg bg-blue-700 px-2 text-xs font-bold text-white transition hover:bg-blue-600 disabled:opacity-40"
-                  >
-                    🎲 {t.randomEnemy || 'Elegir enemigo aleatorio'}
-                  </button>
                 </div>
               </div>
 

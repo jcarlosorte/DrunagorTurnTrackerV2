@@ -56,19 +56,18 @@ test.describe('Tablero de iniciativa', () => {
     await expect(page.getByTestId('history-toggle')).toBeVisible();
   });
 
-  test('el selector aleatorio usa las expansiones activas', async ({ page }) => {
+  test('el selector aleatorio muestra las expansiones activas y sus enemigos', async ({ page }) => {
     await openTracker(page);
     await page.getByRole('button', { name: 'Enemigos', exact: true }).first().click();
 
     const randomPanel = page.getByTestId('random-enemies');
     await expect(randomPanel.getByText('Expansiones incluidas')).toBeVisible();
-    await expect(randomPanel.getByRole('button', { name: 'Crónicas de Drunagor (Juego Base)' })).toBeVisible();
-    await randomPanel.getByRole('button', { name: /Elegir enemigo aleatorio/ }).click();
-
-    await expect.poll(async () => {
-      const state = await page.evaluate(() => JSON.parse(localStorage.getItem('initEnemiesState') || '{}'));
-      return (state.placedEnemies || []).length;
-    }).toBeGreaterThan(0);
+    const expansion = randomPanel.getByRole('button', { name: 'Crónicas de Drunagor (Juego Base)' });
+    await expect(expansion).toHaveAttribute('aria-pressed', 'true');
+    await randomPanel.getByText(/Ver enemigos incluidos/).click();
+    await expect(randomPanel.getByText(/Arquero Esqueleto|Contramaestre|Guardia Esqueleto/).first()).toBeVisible();
+    await expansion.click();
+    await expect(expansion).toHaveAttribute('aria-pressed', 'false');
   });
 
   test('el carrusel muestra anterior, actual y siguiente', async ({ page }) => {

@@ -4852,6 +4852,21 @@ Unit       231 tests
 E2E        91/91
 ```
 
+### 283.ª tanda — Quitar el botón de sorteo aleatorio
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Botón** | Eliminado el botón «Elegir enemigo aleatorio» del panel | `TopMenu` |
+| **Filtros** | Se mantienen los botones de expansión y el desplegable de enemigos asociados | `TopMenu` |
+| **Pruebas** | 231 unitarios · 91 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        91/91
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

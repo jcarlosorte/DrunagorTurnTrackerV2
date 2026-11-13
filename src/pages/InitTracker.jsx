@@ -1429,19 +1429,6 @@ const InitTracker = () => {
     if (ver === 'show') showToast(selected);
   };
   
-  const handleRandomEnemyFromPool = (pool = []) => {
-    if (!Array.isArray(pool) || pool.length === 0) {
-      showScenarioToast(`⚠ ${ti.randomNoEnemies || 'No hay enemigos en las expansiones seleccionadas.'}`);
-      return;
-    }
-    const chosen = pool[Math.floor(Math.random() * pool.length)];
-    handleManualEnemyAdd(
-      chosen.id,
-      chosen.comportamiento || 'estandar',
-      chosen.categoria || 'soldado',
-    );
-  };
-
   const handleRandomCommander = () => {
     const candidates = getCommanderCandidates({
       selectedEnemyIds: trackerData.enemies || [],
@@ -5043,7 +5030,6 @@ const InitTracker = () => {
             {!presentation && (
               <TopMenu
                 onAddEnemy={openCategorySelector}
-                onAddRandomEnemy={handleRandomEnemyFromPool}
                 onSelectCommander={handleRandomCommander}
                 onSelectBoss={openManualBoss}
                 onAddManual={openManualSelector}
