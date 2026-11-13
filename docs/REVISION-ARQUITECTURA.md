@@ -4914,6 +4914,21 @@ Unit       231 tests
 E2E        91/91
 ```
 
+### 287.ª tanda — Solape del 75 % en pilas de enemigos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Solape** | Las columnas de 3 o más enemigos separan sus cartas ~46 px, mostrando solo ~25 % de cada carta | `TrackSlot` |
+| **Resto** | Héroes y demás cartas mantienen su separación | `TrackSlot` |
+| **Pruebas** | 231 unitarios · 91 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        91/91
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

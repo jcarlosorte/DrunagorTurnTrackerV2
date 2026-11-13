@@ -113,8 +113,10 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
 
     return ordered.map((item, i) => {
       const rawDistance = cardDistance(count, i);
+      const baseStep = cardDistance(count, 1) - BASE_GAP;
+      const enemyStep = Math.max(46, baseStep * 0.42);
       const enemyDistance = type === 'enemy' && count >= 3 && i > 0
-        ? BASE_GAP + (rawDistance - BASE_GAP) * 0.78
+        ? BASE_GAP + i * enemyStep
         : rawDistance;
       const distance = (i === 0 ? rawDistance : enemyDistance)
         * (i === 0 ? 1 : overlapFactor)
