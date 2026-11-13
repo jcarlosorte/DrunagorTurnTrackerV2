@@ -46,7 +46,7 @@ function groupByTurn(entries) {
 
   entries.forEach((entry) => {
     const turnKey = entry.round != null && entry.turn != null
-      ? `${entry.round}:${entry.turn}`
+      ? `${entry.round}:${entry.turn}:${entry.entityId || ''}`
       : null;
     if (entry.kind === 'turn') {
       if (current.items.length > 0) groups.push(current);

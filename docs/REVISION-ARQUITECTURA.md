@@ -4961,6 +4961,22 @@ Unit       231 tests
 E2E        91/91
 ```
 
+### 290.ª tanda — Historial separado por entidad
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Clave** | Cada turno se agrupa por ronda, turno y entidad, no solo por ronda/turno | `HistoryPanel`, `InitTracker` |
+| **Avisos** | Los eventos de una carta conservan su entidad de origen | `InitTracker` |
+| **Cronómetro** | El aviso de tiempo del héroe se agrupa con ese héroe | `InitTracker` |
+| **Pruebas** | 231 unitarios · 91 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        91/91
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

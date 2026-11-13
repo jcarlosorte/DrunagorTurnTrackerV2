@@ -3472,7 +3472,7 @@ const InitTracker = () => {
   const loggedTurnHeaderRef = useRef(null);
   const logCurrentTurnHeader = (entity = currentTurnEntity) => {
     if (!entity) return;
-    const entityId = entity.id || entity.uuid;
+    const entityId = entity.uuid || entity.id;
     const signature = `${roundRef.current}-${turnIndex}-${entityId}`;
     if (loggedTurnHeaderRef.current === signature) return;
     loggedTurnHeaderRef.current = signature;
@@ -3481,6 +3481,7 @@ const InitTracker = () => {
       round: roundRef.current,
       turn: turnIndex,
       type: entity.type,
+      entityId,
     });
   };
 
@@ -3830,6 +3831,7 @@ const InitTracker = () => {
                     round: cardRound,
                     turn: cardTurn,
                     type: 'enemy',
+                    entityId: currentForResolution.uuid || currentForResolution.id,
                   })
                 );
               }).catch((error) => {
@@ -4706,6 +4708,7 @@ const InitTracker = () => {
           round: roundRef.current,
           turn: turnIndex,
           type: 'hero',
+          entityId: previo.entity.id,
         });
         refreshHeroExtras();
       }
@@ -4760,6 +4763,7 @@ const InitTracker = () => {
       round: context?.round ?? roundRef.current,
       turn: context?.turn ?? turnIndex,
       type: context?.type,
+      entityId: context?.entityId ?? (currentTurnEntity?.uuid || currentTurnEntity?.id),
     });
   };
 
