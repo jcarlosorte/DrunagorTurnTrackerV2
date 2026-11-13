@@ -33,6 +33,54 @@ test.describe('Escenas de Despertar', () => {
     });
   });
 
+  test('un capítulo normal limpia enemigos, runas y cartas previas', async ({ page }) => {
+    await seedStorage(page, awakeningsSeed());
+    await openTracker(page);
+    await page.evaluate(() => {
+      localStorage.setItem('initEnemiesState', JSON.stringify({
+        placedEnemies: [{ enemy: { uuid: 'old-enemy', id: 'skeleton_archer', color: 'blanco', categoria: 'soldado' } }],
+      }));
+      localStorage.setItem('gameState', JSON.stringify({
+        usedTiles: [{ uuid: 'old-rune', runa: 'rojo' }],
+        runes: { rojo: 1, azul: 0, verde: 0, naranja: 0, gris: 0 },
+        nodosOscuridad: [{ id: 'old-node', estado: 'activa', tiles: [] }],
+        scenarioMonster: { id: 'old-monster' },
+      }));
+      localStorage.setItem('initRunesState', JSON.stringify({
+        placedRunes: [{ rune: { id: 'old-card', uuid: 'old-card', tipo: 'runa' } }],
+        executedRunes: [],
+      }));
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.track-slot');
+
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await page.getByTestId('scene-chapter1').getByRole('button', { name: /Activar capítulo/ }).click();
+
+    await expect.poll(async () => page.evaluate(() => {
+      const runes = JSON.parse(localStorage.getItem('initRunesState') || '{}');
+      const game = JSON.parse(localStorage.getItem('gameState') || '{}');
+      const enemies = JSON.parse(localStorage.getItem('initEnemiesState') || '{}');
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        used: (game.usedTiles || []).length,
+        runes: game.runes,
+        nodes: (game.nodosOscuridad || []).length,
+        scenario: game.scenarioMonster || null,
+        enemies: (enemies.placedEnemies || []).length,
+        hasOldEnemy: (enemies.placedEnemies || []).some((entry) => entry.enemy.id === 'old-enemy'),
+      };
+    })).toEqual({
+      cards: ['runa_despertar_influencia'],
+      used: 20,
+      runes: { rojo: 4, azul: 4, verde: 4, naranja: 4, gris: 4 },
+      nodes: 0,
+      scenario: null,
+      enemies: 1,
+      hasOldEnemy: false,
+    });
+  });
+
   test('Capítulo 2 coloca runas, nodos, incursión y enemigos en orden', async ({ page }) => {
     await seedStorage(page, awakeningsSeed());
     await openTracker(page);

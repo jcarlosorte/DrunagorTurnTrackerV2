@@ -5044,6 +5044,22 @@ Unit       231 tests
 E2E        93/93
 ```
 
+### 295.ª tanda — Reinicio previo en escenas de capítulo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Reinicio** | Antes de los pasos de una escena normal se limpian enemigos, runas, Nodos/áreas y cartas | `InitTracker` |
+| **Excepción** | Las escenas con número y letra, como `chapter8b`, conservan el estado previo | `sceneReset` |
+| **Runas** | La colocación de escena usa un tablero limpio y evita carreras con el reinicio | `GameContext`, `initRunesContext` |
+| **Pruebas** | 233 unitarios · 94 E2E | tests |
+
+**Medición**
+
+```text
+Unit       233 tests
+E2E        94/94
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

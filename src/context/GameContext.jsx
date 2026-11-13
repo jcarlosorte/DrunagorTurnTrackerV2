@@ -747,11 +747,13 @@ export const GameProvider = ({ children }) => {
 
   // Preparación de escena: coloca runas desde la bolsa y, después, forma los
   // Nodos de Oscuridad activos consumiendo esas mismas runas del track.
-  const placeSceneRunes = (perColor = 0, nodeCount = 0) => {
+  const placeSceneRunes = (perColor = 0, nodeCount = 0, options = {}) => {
+    const fresh = Boolean(options.fresh);
     const colores = ['naranja', 'verde', 'azul', 'rojo', 'gris'];
-    let remaining = [...availableTiles];
-    const used = [...usedTiles];
+    let remaining = fresh ? createInitialTiles() : [...availableTiles];
+    const used = fresh ? [] : [...usedTiles];
     const placed = [];
+    const nodeBase = fresh ? 1 : contadorNodosOscuridad;
 
     for (const color of colores) {
       for (let index = 0; index < perColor; index += 1) {
@@ -779,11 +781,13 @@ export const GameProvider = ({ children }) => {
         id: createId(),
         tiles: nodeTiles,
         estado: 'activa',
-        numPila: contadorNodosOscuridad + nodes.length,
+        numPila: nodeBase + nodes.length,
       });
     }
 
-    const nextRunes = { ...runes };
+    const nextRunes = fresh
+      ? { rojo: 0, azul: 0, verde: 0, naranja: 0, gris: 0 }
+      : { ...runes };
     placed.forEach((tile) => {
       nextRunes[tile.runa] = (nextRunes[tile.runa] || 0) + 1;
     });

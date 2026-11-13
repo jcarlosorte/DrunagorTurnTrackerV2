@@ -75,6 +75,7 @@ import { isPlainObject, createStorageSnapshot, readJsonStorage, removeStorage, w
 import { healSurvivors } from '@/utils/hiloDeVida';
 import { formatCardText } from '@/utils/cardText';
 import { appendGameLog, clearGameLog, replaceLastGameLog } from '@/utils/gameLog';
+import { shouldResetSceneBoard } from '@/utils/sceneReset';
 import { saveGame } from '@/utils/saves';
 import { useNavigate } from 'react-router-dom';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
@@ -1810,6 +1811,14 @@ const InitTracker = () => {
   };
 
   const activateScene = async (scene) => {
+    const needsSceneReset = shouldResetSceneBoard(scene.id);
+    if (needsSceneReset) {
+      resetEnemySession();
+      resetPlacedRunes();
+      resetGameState();
+      resetNodeMechanics();
+    }
+
     if (scene.returnActiveNodes) {
       nodosOscuridad
         .filter((nodo) => nodo.estado === 'activa')
@@ -1827,7 +1836,7 @@ const InitTracker = () => {
         : null;
       if (runeCard) handleAddRuneCard(runeCard, false, scene.timeTokens || 0);
 
-      const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0);
+      const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0, { fresh: needsSceneReset });
 
       if (scene.incursionId) {
         const incursion = INCURSION_DESPERTAR.find((card) => card.id === scene.incursionId && card.cara === 'A');
@@ -1859,17 +1868,17 @@ const InitTracker = () => {
     const runeCard = scene.runeId
       ? RUNAS_DESPERTAR.find((card) => card.id === scene.runeId && card.cara === 'A')
       : null;
-    if (runeCard && !placedRunes.some((entry) => entry.rune.id === runeCard.id)) {
+    if (runeCard && (needsSceneReset || !placedRunes.some((entry) => entry.rune.id === runeCard.id))) {
       handleAddRuneCard(runeCard, false, scene.timeTokens || 0);
     }
 
     // Las runas se colocan primero y los Nodos se forman después con las runas
     // que ya están en el track.
-    const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0);
+    const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0, { fresh: needsSceneReset });
 
     if (scene.incursionId) {
       const incursion = INCURSION_DESPERTAR.find((card) => card.id === scene.incursionId && card.cara === 'A');
-      if (incursion && !placedRunes.some((entry) => entry.rune.id === incursion.id)) {
+      if (incursion && (needsSceneReset || !placedRunes.some((entry) => entry.rune.id === incursion.id))) {
         handleAddRuneCard(incursion);
       }
     }
