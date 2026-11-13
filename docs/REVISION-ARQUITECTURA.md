@@ -4945,6 +4945,22 @@ Unit       231 tests
 E2E        91/91
 ```
 
+### 289.ª tanda — Inmunidades y estados separados del jefe
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Paneles** | Inmunidades y estados son paneles independientes, uno debajo del otro | `ModalEnemyCard` |
+| **Inmunidades** | Sin truncado y con más altura para mostrar todos los textos | `ModalEnemyCard` |
+| **Imagen** | El retrato se estira hasta igualar la altura de los dos paneles | `ModalEnemyCard` |
+| **Pruebas** | 231 unitarios · 91 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        91/91
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

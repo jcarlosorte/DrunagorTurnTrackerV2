@@ -478,17 +478,17 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
 
           {/* Imagen y stats */}
           <div className={categoria === 'jefe'
-            ? 'mt-2 grid grid-cols-[1.1fr_0.9fr] items-start gap-2'
+            ? 'mt-2 grid grid-cols-[1.1fr_0.9fr] items-stretch gap-2'
             : 'mt-2'}>
             <div className={`flex w-full gap-1 ${categoria === 'jefe' ? 'contents' : 'items-center'}`}>
               <EnemyPortraitBackdrop
                 color={color}
                 categoria={categoria}
                 className={`relative shrink-0 rounded-lg border-2 ${
-                  categoria === 'jefe' ? 'w-full' : 'w-40 sm:w-48'
+                  categoria === 'jefe' ? 'h-full min-h-[18rem] w-full' : 'w-40 sm:w-48'
                 } ${borderColorMap[color] || 'border-slate-600'}`}
               >
-                <div className={categoria === 'jefe' ? 'h-56 sm:h-64' : 'aspect-[567/827]'}>
+                <div className={categoria === 'jefe' ? 'h-full min-h-[18rem]' : 'aspect-[567/827]'}>
                 <ResponsiveImage 
                   src={imagen}
                   alt={name}
@@ -525,7 +525,9 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
 
             </EnemyPortraitBackdrop>
               
-            <div className={`flex-1 grid grid-cols-1 gap-1 text-gray-800 font-semibold text-sm bg-gray-200 rounded-lg`}>
+            <div className={categoria === 'jefe'
+              ? 'flex min-w-0 flex-1 flex-col gap-2 p-0 text-gray-800 font-semibold text-sm'
+              : 'flex-1 grid grid-cols-1 gap-1 text-gray-800 font-semibold text-sm bg-gray-200 rounded-lg'}>
               {/* Vida + Movimiento + Ataque en la misma línea */}
               {categoria !== "jefe" && (
                 <div className="flex items-center text-center gap-4">
@@ -561,27 +563,38 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                     </span>
                 </div>
               )}
-              <div className="flex items-start gap-2">
+              <div className={categoria === 'jefe'
+                ? 'flex items-start gap-2 rounded-xl border border-slate-700 bg-gray-200 p-2'
+                : 'flex items-start gap-2'}>
                 <GiShieldReflect className="text-purple-700 mt-1 text-2xl cursor-help" title={ti.inmunidad || ''} />
-                <div className="grid max-h-20 flex-1 grid-cols-2 gap-1 overflow-y-auto pr-1 text-[0.62rem] leading-tight sm:grid-cols-3">
-                  {Array.isArray(todasInmunidades) && todasInmunidades.length > 0
-                    ? todasInmunidades.map((clave) => (
-                        <span key={clave} className="inline-flex min-w-0 items-center gap-1 rounded bg-slate-800/60 px-1 py-0.5">
-                          <span className="truncate">{tt[clave] || clave}</span>
-                          <FiInfo
-                            title={tte[clave] || ''}
-                            className="shrink-0 text-gray-500 hover:text-gray-800 cursor-help"
-                          />
-                        </span>
-                      ))
-                    : tt.none}
+                <div className="min-w-0 flex-1">
+                  {categoria === 'jefe' && (
+                    <p className="mb-1 text-xs font-bold uppercase tracking-wide text-slate-700">
+                      {ti.inmunidades || 'Inmunidades'}
+                    </p>
+                  )}
+                  <div className={categoria === 'jefe'
+                    ? 'grid grid-cols-1 gap-1.5 text-[0.68rem] leading-tight sm:grid-cols-2'
+                    : 'grid max-h-20 grid-cols-2 gap-1 overflow-y-auto pr-1 text-[0.62rem] leading-tight sm:grid-cols-3'}>
+                    {Array.isArray(todasInmunidades) && todasInmunidades.length > 0
+                      ? todasInmunidades.map((clave) => (
+                          <span key={clave} className="inline-flex min-w-0 items-center gap-1 rounded bg-slate-800/60 px-1 py-0.5">
+                            <span className={categoria === 'jefe' ? 'break-words' : 'truncate'}>{tt[clave] || clave}</span>
+                            <FiInfo
+                              title={tte[clave] || ''}
+                              className="shrink-0 text-gray-500 hover:text-gray-800 cursor-help"
+                            />
+                          </span>
+                        ))
+                      : tt.none}
+                  </div>
                 </div>
               </div>
               {/* Capacidades */}
               {mostrarAccionesCapacidad(capacidadesAjustadas, tt, tte, ti)}
 
               {categoria === 'jefe' && (
-                <div className="mt-2 min-w-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2">
+                <div className="min-w-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2">
                   <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
                   <div className="flex flex-wrap items-stretch justify-center gap-1">
                     {getEnemyStatusCatalog(rulesVersion)
