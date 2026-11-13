@@ -4929,6 +4929,22 @@ Unit       231 tests
 E2E        91/91
 ```
 
+### 288.ª tanda — Versiones en el selector aleatorio
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Sin duplicados** | El listado y el contador agrupan cada enemigo por ID | `TopMenu` |
+| **Versiones** | Botones para incluir estándar, alternativo y complejo | `TopMenu` |
+| **Expansiones** | Se combinan con los filtros de expansión activos | `TopMenu` |
+| **Pruebas** | 231 unitarios · 91 E2E | tests |
+
+**Medición**
+
+```text
+Unit       231 tests
+E2E        91/91
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

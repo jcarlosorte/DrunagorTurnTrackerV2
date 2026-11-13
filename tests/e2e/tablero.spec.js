@@ -64,6 +64,11 @@ test.describe('Tablero de iniciativa', () => {
     await expect(randomPanel.getByText('Expansiones incluidas')).toBeVisible();
     const expansion = randomPanel.getByRole('button', { name: 'Crónicas de Drunagor (Juego Base)' });
     await expect(expansion).toHaveAttribute('aria-pressed', 'true');
+    const standard = randomPanel.getByRole('button', { name: 'Estándar' });
+    await expect(standard).toHaveAttribute('aria-pressed', 'true');
+    await standard.click();
+    await expect(standard).toHaveAttribute('aria-pressed', 'false');
+    await standard.click();
     await randomPanel.getByText(/Ver enemigos incluidos/).click();
     await expect(randomPanel.getByText(/Arquero Esqueleto|Contramaestre|Guardia Esqueleto/).first()).toBeVisible();
     await expansion.click();

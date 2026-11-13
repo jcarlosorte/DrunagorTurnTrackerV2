@@ -86,6 +86,7 @@ const TopMenu = ({
   const { resetPlacedEnemies, activaHuesped, desactivaHuesped, huespedActivo, activaAcecho, desactivaAcecho, acechoActivo, activaInvadidos, desactivaInvadidos, invadidosActivo, oscuridadActivo, activaOscuridad, desactivaOscuridad, asaltoActivo, activaAsalto, desactivaAsalto } = useInitEnemies();
   const [enemySelect, setEnemySelect] = useState('');
   const [randomExpansionIds, setRandomExpansionIds] = useState([]);
+  const [randomBehaviors, setRandomBehaviors] = useState(['estandar', 'alternativo', 'complejo']);
   const [manualSelect, setManualSelect] = useState('');
   const [showRuneFaceOptions, setShowRuneFaceOptions] = useState(false);
   const [showAssaultFaceOptions, setshowAssaultFaceOptions] = useState(false);
@@ -121,11 +122,14 @@ const TopMenu = ({
       return stillActive.length > 0 ? stillActive : active;
     });
   }, [activeEnemyExpansionKey]);
-  const randomPool = ENEMIES.filter((enemy) => (
-    randomExpansionIds.includes(enemy.expansionId)
-    && enemy.tipo === 'enemigo'
-    && !['comandante', 'jefe', 'overlord', 'hero', 'escenario'].includes(enemy.categoria)
-  ));
+  const randomPool = Array.from(new Map(ENEMIES
+    .filter((enemy) => (
+      randomExpansionIds.includes(enemy.expansionId)
+      && enemy.tipo === 'enemigo'
+      && randomBehaviors.includes(enemy.comportamiento || 'estandar')
+      && !['comandante', 'jefe', 'overlord', 'hero', 'escenario'].includes(enemy.categoria)
+    ))
+    .map((enemy) => [enemy.id, enemy])).values());
   const showCoreContent = mainBox === 'core' || previewOtherBoxes;
   
   const colorMap = {
@@ -649,6 +653,38 @@ const TopMenu = ({
                           }`}
                         >
                           {translations.expansions?.[expansionId] || expansionId}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <p className="mb-1 mt-2 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
+                    {t.randomBehaviors || 'Versiones incluidas'}
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {[
+                      { key: 'estandar', label: t.behaviorStandard || 'Estándar' },
+                      { key: 'alternativo', label: t.behaviorAlternative || 'Alternativo' },
+                      { key: 'complejo', label: t.behaviorComplex || 'Complejo' },
+                    ].map(({ key, label }) => {
+                      const active = randomBehaviors.includes(key);
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          aria-pressed={active}
+                          onClick={() => setRandomBehaviors((prev) => (
+                            prev.includes(key)
+                              ? prev.filter((value) => value !== key)
+                              : [...prev, key]
+                          ))}
+                          className={`rounded-full border px-2 py-1 text-[0.6rem] font-semibold transition ${
+                            active
+                              ? 'border-emerald-400 bg-emerald-800 text-emerald-100'
+                              : 'border-slate-600 bg-slate-900 text-slate-400'
+                          }`}
+                        >
+                          {label}
                         </button>
                       );
                     })}
