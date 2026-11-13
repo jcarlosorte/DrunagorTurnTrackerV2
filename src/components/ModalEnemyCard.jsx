@@ -579,12 +579,76 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
               </div>
               {/* Capacidades */}
               {mostrarAccionesCapacidad(capacidadesAjustadas, tt, tte, ti)}
+
+              {categoria === 'jefe' && (
+                <div className="mt-2 min-w-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2">
+                  <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-300">{ti.estados || 'Estados alterados'}</p>
+                  <div className="flex flex-wrap items-stretch justify-center gap-1">
+                    {getEnemyStatusCatalog(rulesVersion)
+                      .filter((config) => config.mostrar === 'si' || config.id === 'TIEMPO')
+                      .filter((config) => !todasInmunidades?.includes(config.id) && !(todasInmunidades?.includes('GRANDE') && ['DERRIBO_I', 'ATURDIMIENTO_I'].includes(config.id)))
+                      .map((estadoConfig) => {
+                        const activo = estadosLocal.find((item) => item.id === estadoConfig.id);
+                        const estado = activo || { id: estadoConfig.id, count: 0 };
+                        const maxCount = estado.max || estadoConfig.max || 1;
+                        const nombre = tea[estadoConfig.texto] || estadoConfig.texto;
+                        return (
+                          <div key={estado.id} className="state-chip flex min-w-[2.1rem] max-w-[3.5rem] flex-1 basis-0 flex-col items-center rounded-lg border py-0.5">
+                            <button
+                              type="button"
+                              onClick={() => handleEstadoChangeLocal(estado.id, +1)}
+                              disabled={maxCount === 1 && (estado.count || 0) >= maxCount}
+                              aria-label={`${nombre}: +1`}
+                              className="state-btn-add flex h-5 w-8 items-center justify-center rounded text-xs font-bold leading-none text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
+                            >
+                              +
+                            </button>
+                            <div className="relative flex flex-col items-center py-0.5" title={`${nombre} ×${estado.count || 0}${tte[estadoConfig.id] ? `\n${tte[estadoConfig.id]}` : ''}`}>
+                              <img src={estadoConfig.imagen} alt={nombre} className="h-6 w-6 flex-shrink" loading="lazy" decoding="async" />
+                              <span className="text-[0.6rem] font-bold leading-none text-white">{estado.count || 0}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleEstadoChangeLocal(estado.id, -1)}
+                              disabled={(estado.count || 0) <= 0}
+                              aria-label={`${nombre}: −1`}
+                              className="state-btn-remove flex h-5 w-8 items-center justify-center rounded text-xs font-bold leading-none text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
+                            >
+                              −
+                            </button>
+                          </div>
+                        );
+                      })}
+                  </div>
+                  {isSoulHarvester && (
+                    <BossRunesColumn
+                      selected={activeBossRune}
+                      labels={ti}
+                      texts={enemy.bossRuneTexts || {}}
+                      className="mt-2"
+                      onSelect={(runeId) => {
+                        setPlacedEnemies((prev) => prev.map((entry) => (
+                          entry.enemy.uuid === enemy.uuid
+                            ? { ...entry, enemy: applyBossRuneEffect(entry.enemy, runeId) }
+                            : entry
+                        )));
+                        setEstadosLocal((prev) => {
+                          if (runeId !== 'azul') return prev;
+                          const index = prev.findIndex((estado) => estado.id === 'ATURDIMIENTO_I');
+                          if (index === -1) return [...prev, { id: 'ATURDIMIENTO_I', count: 1 }];
+                          return prev.map((estado, i) => (i === index ? { ...estado, count: 1 } : estado));
+                        });
+                      }}
+                    />
+                  )}
+                </div>
+              )}
               
             </div>
           </div>
 
           <div className={categoria === 'jefe'
-            ? 'col-start-2 row-start-2 min-w-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2'
+            ? 'hidden'
             : 'mt-2 flex flex-col gap-2 sm:flex-row sm:items-start'}>
             {/* Submenú Estados Alterados: paleta fija, siempre visible */}
             <div className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900/60 p-2">
