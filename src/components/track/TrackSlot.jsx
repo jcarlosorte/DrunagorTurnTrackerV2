@@ -9,6 +9,7 @@ import FollowerCard from '@/components/track/FollowerCard';
 import CannonShotControl from '@/components/track/CannonShotControl';
 import ResponsiveImage from '@/components/track/ResponsiveImage';
 import { ENEMY_RING_COLORS } from '@/data/enemyRings';
+import { getEnemyTone } from '@/components/track/enemyVisuals';
 import { ENEMY_RING_COLORS_BIG } from '@/data/enemyRingsBig';
 import { BASE_GAP, cardDistance, compactSlotHeight } from '@/components/track/trackLayout';
 
@@ -28,6 +29,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     tr = {},
     ti = {},
     tea = {},
+    ta = {},
     placedHeroes = [],
     placedEnemies = [],
     placedRunes = [],
@@ -122,7 +124,6 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       const isCompanion = type === 'hero' && item.kind === 'companion';
       const isFollower = type === 'hero' && item.kind === 'follower';
       const isSiege = item.kind === 'siege';
-      const isSpecialEnemy = type === 'enemy' && (item.enemy.tipo === 'especial' || item.enemy.tipo === 'fallenHero');
       const isCurrentTurn = currentTurnEntity && (
         (type === 'enemy' && item.enemy.uuid === currentTurnEntity.uuid) ||
         (type === 'rune' && item.uuid === currentTurnEntity.uuid) ||
@@ -133,18 +134,31 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       );
       const isEntityFlipping = type === 'enemy' && flippedCards.includes(item.enemy.uuid);
 
-      if (type === 'enemy' && simplified && !isSpecialEnemy) {
-        const ringClass = ENEMY_RING_COLORS.find((ring) => ring.id === item.enemy.ringColor)?.className
-          || ENEMY_RING_COLORS_BIG.find((ring) => ring.id === item.enemy.ringColor)?.className
+      if (type === 'enemy' && simplified) {
+        const enemy = item.enemy;
+        const isSpecialCard = enemy.tipo === 'especial' || enemy.tipo === 'fallenHero';
+        const name = isSpecialCard
+          ? ta.nombre?.[enemy.capacidades]
+            || ta.nombre?.[`${enemy.id}_${enemy.cara}`]
+            || ta.nombre?.[enemy.id]
+            || enemy.nombre
+            || enemy.id
+          : getEnemyName(enemy.id, enemy.color);
+        const tone = getEnemyTone(enemy.color, enemy.categoria);
+        const vida = Number(enemy.vida) || 0;
+        const vidaMax = Number(enemy.vidaMax) || 0;
+        const hasHealth = vidaMax > 0;
+        const ringClass = ENEMY_RING_COLORS.find((ring) => ring.id === enemy.ringColor)?.className
+          || ENEMY_RING_COLORS_BIG.find((ring) => ring.id === enemy.ringColor)?.className
           || '';
         return (
           <div
-            key={item.enemy.uuid}
+            key={enemy.uuid}
             className="absolute left-1/2 w-[132px] max-w-full"
             style={{
               ...(isTop
-                ? { bottom: `calc(50% + ${BASE_GAP + i * 34}px)` }
-                : { top: `calc(50% + ${BASE_GAP + i * 34}px)` }),
+                ? { bottom: `calc(50% + ${BASE_GAP + i * 44}px)` }
+                : { top: `calc(50% + ${BASE_GAP + i * 44}px)` }),
               transform: 'translateX(-50%)',
               zIndex: isCurrentTurn ? 40 : zIndex,
             }}
@@ -152,24 +166,37 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
             <button
               type="button"
               data-simplified-enemy="true"
-              onClick={() => openEnemyModal(item.enemy.uuid)}
-              className={`flex h-8 w-full min-w-0 items-center gap-1 rounded border bg-slate-950/90 px-1 text-left transition hover:border-sky-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-sky-300 ${
+              onClick={() => openEnemyModal(enemy.uuid)}
+              className={`flex h-10 w-full min-w-0 items-center gap-1 rounded border px-1 text-left transition hover:border-sky-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-sky-300 ${
                 isCurrentTurn ? 'border-amber-300 ring-1 ring-amber-300/70' : 'border-slate-600/80'
               } ${ringClass.replace('ring-4', 'ring-2')}`}
-              title={getEnemyName(item.enemy.id, item.enemy.color)}
+              style={{ background: `linear-gradient(135deg, ${tone}dd 0%, ${tone}66 100%)` }}
+              title={name}
             >
-              {item.enemy.imagen ? (
+              {enemy.imagen ? (
                 <ResponsiveImage
-                  src={item.enemy.imagen}
+                  src={enemy.imagen}
                   alt=""
                   sizes="28px"
-                  className="h-7 w-5 shrink-0 object-contain object-bottom"
+                  className="h-8 w-5 shrink-0 object-contain object-bottom"
                   loading="lazy"
                   decoding="async"
                 />
-              ) : null}
-              <span className="min-w-0 flex-1 truncate text-[0.55rem] font-semibold leading-tight text-slate-100">
-                {getEnemyName(item.enemy.id, item.enemy.color)}
+              ) : (
+                <GiAbstract065 className="h-6 w-5 shrink-0 text-white/80" aria-hidden="true" />
+              )}
+              <span className="flex min-w-0 flex-1 flex-col justify-center">
+                <span className="truncate text-[0.55rem] font-semibold leading-tight text-white">
+                  {name}
+                </span>
+                {hasHealth && (
+                  <span className="mt-0.5 block h-1 w-full overflow-hidden rounded bg-black/45">
+                    <span
+                      className="block h-full rounded bg-emerald-400"
+                      style={{ width: `${Math.max(0, Math.min(100, (vida / vidaMax) * 100))}%` }}
+                    />
+                  </span>
+                )}
               </span>
             </button>
           </div>

@@ -291,7 +291,7 @@ test.describe('Escenas de Despertar', () => {
     });
   });
 
-  test('la vista simplificada solo compacta a los enemigos normales', async ({ page }) => {
+  test('la vista simplificada compacta enemigos y cartas de ataque', async ({ page }) => {
     await seedStorage(page, awakeningsSeed());
     await openTracker(page);
 
@@ -300,7 +300,9 @@ test.describe('Escenas de Despertar', () => {
     const normalHeight = await page.locator('.track-slot').first().evaluate((element) => element.getBoundingClientRect().height);
     await page.getByTestId('simplified-toggle').click();
 
-    await expect(page.locator('[data-simplified-enemy="true"]')).toHaveCount(2);
+    await expect(page.locator('[data-simplified-enemy="true"]').first()).toBeVisible();
+    const compactEnemies = await page.locator('[data-simplified-enemy="true"]').count();
+    expect(compactEnemies).toBeGreaterThan(4);
     const simplifiedHeight = await page.locator('.track-slot').first().evaluate((element) => element.getBoundingClientRect().height);
     expect(simplifiedHeight).toBeLessThan(normalHeight);
     await expect(page.getByText('Vorn', { exact: true }).first()).toBeVisible();

@@ -4804,11 +4804,8 @@ const InitTracker = () => {
     const enemiesBelow = isRuneSlot
       ? placedEnemies.filter((e) => e.enemy.position === i && e.enemy.runePosition === 'abajo')
       : [];
-    const isCompactEnemy = (enemy) => simplified
-      && enemy.enemy.tipo !== 'especial'
-      && enemy.enemy.tipo !== 'fallenHero';
-    const compactAbove = enemiesAbove.filter(isCompactEnemy).length;
-    const compactBelow = enemiesBelow.filter(isCompactEnemy).length;
+    const compactAbove = enemiesAbove.length;
+    const compactBelow = enemiesBelow.length;
     const normalAbove =
       heroesAbove.length + companionsAbove + followersAbove +
       enemiesAbove.length - compactAbove +

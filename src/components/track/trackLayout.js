@@ -18,7 +18,7 @@ export const MIN_SLOT_HEIGHT = 720;
 export const MIN_COMPACT_SLOT_HEIGHT = 500;
 export const MIN_SIMPLIFIED_SLOT_HEIGHT = 420;
 export const SIMPLIFIED_PADDING = 70;
-export const SIMPLIFIED_ENEMY_STEP = 34;
+export const SIMPLIFIED_ENEMY_STEP = 44;
 
 /** Solape entre cartas consecutivas para que la pila quepa en MAX_STACK_HEIGHT. */
 export function overlapFor(count) {
