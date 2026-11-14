@@ -5093,6 +5093,22 @@ Unit       233 tests
 E2E        98/98
 ```
 
+### 298.ª tanda — Paneles de control de áreas bajo la bolsa
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Paneles** | Barricadas, Puntos de Aparición, Llaves Rúnicas y Rescate de Aldeanos | `AreaControlPanels` |
+| **Visibilidad** | Solo aparecen cuando la mecánica tiene elementos activos | `InitTracker` |
+| **Acciones** | Cada ficha muestra su color y permite retirarla | `AreaControlPanels` |
+| **Pruebas** | 233 unitarios · 99 E2E | tests |
+
+**Medición**
+
+```text
+Unit       233 tests
+E2E        99/99
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

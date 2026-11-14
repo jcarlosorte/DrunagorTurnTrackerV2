@@ -45,6 +45,28 @@ test.describe('Tablero de iniciativa', () => {
     expect(height).toBeLessThanOrEqual(500);
   });
 
+  test('muestra los paneles de control de áreas bajo la bolsa', async ({ page }) => {
+    await openTracker(page);
+    await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+      state.controlPoints = [{ uuid: 'cp-1', runa: 'rojo' }];
+      state.spawnPoints = [{ uuid: 'sp-1', runa: 'azul' }, { uuid: 'sp-2', runa: 'evento' }];
+      state.runeKeys = [{ uuid: 'rk-1', runa: 'verde' }];
+      state.rescue = [{ uuid: 'rs-1', runa: 'gris' }];
+      localStorage.setItem('gameState', JSON.stringify(state));
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.track-slot');
+
+    const panels = page.getByTestId('area-control-panels');
+    await expect(panels).toBeVisible();
+    await expect(panels.getByText(/Barricadas Activas/i)).toBeVisible();
+    await expect(panels.getByText(/Puntos de Aparición Activos/i)).toBeVisible();
+    await expect(panels.getByText(/LLaves Rúnicas Activas/i)).toBeVisible();
+    await expect(panels.getByText(/Aldeanos Activos|Rescate de aldeanos/i)).toBeVisible();
+    await expect(panels.getByRole('button')).toHaveCount(5);
+  });
+
   test('el botón junto a la bolsa pliega y despliega los controles de visualización', async ({ page }) => {
     await openTracker(page);
     await page.getByTestId('controls-toggle').click();
