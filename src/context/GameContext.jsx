@@ -458,8 +458,47 @@ export const GameProvider = ({ children }) => {
     return tilesRestantes;
   };
   
-  const activarPila = (id) => {
-    setPilas(prev => prev.map(pila => 
+  const initializeDarknessPiles = (count = 1, activeCount = 0, fresh = false) => {
+    let remaining = fresh ? createInitialTiles() : [...availableTiles];
+    const created = [];
+    const baseCounter = fresh ? 1 : contadorPilas;
+    const colors = ['rojo', 'azul', 'verde', 'naranja', 'gris'];
+    const discarded = { rojo: [], azul: [], verde: [], naranja: [], gris: [] };
+
+    for (let index = 0; index < count; index += 1) {
+      const pileTiles = [];
+      const shuffled = shuffle([...colors]);
+      for (const color of shuffled) {
+        const candidates = remaining.filter((tile) => tile.runa === color);
+        if (candidates.length === 0) break;
+        const tile = candidates[Math.floor(Math.random() * candidates.length)];
+        remaining = remaining.filter((item) => item.uuid !== tile.uuid);
+        pileTiles.push(tile);
+        discarded[color].push(tile);
+      }
+      if (pileTiles.length !== colors.length) break;
+      created.push({
+        id: createId(),
+        tiles: pileTiles,
+        estado: index < activeCount ? 'activa' : 'reserva',
+        numPila: baseCounter + index,
+      });
+    }
+
+    setAvailableTiles(remaining);
+    setDiscardedTiles((prev) => {
+      const next = { ...prev };
+      Object.entries(discarded).forEach(([color, tiles]) => {
+        if (tiles.length) next[color] = [...(next[color] || []), ...tiles];
+      });
+      return next;
+    });
+    setPilas((prev) => (fresh ? created : [...prev, ...created]));
+    setContadorPilas(baseCounter + created.length);
+    return created;
+  };
+
+  const activarPila = (id) => {    setPilas(prev => prev.map(pila => 
       pila.id === id ? { ...pila, estado: 'activa' } : pila
     ));
   };
@@ -1318,7 +1357,7 @@ export const GameProvider = ({ children }) => {
         discardTileByColor,
         discardTileRandom,
         restoreDiscardedTile,
-        pilas, setPilas, addNewPila, activarPila, activarPilaConcentrada, codigosPilas, setCodigosPilas, handleCodigoChange,
+        pilas, setPilas, addNewPila, initializeDarknessPiles, activarPila, activarPilaConcentrada, codigosPilas, setCodigosPilas, handleCodigoChange,
         removeTileFromPila, addRunesCascade, restoreRunesFromSequence, placeTilesFromPilaToTrack, addTileToPila, addTileToPilaConcentrada,
         removeSingleTileFromPila,
         pilasConcentrada, setPilasConcentrada, addNewPilaConcentrada, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack,

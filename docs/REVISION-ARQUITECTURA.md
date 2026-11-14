@@ -5170,6 +5170,23 @@ Unit       234 tests
 E2E        100/100
 ```
 
+### 303.ª tanda — Escena del Capítulo 04 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escena** | El saqueo de Ignispyra / The Raid of Ignispyra | `scenes` |
+| **Cartas** | Oscuridad de Caza e incursión con el Vástago de Vampiro Sombrío | `scenes`, `InitTracker` |
+| **Pilas** | Cinco pilas de Oscuridad Inquieta, una activa | `GameContext`, `InitTracker` |
+| **Enemigos** | Grupos acumulativos según el número de héroes | `scenes` |
+| **Pruebas** | 234 unitarios · 101 E2E | tests |
+
+**Medición**
+
+```text
+Unit       234 tests
+E2E        101/101
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

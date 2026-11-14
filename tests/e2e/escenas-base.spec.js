@@ -55,6 +55,31 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('Capítulo 4 coloca incursión, cinco pilas y enemigos', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter4');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      const game = await readStorage(page, 'gameState', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        enemies: (enemies.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
+        piles: (game.pilas || []).length,
+        activePiles: (game.pilas || []).filter((pila) => pila.estado === 'activa').length,
+        scenario: game.scenarioMonster?.id,
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza', 'incru1'],
+      enemies: ['negro:bisoño', 'gris:soldado'],
+      piles: 5,
+      activePiles: 1,
+      scenario: 'dark_vampire',
+    });
+  });
+
   test('Capítulo 3 coloca runa, incursión, Barricadas y enemigos', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);
