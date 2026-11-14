@@ -67,6 +67,30 @@ test.describe('Tablero de iniciativa', () => {
     await expect(panels.getByRole('button')).toHaveCount(5);
   });
 
+  test('retirar una Llave Rúnica no devuelve su ficha a la bolsa', async ({ page }) => {
+    await openTracker(page);
+    await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+      state.availableTiles = [{ uuid: 'bag-1', runa: 'rojo' }];
+      state.runeKeys = [{ uuid: 'rk-remove', runa: 'verde', tile: { uuid: 'key-tile', runa: 'verde' } }];
+      localStorage.setItem('gameState', JSON.stringify(state));
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.track-slot');
+
+    const panel = page.getByTestId('area-control-panels');
+    await expect(panel.getByText(/LLaves Rúnicas Activas/i)).toBeVisible();
+    await panel.getByRole('button').first().click();
+
+    await expect.poll(async () => page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+      return {
+        keys: (state.runeKeys || []).length,
+        available: (state.availableTiles || []).length,
+      };
+    })).toEqual({ keys: 0, available: 1 });
+  });
+
   test('el botón junto a la bolsa pliega y despliega los controles de visualización', async ({ page }) => {
     await openTracker(page);
     await page.getByTestId('controls-toggle').click();

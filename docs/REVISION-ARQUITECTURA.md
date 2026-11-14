@@ -5252,6 +5252,20 @@ Unit       237 tests
 E2E        104/104
 ```
 
+### 308.ª tanda — Retirar Llaves Rúnicas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Comportamiento** | Al retirar una Llave Rúnica su ficha no vuelve a la bolsa ni se coloca en otro sitio | `GameContext` |
+| **Pruebas** | 237 unitarios · 105 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        105/105
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

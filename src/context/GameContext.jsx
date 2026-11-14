@@ -1285,7 +1285,8 @@ export const GameProvider = ({ children }) => {
   const removeRuneKey = (uuid) => {
     const point = runeKeys.find((item) => item.uuid === uuid);
     if (!point) return;
-    if (point.tile?.runa) setAvailableTiles((prev) => [...prev, point.tile]);
+    // La ficha de una Llave Rúnica retirada queda fuera de la partida: no
+    // vuelve a la bolsa ni se coloca en ninguna otra mecánica.
     setRuneKeys((prev) => prev.filter((item) => item.uuid !== uuid));
   };
 
