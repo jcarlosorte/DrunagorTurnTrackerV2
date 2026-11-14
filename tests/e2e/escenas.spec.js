@@ -41,11 +41,11 @@ test.describe('Escenas', () => {
     });
   });
 
-  test('Eventos y Escenas solo aparecen en Despertar', async ({ page }) => {
+  test('Eventos no aparece en base y Escenas sí', async ({ page }) => {
     await seedStorage(page, buildSeed());
     await openTracker(page);
     await expect(page.getByRole('button', { name: 'Eventos', exact: true })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Escenas', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Escenas', exact: true })).toBeVisible();
   });
 
   test('Visión Clara se retira al atravesar Gris Abajo aunque esté vacío', async ({ page }) => {

@@ -208,7 +208,10 @@ const TopMenu = ({
   }, [mainBox, scenarioMonster, setScenarioMonster]);
 
   useEffect(() => {
-    if (mainBox !== 'awakenings' && (activeMenu === 'events' || activeMenu === 'scenes')) {
+    if (mainBox !== 'awakenings' && activeMenu === 'events') {
+      setActiveMenu(null);
+    }
+    if (!['awakenings', 'core'].includes(mainBox) && activeMenu === 'scenes') {
       setActiveMenu(null);
     }
   }, [mainBox, activeMenu]);
@@ -438,6 +441,8 @@ const TopMenu = ({
               { id: 'companions', icon: GiPawPrint, label: t.companionsMenu || 'Compañeros', tone: 'amber' },
               ...(mainBox === 'awakenings' ? [
                 { id: 'events', icon: SpecialEventIcon, label: t.eventsMenu || 'Eventos', tone: 'amber' },
+              ] : []),
+              ...(['awakenings', 'core'].includes(mainBox) ? [
                 { id: 'scenes', icon: GiStoneTower, label: t.scenesMenu || 'Escenas', tone: 'amber' },
               ] : []),
             ].map(({ id, icon: Icon, label, tone }) => {
@@ -1935,6 +1940,7 @@ const TopMenu = ({
             </div>
             <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-4">
               {[...SCENES]
+                .filter((scene) => (scene.campaign || 'awakenings') === mainBox)
                 .sort((a, b) => Number(a.id.replace(/\D/g, '')) - Number(b.id.replace(/\D/g, '')))
                 .map((scene) => (
                   <div key={scene.id} data-testid={`scene-${scene.id}`} className="rounded-lg border border-amber-800/60 bg-amber-950/30 p-1.5">

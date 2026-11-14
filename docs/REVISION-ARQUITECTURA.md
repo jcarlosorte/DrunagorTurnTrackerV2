@@ -5075,6 +5075,24 @@ Unit       233 tests
 E2E        94/94
 ```
 
+### 297.ª tanda — Escenas del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escenas** | Capítulos 01, 02 y 02b de la campaña Crónicas de Drunagor | `scenes` |
+| **Menú** | Las escenas se filtran por campaña: base o Despertar | `TopMenu` |
+| **Enemigos** | Capítulo 1 y 2 añaden enemigos según el número de héroes; el 5.º añade un Vástago de Vampiro | `scenes`, `enemies` |
+| **Runa** | Oscuridad de Caza se añade en 02 y 02b | `scenes` |
+| **02b** | Retira cartas, recupera cubos/salud/estados permitidos, reinicia ronda y coloca al Rey Redivivo al final | `InitTracker` |
+| **Pruebas** | 233 unitarios · 98 E2E | tests |
+
+**Medición**
+
+```text
+Unit       233 tests
+E2E        98/98
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

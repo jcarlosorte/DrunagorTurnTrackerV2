@@ -1829,9 +1829,9 @@ const InitTracker = () => {
     if (scene.setupAfterEnemies) {
       await spawnSceneEnemies(scene);
 
-      const runeCard = scene.runeId
+      const runeCard = scene.runeCard || (scene.runeId
         ? RUNAS_DESPERTAR.find((card) => card.id === scene.runeId && card.cara === 'A')
-        : null;
+        : null);
       if (runeCard) handleAddRuneCard(runeCard, false, scene.timeTokens || 0);
 
       const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0, { fresh: needsSceneReset });
@@ -1863,9 +1863,9 @@ const InitTracker = () => {
       return;
     }
 
-    const runeCard = scene.runeId
+    const runeCard = scene.runeCard || (scene.runeId
       ? RUNAS_DESPERTAR.find((card) => card.id === scene.runeId && card.cara === 'A')
-      : null;
+      : null);
     if (runeCard && (needsSceneReset || !placedRunes.some((entry) => entry.rune.id === runeCard.id))) {
       handleAddRuneCard(runeCard, false, scene.timeTokens || 0);
     }
@@ -1914,7 +1914,36 @@ const InitTracker = () => {
     if (scene.corruptShip) addCorruptShipEvent();
     if (scene.swanShip) addSwanShipEvent();
 
+    if (scene.recoverParty) {
+      const keptStates = new Set(['ESCUDO', 'KI', 'CONCENTRACION', 'FRUTO_DE_VIDA', 'FURIA', 'ENTROPIA']);
+      (trackerData.heroes || []).forEach((heroId) => {
+        const extras = getHeroExtras(heroId);
+        if (!extras) return;
+        updateHeroExtras(heroId, {
+          vida: extras.vidaMax ?? extras.vida,
+          estados: (extras.estados || []).filter((estado) => keptStates.has(estado?.id || estado)),
+          estadosAlterados: (extras.estadosAlterados || []).filter((estado) => keptStates.has(estado?.id)),
+          cubos: { ...(extras.cubosMax || {}) },
+        });
+      });
+      refreshHeroExtras();
+    }
+
     await spawnSceneEnemies(scene);
+
+    // El jefe del juego base limpia las cartas al colocarse; la escena debe
+    // conservar su carta de Runa de apoyo.
+    if (scene.runeCard) {
+      handleAddRuneCard(scene.runeCard, false, scene.timeTokens || 0);
+    }
+
+    if (scene.resetInitiative) {
+      endRoundAfterCannonShot();
+      appendGameLog('event', `🎯 Iniciativa al primer turno · fin de ronda`, {
+        round: roundRef.current,
+        turn: 0,
+      });
+    }
 
     const placedCount = prepared.placed.length;
     const nodeCount = prepared.nodes.length;
