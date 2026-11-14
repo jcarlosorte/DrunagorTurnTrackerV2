@@ -41,10 +41,10 @@ test.describe('Escenas', () => {
     });
   });
 
-  test('Eventos no aparece en base y Escenas sí', async ({ page }) => {
+  test('Eventos y Escenas aparecen en base', async ({ page }) => {
     await seedStorage(page, buildSeed());
     await openTracker(page);
-    await expect(page.getByRole('button', { name: 'Eventos', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Eventos', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Escenas', exact: true })).toBeVisible();
   });
 

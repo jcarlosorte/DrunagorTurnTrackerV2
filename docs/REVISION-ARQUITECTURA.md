@@ -5220,6 +5220,22 @@ Unit       234 tests
 E2E        102/102
 ```
 
+### 306.ª tanda — Baraja Sorpresa Enterrada
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Baraja** | Implementada la baraja base Sorpresa Enterrada con sus 5 cartas | `GameContext`, `cartasEspeciales` |
+| **Menú** | Opción para añadirla en Eventos y barra lateral para robar | `TopMenu`, `BuriedSurpriseBar` |
+| **Cartas** | Muestra título y texto traducidos al robarlas | `InitTracker`, `EventCardModal` |
+| **Pruebas** | 234 unitarios · 103 E2E | tests |
+
+**Medición**
+
+```text
+Unit       234 tests
+E2E        103/103
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -97,7 +97,7 @@ const TopMenu = ({
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
-  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, resetNodeMechanics, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent, siegeEvent, addSiegeEvent, resetSiegeEvent } = useGame();
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, resetNodeMechanics, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, sorpresaEvent, addSorpresaEvent, resetSorpresaEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent, siegeEvent, addSiegeEvent, resetSiegeEvent } = useGame();
   const { trackerData, setTrackerData } = useTracker();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
@@ -208,7 +208,7 @@ const TopMenu = ({
   }, [mainBox, scenarioMonster, setScenarioMonster]);
 
   useEffect(() => {
-    if (mainBox !== 'awakenings' && activeMenu === 'events') {
+    if (!['awakenings', 'core'].includes(mainBox) && activeMenu === 'events') {
       setActiveMenu(null);
     }
     if (!['awakenings', 'core'].includes(mainBox) && activeMenu === 'scenes') {
@@ -439,7 +439,7 @@ const TopMenu = ({
               { id: 'nodes', icon: RuneStackIcon, label: t.nodesMenu || 'Nodos', tone: 'cyan' },
               { id: 'scenario', icon: GiVillage, label: t.scenarioMenu || 'Escenario', tone: 'amber' },
               { id: 'companions', icon: GiPawPrint, label: t.companionsMenu || 'Compañeros', tone: 'amber' },
-              ...(mainBox === 'awakenings' ? [
+              ...(['awakenings', 'core'].includes(mainBox) ? [
                 { id: 'events', icon: SpecialEventIcon, label: t.eventsMenu || 'Eventos', tone: 'amber' },
               ] : []),
               ...(['awakenings', 'core'].includes(mainBox) ? [
@@ -1794,6 +1794,37 @@ const TopMenu = ({
               </h2>
             </div>
 
+            {mainBox === 'core' && (
+              <div className="rounded-xl border border-fuchsia-800/60 bg-fuchsia-950/30 p-2">
+                <p className="text-xs font-bold text-fuchsia-100">{t.buriedSurpriseTitle || 'Sorpresa Enterrada'}</p>
+                <p className="mt-1 line-clamp-2 text-[0.6rem] text-fuchsia-200/80">
+                  {t.buriedSurpriseDescription || 'Baraja de 5 cartas de Sorpresa Enterrada del juego base.'}
+                </p>
+                {!sorpresaEvent.active ? (
+                  <button
+                    type="button"
+                    onClick={addSorpresaEvent}
+                    className="mt-3 min-h-9 rounded-lg bg-fuchsia-700 px-3 text-xs font-bold text-white hover:bg-fuchsia-600"
+                  >
+                    ➕ {t.addBuriedSurprise || 'Añadir Sorpresa Enterrada'}
+                  </button>
+                ) : (
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-fuchsia-700 bg-slate-950/50 px-2 py-1 text-[0.65rem] text-fuchsia-100">
+                      {t.erradenRemaining || 'Cartas restantes'}: {sorpresaEvent.deck.length}/5
+                    </span>
+                    <button type="button" onClick={addSorpresaEvent} className="min-h-8 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600">
+                      {t.resetErraden || 'Reiniciar mazo'}
+                    </button>
+                    <button type="button" onClick={resetSorpresaEvent} className="min-h-8 rounded-lg bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800">
+                      {t.removeErraden || 'Quitar evento'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {mainBox !== 'core' && (
             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
             <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-2">
               <p className="text-xs font-bold text-amber-100">
@@ -1916,6 +1947,7 @@ const TopMenu = ({
               )}
             </div>
             </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

@@ -63,6 +63,8 @@ import AppAlertDialog from '@/components/AppAlertDialog';
 import TerribleCannonDialog from '@/components/track/TerribleCannonDialog';
 import VisionClaraModal from '@/components/track/VisionClaraModal';
 import EventCardModal from '@/components/track/EventCardModal';
+import BuriedSurpriseBar from '@/components/track/BuriedSurpriseBar';
+import mecanicaEspecialIcon from '@/assets/assets_logo/mecanica_especial.png';
 import CannonLoadDialog from '@/components/track/CannonLoadDialog';
 import { planNavalCannonLoads } from '@/utils/navalCannons';
 import CommanderCardModal from '@/components/CommanderCardModal';
@@ -276,7 +278,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, controlPoints, initializeControlPoints, initializeDarknessPiles, runeKeys, rescue, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, controlPoints, initializeControlPoints, initializeDarknessPiles, runeKeys, rescue, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, sorpresaEvent, drawSorpresaCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -320,6 +322,7 @@ const InitTracker = () => {
   const [selectedFollowerUid, setSelectedFollowerUid] = useState(null);
   const [diceOpen, setDiceOpen] = useState(false);
   const [drawnEventCard, setDrawnEventCard] = useState(null);
+  const [drawnSorpresaCard, setDrawnSorpresaCard] = useState(null);
   const [storyCard, setStoryCard] = useState(null);
   const [fuegoCannonChoice, setFuegoCannonChoice] = useState(null);
   const [terribleCannonChoice, setTerribleCannonChoice] = useState(false);
@@ -636,6 +639,20 @@ const InitTracker = () => {
       return;
     }
     setDrawnEventCard(card);
+  };
+
+  const handleDrawSorpresaCard = () => {
+    const card = drawSorpresaCard();
+    if (!card) {
+      showScenarioToast(ti.buriedSurpriseEmpty || 'No quedan cartas de Sorpresa Enterrada.');
+      return;
+    }
+    setDrawnSorpresaCard({
+      ...card,
+      title: translations.cartas_sorpresa?.nombre?.[card.id] || card.nombre,
+      text: translations.cartas_sorpresa?.texto?.[card.id] || card.texto,
+      background: mecanicaEspecialIcon,
+    });
   };
 
   const handleSummonErradenMonster = (card) => {
@@ -5406,7 +5423,7 @@ const InitTracker = () => {
               {(diceOpen || bagOpen || historyOpen || pilas.length > 0 || pilasConcentrada.length > 0
                 || generationPoints.length > 0 || magicCannons.length > 0
                 || spawnPoints.length > 0 || controlPoints.length > 0 || runeKeys.length > 0 || rescue.length > 0
-                || corruptShipEvent?.active || swanShipEvent.active || erradenEvent?.active) && (
+                || corruptShipEvent?.active || swanShipEvent.active || erradenEvent?.active || sorpresaEvent?.active) && (
                 <aside className={panelsBelow
                   ? 'grid w-full grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3'
                   : 'flex min-h-0 w-full max-h-[70dvh] flex-col gap-3 overflow-y-auto lg:max-h-none lg:w-64 lg:shrink-0'}>
@@ -5466,6 +5483,7 @@ const InitTracker = () => {
                   <TerribleCannonsBar />
 
                   <SpecialEventBar onDraw={handleDrawErradenCard} />
+                  <BuriedSurpriseBar onDraw={handleDrawSorpresaCard} />
                   <div className="mb-2 grid grid-cols-1 gap-2">
                     <StoryDeckBar
                       title={ti.corruptShipDeck || 'PS del Navío Corrupto'}
@@ -6021,6 +6039,11 @@ const InitTracker = () => {
           }}
           onReset={() => addSiegeEvent()}
           onClose={() => setSiegeDeckOpen(false)}
+        />
+        <EventCardModal
+          card={drawnSorpresaCard}
+          onClose={() => setDrawnSorpresaCard(null)}
+          summonLabel={{ close: ti.close || 'Cerrar' }}
         />
         <EventCardModal
           card={drawnEventCard}

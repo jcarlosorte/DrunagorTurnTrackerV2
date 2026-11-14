@@ -4,7 +4,7 @@ import { isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storag
 import { appendGameLog } from '@/utils/gameLog';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTracker } from '@/context/TrackerContext';
-import { ALDEANO, ERRANTES } from '@/data/cartasEspeciales';
+import { ALDEANO, ERRANTES, SORPRESA } from '@/data/cartasEspeciales';
 import { createId } from '@/utils/id';
 import { appendGenerationPoint } from '@/utils/generationPoints';
 import { appNotify } from '@/utils/appDialogs';
@@ -56,6 +56,9 @@ export const GameProvider = ({ children }) => {
   const [terribleCannonNotice, setTerribleCannonNotice] = useState(null);
   const [erradenEvent, setErradenEvent] = useState(() => (
     persisted.erradenEvent || { active: false, deck: [], discarded: [] }
+  ));
+  const [sorpresaEvent, setSorpresaEvent] = useState(() => (
+    persisted.sorpresaEvent || { active: false, deck: [], discarded: [] }
   ));
   const [corruptShipEvent, setCorruptShipEvent] = useState(() => (
     persisted.corruptShipEvent || { active: false, deck: [], discarded: [] }
@@ -111,6 +114,7 @@ export const GameProvider = ({ children }) => {
       codigosPilas,
       campamento,
       erradenEvent,
+      sorpresaEvent,
       corruptShipEvent,
       swanShipEvent,
       flickeringBoarDeck,
@@ -123,6 +127,7 @@ export const GameProvider = ({ children }) => {
     nodosOscuridad, contadorPilas, contadorPilasConcentradas, contadorNodosOscuridad, availableTiles, usedTiles,
     scenarioMonster, spawnPoints, generationPoints, magicCannons, controlPoints, runeKeys, rescue,
     aldeanoDeck, errantesDeck, codigosPilas, campamento, erradenEvent,
+    sorpresaEvent,
     corruptShipEvent, swanShipEvent, flickeringBoarDeck, siegeEvent, visionClaraActive, terribleCannons,
   ]);
 
@@ -282,6 +287,7 @@ export const GameProvider = ({ children }) => {
     setContadorPilasConcentradas(1);
     setContadorNodosOscuridad(1);
     setErradenEvent({ active: false, deck: [], discarded: [] });
+    setSorpresaEvent({ active: false, deck: [], discarded: [] });
     setCorruptShipEvent({ active: false, deck: [], discarded: [] });
     setSwanShipEvent({ active: false, deck: [], discarded: [] });
     setFlickeringBoarDeck(emptyFlickeringBoarDeck());
@@ -974,6 +980,34 @@ export const GameProvider = ({ children }) => {
     setErradenEvent({ active: false, deck: [], discarded: [] });
   };
 
+  const addSorpresaEvent = () => {
+    const deck = SORPRESA.map((card) => card.id);
+    for (let i = deck.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    setSorpresaEvent({ active: true, deck, discarded: [] });
+  };
+
+  const drawSorpresaCard = () => {
+    if (!sorpresaEvent.active || sorpresaEvent.deck.length === 0) return null;
+    const index = Math.floor(Math.random() * sorpresaEvent.deck.length);
+    const cardId = sorpresaEvent.deck[index];
+    const card = SORPRESA.find((entry) => entry.id === cardId) || null;
+    if (!card) return null;
+    setSorpresaEvent((prev) => {
+      if (!prev.active) return prev;
+      const deck = prev.deck.filter((id) => id !== cardId);
+      if (deck.length === 0) return { active: false, deck: [], discarded: [] };
+      return { ...prev, deck, discarded: [...prev.discarded, cardId] };
+    });
+    return card;
+  };
+
+  const resetSorpresaEvent = () => {
+    setSorpresaEvent({ active: false, deck: [], discarded: [] });
+  };
+
   const shuffleEventDeck = (cards) => {
     const deck = cards.map((card) => card.instanceId);
     for (let i = deck.length - 1; i > 0; i -= 1) {
@@ -1368,6 +1402,7 @@ export const GameProvider = ({ children }) => {
         placeSceneRunes,
         rompenodoNotice, notifyRompenodo, clearRompenodoNotice,
         erradenEvent, addErradenEvent, drawErradenCard, resetErradenEvent,
+        sorpresaEvent, addSorpresaEvent, drawSorpresaCard, resetSorpresaEvent,
         corruptShipEvent, addCorruptShipEvent, drawCorruptShipCard, resetCorruptShipEvent,
         swanShipEvent, addSwanShipEvent, drawSwanShipCard, resetSwanShipEvent,
         flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck,
