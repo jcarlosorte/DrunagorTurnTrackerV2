@@ -5126,6 +5126,20 @@ Unit       233 tests
 E2E        100/100
 ```
 
+### 300.ª tanda — Capítulo 02 sin invocaciones
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | El Capítulo 02 ya no invoca enemigos; solo coloca Oscuridad de Caza | `scenes` |
+| **Pruebas** | 233 unitarios · 100 E2E | tests |
+
+**Medición**
+
+```text
+Unit       233 tests
+E2E        100/100
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

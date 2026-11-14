@@ -37,7 +37,7 @@ test.describe('Escenas del juego base', () => {
     }).toEqual([{ id: 'skeleton_archer', color: 'blanco', category: 'bisoño' }]);
   });
 
-  test('Capítulo 2 coloca Oscuridad de Caza y sus enemigos', async ({ page }) => {
+  test('Capítulo 2 solo coloca Oscuridad de Caza', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);
     await activateScene(page, 'base_chapter2');
@@ -51,7 +51,7 @@ test.describe('Escenas del juego base', () => {
       };
     }).toEqual({
       cards: ['runa_base_oscuridad_caza'],
-      enemies: ['skeleton_archer'],
+      enemies: [],
     });
   });
 

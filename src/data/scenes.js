@@ -258,13 +258,7 @@ export const SCENES = [
       numRunas: 1,
       descripcion: 'Roba 1 runa. Las runas que robes por esta carta no generan ninguna loseta de oscuridad. Luego, voltea esta carta.',
     },
-    enemiesByHeroes: {
-      1: [{ enemyId: 'skeleton_archer', color: 'blanco', category: 'bisoño', quantity: 1, label: 'Arquero Esqueleto' }],
-      2: [{ color: 'gris', category: 'bisoño', quantity: 1 }],
-      3: [{ enemyId: 'skeleton_archer', color: 'blanco', category: 'bisoño', quantity: 1, label: 'Arquero Esqueleto' }],
-      4: [{ color: 'gris', category: 'bisoño', quantity: 1 }],
-      5: [{ enemyId: 'vampire_spawn', color: 'negro', category: 'bisoño', quantity: 1, label: 'Vástago de Vampiro' }],
-    },
+    enemiesByHeroes: {},
   },
   {
     id: 'base_chapter3',
