@@ -276,7 +276,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, controlPoints, runeKeys, rescue, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, controlPoints, initializeControlPoints, runeKeys, rescue, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -1835,9 +1835,10 @@ const InitTracker = () => {
       if (runeCard) handleAddRuneCard(runeCard, false, scene.timeTokens || 0);
 
       const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0, { fresh: needsSceneReset });
+      if (scene.controlAreas) initializeControlPoints(needsSceneReset);
 
-      if (scene.incursionId) {
-        const incursion = INCURSION_DESPERTAR.find((card) => card.id === scene.incursionId && card.cara === 'A');
+      if (scene.incursionId || scene.incursionCard) {
+        const incursion = scene.incursionCard || INCURSION_DESPERTAR.find((card) => card.id === scene.incursionId && card.cara === 'A');
         if (incursion) handleAddRuneCard(incursion);
       }
       if (scene.scenarioMonsterId) {
@@ -1873,9 +1874,10 @@ const InitTracker = () => {
     // Las runas se colocan primero y los Nodos se forman después con las runas
     // que ya están en el track.
     const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0, { fresh: needsSceneReset });
+    if (scene.controlAreas) initializeControlPoints(needsSceneReset);
 
-    if (scene.incursionId) {
-      const incursion = INCURSION_DESPERTAR.find((card) => card.id === scene.incursionId && card.cara === 'A');
+    if (scene.incursionId || scene.incursionCard) {
+      const incursion = scene.incursionCard || INCURSION_DESPERTAR.find((card) => card.id === scene.incursionId && card.cara === 'A');
       if (incursion && (needsSceneReset || !placedRunes.some((entry) => entry.rune.id === incursion.id))) {
         handleAddRuneCard(incursion);
       }

@@ -55,6 +55,28 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('Capítulo 3 coloca runa, incursión, Barricadas y enemigos', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter3');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      const game = await readStorage(page, 'gameState', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        enemies: (enemies.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
+        barricades: (game.controlPoints || []).length,
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza', 'incru1'],
+      enemies: ['gris:bisoño', 'negro:bisoño'],
+      barricades: 5,
+    });
+    await expect(page.getByTestId('area-control-panels').getByText(/Barricadas Activas/i)).toBeVisible();
+  });
+
   test('Capítulo 2b recupera al grupo, reinicia ronda y coloca al Rey Redivivo', async ({ page }) => {
     await seedStorage(page, {
       ...baseSeed(),

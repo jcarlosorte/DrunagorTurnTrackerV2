@@ -1156,7 +1156,22 @@ export const GameProvider = ({ children }) => {
     setSpawnPoints((prev) => prev.filter((item) => item.uuid !== uuid));
   };
 
-  const initializeControlPoints = () => {
+  const initializeControlPoints = (fresh = false) => {
+    if (fresh) {
+      const colors = ['naranja', 'verde', 'azul', 'rojo', 'gris'];
+      let pool = createInitialTiles();
+      const points = [];
+      colors.forEach((color) => {
+        const candidates = pool.filter((tile) => tile.runa === color);
+        const tile = candidates[Math.floor(Math.random() * candidates.length)];
+        if (!tile) return;
+        points.push({ uuid: createId(), runa: color, tile });
+        pool = pool.filter((item) => item.uuid !== tile.uuid);
+      });
+      setAvailableTiles(pool);
+      setControlPoints(points);
+      return points;
+    }
     replaceRunePoints(
       controlPoints,
       ['naranja', 'verde', 'azul', 'rojo', 'gris'],

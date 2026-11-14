@@ -5109,6 +5109,23 @@ Unit       233 tests
 E2E        99/99
 ```
 
+### 299.ª tanda — Escena del Capítulo 03 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escena** | La joya de los Pueblos Libres / The Jewel of the Free People | `scenes` |
+| **Cartas** | Oscuridad de Caza y la incursión de Monstruos con el Vástago de Vampiro Sombrío | `scenes`, `InitTracker` |
+| **Barricadas** | Se crean las cinco Barricadas del menú de Nodos | `GameContext`, `InitTracker` |
+| **Enemigos** | Grupos acumulativos según el número de héroes | `scenes` |
+| **Pruebas** | 233 unitarios · 100 E2E | tests |
+
+**Medición**
+
+```text
+Unit       233 tests
+E2E        100/100
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
