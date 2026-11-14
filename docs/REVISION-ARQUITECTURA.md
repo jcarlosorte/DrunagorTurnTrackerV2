@@ -5189,6 +5189,20 @@ Unit       234 tests
 E2E        101/101
 ```
 
+### 304.ª tanda — Renombrar la pila de Nieblas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nombre** | «Nieblas» pasa a «Niebla/Oscuridad Concentrada» | `i18n` |
+| **Pruebas** | 234 unitarios · 101 E2E | tests |
+
+**Medición**
+
+```text
+Unit       234 tests
+E2E        101/101
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
