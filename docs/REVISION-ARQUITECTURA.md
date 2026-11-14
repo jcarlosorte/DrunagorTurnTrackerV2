@@ -5236,6 +5236,22 @@ Unit       234 tests
 E2E        103/103
 ```
 
+### 307.ª tanda — Efectos de Sorpresa Enterrada
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Incursión** | Invoca MG/MB soldado según el número de jugadores | `buriedSurprise`, `InitTracker` |
+| **Nieblas** | Muestra el aviso de alcance reducido sobre el track | `InitTracker` |
+| **Resto** | Nube Nociva, Monstruos Agitados y Tesoro de Reyes no aplican efectos automáticos | `InitTracker` |
+| **Pruebas** | 237 unitarios · 104 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        104/104
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

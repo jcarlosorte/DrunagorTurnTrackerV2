@@ -78,6 +78,7 @@ import { healSurvivors } from '@/utils/hiloDeVida';
 import { formatCardText } from '@/utils/cardText';
 import { appendGameLog, clearGameLog, replaceLastGameLog } from '@/utils/gameLog';
 import { shouldResetSceneBoard } from '@/utils/sceneReset';
+import { getBuriedSurpriseSummons } from '@/utils/buriedSurprise';
 import { saveGame } from '@/utils/saves';
 import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
@@ -641,7 +642,7 @@ const InitTracker = () => {
     setDrawnEventCard(card);
   };
 
-  const handleDrawSorpresaCard = () => {
+  const handleDrawSorpresaCard = async () => {
     const card = drawSorpresaCard();
     if (!card) {
       showScenarioToast(ti.buriedSurpriseEmpty || 'No quedan cartas de Sorpresa Enterrada.');
@@ -653,6 +654,35 @@ const InitTracker = () => {
       text: translations.cartas_sorpresa?.texto?.[card.id] || card.texto,
       background: mecanicaEspecialIcon,
     });
+
+    if (card.id === 'sorpresa_4') {
+      const summonGroups = getBuriedSurpriseSummons(numHeroes);
+      for (const group of summonGroups) {
+        const pool = ENEMIES.filter((enemy) => (
+          enemy.tipo === 'enemigo'
+          && enemy.cara !== 'B'
+          && enemy.color === group.color
+          && enemy.categoria === group.categoria
+          && selectedExpansions.includes(enemy.expansionId)
+        ));
+        if (pool.length === 0) continue;
+        const enemy = pool[Math.floor(Math.random() * pool.length)];
+        await handleManualEnemyAdd(
+          enemy.id,
+          enemy.comportamiento,
+          enemy.categoria,
+          'NoShow',
+        );
+      }
+    }
+
+    if (card.id === 'sorpresa_3') {
+      showScenarioToast(
+        translations.cartas_sorpresa?.texto?.sorpresa_3
+          || card.texto
+          || ti.buriedSurpriseMists || 'Nieblas Sofocantes',
+      );
+    }
   };
 
   const handleSummonErradenMonster = (card) => {

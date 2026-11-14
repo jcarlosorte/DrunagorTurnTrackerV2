@@ -7,6 +7,28 @@ const awakeningsSeed = () => buildSeed({
 });
 
 test.describe('Sorpresa Enterrada', () => {
+  test('Incursión de Monstruos invoca un MG soldado con un héroe', async ({ page }) => {
+    await seedStorage(page, buildSeed());
+    await openTracker(page);
+    await page.getByRole('button', { name: 'Eventos', exact: true }).click();
+    await page.getByRole('button', { name: /Añadir Sorpresa Enterrada/ }).click();
+    await page.getByTestId('close-menu').click();
+    await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+      state.sorpresaEvent = { active: true, deck: ['sorpresa_4'], discarded: [] };
+      localStorage.setItem('gameState', JSON.stringify(state));
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.track-slot');
+
+    await page.getByRole('button', { name: 'Robar carta' }).click();
+    await expect(page.getByRole('dialog').getByText(/INVOCA A LOS SIGUIENTES MONSTRUOS/)).toBeVisible();
+    await expect.poll(async () => page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('initEnemiesState') || '{}');
+      return (state.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`);
+    })).toEqual(['gris:soldado']);
+  });
+
   test('añade el evento base, roba una carta y la descarta', async ({ page }) => {
     await seedStorage(page, buildSeed());
     await openTracker(page);
