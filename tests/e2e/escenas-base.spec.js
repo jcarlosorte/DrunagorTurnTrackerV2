@@ -55,6 +55,35 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('Capítulo 6 añade Tharmagar, Sorpresa Enterrada, Llaves y deja 3 runas por color', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter6');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const tracker = await readStorage(page, 'trackerData', {});
+      const game = await readStorage(page, 'gameState', {});
+      const bagColors = (game.availableTiles || []).reduce((acc, tile) => {
+        acc[tile.runa] = (acc[tile.runa] || 0) + 1;
+        return acc;
+      }, {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        companion: (tracker.companions || []).some((entry) => entry.id === 'tharmagar_leal'),
+        buriedDeck: game.sorpresaEvent?.deck?.length,
+        runeKeys: (game.runeKeys || []).length,
+        bag: bagColors,
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza'],
+      companion: true,
+      buriedDeck: 5,
+      runeKeys: 4,
+      bag: { rojo: 3, azul: 3, verde: 3, naranja: 3, gris: 3 },
+    });
+  });
+
   test('Capítulo 5 coloca Oscuridad de Caza, Tharmagar y enemigos', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);

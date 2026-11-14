@@ -5266,6 +5266,25 @@ Unit       237 tests
 E2E        105/105
 ```
 
+### 309.ª tanda — Escena del Capítulo 06 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escena** | Subterráneos dracónidos / The Draconian Dungeons | `scenes` |
+| **Carta** | Oscuridad de Caza cara A | `scenes` |
+| **Compañero** | Añade a Tharmagar (Leal) si falta | `InitTracker` |
+| **Baraja** | Añade Sorpresa Enterrada | `InitTracker` |
+| **Llaves** | Añade las Llaves Rúnicas del control de áreas | `GameContext`, `InitTracker` |
+| **Bolsa** | Deja 3 runas de cada color al final | `GameContext`, `InitTracker` |
+| **Pruebas** | 237 unitarios · 106 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        106/106
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
