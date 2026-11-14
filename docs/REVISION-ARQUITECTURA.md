@@ -5140,6 +5140,21 @@ Unit       233 tests
 E2E        100/100
 ```
 
+### 301.ª tanda — Recuento correcto del Capítulo 03
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Grupos** | Cada tramo de héroes contiene solo las invocaciones añadidas, sin acumularlas dos veces | `scenes` |
+| **Totales** | Con 5 héroes: 4 MG bisoño, 2 MN bisoño y 4 MB soldado | `scenes` |
+| **Pruebas** | 234 unitarios · 100 E2E | tests |
+
+**Medición**
+
+```text
+Unit       234 tests
+E2E        100/100
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
