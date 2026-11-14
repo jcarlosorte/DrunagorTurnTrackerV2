@@ -64,12 +64,16 @@ test.describe('Escenas del juego base', () => {
       const runes = await readStorage(page, 'initRunesState', {});
       const enemies = await readStorage(page, 'initEnemiesState', {});
       const game = await readStorage(page, 'gameState', {});
+      const tracker = await readStorage(page, 'trackerData', {});
       return {
         cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
         enemies: (enemies.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
         piles: (game.pilas || []).length,
         activePiles: (game.pilas || []).filter((pila) => pila.estado === 'activa').length,
         scenario: game.scenarioMonster?.id,
+        trackRunes: (game.usedTiles || []).length,
+        runes: game.runes,
+        companion: (tracker.companions || []).some((entry) => entry.id === 'tharmagar_leal'),
       };
     }).toEqual({
       cards: ['runa_base_oscuridad_caza', 'incru1'],
@@ -77,6 +81,9 @@ test.describe('Escenas del juego base', () => {
       piles: 5,
       activePiles: 1,
       scenario: 'dark_vampire',
+      trackRunes: 25,
+      runes: { rojo: 5, azul: 5, verde: 5, naranja: 5, gris: 5 },
+      companion: true,
     });
   });
 

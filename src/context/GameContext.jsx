@@ -458,8 +458,8 @@ export const GameProvider = ({ children }) => {
     return tilesRestantes;
   };
   
-  const initializeDarknessPiles = (count = 1, activeCount = 0, fresh = false) => {
-    let remaining = fresh ? createInitialTiles() : [...availableTiles];
+  const initializeDarknessPiles = (count = 1, activeCount = 0, fresh = false, independent = false) => {
+    let remaining = independent ? createInitialTiles() : (fresh ? createInitialTiles() : [...availableTiles]);
     const created = [];
     const baseCounter = fresh ? 1 : contadorPilas;
     const colors = ['rojo', 'azul', 'verde', 'naranja', 'gris'];
@@ -485,15 +485,17 @@ export const GameProvider = ({ children }) => {
       });
     }
 
-    setAvailableTiles(remaining);
-    setDiscardedTiles((prev) => {
-      const next = { ...prev };
-      Object.entries(discarded).forEach(([color, tiles]) => {
-        if (tiles.length) next[color] = [...(next[color] || []), ...tiles];
+    if (!independent) setAvailableTiles(remaining);
+    if (!independent) {
+      setDiscardedTiles((prev) => {
+        const next = { ...prev };
+        Object.entries(discarded).forEach(([color, tiles]) => {
+          if (tiles.length) next[color] = [...(next[color] || []), ...tiles];
+        });
+        return next;
       });
-      return next;
-    });
-    setPilas((prev) => (fresh ? created : [...prev, ...created]));
+    }
+    setPilas((prev) => (fresh || independent ? created : [...prev, ...created]));
     setContadorPilas(baseCounter + created.length);
     return created;
   };

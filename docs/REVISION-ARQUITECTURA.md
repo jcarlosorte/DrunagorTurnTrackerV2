@@ -5176,6 +5176,8 @@ E2E        100/100
 |---|---|---|
 | **Escena** | El saqueo de Ignispyra / The Raid of Ignispyra | `scenes` |
 | **Cartas** | Oscuridad de Caza e incursión con el Vástago de Vampiro Sombrío | `scenes`, `InitTracker` |
+| **Compañero** | Añade a Tharmagar (Leal) si no está presente | `InitTracker` |
+| **Runas** | 5 runas de cada color en el track | `scenes` |
 | **Pilas** | Cinco pilas de Oscuridad Inquieta, una activa | `GameContext`, `InitTracker` |
 | **Enemigos** | Grupos acumulativos según el número de héroes | `scenes` |
 | **Pruebas** | 234 unitarios · 101 E2E | tests |

@@ -342,6 +342,8 @@ export const SCENES = [
     },
     darknessPiles: 5,
     activeDarknessPiles: 1,
+    runesPerColor: 5,
+    addCompanionId: 'tharmagar_leal',
     enemiesByHeroes: {
       1: [
         { color: 'negro', category: 'bisoño', quantity: 1 },

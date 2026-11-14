@@ -81,7 +81,7 @@ import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import { findNextActiveEntity, buildTurnOrder, indexOfEntityInOrder } from '@/utils/turnOrder';
-import { getCompanion, getCompanionName, getCompanionBackground } from '@/data/companions';
+import { getCompanion, getCompanionName, getCompanionBackground, createCompanionEntry } from '@/data/companions';
 import { getFollower, getFollowerState } from '@/data/followers';
 import { ROLE_POSITIONS, ROLES_ON_TOP as rolesOnTop, ROLES_ON_BOTTOM as rolesOnBottom, getRoleSide } from '@/data/roles';
 import { readCampFollowers } from '@/utils/campFollowers';
@@ -1875,7 +1875,24 @@ const InitTracker = () => {
     // que ya están en el track.
     const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0, { fresh: needsSceneReset });
     if (scene.controlAreas) initializeControlPoints(needsSceneReset);
-    if (scene.darknessPiles) initializeDarknessPiles(scene.darknessPiles, scene.activeDarknessPiles || 0, needsSceneReset);
+    if (scene.darknessPiles) initializeDarknessPiles(scene.darknessPiles, scene.activeDarknessPiles || 0, needsSceneReset, true);
+
+    if (scene.addCompanionId) {
+      const companion = getCompanion(scene.addCompanionId);
+      const heroId = trackerData.placedHeroes?.[0]?.id || trackerData.heroes?.[0];
+      if (companion && heroId && !(trackerData.companions || []).some((entry) => entry.id === companion.id)) {
+        setTrackerData((prev) => {
+          if ((prev.companions || []).some((entry) => entry.id === companion.id)) return prev;
+          return {
+            ...prev,
+            companions: [
+              ...(prev.companions || []),
+              createCompanionEntry(companion, heroId, 0),
+            ],
+          };
+        });
+      }
+    }
 
     if (scene.incursionId || scene.incursionCard) {
       const incursion = scene.incursionCard || INCURSION_DESPERTAR.find((card) => card.id === scene.incursionId && card.cara === 'A');
