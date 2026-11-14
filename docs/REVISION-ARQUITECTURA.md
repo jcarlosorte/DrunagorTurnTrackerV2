@@ -5203,6 +5203,23 @@ Unit       234 tests
 E2E        101/101
 ```
 
+### 305.ª tanda — Escena del Capítulo 05 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escena** | El Cenáculo de los Antiguos / The Sanctum of the Ancients | `scenes` |
+| **Carta** | Oscuridad de Caza cara A | `scenes` |
+| **Compañero** | Añade a Tharmagar (Leal) si no está presente | `InitTracker` |
+| **Enemigos** | Grupos acumulativos según el número de héroes | `scenes` |
+| **Pruebas** | 234 unitarios · 102 E2E | tests |
+
+**Medición**
+
+```text
+Unit       234 tests
+E2E        102/102
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

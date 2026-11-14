@@ -55,6 +55,27 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('Capítulo 5 coloca Oscuridad de Caza, Tharmagar y enemigos', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter5');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      const tracker = await readStorage(page, 'trackerData', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        enemies: (enemies.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
+        companion: (tracker.companions || []).some((entry) => entry.id === 'tharmagar_leal'),
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza'],
+      enemies: ['gris:bisoño', 'negro:soldado'],
+      companion: true,
+    });
+  });
+
   test('Capítulo 4 coloca incursión, cinco pilas y enemigos', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);
