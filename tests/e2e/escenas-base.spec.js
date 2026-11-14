@@ -68,11 +68,13 @@ test.describe('Escenas del juego base', () => {
         cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
         enemies: (enemies.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
         barricades: (game.controlPoints || []).length,
+        scenario: game.scenarioMonster?.id,
       };
     }).toEqual({
       cards: ['runa_base_oscuridad_caza', 'incru1'],
       enemies: ['gris:bisoño', 'negro:bisoño'],
       barricades: 5,
+      scenario: 'dark_vampire',
     });
     await expect(page.getByTestId('area-control-panels').getByText(/Barricadas Activas/i)).toBeVisible();
   });

@@ -1880,6 +1880,14 @@ const InitTracker = () => {
       const incursion = scene.incursionCard || INCURSION_DESPERTAR.find((card) => card.id === scene.incursionId && card.cara === 'A');
       if (incursion && (needsSceneReset || !placedRunes.some((entry) => entry.rune.id === incursion.id))) {
         handleAddRuneCard(incursion);
+        if (incursion.monsterId) {
+          const monster = ENEMIES.find((entry) => (
+            entry.id === incursion.monsterId
+            && entry.cara !== 'B'
+            && (entry.scenario === 'escenario' || entry.color === 'escenario')
+          ));
+          if (monster) setScenarioMonster(monster);
+        }
       }
     }
     if (scene.scenarioMonsterId) {

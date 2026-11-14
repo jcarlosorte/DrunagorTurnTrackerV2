@@ -5155,6 +5155,21 @@ Unit       234 tests
 E2E        100/100
 ```
 
+### 302.ª tanda — Limpieza de `vampire_spawn` y escenario del Capítulo 03
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Limpieza** | Eliminado `vampire_spawn`, creado solo para una versión anterior del Capítulo 02 | `enemies` |
+| **Incursión** | La carta selecciona el monstruo de escenario `dark_vampire` (Vástago de Vampiro Sombrío) | `scenes`, `InitTracker` |
+| **Pruebas** | 234 unitarios · 100 E2E | tests |
+
+**Medición**
+
+```text
+Unit       234 tests
+E2E        100/100
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
