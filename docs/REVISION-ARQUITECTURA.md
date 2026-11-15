@@ -5399,6 +5399,22 @@ Unit       237 tests
 E2E        112/112
 ```
 
+### 317.ª tanda — Pilas y Control de áreas en paralelo
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Disposición** | Pilas de Runas y Control de Áreas vuelven a estar uno al lado del otro en escritorio | `ScenarioPanels` |
+| **Opciones** | Las cuatro mecánicas de control siguen en una sola fila | `ScenarioPanels` |
+| **Ancho** | La columna de Control de Áreas recibe algo más de espacio que la de Pilas | `ScenarioPanels` |
+| **Pruebas** | 237 unitarios · 112 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        112/112
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

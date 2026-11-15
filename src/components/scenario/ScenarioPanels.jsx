@@ -64,7 +64,7 @@ export default function ScenarioPanels() {
   };
 
   return (
-                <div className="grid gap-4 mt-4 grid-cols-1">
+                <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.35fr)]">
                   {/* Sub-bloque: Pilas del juego base */}
                   {showCoreContent && (
                   <div className={`track-surface-raised min-w-0 p-3 shadow-md ${showCoreContent ? '' : 'xl:col-span-2'}`}>
