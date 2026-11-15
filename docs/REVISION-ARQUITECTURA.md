@@ -5432,6 +5432,24 @@ Unit       237 tests
 E2E        113/113
 ```
 
+### 319.ª tanda — Escena del Capítulo 11 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escena** | Embrujo / The Haunting, secuencial | `scenes` |
+| **Runas** | Conserva las runas del track tal como están | `InitTracker` |
+| **Estados** | Elimina los estados no permitidos sin tocar trauma, maldición, salud ni cubos | `InitTracker` |
+| **Acecho** | Activa El Rey Redivivo Acecha con Embrujo 0 y añade un Nodo de Niebla activo | `InitTracker`, `GameContext` |
+| **Enemigos** | Apariciones Asesinas y Errantes según el número de héroes | `scenes` |
+| **Pruebas** | 237 unitarios · 114 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        114/114
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

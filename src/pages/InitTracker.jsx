@@ -221,7 +221,7 @@ const InitTracker = () => {
     () => buildTurnOrder(TURN_ORDER, trackerData.companions || [], trackerData.placedHeroes || [], trackerData.followers || []),
     [trackerData.companions, trackerData.placedHeroes, trackerData.followers],
   );
-  const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetEnemySession, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, acechoActivo, invadidosActivo, desactivaAcecho, desactivaHuesped, desactivaOscuridad, desactivaAsalto, desactivaInvadidos } = useInitEnemies();
+  const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetEnemySession, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, acechoActivo, activaAcecho, invadidosActivo, desactivaAcecho, desactivaHuesped, desactivaOscuridad, desactivaAsalto, desactivaInvadidos } = useInitEnemies();
   const { translations } = useLanguage();
   const { selectedExpansions, mainBox, previewOtherBoxes } = useExpansions();
   const ti = translations.trackerInit || {};
@@ -282,7 +282,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, initializeSpawnPoints, controlPoints, initializeControlPoints, initializeDarknessPiles, runeKeys, initializeRuneKeys, reduceRuneBagTo, rescue, aldeanos, aldeanosRescatados, addAldeano, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, sorpresaEvent, addSorpresaEvent, drawSorpresaCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, initializeSpawnPoints, controlPoints, initializeControlPoints, initializeDarknessPiles, runeKeys, initializeRuneKeys, reduceRuneBagTo, rescue, aldeanos, aldeanosRescatados, addAldeano, generationPoints, addGenerationPoint, pilas, pilasConcentrada, addActiveFogNode, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, sorpresaEvent, addSorpresaEvent, drawSorpresaCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -1861,7 +1861,7 @@ const InitTracker = () => {
   };
 
   const activateScene = async (scene) => {
-    const needsSceneReset = shouldResetSceneBoard(scene.id);
+    const needsSceneReset = !scene.preserveBoard && shouldResetSceneBoard(scene.id);
     if (needsSceneReset) {
       resetEnemySession();
       resetPlacedRunes();
@@ -1934,6 +1934,28 @@ const InitTracker = () => {
     if (scene.defenseCard) {
       const defense = DEFENSA.find((card) => card.cara === 'A');
       if (defense) handleAddRuneCard(defense, false, scene.defenseTimeTokens || 0);
+    }
+
+    if (scene.clearHeroStatesPreserving) {
+      const keptStates = new Set(['ESCUDO', 'KI', 'CONCENTRACION', 'FRUTO_DE_VIDA', 'FURIA', 'ENTROPIA']);
+      (trackerData.heroes || []).forEach((heroId) => {
+        const extras = getHeroExtras(heroId);
+        if (!extras) return;
+        updateHeroExtras(heroId, {
+          estados: (extras.estados || []).filter((estado) => keptStates.has(estado?.id || estado)),
+          estadosAlterados: (extras.estadosAlterados || []).filter((estado) => keptStates.has(estado?.id)),
+        });
+      });
+      refreshHeroExtras();
+    }
+
+    if (scene.addFogNode) addActiveFogNode(Boolean(scene.preserveBoard));
+
+    if (scene.acechoBoss) {
+      activaAcecho();
+      if (!placedEnemies.some((entry) => entry.enemy.id === 'undead_king_boss_Acecho_1')) {
+        await handleManualEnemyAdd('undead_king_boss_Acecho_1', 'jefe', 'jefe', 'NoShow');
+      }
     }
 
     if (scene.removeAllCompanions) {

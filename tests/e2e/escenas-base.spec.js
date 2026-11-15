@@ -107,6 +107,62 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('Capítulo 11 conserva runas, limpia estados y añade Acecho y apariciones', async ({ page }) => {
+    const seed = buildSeed();
+    const tracker = JSON.parse(seed.trackerData);
+    tracker.companions = [{ uid: 'leal-11', id: 'tharmagar_leal', heroId: 'vorn', order: 0, vida: 5, vidaMax: 5, estadosAlterados: [], capacidades: [] }];
+    seed.trackerData = JSON.stringify(tracker);
+    await seedStorage(page, {
+      ...seed,
+      heroExtras: buildHeroExtras({
+        vida: 7,
+        trauma: 2,
+        maldicion: 1,
+        estadosAlterados: [{ id: 'ESCUDO', count: 2 }, { id: 'VENENO_I', count: 1 }],
+      }),
+    });
+    await openTracker(page);
+    await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+      state.usedTiles = ['rojo', 'azul', 'verde', 'naranja', 'gris'].flatMap((color, colorIndex) => (
+        [0, 1, 2].map((index) => ({ uuid: `prev-${colorIndex}-${index}`, runa: color }))
+      ));
+      state.runes = { rojo: 3, azul: 3, verde: 3, naranja: 3, gris: 3 };
+      localStorage.setItem('gameState', JSON.stringify(state));
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.track-slot');
+    await activateScene(page, 'base_chapter11');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const game = await readStorage(page, 'gameState', {});
+      const saved = await readStorage(page, 'trackerData', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        companions: (saved.companions || []).length,
+        trackRunes: (game.usedTiles || []).length,
+        fogActive: (game.pilasConcentrada || []).some((pila) => pila.estado === 'activa'),
+        enemyIds: (enemies.placedEnemies || []).map((entry) => entry.enemy.id),
+        acecho: enemies.acechoActivo,
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza'],
+      companions: 0,
+      trackRunes: 15,
+      fogActive: true,
+      enemyIds: ['undead_king_boss_Acecho_1', 'dark_vampire_scenario'],
+      acecho: true,
+    });
+
+    const extras = await readStorage(page, 'heroExtras', {});
+    await expect.poll(async () => (await readStorage(page, 'heroExtras', {})).vorn.estadosAlterados)
+      .toEqual([{ id: 'ESCUDO', count: 2 }]);
+    expect(extras.vorn.trauma).toBe(2);
+    expect(extras.vorn.maldicion).toBe(1);
+  });
+
   test('Capítulo 10 elimina los compañeros y coloca 3 runas por color', async ({ page }) => {
     const seed = buildSeed();
     const tracker = JSON.parse(seed.trackerData);

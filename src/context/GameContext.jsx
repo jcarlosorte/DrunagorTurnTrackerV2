@@ -593,6 +593,36 @@ export const GameProvider = ({ children }) => {
     return nuevaPila;
   };
   
+  const addActiveFogNode = (preserveTrack = false) => {
+    if (preserveTrack) {
+      const node = {
+        id: createId(),
+        tiles: [],
+        estado: 'activa',
+        numPila: contadorPilasConcentradas,
+      };
+      setPilasConcentrada((prev) => [...prev, node]);
+      setContadorPilasConcentradas((prev) => prev + 1);
+      return node;
+    }
+    const node = addNewPilaConcentrada();
+    if (node) {
+      setPilasConcentrada((prev) => prev.map((pila) => (
+        pila.id === node.id ? { ...pila, estado: 'activa' } : pila
+      )));
+      return { ...node, estado: 'activa' };
+    }
+    const fallback = {
+      id: createId(),
+      tiles: [],
+      estado: 'activa',
+      numPila: contadorPilasConcentradas,
+    };
+    setPilasConcentrada((prev) => [...prev, fallback]);
+    setContadorPilasConcentradas((prev) => prev + 1);
+    return fallback;
+  };
+
   const removeTileFromPilaConcentrada = (pilaId) => {
     // 1️⃣ Buscar la pila actual
     const pilaActual = pilasConcentrada.find(p => p.id === pilaId);
@@ -1487,7 +1517,7 @@ export const GameProvider = ({ children }) => {
         pilas, setPilas, addNewPila, initializeDarknessPiles, activarPila, activarPilaConcentrada, codigosPilas, setCodigosPilas, handleCodigoChange,
         removeTileFromPila, addRunesCascade, restoreRunesFromSequence, placeTilesFromPilaToTrack, addTileToPila, addTileToPilaConcentrada,
         removeSingleTileFromPila,
-        pilasConcentrada, setPilasConcentrada, addNewPilaConcentrada, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack,
+        pilasConcentrada, setPilasConcentrada, addNewPilaConcentrada, addActiveFogNode, removeTileFromPilaConcentrada, removeSingleTileFromPilaConcentrada, placeTilesFromPilaConcentradaToTrack,
         nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, addTileToNodoOscuridad,
         removeTileFromNodoOscuridad, removeSingleTileFromNodoOscuridad, placeTilesFromNodoOscuridadToTrack,
         placeSceneRunes,
