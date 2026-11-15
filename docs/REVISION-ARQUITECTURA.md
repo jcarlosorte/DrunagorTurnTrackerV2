@@ -5301,6 +5301,21 @@ Unit       237 tests
 E2E        107/107
 ```
 
+### 311.ª tanda — Aviso persistente de Nieblas Sofocantes
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Aviso** | Al robar Nieblas Sofocantes aparece un panel sobre el track con resumen y detalles | `TrackWarningBanner`, `InitTracker` |
+| **Duración** | Permanece hasta reiniciar la iniciativa o salir/reiniciar la partida | `InitTracker` |
+| **Pruebas** | 237 unitarios · 108 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        108/108
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

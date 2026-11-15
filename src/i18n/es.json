@@ -607,6 +607,8 @@
     "addBuriedSurprise": "Añadir Sorpresa Enterrada",
     "openBuriedSurprise": "Abrir Sorpresa Enterrada",
     "buriedSurpriseEmpty": "No quedan cartas de Sorpresa Enterrada.",
+    "buriedSurpriseMists": "Nieblas Sofocantes",
+    "mistsSummary": "Alcance máximo de 1 área para habilidades de Agilidad, Sabiduría y Concentración (salvo ataques con arma y consumibles).",
     "erradenTitle": "Sorpresa de Eradren",
     "erradenDescription": "Mazo de 6 cartas que se barajan y se descartan al salir.",
     "boarDeckTitle": "Comportamiento Jabalí Parpadeante",

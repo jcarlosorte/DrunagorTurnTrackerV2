@@ -606,6 +606,8 @@
     "addBuriedSurprise": "Add Buried Surprise",
     "openBuriedSurprise": "Open Buried Surprise",
     "buriedSurpriseEmpty": "No Buried Surprise cards left.",
+    "buriedSurpriseMists": "Suffocating Mists",
+    "mistsSummary": "Maximum range of 1 area for Agility, Wisdom and Concentration abilities (except weapon attacks and consumables).",
     "erradenTitle": "Eradren's Surprise",
     "erradenDescription": "A deck of 6 cards that are shuffled and discarded when drawn.",
     "boarDeckTitle": "Flickering Boar Behavior",

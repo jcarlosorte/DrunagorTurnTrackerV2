@@ -50,6 +50,7 @@ import FollowerModal from '@/components/track/FollowerModal';
 import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import PassiveCardsPanel from '@/components/track/PassiveCardsPanel';
+import TrackWarningBanner from '@/components/track/TrackWarningBanner';
 import GenerationPointsBar from '@/components/track/GenerationPointsBar';
 import MagicCannonsBar from '@/components/track/MagicCannonsBar';
 import PilaStatusPanel from '@/components/track/PilaStatusPanel';
@@ -325,6 +326,7 @@ const InitTracker = () => {
   const [diceOpen, setDiceOpen] = useState(false);
   const [drawnEventCard, setDrawnEventCard] = useState(null);
   const [drawnSorpresaCard, setDrawnSorpresaCard] = useState(null);
+  const [mistsSofocantesActive, setMistsSofocantesActive] = useState(false);
   const [storyCard, setStoryCard] = useState(null);
   const [fuegoCannonChoice, setFuegoCannonChoice] = useState(null);
   const [terribleCannonChoice, setTerribleCannonChoice] = useState(false);
@@ -678,6 +680,7 @@ const InitTracker = () => {
     }
 
     if (card.id === 'sorpresa_3') {
+      setMistsSofocantesActive(true);
       showScenarioToast(
         translations.cartas_sorpresa?.texto?.sorpresa_3
           || card.texto
@@ -4774,6 +4777,7 @@ const InitTracker = () => {
     setCurrentTurnEntity(null);
     setLastRealTurnIndex(null);
     setExecutedRunes([]);
+    setMistsSofocantesActive(false);
     processedVoragineRef.current = new Set();
     processedDefenseTurnRef.current = new Set();
     processedStartEffectsRef.current.clear();
@@ -5355,6 +5359,14 @@ const InitTracker = () => {
                     },
                   )}
                 />
+                {mistsSofocantesActive && (
+                  <TrackWarningBanner
+                    title={translations.cartas_sorpresa?.nombre?.sorpresa_3 || ti.buriedSurpriseMists || 'Nieblas Sofocantes'}
+                    summary={ti.mistsSummary || 'Alcance máximo de 1 área para habilidades de Agilidad, Sabiduría y Concentración (salvo ataques con arma y consumibles).'}
+                    details={translations.cartas_sorpresa?.texto?.sorpresa_3 || ''}
+                    labels={{ details: ti.details || 'Detalles' }}
+                  />
+                )}
                 <TurnTrackBoard
                   renderSlot={renderSlot}
                   summaries={slotSummaries}

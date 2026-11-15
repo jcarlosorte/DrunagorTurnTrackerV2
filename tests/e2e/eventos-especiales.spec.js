@@ -7,6 +7,28 @@ const awakeningsSeed = () => buildSeed({
 });
 
 test.describe('Sorpresa Enterrada', () => {
+  test('Nieblas Sofocantes deja un aviso activo sobre el track', async ({ page }) => {
+    await seedStorage(page, buildSeed());
+    await openTracker(page);
+    await page.getByRole('button', { name: 'Eventos', exact: true }).click();
+    await page.getByRole('button', { name: /Añadir Sorpresa Enterrada/ }).click();
+    await page.getByTestId('close-menu').click();
+    await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+      state.sorpresaEvent = { active: true, deck: ['sorpresa_3'], discarded: [] };
+      localStorage.setItem('gameState', JSON.stringify(state));
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.track-slot');
+
+    await page.getByRole('button', { name: 'Robar carta' }).click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Cerrar' }).last().click();
+
+    const banner = page.getByRole('status').filter({ hasText: 'Nieblas Sofocantes' });
+    await expect(banner).toBeVisible();
+    await expect(banner).toContainText('1 área');
+  });
+
   test('Incursión de Monstruos invoca un MG soldado con un héroe', async ({ page }) => {
     await seedStorage(page, buildSeed());
     await openTracker(page);
