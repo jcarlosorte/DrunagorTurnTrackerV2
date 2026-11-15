@@ -55,6 +55,31 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('pregunta a qué héroe asociar a Tharmagar cuando hay varios', async ({ page }) => {
+    const seed = buildSeed();
+    const tracker = JSON.parse(seed.trackerData);
+    tracker.heroes = ['vorn', 'elros'];
+    tracker.roles = { vorn: 'defensor', elros: 'asesino' };
+    tracker.placedHeroes = [
+      { id: 'vorn', role: 'defensor', position: 0, image: '' },
+      { id: 'elros', role: 'asesino', position: 1, image: '' },
+    ];
+    seed.trackerData = JSON.stringify(tracker);
+    await seedStorage(page, seed);
+    await openTracker(page);
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await page.getByTestId('scene-base_chapter5').getByRole('button', { name: /Activar capítulo/ }).click();
+
+    const dialog = page.getByRole('dialog', { name: 'Elegir héroe para el compañero' });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Elros' }).click();
+
+    await expect.poll(async () => {
+      const saved = await readStorage(page, 'trackerData', {});
+      return (saved.companions || []).find((entry) => entry.id === 'tharmagar_leal')?.heroId;
+    }).toBe('elros');
+  });
+
   test('Capítulo 6 añade Tharmagar, Sorpresa Enterrada, Llaves y deja 3 runas por color', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);

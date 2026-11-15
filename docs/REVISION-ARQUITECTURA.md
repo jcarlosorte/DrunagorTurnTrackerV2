@@ -5285,6 +5285,22 @@ Unit       237 tests
 E2E        106/106
 ```
 
+### 310.ª tanda — Elegir héroe para Tharmagar en escenas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Pregunta** | Si Tharmagar no está añadido y hay varios héroes, se pregunta a cuál asociarlo | `InitTracker` |
+| **Un héroe** | Con un único héroe activo se asocia automáticamente | `InitTracker` |
+| **Cancelar** | Se puede cancelar la asociación sin añadir al compañero | `InitTracker` |
+| **Pruebas** | 237 unitarios · 107 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        107/107
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

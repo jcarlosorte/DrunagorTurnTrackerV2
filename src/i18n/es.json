@@ -600,6 +600,8 @@
     "sceneFollowerSelectionTitle": "Elegir seguidores",
     "sceneFollowerSelectionDescription": "Elige los seguidores que acompañan al grupo.",
     "eventsTitle": "Eventos y mecánicas especiales",
+    "chooseCompanionHero": "Elegir héroe para el compañero",
+    "companionHeroQuestion": "¿Con qué héroe activo estará asociado para el turno?",
     "buriedSurpriseTitle": "Sorpresa Enterrada",
     "buriedSurpriseDescription": "Baraja de 5 cartas de Sorpresa Enterrada del juego base.",
     "addBuriedSurprise": "Añadir Sorpresa Enterrada",

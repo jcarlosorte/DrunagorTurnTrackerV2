@@ -598,6 +598,8 @@
     "sceneFollowersConfirm": "Add followers",
     "sceneFollowerSelectionTitle": "Choose followers",
     "sceneFollowerSelectionDescription": "Choose the followers accompanying the party.",
+    "chooseCompanionHero": "Choose a hero for the companion",
+    "companionHeroQuestion": "Which active hero will they be associated with for the turn?",
     "eventsTitle": "Special events and mechanics",
     "buriedSurpriseTitle": "Buried Surprise",
     "buriedSurpriseDescription": "Base game Buried Surprise deck with 5 cards.",

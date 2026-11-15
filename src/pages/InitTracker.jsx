@@ -264,6 +264,7 @@ const InitTracker = () => {
   const [isRestartOpen, setIsRestartOpen] = useState(false);
   const [isCampPhaseOpen, setIsCampPhaseOpen] = useState(false);
   const [isSequentialAdventureOpen, setIsSequentialAdventureOpen] = useState(false);
+  const [sceneCompanionChoice, setSceneCompanionChoice] = useState(null);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
   const isFlickeringBoar = (enemy) => (
@@ -1928,18 +1929,21 @@ const InitTracker = () => {
 
     if (scene.addCompanionId) {
       const companion = getCompanion(scene.addCompanionId);
-      const heroId = trackerData.placedHeroes?.[0]?.id || trackerData.heroes?.[0];
-      if (companion && heroId && !(trackerData.companions || []).some((entry) => entry.id === companion.id)) {
-        setTrackerData((prev) => {
-          if ((prev.companions || []).some((entry) => entry.id === companion.id)) return prev;
-          return {
-            ...prev,
-            companions: [
-              ...(prev.companions || []),
-              createCompanionEntry(companion, heroId, 0),
-            ],
-          };
-        });
+      const alreadyAdded = (trackerData.companions || []).some((entry) => entry.id === companion?.id);
+      if (companion && !alreadyAdded) {
+        const heroId = await chooseSceneCompanionHero(companion);
+        if (heroId) {
+          setTrackerData((prev) => {
+            if ((prev.companions || []).some((entry) => entry.id === companion.id)) return prev;
+            return {
+              ...prev,
+              companions: [
+                ...(prev.companions || []),
+                createCompanionEntry(companion, heroId, 0),
+              ],
+            };
+          });
+        }
       }
     }
 
@@ -5208,6 +5212,24 @@ const InitTracker = () => {
     }
   };
 
+  const chooseSceneCompanionHero = (companion) => {
+    const activeHeroes = (trackerData.placedHeroes || [])
+      .map((hero) => hero.id)
+      .filter(Boolean);
+    if (activeHeroes.length === 0) return Promise.resolve(null);
+    if (activeHeroes.length === 1) return Promise.resolve(activeHeroes[0]);
+    return new Promise((resolve) => {
+      setSceneCompanionChoice({ companion, heroes: activeHeroes, resolve });
+    });
+  };
+
+  const resolveSceneCompanionHero = (heroId) => {
+    const choice = sceneCompanionChoice;
+    if (!choice) return;
+    setSceneCompanionChoice(null);
+    choice.resolve(heroId || null);
+  };
+
   const handleRestartGame = ({ runas = false, heroes = false } = {}) => {
     resetTurnAndHistory();
     clearGameLog();
@@ -6040,6 +6062,44 @@ const InitTracker = () => {
           onConfirm={handleRestartGame}
         />
         <CampDialog open={isCampOpen} onClose={() => setIsCampOpen(false)} />
+        {sceneCompanionChoice && (
+          <div className="layer-modal fixed inset-0 z-[95] flex items-center justify-center bg-black/70 p-4" role="presentation">
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={ti.chooseCompanionHero || 'Elegir héroe para el compañero'}
+              className="w-full max-w-md rounded-2xl border border-slate-600 bg-slate-900 p-4 text-white shadow-2xl"
+            >
+              <h2 className="text-base font-bold">
+                {ti.chooseCompanionHero || 'Elegir héroe para el compañero'}
+              </h2>
+              <p className="mt-1 text-sm text-slate-300">
+                {translations.companions?.[sceneCompanionChoice.companion.id] || sceneCompanionChoice.companion.name || sceneCompanionChoice.companion.id}
+                {' · '}
+                {ti.companionHeroQuestion || '¿Con qué héroe activo estará asociado para el turno?'}
+              </p>
+              <div className="mt-3 grid gap-1.5">
+                {sceneCompanionChoice.heroes.map((heroId) => (
+                  <button
+                    key={heroId}
+                    type="button"
+                    onClick={() => resolveSceneCompanionHero(heroId)}
+                    className="min-h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-left text-sm font-semibold text-white hover:border-sky-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                  >
+                    {getHeroName(heroId)}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => resolveSceneCompanionHero(null)}
+                className="mt-3 min-h-9 w-full rounded-lg bg-slate-700 px-3 text-xs font-semibold text-slate-200 hover:bg-slate-600"
+              >
+                {ti.cancel || 'Cancelar'}
+              </button>
+            </div>
+          </div>
+        )}
         <AppDialogHost onNotify={showScenarioToast} />
         <FlickeringBoarCardModal
           open={Boolean(pendingBoarCard)}
