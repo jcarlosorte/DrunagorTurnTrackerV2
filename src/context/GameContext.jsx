@@ -46,6 +46,8 @@ export const GameProvider = ({ children }) => {
   const [controlPoints, setControlPoints] = useState(() => persisted.controlPoints || []);
   const [runeKeys, setRuneKeys] = useState(() => persisted.runeKeys || []);
   const [rescue, setRescue] = useState(() => persisted.rescue || []);
+  const [aldeanos, setAldeanos] = useState(() => persisted.aldeanos || []);
+  const [aldeanosRescatados, setAldeanosRescatados] = useState(() => persisted.aldeanosRescatados || 0);
   const [aldeanoDeck, setAldeanoDeck] = useState(() => persisted.aldeanoDeck || []);
   const [errantesDeck, setErrantesDeck] = useState(() => persisted.errantesDeck || []);
   const [codigosPilas, setCodigosPilas] = useState(() => persisted.codigosPilas || {});
@@ -109,6 +111,8 @@ export const GameProvider = ({ children }) => {
       controlPoints,
       runeKeys,
       rescue,
+      aldeanos,
+      aldeanosRescatados,
       aldeanoDeck,
       errantesDeck,
       codigosPilas,
@@ -126,6 +130,7 @@ export const GameProvider = ({ children }) => {
     runes, discardedTiles, pilaDeRunas, pilas, pilasConcentrada,
     nodosOscuridad, contadorPilas, contadorPilasConcentradas, contadorNodosOscuridad, availableTiles, usedTiles,
     scenarioMonster, spawnPoints, generationPoints, magicCannons, controlPoints, runeKeys, rescue,
+    aldeanos, aldeanosRescatados,
     aldeanoDeck, errantesDeck, codigosPilas, campamento, erradenEvent,
     sorpresaEvent,
     corruptShipEvent, swanShipEvent, flickeringBoarDeck, siegeEvent, visionClaraActive, terribleCannons,
@@ -304,6 +309,8 @@ export const GameProvider = ({ children }) => {
     setControlPoints([]);
     setRuneKeys([]);
     setRescue([]);
+    setAldeanos([]);
+    setAldeanosRescatados(0);
     setAldeanoDeck([]);
     setErrantesDeck([]);
     decksInitialized.current = false;
@@ -1327,6 +1334,51 @@ export const GameProvider = ({ children }) => {
     if (point.tile?.runa) setAvailableTiles((prev) => [...prev, point.tile]);
     setRescue((prev) => prev.filter((item) => item.uuid !== uuid));
   };
+
+  const ALDEANO_COLORS = {
+    aldeano_1: 'beige',
+    aldeano_2: 'azul',
+    aldeano_3: 'naranja',
+    aldeano_4: 'verde',
+    aldeano_5: 'rojo',
+    aldeano_6: 'gris',
+  };
+
+  const addAldeano = (cardId) => {
+    const color = ALDEANO_COLORS[cardId];
+    if (!color) return null;
+    const aldeano = {
+      uuid: createId(),
+      cardId,
+      color,
+      vida: 4,
+      vidaMax: 4,
+    };
+    setAldeanos((prev) => [...prev, aldeano]);
+    return aldeano;
+  };
+
+  const setAldeanoVida = (uuid, vida) => {
+    setAldeanos((prev) => prev.map((entry) => (
+      entry.uuid === uuid
+        ? { ...entry, vida: Math.max(0, Math.min(entry.vidaMax || 4, Number(vida) || 0)) }
+        : entry
+    )));
+  };
+
+  const removeAldeano = (uuid) => {
+    setAldeanos((prev) => prev.filter((entry) => entry.uuid !== uuid));
+  };
+
+  const rescueAldeano = (uuid) => {
+    setAldeanos((prev) => prev.filter((entry) => entry.uuid !== uuid));
+    setAldeanosRescatados((prev) => Math.min(3, prev + 1));
+  };
+
+  const resetAldeanos = () => {
+    setAldeanos([]);
+    setAldeanosRescatados(0);
+  };
   
   const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
@@ -1479,6 +1531,8 @@ export const GameProvider = ({ children }) => {
         removeControlPoint,
         setRuneKeys, runeKeys, initializeRuneKeys, removeRuneKey, reduceRuneBagTo,
         setRescue, rescue, initializeRescue, removeRescue,
+        aldeanos, addAldeano, setAldeanoVida, removeAldeano, rescueAldeano, resetAldeanos,
+        aldeanosRescatados, setAldeanosRescatados,
         initializeDecks,
         drawCardFromDeck,
         campamento,

@@ -5366,6 +5366,23 @@ Unit       237 tests
 E2E        110/110
 ```
 
+### 315.ª tanda — Aldeanos en apuros
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Mazo** | Al robar cartas de aldeano se añaden al panel con su color y firmeza 4 | `GameContext`, `InitTracker` |
+| **Panel** | Bajo la bolsa de runas, con vida, muerte y rescate | `VillagersPanel` |
+| **Rescates** | Contador de aldeanos rescatados y aviso al llegar a 3 | `GameContext`, `VillagersPanel` |
+| **Aviso** | «Fin de la aventura: Un nuevo amanecer» | `VillagersPanel` |
+| **Pruebas** | 237 unitarios · 111 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        111/111
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

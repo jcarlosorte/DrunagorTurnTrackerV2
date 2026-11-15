@@ -42,6 +42,7 @@ import TileWarningModal from '@/components/TileWarningModal';
 import TileToast from '@/components/TileToast';
 import BagStatusPanel from '@/components/track/BagStatusPanel';
 import AreaControlPanels from '@/components/track/AreaControlPanels';
+import VillagersPanel from '@/components/track/VillagersPanel';
 
 import HistoryPanel from '@/components/track/HistoryPanel';
 import ModalHeroCard from '@/components/track/ModalHeroCard';
@@ -281,7 +282,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, controlPoints, initializeControlPoints, initializeDarknessPiles, runeKeys, initializeRuneKeys, reduceRuneBagTo, rescue, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, sorpresaEvent, addSorpresaEvent, drawSorpresaCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, controlPoints, initializeControlPoints, initializeDarknessPiles, runeKeys, initializeRuneKeys, reduceRuneBagTo, rescue, aldeanos, aldeanosRescatados, addAldeano, generationPoints, addGenerationPoint, pilas, pilasConcentrada, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, sorpresaEvent, addSorpresaEvent, drawSorpresaCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -4231,6 +4232,7 @@ const InitTracker = () => {
                 // TODO: Lógica para robar del mazo correspondiente (cuando tengamos datos)
                 const cartaRobada = drawCardFromDeck(mazo);
                 if (cartaRobada) {
+                  addAldeano(cartaRobada.id);
                   showCardToast(cartaRobada, mazo); 
                 } else {
                   console.warn(`${ti.mazo_1} ${mazo}`);
@@ -5499,6 +5501,7 @@ const InitTracker = () => {
               {(diceOpen || bagOpen || historyOpen || pilas.length > 0 || pilasConcentrada.length > 0
                 || generationPoints.length > 0 || magicCannons.length > 0
                 || spawnPoints.length > 0 || controlPoints.length > 0 || runeKeys.length > 0 || rescue.length > 0
+                || aldeanos.length > 0 || aldeanosRescatados > 0
                 || corruptShipEvent?.active || swanShipEvent.active || erradenEvent?.active || sorpresaEvent?.active) && (
                 <aside className={panelsBelow
                   ? 'grid w-full grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3'
@@ -5553,6 +5556,7 @@ const InitTracker = () => {
                   )}
 
                   <AreaControlPanels />
+                  <VillagersPanel />
 
                   <GenerationPointsBar />
                   <MagicCannonsBar />
