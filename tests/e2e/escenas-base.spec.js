@@ -80,6 +80,70 @@ test.describe('Escenas del juego base', () => {
     }).toBe('elros');
   });
 
+  test('Capítulo 7 añade Tharmagar, 3 runas por color y 3 pilas sin activar', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter7');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const game = await readStorage(page, 'gameState', {});
+      const tracker = await readStorage(page, 'trackerData', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        companion: (tracker.companions || []).some((entry) => entry.id === 'tharmagar_leal'),
+        trackRunes: (game.usedTiles || []).length,
+        runes: game.runes,
+        piles: (game.pilas || []).length,
+        activePiles: (game.pilas || []).filter((pila) => pila.estado === 'activa').length,
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza'],
+      companion: true,
+      trackRunes: 15,
+      runes: { rojo: 3, azul: 3, verde: 3, naranja: 3, gris: 3 },
+      piles: 3,
+      activePiles: 0,
+    });
+  });
+
+  test('Capítulo 8 sustituye a Tharmagar Leal por Resentido', async ({ page }) => {
+    const seed = buildSeed();
+    const tracker = JSON.parse(seed.trackerData);
+    tracker.companions = [{
+      uid: 'tharmagar-leal-test',
+      id: 'tharmagar_leal',
+      heroId: 'vorn',
+      order: 0,
+      vida: 5,
+      vidaMax: 5,
+      estadosAlterados: [],
+      capacidades: [],
+    }];
+    seed.trackerData = JSON.stringify(tracker);
+    await seedStorage(page, seed);
+    await openTracker(page);
+    await activateScene(page, 'base_chapter8');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const game = await readStorage(page, 'gameState', {});
+      const saved = await readStorage(page, 'trackerData', {});
+      const enemiesState = await readStorage(page, 'initEnemiesState', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        companions: (saved.companions || []).map((entry) => `${entry.id}:${entry.heroId}`),
+        trackRunes: (game.usedTiles || []).length,
+        enemies: (enemiesState.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza'],
+      companions: ['tharmagar_resentido:vorn'],
+      trackRunes: 15,
+      enemies: ['negro:soldado', 'gris:veterano'],
+    });
+  });
+
   test('Capítulo 6 añade Tharmagar, Sorpresa Enterrada, Llaves y deja 3 runas por color', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);

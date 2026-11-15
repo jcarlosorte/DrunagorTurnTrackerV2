@@ -5350,6 +5350,22 @@ Unit       237 tests
 E2E        108/108
 ```
 
+### 314.ª tanda — Escenas de los Capítulos 07 y 08 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Capítulo 07** | Galerías bajo la montaña: Tharmagar Leal, Oscuridad de Caza, 3 runas por color y 3 pilas sin activar | `scenes`, `InitTracker` |
+| **Capítulo 08** | La mansión del Rey enano: sustituye Tharmagar Leal por Resentido, 3 runas por color y enemigos | `scenes`, `InitTracker` |
+| **Compañero** | La sustitución conserva el héroe asociado sin volver a preguntar | `InitTracker` |
+| **Pruebas** | 237 unitarios · 110 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        110/110
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

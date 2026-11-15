@@ -1932,21 +1932,29 @@ const InitTracker = () => {
 
     if (scene.addCompanionId) {
       const companion = getCompanion(scene.addCompanionId);
-      const alreadyAdded = (trackerData.companions || []).some((entry) => entry.id === companion?.id);
-      if (companion && !alreadyAdded) {
-        const heroId = await chooseSceneCompanionHero(companion);
-        if (heroId) {
-          setTrackerData((prev) => {
-            if ((prev.companions || []).some((entry) => entry.id === companion.id)) return prev;
-            return {
-              ...prev,
-              companions: [
-                ...(prev.companions || []),
-                createCompanionEntry(companion, heroId, 0),
-              ],
-            };
-          });
-        }
+      const removeIds = scene.removeCompanionIds || [];
+      const currentCompanions = trackerData.companions || [];
+      const existingTarget = currentCompanions.find((entry) => entry.id === companion?.id);
+      const displaced = currentCompanions.find((entry) => removeIds.includes(entry.id));
+      let heroId = existingTarget?.heroId || displaced?.heroId || null;
+      if (companion && !existingTarget && !heroId) {
+        heroId = await chooseSceneCompanionHero(companion);
+      }
+      if (companion) {
+        setTrackerData((prev) => {
+          const filtered = (prev.companions || []).filter((entry) => !removeIds.includes(entry.id));
+          if (filtered.some((entry) => entry.id === companion.id)) {
+            return { ...prev, companions: filtered };
+          }
+          if (!heroId) return { ...prev, companions: filtered };
+          return {
+            ...prev,
+            companions: [
+              ...filtered,
+              createCompanionEntry(companion, heroId, displaced?.order || 0),
+            ],
+          };
+        });
       }
     }
 
