@@ -107,6 +107,145 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('Capítulo 12 conserva runas y añade la incursión de la Aparición Plañidera', async ({ page }) => {
+    const seed = buildSeed();
+    const tracker = JSON.parse(seed.trackerData);
+    tracker.companions = [{ uid: 'leal-12', id: 'tharmagar_leal', heroId: 'vorn', order: 0, vida: 5, vidaMax: 5, estadosAlterados: [], capacidades: [] }];
+    seed.trackerData = JSON.stringify(tracker);
+    await seedStorage(page, seed);
+    await openTracker(page);
+    await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+      state.usedTiles = ['rojo', 'azul', 'verde', 'naranja', 'gris'].flatMap((color, colorIndex) => (
+        [0, 1, 2].map((index) => ({ uuid: `c12-${colorIndex}-${index}`, runa: color }))
+      ));
+      state.runes = { rojo: 3, azul: 3, verde: 3, naranja: 3, gris: 3 };
+      localStorage.setItem('gameState', JSON.stringify(state));
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.track-slot');
+    await activateScene(page, 'base_chapter12');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const saved = await readStorage(page, 'trackerData', {});
+      const game = await readStorage(page, 'gameState', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        companions: (saved.companions || []).length,
+        trackRunes: (game.usedTiles || []).length,
+        scenario: game.scenarioMonster?.id,
+        enemies: (enemies.placedEnemies || []).map((entry) => entry.enemy.id),
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza', 'incru1'],
+      companions: 0,
+      trackRunes: 15,
+      scenario: 'shadow_cultist_scenario',
+      enemies: ['dark_vampire_scenario', 'executioner_scenario1'],
+    });
+  });
+
+  test('Capítulo 13 conserva runas y añade un Nodo de Niebla activo', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+      state.usedTiles = ['rojo', 'azul', 'verde', 'naranja', 'gris'].flatMap((color, colorIndex) => (
+        [0, 1, 2].map((index) => ({ uuid: `c13-${colorIndex}-${index}`, runa: color }))
+      ));
+      state.runes = { rojo: 3, azul: 3, verde: 3, naranja: 3, gris: 3 };
+      localStorage.setItem('gameState', JSON.stringify(state));
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.track-slot');
+    await activateScene(page, 'base_chapter13');
+
+    await expect.poll(async () => {
+      const game = await readStorage(page, 'gameState', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      return {
+        trackRunes: (game.usedTiles || []).length,
+        fogActive: (game.pilasConcentrada || []).some((pila) => pila.estado === 'activa'),
+        enemies: (enemies.placedEnemies || []).map((entry) => entry.enemy.id),
+      };
+    }).toEqual({
+      trackRunes: 15,
+      fogActive: true,
+      enemies: ['executioner_scenario1', 'shadow_knight_scenario'],
+    });
+  });
+
+  test('Capítulo 14 añade Tharmagar y sus enemigos', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter14');
+
+    await expect.poll(async () => {
+      const game = await readStorage(page, 'gameState', {});
+      const saved = await readStorage(page, 'trackerData', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      return {
+        trackRunes: (game.usedTiles || []).length,
+        companion: (saved.companions || []).some((entry) => entry.id === 'tharmagar_leal'),
+        enemies: (enemies.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
+      };
+    }).toEqual({
+      trackRunes: 15,
+      companion: true,
+      enemies: ['negro:veterano', 'blanco:campeon'],
+    });
+  });
+
+  test('Capítulo 15 añade Tharmagar, Janina, incursión, pilas y enemigos', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter15');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const game = await readStorage(page, 'gameState', {});
+      const saved = await readStorage(page, 'trackerData', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        companions: (saved.companions || []).map((entry) => entry.id).sort(),
+        trackRunes: (game.usedTiles || []).length,
+        piles: (game.pilas || []).length,
+        activePiles: (game.pilas || []).filter((pila) => pila.estado === 'activa').length,
+        scenario: game.scenarioMonster?.id,
+        enemies: (enemies.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza', 'incru1'],
+      companions: ['janina', 'tharmagar_leal'],
+      trackRunes: 10,
+      piles: 4,
+      activePiles: 0,
+      scenario: 'dark_vampire',
+      enemies: ['escenario:escenario', 'negro:veterano'],
+    });
+  });
+
+  test('Capítulo 16 coloca la Oscuridad de Caza especial cara B', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter16');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const game = await readStorage(page, 'gameState', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => `${entry.rune.id}:${entry.rune.cara}`),
+        trackRunes: (game.usedTiles || []).length,
+      };
+    }).toEqual({
+      cards: ['runa2:B'],
+      trackRunes: 10,
+    });
+  });
+
   test('Capítulo 11 conserva runas, limpia estados y añade Acecho y apariciones', async ({ page }) => {
     const seed = buildSeed();
     const tracker = JSON.parse(seed.trackerData);

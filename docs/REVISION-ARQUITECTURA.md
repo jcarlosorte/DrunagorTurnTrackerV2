@@ -5465,6 +5465,26 @@ Unit       237 tests
 E2E        114/114
 ```
 
+### 321.ª tanda — Escenas de los Capítulos 12 a 16 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **12** | El reencuentro: secuencial, incursión de la Aparición Plañidera y apariciones | `scenes` |
+| **13** | Una verdad incómoda: secuencial, Nodo de Niebla activo y apariciones | `scenes` |
+| **14** | El paso de Omekka: Tharmagar Leal, runas y enemigos | `scenes` |
+| **15** | El principio del fin: Tharmagar, Janina, incursión, runas, 4 pilas y enemigos | `scenes` |
+| **16** | La cripta real: Oscuridad de Caza especial cara B y runas | `scenes` |
+| **Compañeros** | Soporte para añadir varios compañeros en una escena | `InitTracker` |
+| **Enemigos** | Añadido el Verdugo Funesto de escenario | `enemies` |
+| **Pruebas** | 237 unitarios · 119 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        119/119
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

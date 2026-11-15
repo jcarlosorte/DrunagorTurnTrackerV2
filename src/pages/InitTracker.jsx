@@ -1962,8 +1962,9 @@ const InitTracker = () => {
       setTrackerData((prev) => ({ ...prev, companions: [] }));
     }
 
-    if (scene.addCompanionId) {
-      const companion = getCompanion(scene.addCompanionId);
+    const companionIds = scene.addCompanionIds || (scene.addCompanionId ? [scene.addCompanionId] : []);
+    for (const companionId of companionIds) {
+      const companion = getCompanion(companionId);
       const removeIds = scene.removeCompanionIds || [];
       const currentCompanions = trackerData.companions || [];
       const existingTarget = currentCompanions.find((entry) => entry.id === companion?.id);
