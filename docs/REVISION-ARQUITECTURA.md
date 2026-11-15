@@ -5415,6 +5415,23 @@ Unit       237 tests
 E2E        112/112
 ```
 
+### 318.ª tanda — Escena del Capítulo 10 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escena** | Viaje a ninguna parte / The Journey to Nowhere | `scenes` |
+| **Carta** | Oscuridad de Caza cara A | `scenes` |
+| **Compañeros** | Elimina todos los compañeros y mascotas del grupo | `InitTracker` |
+| **Runas** | Añade 3 runas de cada color en el track | `scenes` |
+| **Pruebas** | 237 unitarios · 113 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        113/113
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -107,6 +107,36 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('Capítulo 10 elimina los compañeros y coloca 3 runas por color', async ({ page }) => {
+    const seed = buildSeed();
+    const tracker = JSON.parse(seed.trackerData);
+    tracker.companions = [
+      { uid: 'leal-10', id: 'tharmagar_leal', heroId: 'vorn', order: 0, vida: 5, vidaMax: 5, estadosAlterados: [], capacidades: [] },
+      { uid: 'pets-10', id: 'drumm', heroId: 'vorn', order: 1, vida: 1, vidaMax: 1, estadosAlterados: [], capacidades: [] },
+    ];
+    seed.trackerData = JSON.stringify(tracker);
+    await seedStorage(page, seed);
+    await openTracker(page);
+    await activateScene(page, 'base_chapter10');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const game = await readStorage(page, 'gameState', {});
+      const saved = await readStorage(page, 'trackerData', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        companions: (saved.companions || []).length,
+        trackRunes: (game.usedTiles || []).length,
+        runes: game.runes,
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza'],
+      companions: 0,
+      trackRunes: 15,
+      runes: { rojo: 3, azul: 3, verde: 3, naranja: 3, gris: 3 },
+    });
+  });
+
   test('Capítulo 9 coloca runas, Puntos de Aparición, Defensa y enemigos', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);

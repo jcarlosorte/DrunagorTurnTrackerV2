@@ -1936,6 +1936,10 @@ const InitTracker = () => {
       if (defense) handleAddRuneCard(defense, false, scene.defenseTimeTokens || 0);
     }
 
+    if (scene.removeAllCompanions) {
+      setTrackerData((prev) => ({ ...prev, companions: [] }));
+    }
+
     if (scene.addCompanionId) {
       const companion = getCompanion(scene.addCompanionId);
       const removeIds = scene.removeCompanionIds || [];
