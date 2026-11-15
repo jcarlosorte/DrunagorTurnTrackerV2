@@ -5450,6 +5450,21 @@ Unit       237 tests
 E2E        114/114
 ```
 
+### 320.ª tanda — Corrección del Capítulo 04 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Runas** | Coloca 1 runa de cada color en el track, no 5 | `scenes` |
+| **Pilas** | Añade 4 pilas de Oscuridad Inquieta, 1 activa | `scenes` |
+| **Pruebas** | 237 unitarios · 114 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        114/114
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

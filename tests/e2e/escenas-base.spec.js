@@ -308,7 +308,7 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
-  test('Capítulo 4 coloca incursión, cinco pilas y enemigos', async ({ page }) => {
+  test('Capítulo 4 coloca incursión, una runa por color y cuatro pilas', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);
     await activateScene(page, 'base_chapter4');
@@ -331,11 +331,11 @@ test.describe('Escenas del juego base', () => {
     }).toEqual({
       cards: ['runa_base_oscuridad_caza', 'incru1'],
       enemies: ['negro:bisoño', 'gris:soldado'],
-      piles: 5,
+      piles: 4,
       activePiles: 1,
       scenario: 'dark_vampire',
-      trackRunes: 25,
-      runes: { rojo: 5, azul: 5, verde: 5, naranja: 5, gris: 5 },
+      trackRunes: 5,
+      runes: { rojo: 1, azul: 1, verde: 1, naranja: 1, gris: 1 },
       companion: true,
     });
   });

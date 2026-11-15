@@ -340,9 +340,9 @@ export const SCENES = [
       monsterScenario: true,
       descripcion: 'Manifiesta al Vástago de Vampiro Sombrío.',
     },
-    darknessPiles: 5,
+    darknessPiles: 4,
     activeDarknessPiles: 1,
-    runesPerColor: 5,
+    runesPerColor: 1,
     addCompanionId: 'tharmagar_leal',
     enemiesByHeroes: {
       1: [
