@@ -1204,7 +1204,7 @@ export const GameProvider = ({ children }) => {
     return newPoints;
   };
 
-  const initializeSpawnPoints = (tipo = "runa") => {
+  const initializeSpawnPoints = (tipo = "runa", fresh = false) => {
     if (tipo === "evento") {
       // ✅ Solo un punto genérico de evento
       const newPoints = [
@@ -1220,6 +1220,22 @@ export const GameProvider = ({ children }) => {
       ]);
       setSpawnPoints(newPoints);
       return;
+    }
+
+    if (fresh) {
+      const colors = ['naranja', 'verde', 'azul', 'rojo', 'gris'];
+      let pool = createInitialTiles();
+      const points = [];
+      colors.forEach((color) => {
+        const candidates = pool.filter((tile) => tile.runa === color);
+        const tile = candidates[Math.floor(Math.random() * candidates.length)];
+        if (!tile) return;
+        points.push({ uuid: createId(), runa: color, tile });
+        pool = pool.filter((item) => item.uuid !== tile.uuid);
+      });
+      setAvailableTiles(pool);
+      setSpawnPoints(points);
+      return points;
     }
 
     replaceRunePoints(

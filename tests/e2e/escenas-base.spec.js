@@ -107,6 +107,34 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('Capítulo 9 coloca runas, Puntos de Aparición, Defensa y enemigos', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter9');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const game = await readStorage(page, 'gameState', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      const defense = (runes.placedRunes || []).find((entry) => entry.rune.id === 'defen1');
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        time: defense?.rune?.estadosAlterados?.find((estado) => estado.id === 'TIEMPO')?.count,
+        trackRunes: (game.usedTiles || []).length,
+        runes: game.runes,
+        spawnPoints: (game.spawnPoints || []).length,
+        enemies: (enemies.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza', 'defen1'],
+      time: 3,
+      trackRunes: 20,
+      runes: { rojo: 4, azul: 4, verde: 4, naranja: 4, gris: 4 },
+      spawnPoints: 5,
+      enemies: ['blanco:soldado', 'negro:veterano'],
+    });
+  });
+
   test('Capítulo 8 sustituye a Tharmagar Leal por Resentido', async ({ page }) => {
     const seed = buildSeed();
     const tracker = JSON.parse(seed.trackerData);

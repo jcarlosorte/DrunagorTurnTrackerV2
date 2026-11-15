@@ -461,6 +461,49 @@ export const SCENES = [
     },
   },
   {
+    id: 'base_chapter9',
+    campaign: 'core',
+    titleKey: 'sceneCoreChapter9',
+    titleEn: 'Chapter 09 – The Battle for Hezechia',
+    descriptionKey: 'sceneCoreChapter9Description',
+    runeCard: {
+      id: 'runa_base_oscuridad_caza',
+      cara: 'A',
+      nombre: 'Oscuridad de Caza',
+      posicion: 'abajo',
+      tipo: 'runa',
+      accion: 'Roba',
+      numRunas: 1,
+      descripcion: 'Roba 1 runa. Las runas que robes por esta carta no generan ninguna loseta de oscuridad. Luego, voltea esta carta.',
+    },
+    runesPerColor: 4,
+    controlAreaSpawn: true,
+    defenseCard: true,
+    defenseTimeTokens: 3,
+    enemiesByHeroes: {
+      1: [
+        { color: 'blanco', category: 'soldado', quantity: 1 },
+        { color: 'negro', category: 'veterano', quantity: 1 },
+      ],
+      2: [
+        { color: 'gris', category: 'veterano', quantity: 1 },
+        { color: 'negro', category: 'veterano', quantity: 1 },
+      ],
+      3: [
+        { color: 'blanco', category: 'soldado', quantity: 1 },
+        { color: 'gris', category: 'veterano', quantity: 1 },
+      ],
+      4: [
+        { color: 'blanco', category: 'veterano', quantity: 1 },
+        { color: 'gris', category: 'veterano', quantity: 1 },
+      ],
+      5: [
+        { color: 'blanco', category: 'veterano', quantity: 1 },
+        { color: 'gris', category: 'veterano', quantity: 1 },
+      ],
+    },
+  },
+  {
     id: 'base_chapter2b',
     campaign: 'core',
     titleKey: 'sceneCoreChapter2b',

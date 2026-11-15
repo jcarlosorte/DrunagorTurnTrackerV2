@@ -5383,6 +5383,22 @@ Unit       237 tests
 E2E        111/111
 ```
 
+### 316.ª tanda — Escena del Capítulo 09 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Escena** | La batalla de Hezechia / The Battle for Hezechia | `scenes` |
+| **Carta** | Oscuridad de Caza, 4 runas de cada color, Puntos de Aparición y Defensa de la Aldea con 3 fichas de tiempo | `scenes`, `InitTracker` |
+| **Enemigos** | Grupos acumulativos según el número de héroes | `scenes` |
+| **Pruebas** | 237 unitarios · 112 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        112/112
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
