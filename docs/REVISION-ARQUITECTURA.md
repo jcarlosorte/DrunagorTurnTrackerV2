@@ -5334,6 +5334,22 @@ Unit       237 tests
 E2E        108/108
 ```
 
+### 313.ª tanda — Paneles de control de áreas en una línea
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Disposición** | Pilas de runas y Control de áreas ocupan líneas completas; las cuatro mecánicas van en una fila en escritorio | `ScenarioPanels` |
+| **Iconos** | Barricadas, aparición, llaves rúnicas y rescate usan iconos propios | `ScenarioPanels` |
+| **Estilo** | Tarjetas uniformes, botones de añadir/quitar coherentes y zona de activos condicional | `ScenarioPanels` |
+| **Pruebas** | 237 unitarios · 108 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        108/108
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -1,4 +1,4 @@
-import { GiRuneStone } from 'react-icons/gi';
+import { GiRuneStone, GiBrickWall, GiPortal, GiKey, GiPerson } from 'react-icons/gi';
 import { useGame } from '@/context/GameContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useExpansions } from '@/context/ExpansionContext';
@@ -64,7 +64,7 @@ export default function ScenarioPanels() {
   };
 
   return (
-                <div className="grid gap-4 mt-4 xl:grid-cols-2">
+                <div className="grid gap-4 mt-4 grid-cols-1">
                   {/* Sub-bloque: Pilas del juego base */}
                   {showCoreContent && (
                   <div className={`track-surface-raised min-w-0 p-3 shadow-md ${showCoreContent ? '' : 'xl:col-span-2'}`}>
@@ -253,28 +253,32 @@ export default function ScenarioPanels() {
                   {/* Bloque 2: Control de áreas y puntos de aparición */}
                   {showCoreContent && (
                   <div className="track-surface-raised min-w-0 p-3 shadow-md">
-                    <div className="flex items-center gap-2 mb-2 justify-center">
-                      <GiRuneStone className="text-cyan-500 text-xl" />
+                    <div className="mb-3 flex flex-wrap items-center justify-center gap-2 border-b border-cyan-900/60 pb-2">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-900/60 text-cyan-200">
+                        <GiRuneStone className="text-lg" />
+                      </span>
                       <span className="font-semibold">{t.controlAreas}</span>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
                       {/* Sub-bloque: Barricadas */}
-                      <div className="track-surface-raised p-3 shadow-md">
-                        <div className="flex items-center gap-2 mb-2 justify-center">
-                          <GiRuneStone className="text-cyan-400 text-xl" />
+                      <div className="rounded-xl border border-cyan-800/60 bg-slate-950/55 p-3 shadow-md">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-amber-900/50 text-amber-200">
+                            <GiBrickWall className="text-base" aria-hidden="true" />
+                          </span>
                           <span className="font-semibold">{t.barricadas}</span>
                         </div>
                         
-                        <div className="flex gap-2 flex-wrap justify-center">
+                        <div className="flex gap-2 flex-wrap justify-start">
                           <button
                             onClick={() => initializeControlPoints()}
-                            className="bg-purple-700 hover:bg-purple-600 text-white text-xs px-3 py-1 rounded"
+                            className="min-h-8 rounded-lg bg-cyan-700 px-2.5 text-xs font-semibold text-white hover:bg-cyan-600"
                           >
                             ➕ {t.addControlAreas}
                           </button>
                           <button
                             onClick={() => setControlPoints([])}
-                            className="state-btn-remove text-white text-xs px-3 py-1 rounded"
+                            className="min-h-8 rounded-lg border border-red-800/70 bg-red-950/50 px-2.5 text-xs font-semibold text-red-100 hover:bg-red-900/60"
                           >
                             ✕ {t.removeCA}
                           </button>
@@ -282,33 +286,30 @@ export default function ScenarioPanels() {
                       </div>
                 
                       {/* Sub-bloque: Puntos de aparición */}
-                      <div className="track-surface-raised p-3 shadow-md">
-                        <div className="flex items-center gap-2 mb-2 justify-center">
-                          <GiRuneStone className="text-cyan-400 text-xl" />
+                      <div className="rounded-xl border border-cyan-800/60 bg-slate-950/55 p-3 shadow-md">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-sky-900/50 text-sky-200">
+                            <GiPortal className="text-base" aria-hidden="true" />
+                          </span>
                           <span className="font-semibold">{t.spawnPoints}</span>
                         </div>
                   
-                        <div className="flex gap-2 flex-wrap justify-center">
-                          {/* Botón runas */}
+                        <div className="flex gap-2 flex-wrap justify-start">
                           <button
                             onClick={() => initializeSpawnPoints("runa")}
-                            className="bg-purple-700 hover:bg-purple-600 text-white text-xs px-3 py-1 rounded"
+                            className="min-h-8 rounded-lg bg-cyan-700 px-2.5 text-xs font-semibold text-white hover:bg-cyan-600"
                           >
                             ➕ {t.addSpawnPoints} {t.runes}
                           </button>
-                      
-                          {/* Botón evento */}
                           <button
                             onClick={() => initializeSpawnPoints("evento")}
-                            className="bg-blue-700 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded"
+                            className="min-h-8 rounded-lg bg-indigo-700 px-2.5 text-xs font-semibold text-white hover:bg-indigo-600"
                           >
                             ➕ {t.addSpawnPoints} {t.PAevento}
                           </button>
-                      
-                          {/* Botón eliminar */}
                           <button
                             onClick={() => setSpawnPoints([])}
-                            className="state-btn-remove text-white text-xs px-3 py-1 rounded"
+                            className="min-h-8 rounded-lg border border-red-800/70 bg-red-950/50 px-2.5 text-xs font-semibold text-red-100 hover:bg-red-900/60"
                           >
                             ✕ {t.removeSP}
                           </button>
@@ -316,22 +317,24 @@ export default function ScenarioPanels() {
                       </div>
   
                       {/* Sub-bloque: LLaves Rúnicas */}
-                      <div className="track-surface-raised p-3 shadow-md">
-                        <div className="flex items-center gap-2 mb-2 justify-center">
-                          <GiRuneStone className="text-cyan-400 text-xl" />
+                      <div className="rounded-xl border border-cyan-800/60 bg-slate-950/55 p-3 shadow-md">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-yellow-900/50 text-yellow-200">
+                            <GiKey className="text-base" aria-hidden="true" />
+                          </span>
                           <span className="font-semibold">{t.runeKey}</span>
                         </div>
                   
-                        <div className="flex gap-2 flex-wrap justify-center">
+                        <div className="flex gap-2 flex-wrap justify-start">
                           <button
                             onClick={() => initializeRuneKeys()}
-                            className="bg-purple-700 hover:bg-purple-600 text-white text-xs px-3 py-1 rounded"
+                            className="min-h-8 rounded-lg bg-cyan-700 px-2.5 text-xs font-semibold text-white hover:bg-cyan-600"
                           >
                             ➕ {t.addRuneKeys}
                           </button>
                           <button
                             onClick={() => setRuneKeys([])}
-                            className="state-btn-remove text-white text-xs px-3 py-1 rounded"
+                            className="min-h-8 rounded-lg border border-red-800/70 bg-red-950/50 px-2.5 text-xs font-semibold text-red-100 hover:bg-red-900/60"
                           >
                             ✕ {t.removeRK}
                           </button>
@@ -339,22 +342,24 @@ export default function ScenarioPanels() {
                       </div>
   
                       {/* Sub-bloque: Rescate de Aldeanos */}
-                      <div className="track-surface-raised p-3 shadow-md">
-                        <div className="flex items-center gap-2 mb-2 justify-center">
-                          <GiRuneStone className="text-cyan-400 text-xl" />
+                      <div className="rounded-xl border border-cyan-800/60 bg-slate-950/55 p-3 shadow-md">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-900/50 text-emerald-200">
+                            <GiPerson className="text-base" aria-hidden="true" />
+                          </span>
                           <span className="font-semibold">{t.rescue}</span>
                         </div>
                   
-                        <div className="flex gap-2 flex-wrap justify-center">
+                        <div className="flex gap-2 flex-wrap justify-start">
                           <button
                             onClick={() => initializeRescue()}
-                            className="bg-purple-700 hover:bg-purple-600 text-white text-xs px-3 py-1 rounded"
+                            className="min-h-8 rounded-lg bg-cyan-700 px-2.5 text-xs font-semibold text-white hover:bg-cyan-600"
                           >
                             ➕ {t.addRescue}
                           </button>
                           <button
                             onClick={() => setRescue([])}
-                            className="state-btn-remove text-white text-xs px-3 py-1 rounded"
+                            className="min-h-8 rounded-lg border border-red-800/70 bg-red-950/50 px-2.5 text-xs font-semibold text-red-100 hover:bg-red-900/60"
                           >
                             ✕ {t.removeRV}
                           </button>
@@ -362,7 +367,8 @@ export default function ScenarioPanels() {
                       </div>
   
                       {/* Sub-bloque: mostrar botones */}
-                      <div className="track-surface-raised p-3 shadow-md col-span-1 md:col-span-2">
+                      {(controlPoints.length > 0 || spawnPoints.length > 0 || runeKeys.length > 0 || rescue.length > 0) && (
+                      <div className="rounded-xl border border-cyan-900/60 bg-slate-950/40 p-3 shadow-md sm:col-span-2 xl:col-span-4">
                       <div className="flex items-center gap-2 mb-2 justify-center flex-wrap">
                         {controlPoints.length > 0 && (
                           <div className="track-surface-raised mt-3 p-2">
@@ -479,6 +485,7 @@ export default function ScenarioPanels() {
                         )}
                       </div>
                       </div>
+                      )}
                       
                     </div>
   
