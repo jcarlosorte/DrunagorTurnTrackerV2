@@ -5316,6 +5316,24 @@ Unit       237 tests
 E2E        108/108
 ```
 
+### 312.ª tanda — Zona de riesgo en los submenús del track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Enemigos** | El reseteo de enemigos pasa a la zona de riesgo final | `TopMenu`, `RiskZone` |
+| **Nodos** | El reseteo de mecánicas pasa a la zona de riesgo final | `TopMenu` |
+| **Eventos** | Los reinicios y retiradas de mazos pasan a la zona de riesgo final | `TopMenu` |
+| **Compañeros** | El reseteo de criaturas pasa a la zona de riesgo final | `TopMenu`, `CompanionPicker` |
+| **Runas** | Mantiene su zona de riesgo existente | `TopMenu` |
+| **Pruebas** | 237 unitarios · 108 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        108/108
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

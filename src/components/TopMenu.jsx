@@ -39,6 +39,7 @@ import { useInitRunes } from "@/context/initRunesContext";
 import { useExpansions } from '@/context/ExpansionContext';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import CompanionPicker from '@/components/track/CompanionPicker';
+import RiskZone from '@/components/track/RiskZone';
 
 
 const RuneStackIcon = ({ size = 20 }) => (
@@ -789,16 +790,22 @@ const TopMenu = ({
               </div>
             </div>
 
-            <div className="flex justify-center gap-3 pt-1">
-              <button
-                type="button"
-                data-testid="reset-enemies"
-                onClick={resetPlacedEnemies}
-                className="min-h-11 rounded-xl border border-amber-600/70 bg-amber-950/50 px-4 text-sm font-semibold text-amber-100 transition hover:border-amber-400 hover:bg-amber-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
-              >
-                ↺ {t.resetEnemies || 'Resetear enemigos'}
-              </button>
-            </div>
+            <RiskZone
+              id="enemies-riesgo"
+              title={t.riskZone || 'Zona de riesgo'}
+              hint={t.riskZoneHint || 'Estas acciones no se pueden deshacer.'}
+            >
+              <div className="text-center">
+                <button
+                  type="button"
+                  data-testid="reset-enemies"
+                  onClick={resetPlacedEnemies}
+                  className="min-h-11 rounded-xl border border-amber-600/70 bg-amber-950/50 px-4 text-sm font-semibold text-amber-100 transition hover:border-amber-400 hover:bg-amber-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
+                >
+                  ↺ {t.resetEnemies || 'Resetear enemigos'}
+                </button>
+              </div>
+            </RiskZone>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1394,13 +1401,6 @@ const TopMenu = ({
                     <GiRuneStone className="text-lg" />
                   </span>
                   <h3 id="nodes-section" className="min-w-0 flex-1 text-sm font-semibold">{t.nodesSection || 'Nodos y áreas'}</h3>
-                  <button
-                    type="button"
-                    onClick={handleResetNodeMechanics}
-                    className="min-h-8 shrink-0 rounded-lg bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800"
-                  >
-                    ↺ {t.resetNodeMechanicsShort || 'Resetear mecánicas'}
-                  </button>
                 </div>
                 <ScenarioPanels />
                 <div className="mt-2 grid items-start gap-2 lg:grid-cols-3">
@@ -1499,6 +1499,21 @@ const TopMenu = ({
                 )}
                 </div>
               </section>
+              <RiskZone
+                id="nodes-riesgo"
+                title={t.riskZone || 'Zona de riesgo'}
+                hint={t.riskZoneHint || 'Estas acciones no se pueden deshacer.'}
+              >
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={handleResetNodeMechanics}
+                    className="min-h-11 rounded-xl border border-red-700 bg-red-950/50 px-4 text-sm font-semibold text-red-100 transition hover:border-red-400 hover:bg-red-900/60"
+                  >
+                    ↺ {t.resetNodeMechanicsShort || 'Resetear mecánicas'}
+                  </button>
+                </div>
+              </RiskZone>
             </div>
           </motion.div>
         )}
@@ -1761,6 +1776,7 @@ const TopMenu = ({
             <CompanionPicker
               inline
               open
+              hideReset
               onClose={() => setActiveMenu(null)}
               onOpenCompanion={(uid) => {
                 setActiveMenu(null);
@@ -1771,6 +1787,36 @@ const TopMenu = ({
                 onOpenFollower?.(uid);
               }}
             />
+            <RiskZone
+              id="companions-riesgo"
+              title={t.riskZone || 'Zona de riesgo'}
+              hint={t.riskZoneHint || 'Estas acciones no se pueden deshacer.'}
+            >
+              <div className="text-center">
+                <button
+                  type="button"
+                  disabled={!(trackerData.companions || []).length}
+                  onClick={async () => {
+                    const confirmed = await appConfirm(
+                      t.companionsResetConfirm || 'Se restaurará la vida y se quitarán los estados de todas las criaturas asignadas.',
+                      { title: t.companionsResetTitle || 'Resetear compañeros', confirmLabel: t.companionsResetAction || 'Resetear' },
+                    );
+                    if (!confirmed) return;
+                    setTrackerData((prev) => ({
+                      ...prev,
+                      companions: (prev.companions || []).map((entry) => ({
+                        ...entry,
+                        vida: entry.vidaMax ?? entry.vida,
+                        estadosAlterados: [],
+                      })),
+                    }));
+                  }}
+                  className="min-h-11 rounded-xl border border-red-700 bg-red-950/50 px-4 text-sm font-semibold text-red-100 transition hover:border-red-400 hover:bg-red-900/60 disabled:opacity-40"
+                >
+                  ↺ {t.companionsReset || 'Resetear compañeros'}
+                </button>
+              </div>
+            </RiskZone>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1809,16 +1855,10 @@ const TopMenu = ({
                     ➕ {t.addBuriedSurprise || 'Añadir Sorpresa Enterrada'}
                   </button>
                 ) : (
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <div className="mt-3">
                     <span className="rounded-full border border-fuchsia-700 bg-slate-950/50 px-2 py-1 text-[0.65rem] text-fuchsia-100">
                       {t.erradenRemaining || 'Cartas restantes'}: {sorpresaEvent.deck.length}/5
                     </span>
-                    <button type="button" onClick={addSorpresaEvent} className="min-h-8 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600">
-                      {t.resetErraden || 'Reiniciar mazo'}
-                    </button>
-                    <button type="button" onClick={resetSorpresaEvent} className="min-h-8 rounded-lg bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800">
-                      {t.removeErraden || 'Quitar evento'}
-                    </button>
                   </div>
                 )}
               </div>
@@ -1839,16 +1879,10 @@ const TopMenu = ({
                   ➕ {t.addCorruptShip || 'Añadir PS del Navío Corrupto'}
                 </button>
               ) : (
-                <div className="mt-2 flex flex-wrap items-center gap-2">
+                <div className="mt-2">
                   <span className="rounded-full border border-amber-700 bg-slate-950/50 px-2 py-1 text-[0.65rem]">
                     {t.erradenRemaining || 'Cartas restantes'}: {corruptShipEvent.deck.length}/6
                   </span>
-                  <button type="button" onClick={addCorruptShipEvent} className="rounded bg-slate-700 px-2 py-1 text-[0.65rem] font-bold text-white">
-                    {t.resetDeck || 'Reiniciar mazo'}
-                  </button>
-                  <button type="button" onClick={resetCorruptShipEvent} className="rounded bg-red-900 px-2 py-1 text-[0.65rem] font-bold text-white">
-                    {t.removeDeck || 'Quitar'}
-                  </button>
                 </div>
               )}
             </div>
@@ -1866,16 +1900,10 @@ const TopMenu = ({
                   ➕ {t.addSwanShip || 'Añadir PS del Buque Cisne'}
                 </button>
               ) : (
-                <div className="mt-2 flex flex-wrap items-center gap-2">
+                <div className="mt-2">
                   <span className="rounded-full border border-cyan-700 bg-slate-950/50 px-2 py-1 text-[0.65rem]">
                     {t.erradenRemaining || 'Cartas restantes'}: {swanShipEvent.deck.length}/6
                   </span>
-                  <button type="button" onClick={addSwanShipEvent} className="rounded bg-slate-700 px-2 py-1 text-[0.65rem] font-bold text-white">
-                    {t.resetDeck || 'Reiniciar mazo'}
-                  </button>
-                  <button type="button" onClick={resetSwanShipEvent} className="rounded bg-red-900 px-2 py-1 text-[0.65rem] font-bold text-white">
-                    {t.removeDeck || 'Quitar'}
-                  </button>
                 </div>
               )}
             </div>
@@ -1894,16 +1922,10 @@ const TopMenu = ({
                   ➕ {t.siegeAdd || 'Añadir Asedio de Limiternia'}
                 </button>
               ) : (
-                <div className="mt-3 flex flex-wrap items-center gap-2">
+                <div className="mt-3">
                   <span className="rounded-full border border-amber-700 bg-slate-950/50 px-2 py-1 text-[0.65rem] text-amber-100">
                     {t.siegeRemaining || 'Cartas restantes'}: {siegeEvent.deck.length}/10
                   </span>
-                  <button type="button" onClick={addSiegeEvent} className="min-h-8 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600">
-                    {t.siegeReset || 'Reiniciar mazo'}
-                  </button>
-                  <button type="button" onClick={resetSiegeEvent} className="min-h-8 rounded-lg bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800">
-                    {t.siegeRemove || 'Quitar evento'}
-                  </button>
                 </div>
               )}
             </div>
@@ -1925,29 +1947,68 @@ const TopMenu = ({
                   ➕ {t.addErraden || 'Añadir Sorpresa de Eradren'}
                 </button>
               ) : (
-                <div className="mt-3 flex flex-wrap items-center gap-2">
+                <div className="mt-3">
                   <span className="rounded-full border border-fuchsia-700 bg-slate-950/50 px-2 py-1 text-[0.65rem] text-fuchsia-100">
                     {t.erradenRemaining || 'Cartas restantes'}: {erradenEvent.deck.length}/6
                   </span>
-                  <button
-                    type="button"
-                    onClick={addErradenEvent}
-                    className="min-h-8 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600"
-                  >
-                    {t.resetErraden || 'Reiniciar mazo'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={resetErradenEvent}
-                    className="min-h-8 rounded-lg bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800"
-                  >
-                    {t.removeErraden || 'Quitar evento'}
-                  </button>
                 </div>
               )}
             </div>
             </div>
             )}
+            <RiskZone
+              id="events-riesgo"
+              title={t.riskZone || 'Zona de riesgo'}
+              hint={t.riskZoneHint || 'Estas acciones no se pueden deshacer.'}
+            >
+              <div className="grid gap-2 sm:grid-cols-2">
+                {sorpresaEvent.active && (
+                  <div className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
+                    <p className="mb-1 text-xs font-semibold text-red-200">{t.buriedSurpriseTitle || 'Sorpresa Enterrada'}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button type="button" onClick={addSorpresaEvent} className="min-h-8 rounded bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600">{t.resetDeck || 'Reiniciar mazo'}</button>
+                      <button type="button" onClick={resetSorpresaEvent} className="min-h-8 rounded bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800">{t.removeDeck || 'Quitar'}</button>
+                    </div>
+                  </div>
+                )}
+                {corruptShipEvent.active && (
+                  <div className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
+                    <p className="mb-1 text-xs font-semibold text-red-200">{t.corruptShipDeck || 'PS del Navío Corrupto'}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button type="button" onClick={addCorruptShipEvent} className="min-h-8 rounded bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600">{t.resetDeck || 'Reiniciar mazo'}</button>
+                      <button type="button" onClick={resetCorruptShipEvent} className="min-h-8 rounded bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800">{t.removeDeck || 'Quitar'}</button>
+                    </div>
+                  </div>
+                )}
+                {swanShipEvent.active && (
+                  <div className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
+                    <p className="mb-1 text-xs font-semibold text-red-200">{t.swanShipDeck || 'PS del Buque Cisne'}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button type="button" onClick={addSwanShipEvent} className="min-h-8 rounded bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600">{t.resetDeck || 'Reiniciar mazo'}</button>
+                      <button type="button" onClick={resetSwanShipEvent} className="min-h-8 rounded bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800">{t.removeDeck || 'Quitar'}</button>
+                    </div>
+                  </div>
+                )}
+                {siegeEvent.active && (
+                  <div className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
+                    <p className="mb-1 text-xs font-semibold text-red-200">{t.siegeTitle || 'Asedio de Limiternia'}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button type="button" onClick={addSiegeEvent} className="min-h-8 rounded bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600">{t.resetDeck || 'Reiniciar mazo'}</button>
+                      <button type="button" onClick={resetSiegeEvent} className="min-h-8 rounded bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800">{t.removeDeck || 'Quitar'}</button>
+                    </div>
+                  </div>
+                )}
+                {erradenEvent.active && (
+                  <div className="rounded-xl border border-red-900/60 bg-slate-950/50 p-2">
+                    <p className="mb-1 text-xs font-semibold text-red-200">{t.erradenTitle || 'Sorpresa de Eradren'}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button type="button" onClick={addErradenEvent} className="min-h-8 rounded bg-slate-700 px-2 text-[0.65rem] font-bold text-white hover:bg-slate-600">{t.resetDeck || 'Reiniciar mazo'}</button>
+                      <button type="button" onClick={resetErradenEvent} className="min-h-8 rounded bg-red-900 px-2 text-[0.65rem] font-bold text-white hover:bg-red-800">{t.removeDeck || 'Quitar'}</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </RiskZone>
           </motion.div>
         )}
       </AnimatePresence>

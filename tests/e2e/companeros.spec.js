@@ -133,7 +133,8 @@ test.describe('Compañeros y mascotas', () => {
 
     await page.getByRole('button', { name: 'Compañeros' }).click();
     const picker = page.getByRole('dialog', { name: 'Compañeros y mascotas' });
-    await picker.getByRole('button', { name: /Resetear/ }).click();
+    await expect(picker).toBeVisible();
+    await page.locator('#track-menu-companions').getByRole('button', { name: /Resetear/ }).click();
     const confirm = page.getByRole('dialog', { name: 'Resetear compañeros' });
     await confirm.getByRole('button', { name: 'Resetear' }).click();
 

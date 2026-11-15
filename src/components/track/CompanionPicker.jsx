@@ -26,7 +26,7 @@ import useFocusTrap from '@/hooks/useFocusTrap';
  * asigna a un héroe en juego y lista las ya asignadas. Una criatura asignada
  * deja de ofrecerse hasta que se quita.
  */
-export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpenFollower, inline = false }) {
+export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpenFollower, inline = false, hideReset = false }) {
   const { trackerData, setTrackerData } = useTracker();
   const { selectedExpansions, mainBox, previewOtherBoxes, canPreviewOtherBoxes } = useExpansions();
   const { translations } = useLanguage();
@@ -517,6 +517,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
               <p className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
                 {t.companionsInPlay || 'En juego'} ({companions.length})
               </p>
+              {!hideReset && (
               <button
                 type="button"
                 onClick={() => setConfirmReset(true)}
@@ -525,6 +526,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
               >
                 ↺ {t.companionsReset || 'Resetear'}
               </button>
+              )}
             </div>
             {companions.length === 0 ? (
               <p className="rounded-lg border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-400">
