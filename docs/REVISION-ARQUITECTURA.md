@@ -5545,6 +5545,21 @@ Unit       237 tests
 E2E        122/122
 ```
 
+### 326.ª tanda — Correcciones del Capítulo 09 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Defensa** | La Defensa de la Aldea lleva 2 fichas de tiempo | `scenes` |
+| **Bolsa** | Los Puntos de Aparición consumen fichas de la bolsa restante, sin reiniciar ni ampliar el máximo | `GameContext`, `InitTracker` |
+| **Pruebas** | 237 unitarios · 122 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        122/122
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

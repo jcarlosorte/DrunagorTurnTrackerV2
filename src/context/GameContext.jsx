@@ -886,7 +886,7 @@ export const GameProvider = ({ children }) => {
       setNodosOscuridad((prev) => [...prev, ...nodes]);
       setContadorNodosOscuridad((prev) => prev + nodes.length);
     }
-    return { placed, nodes };
+    return { placed, nodes, remaining };
   };
 
   const removeTileFromNodoOscuridad = (nodoId) => {
@@ -1234,7 +1234,7 @@ export const GameProvider = ({ children }) => {
     return newPoints;
   };
 
-  const initializeSpawnPoints = (tipo = "runa", fresh = false) => {
+  const initializeSpawnPoints = (tipo = "runa", fresh = false, poolOverride = null) => {
     if (tipo === "evento") {
       // ✅ Solo un punto genérico de evento
       const newPoints = [
@@ -1252,9 +1252,9 @@ export const GameProvider = ({ children }) => {
       return;
     }
 
-    if (fresh) {
+    if (fresh || Array.isArray(poolOverride)) {
       const colors = ['naranja', 'verde', 'azul', 'rojo', 'gris'];
-      let pool = createInitialTiles();
+      let pool = Array.isArray(poolOverride) ? [...poolOverride] : createInitialTiles();
       const points = [];
       colors.forEach((color) => {
         const candidates = pool.filter((tile) => tile.runa === color);

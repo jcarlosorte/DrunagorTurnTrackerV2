@@ -1964,7 +1964,7 @@ const InitTracker = () => {
     // que ya están en el track.
     const prepared = placeSceneRunes(scene.runesPerColor || 0, scene.nodes || 0, { fresh: needsSceneReset });
     if (scene.controlAreas) initializeControlPoints(needsSceneReset);
-    if (scene.controlAreaSpawn) initializeSpawnPoints('runa', needsSceneReset);
+    if (scene.controlAreaSpawn) initializeSpawnPoints('runa', needsSceneReset, prepared.remaining);
     if (scene.controlAreaKeys) initializeRuneKeys(needsSceneReset);
     if (scene.darknessPiles) initializeDarknessPiles(scene.darknessPiles, scene.activeDarknessPiles || 0, needsSceneReset, true);
     if (scene.addBuriedSurpriseDeck) addSorpresaEvent();

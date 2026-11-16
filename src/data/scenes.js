@@ -479,7 +479,7 @@ export const SCENES = [
     runesPerColor: 4,
     controlAreaSpawn: true,
     defenseCard: true,
-    defenseTimeTokens: 3,
+    defenseTimeTokens: 2,
     enemiesByHeroes: {
       1: [
         { color: 'blanco', category: 'soldado', quantity: 1 },

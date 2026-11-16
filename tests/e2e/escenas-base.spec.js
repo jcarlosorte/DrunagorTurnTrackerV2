@@ -423,14 +423,16 @@ test.describe('Escenas del juego base', () => {
         cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
         time: defense?.rune?.estadosAlterados?.find((estado) => estado.id === 'TIEMPO')?.count,
         trackRunes: (game.usedTiles || []).length,
+        available: (game.availableTiles || []).length,
         runes: game.runes,
         spawnPoints: (game.spawnPoints || []).length,
         enemies: (enemies.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
       };
     }).toEqual({
       cards: ['runa_base_oscuridad_caza', 'defen1'],
-      time: 3,
+      time: 2,
       trackRunes: 20,
+      available: 11,
       runes: { rojo: 4, azul: 4, verde: 4, naranja: 4, gris: 4 },
       spawnPoints: 5,
       enemies: ['blanco:soldado', 'negro:veterano'],
