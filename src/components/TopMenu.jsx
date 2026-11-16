@@ -182,7 +182,7 @@ const TopMenu = ({
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
   const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, resetNodeMechanics, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, sorpresaEvent, addSorpresaEvent, resetSorpresaEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent, siegeEvent, addSiegeEvent, resetSiegeEvent, eternalDarknessActive, setEternalDarknessActive } = useGame();
   const { trackerData, setTrackerData } = useTracker();
-  const { placedRunes, resetPlacedRunes } = useInitRunes();
+  const { placedRunes, setPlacedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const gameMenuRef = useRef(null);
   const [activeMenu, setActiveMenu] = useState(null); // 'enemies' | 'runes' | 'nodes' | 'scenario' | 'events' | 'scenes'
@@ -1834,6 +1834,38 @@ const TopMenu = ({
                     )}
                   </div>
                   )}
+                </div>
+
+                <div className="mt-3">
+                  <RiskZone
+                    id="scenario-riesgo"
+                    title={t.riskZone || 'Zona de riesgo'}
+                    hint={t.riskZoneHint || 'Estas acciones no se pueden deshacer.'}
+                  >
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        data-testid="scenario-reset"
+                        disabled={!scenarioMonster && !placedRunes.some((entry) => ['incursion', 'defensa'].includes(entry.rune?.tipo))}
+                        onClick={async () => {
+                          const confirmed = await appConfirm(
+                            t.scenarioResetConfirm || 'Se quitará el monstruo de escenario y sus cartas de incursión y defensa.',
+                            {
+                              title: t.scenarioResetTitle || 'Reiniciar escenario',
+                              confirmLabel: t.scenarioResetAction || 'Reiniciar',
+                            },
+                          );
+                          if (!confirmed) return;
+                          setScenarioMonster(null);
+                          setPlacedRunes((prev) => prev.filter((entry) => !['incursion', 'defensa'].includes(entry.rune?.tipo)));
+                          setShowScenarioFaceOptions({ incursion: false, defensa: false });
+                        }}
+                        className="min-h-11 rounded-xl border border-red-700 bg-red-950/50 px-4 text-sm font-semibold text-red-100 transition hover:border-red-400 hover:bg-red-900/60 disabled:opacity-40"
+                      >
+                        ↺ {t.scenarioReset || 'Reiniciar escenario'}
+                      </button>
+                    </div>
+                  </RiskZone>
                 </div>
               </section>
               </div>

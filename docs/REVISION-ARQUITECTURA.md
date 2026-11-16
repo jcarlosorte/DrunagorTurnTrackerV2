@@ -5824,6 +5824,22 @@ Unit       237 tests
 E2E        140/140
 ```
 
+### 343.ª tanda — Zona de riesgo del menú Escenario
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Zona de riesgo** | Añadida al final del menú Escenario | `TopMenu` |
+| **Reinicio** | Quita el monstruo seleccionado y las cartas de incursión y defensa | `TopMenu` |
+| **Confirmación** | La acción pide confirmación antes de borrar | `TopMenu` |
+| **Pruebas** | 237 unitarios · 141 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        141/141
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
