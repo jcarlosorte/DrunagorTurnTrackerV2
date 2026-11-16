@@ -5776,6 +5776,22 @@ Unit       237 tests
 E2E        138/138
 ```
 
+### 340.ª tanda — Contenedor del track para pilas de 4 y 5 cartas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Altura** | El tablero cuenta los enemigos normales al calcular la altura de los slots | `InitTracker` |
+| **Margen** | Espacio adicional por cada carta a partir de la cuarta | `trackLayout` |
+| **Vista lista** | También amplía los slots compactos con pilas grandes | `trackLayout` |
+| **Pruebas** | 237 unitarios · 139 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        139/139
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

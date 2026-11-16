@@ -46,7 +46,16 @@ describe('trackLayout', () => {
   it('la altura compacta se ajusta a la pila del slot', () => {
     expect(compactSlotHeight(0, 0)).toBe(MIN_COMPACT_SLOT_HEIGHT);
     expect(compactSlotHeight(4, 1)).toBeGreaterThanOrEqual(MIN_COMPACT_SLOT_HEIGHT);
-    expect(compactSlotHeight(4, 1)).toBeLessThanOrEqual(2 * stackHeight(4) + 16 + 1);
+    expect(compactSlotHeight(4, 1)).toBeGreaterThan(2 * stackHeight(4) + 16);
+  });
+
+  it('amplía el contenedor cuando una pila tiene cuatro o cinco cartas', () => {
+    const tres = boardSlotHeightFrom([3]);
+    const cuatro = boardSlotHeightFrom([4]);
+    const cinco = boardSlotHeightFrom([5]);
+    expect(cuatro).toBeGreaterThan(tres);
+    expect(cinco).toBeGreaterThan(cuatro);
+    expect(compactSlotHeight(5, 1)).toBeGreaterThan(compactSlotHeight(3, 1));
   });
 
   it('CARD_HEIGHT y BASE_GAP son coherentes con la geometría', () => {

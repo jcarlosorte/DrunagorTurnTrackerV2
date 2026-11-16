@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { buildSeed, openTracker, seedStorage } from './helpers';
+import { buildEnemyState, buildSeed, openTracker, seedStorage } from './helpers';
 
 test.describe('Tablero de iniciativa', () => {
   test.beforeEach(async ({ page }) => {
@@ -32,6 +32,39 @@ test.describe('Tablero de iniciativa', () => {
 
     expect(metrics.hasBeam).toBe(false);
     expect(metrics.card).toBe(true);
+  });
+
+  test('el tablero crece y contiene cinco enemigos apilados', async ({ page }) => {
+    const state = JSON.parse(buildEnemyState());
+    const enemy = state.placedEnemies[0].enemy;
+    state.placedEnemies = [1, 2, 3, 4, 5].map((index) => ({
+      enemy: {
+        ...enemy,
+        uuid: `stack-${index}`,
+        position: 1,
+        runePosition: 'arriba',
+      },
+    }));
+    await openTracker(page);
+    await page.evaluate((state) => {
+      localStorage.setItem('initEnemiesState', JSON.stringify(state));
+    }, state);
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('[data-enemy-card]');
+    await page.waitForTimeout(600);
+
+    const metrics = await page.evaluate(() => {
+      const region = document.querySelector('[role="region"][aria-label="Orden de iniciativa"]');
+      const cards = Array.from(document.querySelectorAll('[data-enemy-card]'));
+      return {
+        slotHeight: document.querySelector('.track-slot')?.getBoundingClientRect().height || 0,
+        cards: cards.length,
+        trackTop: region?.getBoundingClientRect().top || 0,
+        topCard: Math.min(...cards.map((card) => card.getBoundingClientRect().top)),
+      };
+    });
+    expect(metrics.slotHeight).toBeGreaterThan(900);
+    expect(metrics.topCard).toBeGreaterThanOrEqual(metrics.trackTop);
   });
 
   test('la vista de lista usa una altura compacta', async ({ page }) => {

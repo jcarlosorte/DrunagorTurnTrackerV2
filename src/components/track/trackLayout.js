@@ -19,6 +19,9 @@ export const MIN_COMPACT_SLOT_HEIGHT = 500;
 export const MIN_SIMPLIFIED_SLOT_HEIGHT = 420;
 export const SIMPLIFIED_PADDING = 70;
 export const SIMPLIFIED_ENEMY_STEP = 44;
+/** Espacio extra por cada carta a partir de la cuarta, para que la pila no toque el borde superior. */
+export const EXTRA_STACK_PADDING = 90;
+export const COMPACT_EXTRA_STACK_PADDING = 70;
 
 /** Solape entre cartas consecutivas para que la pila quepa en MAX_STACK_HEIGHT. */
 export function overlapFor(count) {
@@ -45,13 +48,16 @@ export function stackHeight(count) {
  */
 export function boardSlotHeightFrom(counts = []) {
   const tallest = counts.reduce((max, count) => Math.max(max, stackHeight(count)), 0);
-  return Math.max(MIN_SLOT_HEIGHT, 2 * tallest + BOARD_PADDING);
+  const maxCards = counts.reduce((max, count) => Math.max(max, count), 0);
+  const overflowPadding = Math.max(0, maxCards - 3) * EXTRA_STACK_PADDING;
+  return Math.max(MIN_SLOT_HEIGHT, 2 * tallest + BOARD_PADDING + overflowPadding);
 }
 
 /** Altura de un slot aislado (vista de lista). */
 export function compactSlotHeight(aboveCount, belowCount) {
   const tallest = Math.max(stackHeight(aboveCount), stackHeight(belowCount));
-  return Math.max(MIN_COMPACT_SLOT_HEIGHT, 2 * tallest + COMPACT_PADDING);
+  const overflowPadding = Math.max(0, Math.max(aboveCount, belowCount) - 3) * COMPACT_EXTRA_STACK_PADDING;
+  return Math.max(MIN_COMPACT_SLOT_HEIGHT, 2 * tallest + COMPACT_PADDING + overflowPadding);
 }
 
 /** Altura del tablero cuando solo los enemigos usan fichas compactas. */
@@ -62,7 +68,13 @@ export function simplifiedSlotHeightFrom(normalCounts = [], compactCounts = []) 
     0,
   );
   const tallest = Math.max(tallestNormal, tallestCompact);
-  return Math.max(MIN_SIMPLIFIED_SLOT_HEIGHT, 2 * tallest + SIMPLIFIED_PADDING);
+  const maxCards = Math.max(
+    0,
+    ...normalCounts,
+    ...compactCounts,
+  );
+  const overflowPadding = Math.max(0, maxCards - 3) * EXTRA_STACK_PADDING;
+  return Math.max(MIN_SIMPLIFIED_SLOT_HEIGHT, 2 * tallest + SIMPLIFIED_PADDING + overflowPadding);
 }
 
 /** Posición (px) de la carta `index` respecto a la línea central. */
