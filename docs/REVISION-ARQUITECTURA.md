@@ -5515,6 +5515,21 @@ Unit       237 tests
 E2E        119/119
 ```
 
+### 324.ª tanda — Escenas de los Capítulos 17 y 18 del juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **17** | El Héroe caído: incursión del Vástago, 3 pilas (1 activa) y campeones | `scenes` |
+| **18** | El final de todo: 2 runas por color, 4 pilas sin activar y el Encuentro Final con sus mecánicas iniciales | `scenes`, `InitTracker` |
+| **Pruebas** | 237 unitarios · 121 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        121/121
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -696,6 +696,46 @@ export const SCENES = [
     runesPerColor: 2,
     enemiesByHeroes: {},
   },
+  {
+    id: 'base_chapter17',
+    campaign: 'core',
+    titleKey: 'sceneCoreChapter17',
+    titleEn: 'Chapter 17 – The Fallen Hero',
+    descriptionKey: 'sceneCoreChapter17Description',
+    runeCard: {
+      id: 'runa_base_oscuridad_caza', cara: 'A', nombre: 'Oscuridad de Caza', posicion: 'abajo', tipo: 'runa', accion: 'Roba', numRunas: 1,
+      descripcion: 'Roba 1 runa. Las runas que robes por esta carta no generan ninguna loseta de oscuridad. Luego, voltea esta carta.',
+    },
+    incursionCard: {
+      id: 'incru1', cara: 'A', nombre: 'Incursión de Monstruos', posicion: 'arriba', tipo: 'incursion', accion: 'Manifiesta', numRunas: 1,
+      monsterId: 'dark_vampire', monsterScenario: true,
+      descripcion: 'Manifiesta al Vástago de Vampiro Sombrío.',
+    },
+    darknessPiles: 3,
+    activeDarknessPiles: 1,
+    enemiesByHeroes: {
+      1: [
+        { color: 'blanco', category: 'campeon', quantity: 1 },
+        { color: 'gris', category: 'campeon', quantity: 1 },
+      ],
+      2: [{ color: 'blanco', category: 'campeon', quantity: 1 }],
+      3: [{ color: 'negro', category: 'campeon', quantity: 1 }],
+      4: [{ color: 'gris', category: 'campeon', quantity: 1 }],
+      5: [{ color: 'negro', category: 'campeon', quantity: 1 }],
+    },
+  },
+  {
+    id: 'base_chapter18',
+    campaign: 'core',
+    titleKey: 'sceneCoreChapter18',
+    titleEn: 'Chapter 18 – The End Game',
+    descriptionKey: 'sceneCoreChapter18Description',
+    runesPerColor: 2,
+    darknessPiles: 4,
+    activeDarknessPiles: 0,
+    finalBoss: true,
+    enemiesByHeroes: {},
+  },
 ];
 
 export default SCENES;

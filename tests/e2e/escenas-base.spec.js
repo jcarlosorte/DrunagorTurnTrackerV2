@@ -228,6 +228,59 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('Capítulo 17 coloca incursión, tres pilas y enemigos campeones', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter17');
+
+    await expect.poll(async () => {
+      const runes = await readStorage(page, 'initRunesState', {});
+      const game = await readStorage(page, 'gameState', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      return {
+        cards: (runes.placedRunes || []).map((entry) => entry.rune.id),
+        piles: (game.pilas || []).length,
+        activePiles: (game.pilas || []).filter((pila) => pila.estado === 'activa').length,
+        scenario: game.scenarioMonster?.id,
+        enemies: (enemies.placedEnemies || []).map((entry) => `${entry.enemy.color}:${entry.enemy.categoria}`),
+      };
+    }).toEqual({
+      cards: ['runa_base_oscuridad_caza', 'incru1'],
+      piles: 3,
+      activePiles: 1,
+      scenario: 'dark_vampire',
+      enemies: ['blanco:campeon', 'gris:campeon'],
+    });
+  });
+
+  test('Capítulo 18 coloca runas, pilas y el Encuentro Final', async ({ page }) => {
+    await seedStorage(page, baseSeed());
+    await openTracker(page);
+    await activateScene(page, 'base_chapter18');
+    for (const label of [/Trauma/i, /Maldición/i]) {
+      const prompt = page.getByRole('dialog').filter({ hasText: label });
+      await expect(prompt).toBeVisible();
+      await prompt.locator('input').fill('0');
+      await prompt.getByRole('button', { name: 'Aceptar' }).click();
+    }
+
+    await expect.poll(async () => {
+      const game = await readStorage(page, 'gameState', {});
+      const enemies = await readStorage(page, 'initEnemiesState', {});
+      return {
+        trackRunes: (game.usedTiles || []).length,
+        piles: (game.pilas || []).length,
+        activePiles: (game.pilas || []).filter((pila) => pila.estado === 'activa').length,
+        boss: (enemies.placedEnemies || []).some((entry) => entry.enemy.id === 'undead_king_boss_2'),
+      };
+    }).toEqual({
+      trackRunes: 10,
+      piles: 4,
+      activePiles: 0,
+      boss: true,
+    });
+  });
+
   test('Capítulo 16 coloca la Oscuridad de Caza especial cara B', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);

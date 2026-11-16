@@ -1988,6 +1988,10 @@ const InitTracker = () => {
 
     if (scene.addFogNode) addActiveFogNode(Boolean(scene.preserveBoard));
 
+    if (scene.finalBoss) {
+      await handleManualEnemyAdd('undead_king_boss_2', 'jefe', 'jefe', 'NoShow');
+    }
+
     if (scene.acechoBoss) {
       activaAcecho();
       if (!placedEnemies.some((entry) => entry.enemy.id === 'undead_king_boss_Acecho_1')) {
