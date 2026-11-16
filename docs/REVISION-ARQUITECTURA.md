@@ -5726,6 +5726,21 @@ Unit       237 tests
 E2E        134/134
 ```
 
+### 337.ª tanda — Alto de carta para ataques especiales
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Formato** | Las cartas de ataque especiales usan la proporción vertical del fondo (756 × 1087) | `CommanderCard` |
+| **Reverso** | La carta boca abajo mantiene el mismo alto | `CommanderCard` |
+| **Pruebas** | 237 unitarios · 134 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        134/134
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

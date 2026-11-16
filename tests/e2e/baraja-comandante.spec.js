@@ -26,4 +26,7 @@ test('el PC permite elegir una baraja manual de comandante', async ({ page }) =>
   const cardBackground = page.getByTestId('attack-card-background').first();
   await expect(cardBackground).toBeVisible();
   await expect(cardBackground).toHaveAttribute('src', /card-commander/);
+  const card = page.getByTestId('commander-attack-card').first();
+  const box = await card.boundingBox();
+  expect(box.height).toBeGreaterThan(box.width * 1.2);
 });

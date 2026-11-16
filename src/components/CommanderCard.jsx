@@ -87,6 +87,7 @@ const CommanderCard = ({ carta }) => {
               : entry
           )))}
           className="relative flex aspect-square w-full max-w-[140px] cursor-pointer items-center justify-center rounded-lg border-2 border-slate-500 bg-slate-900 text-4xl text-slate-500 shadow-md hover:border-sky-400"
+          style={{ aspectRatio: '756 / 1087' }}
           title="Voltear carta"
         >
           🂠
@@ -101,8 +102,10 @@ const CommanderCard = ({ carta }) => {
       <div className="relative w-full max-w-[140px]">
 
         <div
+          data-testid="commander-attack-card"
           onClick={() => setShowModal(true)}
-          className={`cursor-custom relative w-full aspect-square overflow-hidden p-2 rounded-lg border-2 shadow-md hover:scale-105 transition
+          style={{ aspectRatio: '756 / 1087' }}
+          className={`cursor-custom relative w-full overflow-hidden p-2 rounded-lg border-2 shadow-md hover:scale-105 transition
             ${carta.highlight ? ringClass : borderClass}`}
         >
           {tiempoCount > 0 && carta.id !== 'boss_26' && (
