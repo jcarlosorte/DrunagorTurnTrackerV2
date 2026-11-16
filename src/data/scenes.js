@@ -530,6 +530,7 @@ export const SCENES = [
     titleEn: 'Chapter 11 – The Haunting',
     descriptionKey: 'sceneCoreChapter11Description',
     preserveBoard: true,
+    clearEnemiesBefore: true,
     runeCard: {
       id: 'runa_base_oscuridad_caza',
       cara: 'A',
@@ -583,6 +584,7 @@ export const SCENES = [
     titleEn: 'Chapter 12 – The Closure',
     descriptionKey: 'sceneCoreChapter12Description',
     preserveBoard: true,
+    clearEnemiesBefore: true,
     runeCard: {
       id: 'runa_base_oscuridad_caza', cara: 'A', nombre: 'Oscuridad de Caza', posicion: 'abajo', tipo: 'runa', accion: 'Roba', numRunas: 1,
       descripcion: 'Roba 1 runa. Las runas que robes por esta carta no generan ninguna loseta de oscuridad. Luego, voltea esta carta.',
@@ -612,6 +614,7 @@ export const SCENES = [
     titleEn: 'Chapter 13 – The Ugly Truth',
     descriptionKey: 'sceneCoreChapter13Description',
     preserveBoard: true,
+    clearEnemiesBefore: true,
     runeCard: {
       id: 'runa_base_oscuridad_caza', cara: 'A', nombre: 'Oscuridad de Caza', posicion: 'abajo', tipo: 'runa', accion: 'Roba', numRunas: 1,
       descripcion: 'Roba 1 runa. Las runas que robes por esta carta no generan ninguna loseta de oscuridad. Luego, voltea esta carta.',

@@ -5560,6 +5560,20 @@ Unit       237 tests
 E2E        122/122
 ```
 
+### 327.ª tanda — Enemigos previos en capítulos secuenciales
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **11, 12 y 13** | Eliminan todos los enemigos antes de colocar los nuevos, manteniendo las runas del track | `scenes`, `InitTracker` |
+| **Pruebas** | 237 unitarios · 122 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        122/122
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

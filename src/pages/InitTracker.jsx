@@ -1904,6 +1904,8 @@ const InitTracker = () => {
       resetPlacedRunes();
       resetGameState();
       resetNodeMechanics();
+    } else if (scene.clearEnemiesBefore) {
+      resetEnemySession();
     }
 
     if (scene.returnActiveNodes) {

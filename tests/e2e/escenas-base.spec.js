@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { buildHeroExtras, buildSeed, openTracker, readStorage, seedStorage } from './helpers';
+import { buildEnemyState, buildHeroExtras, buildSeed, openTracker, readStorage, seedStorage } from './helpers';
 
 const baseSeed = () => buildSeed({
   mainBox: JSON.stringify('core'),
@@ -330,6 +330,7 @@ test.describe('Escenas del juego base', () => {
     seed.trackerData = JSON.stringify(tracker);
     await seedStorage(page, {
       ...seed,
+      initEnemiesState: buildEnemyState(),
       heroExtras: buildHeroExtras({
         vida: 7,
         trauma: 2,
