@@ -2033,8 +2033,15 @@ const TopMenu = ({
             </div>
             <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-4">
               {[...SCENES]
-                .filter((scene) => (scene.campaign || 'awakenings') === mainBox)
-                .sort((a, b) => Number(a.id.replace(/\D/g, '')) - Number(b.id.replace(/\D/g, '')))
+                .filter((scene) => (
+                  (scene.campaign || 'awakenings') === mainBox
+                  && (!scene.expansionId || selectedExpansions.includes(scene.expansionId))
+                ))
+                .sort((a, b) => {
+                  const orderA = a.order ?? Number(a.id.replace(/\D/g, ''));
+                  const orderB = b.order ?? Number(b.id.replace(/\D/g, ''));
+                  return orderA - orderB;
+                })
                 .map((scene) => (
                   <div key={scene.id} data-testid={`scene-${scene.id}`} className="rounded-lg border border-amber-800/60 bg-amber-950/30 p-1.5">
                     <p className="text-[0.65rem] font-bold leading-tight text-amber-100">

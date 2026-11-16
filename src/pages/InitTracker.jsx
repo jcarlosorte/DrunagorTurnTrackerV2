@@ -1253,9 +1253,8 @@ const InitTracker = () => {
           createAndPlaceCommander(nextPc, deck);
         }, selected);
       }
-      return;
-    } else if (selected.categoria === 'overlord') {
-      
+      return uuid;
+    } else if (selected.categoria === 'overlord') {      
         const totalVida = selected.vida * (numHeroes);
         const runeIndex = runesColorMap[selected.rune];
         const runePosition = selected.runePosition;
@@ -1898,12 +1897,27 @@ const InitTracker = () => {
   };
 
   const activateScene = async (scene) => {
-    const needsSceneReset = !scene.preserveBoard && shouldResetSceneBoard(scene.id);
+    const needsSceneReset = !scene.preserveBoard && !scene.preserveRunesOnly && shouldResetSceneBoard(scene.id);
     if (needsSceneReset) {
       resetEnemySession();
       resetPlacedRunes();
       resetGameState();
       resetNodeMechanics();
+    } else if (scene.preserveRunesOnly) {
+      resetEnemySession();
+      resetPlacedRunes();
+      resetNodeMechanics();
+      resetSiegeEvent();
+      resetFlickeringBoarDeck();
+      resetGenerationPoints();
+      resetMagicCannons();
+      resetErradenEvent();
+      resetSorpresaEvent();
+      resetCorruptShipEvent();
+      resetSwanShipEvent();
+      resetTerribleCannons();
+      deactivateVisionClara();
+      setScenarioMonster(null);
     } else if (scene.clearEnemiesBefore) {
       resetEnemySession();
     }
@@ -1992,6 +2006,31 @@ const InitTracker = () => {
 
     if (scene.finalBoss) {
       await handleManualEnemyAdd('undead_king_boss_2', 'jefe', 'jefe', 'NoShow');
+    }
+
+    let sceneCommanderUuid = null;
+    if (scene.commanderWithPc) {
+      sceneCommanderUuid = await handleManualEnemyAdd(
+        scene.commanderWithPc.id,
+        'estandar',
+        'comandante',
+        'NoShow',
+        null,
+        null,
+        scene.commanderWithPc.pc ?? 1,
+      );
+    }
+
+    if (scene.askRuidoForCommander) {
+      const hasRuido = await appConfirm(
+        ti.ruidoQuestion || '¿Algún Héroe tiene el estado Ruido?',
+        {
+          title: ti.ruidoTitle || 'Ruido',
+          confirmLabel: ti.si || 'Sí',
+          cancelLabel: ti.no || 'No',
+        },
+      );
+      if (hasRuido && sceneCommanderUuid) addExtraTurn(sceneCommanderUuid);
     }
 
     if (scene.acechoBoss) {
@@ -2118,6 +2157,7 @@ const InitTracker = () => {
     await spawnSceneEnemies(scene);
 
     if (scene.bagRunesPerColor) reduceRuneBagTo(scene.bagRunesPerColor);
+    if (scene.advanceToNextHero) advanceSceneToNextHero();
 
     // El jefe del juego base limpia las cartas al colocarse; la escena debe
     // conservar su carta de Runa de apoyo.
@@ -5346,6 +5386,23 @@ const InitTracker = () => {
     if (!choice) return;
     setDuoDarenChoice(null);
     choice.resolve(companion || null);
+  };
+
+  const advanceSceneToNextHero = () => {
+    const order = effectiveTurnOrder || [];
+    if (order.length === 0) return;
+    const start = Number.isInteger(turnIndex) && turnIndex >= 0 ? turnIndex : -1;
+    for (let offset = 1; offset <= order.length; offset += 1) {
+      const index = (start + offset + order.length) % order.length;
+      if (order[index]?.type === 'hero') {
+        previousTurnIndexRef.current = turnIndex;
+        setPreviousTurnIndex(turnIndex);
+        setTurnIndex(index);
+        setLastRealTurnIndex(index);
+        setCurrentTurnEntity(null);
+        return;
+      }
+    }
   };
 
   const handleRestartGame = ({ runas = false, heroes = false, companions = false, followers = false, villagers = false, events = false } = {}) => {

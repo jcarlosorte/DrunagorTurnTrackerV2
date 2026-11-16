@@ -5607,6 +5607,24 @@ Unit       237 tests
 E2E        124/124
 ```
 
+### 330.ª tanda — Escenas de La Ruina de Luccanor
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Visibilidad** | Las escenas de Luccanor solo aparecen si su expansión está activa | `TopMenu` |
+| **Orden** | Se insertan entre los capítulos 03 y 04 del juego base | `scenes` |
+| **Capítulos** | Caos en el Muelle, La bienvenida, La ruina de Luccanor, Suelo Roto y De Vuelta a la Cubierta | `scenes` |
+| **Secuencial 02** | Conserva las runas y reinicia el resto del tablero | `InitTracker` |
+| **02c** | Avanza al siguiente Héroe, pregunta por Ruido, añade al Comandante con PC 1 y su activación extra | `InitTracker` |
+| **Pruebas** | 237 unitarios · 128 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        128/128
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
