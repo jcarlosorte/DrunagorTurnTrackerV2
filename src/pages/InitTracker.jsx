@@ -2006,14 +2006,26 @@ const InitTracker = () => {
     }
 
     const companionIds = scene.addCompanionIds || (scene.addCompanionId ? [scene.addCompanionId] : []);
-    const tharmagarIds = ['tharmagar_leal', 'tharmagar_resentido'];
+    const variantGroups = [
+      ['tharmagar_leal', 'tharmagar_resentido'],
+      ['janina', 'janina_desarmada'],
+    ];
+    const requestedCompanionIds = new Set(companionIds);
+    const unrequestedSpecialIds = variantGroups
+      .flat()
+      .filter((id) => !requestedCompanionIds.has(id));
+    if (unrequestedSpecialIds.length > 0) {
+      setTrackerData((prev) => ({
+        ...prev,
+        companions: (prev.companions || []).filter((entry) => !unrequestedSpecialIds.includes(entry.id)),
+      }));
+    }
     for (const companionId of companionIds) {
       const companion = getCompanion(companionId);
+      const variantGroup = variantGroups.find((group) => group.includes(companionId)) || [];
       const removeIds = [
         ...(scene.removeCompanionIds || []),
-        ...(tharmagarIds.includes(companionId)
-          ? tharmagarIds.filter((id) => id !== companionId)
-          : []),
+        ...variantGroup.filter((id) => id !== companionId),
       ];
       const currentCompanions = trackerData.companions || [];
       const existingTarget = currentCompanions.find((entry) => entry.id === companion?.id);

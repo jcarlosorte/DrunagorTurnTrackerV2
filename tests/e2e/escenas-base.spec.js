@@ -201,6 +201,25 @@ test.describe('Escenas del juego base', () => {
     }).toEqual(['tharmagar_leal:vorn']);
   });
 
+  test('una escena sin Tharmagar ni Janina los elimina sin quitar otros compañeros', async ({ page }) => {
+    const seed = buildSeed();
+    const tracker = JSON.parse(seed.trackerData);
+    tracker.companions = [
+      { uid: 'leal-x', id: 'tharmagar_leal', heroId: 'vorn', order: 0, vida: 5, vidaMax: 5, estadosAlterados: [], capacidades: [] },
+      { uid: 'janina-x', id: 'janina_desarmada', heroId: 'vorn', order: 1, vida: 5, vidaMax: 5, estadosAlterados: [], capacidades: [] },
+      { uid: 'drumm-x', id: 'drumm', heroId: 'vorn', order: 2, vida: 1, vidaMax: 1, estadosAlterados: [], capacidades: [] },
+    ];
+    seed.trackerData = JSON.stringify(tracker);
+    await seedStorage(page, seed);
+    await openTracker(page);
+    await activateScene(page, 'base_chapter1');
+
+    await expect.poll(async () => {
+      const saved = await readStorage(page, 'trackerData', {});
+      return (saved.companions || []).map((entry) => entry.id);
+    }).toEqual(['drumm']);
+  });
+
   test('Capítulo 14 añade Tharmagar y sus enemigos', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);

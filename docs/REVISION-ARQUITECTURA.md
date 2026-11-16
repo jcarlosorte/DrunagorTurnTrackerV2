@@ -5574,6 +5574,22 @@ Unit       237 tests
 E2E        122/122
 ```
 
+### 328.ª tanda — Tharmagar y Janina solo cuando el capítulo lo indica
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Compañeros especiales** | Tharmagar (Leal/Resentido) y Janina (normal/desarmada) se eliminan si la escena no los pide | `InitTracker` |
+| **Compatibilidad** | Se conservan otros compañeros y mascotas | `InitTracker` |
+| **Sustitución** | Si el capítulo pide una versión, se elimina la otra | `InitTracker` |
+| **Pruebas** | 237 unitarios · 123 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        123/123
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
