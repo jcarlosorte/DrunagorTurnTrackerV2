@@ -1420,19 +1420,31 @@ const InitTracker = () => {
             let vidaReducida = 0;
           
             // Pregunta 1: Rompereliquias
-            const romperReliquias = await appConfirm(`${ti.activaRompe}`, { title: ti.consecuencias || 'Consecuencias' });
+            const romperReliquias = await appConfirm(`${ti.activaRompe}`, {
+      title: ti.consecuencias || 'Consecuencias',
+      confirmLabel: ti.si || 'Sí',
+      cancelLabel: ti.no || 'No',
+    });
             if (romperReliquias) {
               vidaReducida += 15 * numHeroes;
             }
           
             // Pregunta 2: Amantes reunidos
-            const amantesReunidos = await appConfirm(`${ti.activaAmantes}`, { title: ti.consecuencias || 'Consecuencias' });
+            const amantesReunidos = await appConfirm(`${ti.activaAmantes}`, {
+      title: ti.consecuencias || 'Consecuencias',
+      confirmLabel: ti.si || 'Sí',
+      cancelLabel: ti.no || 'No',
+    });
             if (amantesReunidos) {
               vidaReducida += 15 * numHeroes;
             }
           
             // Pregunta 3: Dúo Dinámico
-            const duoDinamico = await appConfirm(`${ti.activaDuo}`, { title: ti.consecuencias || 'Consecuencias' });
+            const duoDinamico = await appConfirm(`${ti.activaDuo}`, {
+      title: ti.consecuencias || 'Consecuencias',
+      confirmLabel: ti.si || 'Sí',
+      cancelLabel: ti.no || 'No',
+    });
             if (duoDinamico) {
               showScenarioToast(`${ti.textoDuo}`);
             }

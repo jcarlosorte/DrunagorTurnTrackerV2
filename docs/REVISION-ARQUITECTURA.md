@@ -5485,6 +5485,20 @@ Unit       237 tests
 E2E        119/119
 ```
 
+### 322.ª tanda — Preguntas del Rey Redivivo con Sí/No
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Consecuencias** | Las tres preguntas del Encuentro Final usan Sí y No en vez de Aceptar/Cancelar | `InitTracker` |
+| **Pruebas** | 237 unitarios · 119 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        119/119
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
