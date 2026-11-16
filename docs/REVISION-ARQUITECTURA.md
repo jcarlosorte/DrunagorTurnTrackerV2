@@ -5873,6 +5873,22 @@ Unit       237 tests
 E2E        145/145
 ```
 
+### 346.ª tanda — Ataques encadenados de Aral’hezec
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Cartas** | Las cartas de Aral que ejecutan todos los ataques muestran los tres ataques debajo | `CommanderCardModal` |
+| **Cálculo** | X se calcula con las runas del color de la carta | `aralAttacks` |
+| **Ataques** | Aliento de Dragón, Golpe de Alas y Golpe de Cola con su valor calculado | `CommanderCardModal` |
+| **Pruebas** | 241 unitarios · 145 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        145/145
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

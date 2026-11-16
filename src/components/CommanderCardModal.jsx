@@ -7,6 +7,7 @@ import { useTracker } from '@/context/TrackerContext';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { CARTAS_COMANDANTE, CARTAS_JEFE } from '@/data/cartasEspeciales';
 import { formatCardText } from '@/utils/cardText';
+import { getAralAllAttackValues, isAralAllAttacksCard } from '@/utils/aralAttacks';
 
 const WAKENED_KEYWORDS = [
   'héroe menos corrompido',
@@ -82,6 +83,8 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
   const selectedHeroes = trackerData.heroes;
   const numHeroes = Math.min(selectedHeroes.length, 4);
   const numRunasColor = getRuneCount(carta.id === 'cmd_12' ? 'azul' : carta.rune);
+  const showAralAllAttacks = commander?.id === 'aralhezec' && isAralAllAttacksCard(carta.id);
+  const aralValues = getAralAllAttackValues(numRunasColor);
   const nombre = ta.nombre?.[carta.capacidades] || ta.nombre?.[`${carta.id}_${carta.cara}`] || ta.nombre?.[carta.id] || carta.nombre;
   const nombreEnemy = carta.nombreEnemy;
   const isWakenedCard = ['boss_26', 'boss_27', 'boss_28', 'boss_29', 'boss_30'].includes(carta.id);
@@ -266,6 +269,31 @@ const CommanderCardModal = ({ carta, onClose, onDelete }) => {
           <div className="rounded-xl border border-slate-700/80 bg-slate-950/60 p-4 text-sm leading-relaxed text-slate-200">
             {capacidad}
           </div>
+          {showAralAllAttacks && (
+            <div data-testid="aral-all-attacks" className="mt-3 rounded-xl border border-orange-700/60 bg-orange-950/30 p-3 text-xs text-orange-100">
+              <p className="font-bold">{ta.aralAllAttacksTitle || 'Luego, ejecuta todos los ataques'}</p>
+              <p className="mt-0.5 text-[0.68rem] opacity-80">
+                {(ta.aralAllAttacksX || 'X = {x} (runas de la carta)').replace('{x}', String(numRunasColor))}
+              </p>
+              <ol className="mt-2 space-y-1.5">
+                <li>
+                  <span className="font-semibold">1. {ta.aralDragonBreath || 'Aliento de Dragón'}:</span>{' '}
+                  {ta.aralDamage || 'Daño'} <strong className="text-amber-200">{aralValues.dragonBreath}</strong>{' '}
+                  <span className="opacity-70">(2 + 2X)</span>
+                </li>
+                <li>
+                  <span className="font-semibold">2. {ta.aralWingStrike || 'Golpe de Alas'}:</span>{' '}
+                  {ta.aralDamage || 'Daño'} <strong className="text-amber-200">{aralValues.wingStrike}</strong>{' '}
+                  <span className="opacity-70">(2 + X)</span> {ta.aralNotPreventable || 'No Prevenible'} y {ta.aralPush5 || 'Empujón 5'}
+                </li>
+                <li>
+                  <span className="font-semibold">3. {ta.aralTailSwipe || 'Golpe de Cola'}:</span>{' '}
+                  {ta.aralDamage || 'Daño'} <strong className="text-amber-200">{aralValues.tailSwipe}</strong>{' '}
+                  <span className="opacity-70">(X)</span> {ta.aralNotPreventable || 'No Prevenible'} y {ta.aralKnockdown || 'Derribo'}
+                </li>
+              </ol>
+            </div>
+          )}
           {ta.nota?.[carta.id] && !carta.lista_capacidad?.includes('PASIVA') && (
             <p className="mt-3 rounded-lg border border-amber-700/50 bg-amber-950/30 p-3 text-xs text-amber-100">
               {ta.nota[carta.id]}

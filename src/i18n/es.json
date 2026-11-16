@@ -1692,6 +1692,15 @@
       "over_19": "Primero, el Señor Supremo {SANA} {X}. (esta puede exceder su salud máxima inicial). Luego, el Señor Supremo {SALTA} al área donde está el héroe más fuerte y aparta a los personajes que estén en ella. Por último, el Señor Supremo inflige {DAÑO} {X} a cada uno de los enemigos que haya apartado.",
       "over_20": "Primero, el Señor Supremo gana {ESCUDO} {X}. (estas pueden exceder el límite de 4). Luego, el Señor Supremo sufre {QUEMADURA} 2 e inflige {QUEMADURA} {X} a cada enemigo a {ALCANCE} 1. (El Señor Supremo no sufre esta quemadura si es inmune)."
     },
+    "aralAllAttacksTitle": "Luego, ejecuta todos los ataques",
+    "aralAllAttacksX": "X = {x} (runas de la carta)",
+    "aralDragonBreath": "Aliento de Dragón",
+    "aralWingStrike": "Golpe de Alas",
+    "aralTailSwipe": "Golpe de Cola",
+    "aralDamage": "Daño",
+    "aralNotPreventable": "No Prevenible",
+    "aralPush5": "Empujón 5",
+    "aralKnockdown": "Derribo",
     "nota": {
       "cmd_11": "El escudo puede superar el máximo de 4.",
       "cmd_12": "Preguntar cuántos cubos de Sabiduría descartó cada héroe; el daño final es X × los cubos descartados.",
