@@ -5693,6 +5693,22 @@ Unit       237 tests
 E2E        134/134
 ```
 
+### 335.ª tanda — Piel Gruesa como inmunidad de Wermunggdir
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Datos** | PIEL GRUESA pasa de capacidad a inmunidad | `enemies` |
+| **Token** | Nuevo token circular ocre con escudo y capas de piel | assets |
+| **Etiquetas** | Nombre y descripción en español e inglés | i18n |
+| **Pruebas** | 237 unitarios · 134 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        134/134
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

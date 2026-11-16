@@ -24,6 +24,14 @@ test('Wermunggdir gana vida con los cubos de trauma y maldición', async ({ page
   await expect.poll(async () => {
     const enemies = await readStorage(page, 'initEnemiesState', {});
     const boss = (enemies.placedEnemies || []).find((entry) => entry.enemy.id === 'wermunggdir');
-    return { vida: boss?.enemy.vida, vidaMax: boss?.enemy.vidaMax };
-  }).toEqual({ vida: 56, vidaMax: 56 });
+    return {
+      vida: boss?.enemy.vida,
+      vidaMax: boss?.enemy.vidaMax,
+      inmunidades: boss?.enemy.inmunidad,
+    };
+  }).toEqual({
+    vida: 56,
+    vidaMax: 56,
+    inmunidades: ['GRANDE', 'HEMORRAGIA_I', 'SIGILO_I', 'PIEL_GRUESA'],
+  });
 });

@@ -19,6 +19,7 @@ import ki from "@/assets/assets_logo/ki.png";
 import fragil from "@/assets/assets_logo/fragil.png";
 import polimorfismo from "@/assets/assets_logo/polimorfismo.png";
 import restriccion from "@/assets/assets_logo/restriccion.png";
+import pielGruesa from "@/assets/assets_logo/piel_gruesa.png";
 import semillaDelCaos from "@/assets/assets_logo/semilla_del_caos.png";
 import atadura from "@/assets/assets_logo/atadura.png";
 import entropia from "@/assets/assets_logo/entropia.png";
@@ -138,7 +139,8 @@ export const INMUNIDADES = [
   { id: "POLIMORFISMO", imagen: polimorfismo },
   { id: "MARCA_DE_MONTARAZ", imagen: marca },
   { id: "FRAGIL", imagen: fragil },
-  { id: "RESTRICCION", imagen: restriccion }
+  { id: "RESTRICCION", imagen: restriccion },
+  { id: "PIEL_GRUESA", imagen: pielGruesa }
 ];
 
 export const CAPACIDADES_ACTIVADAS = [
