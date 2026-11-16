@@ -5643,6 +5643,23 @@ Unit       237 tests
 E2E        132/132
 ```
 
+### 332.ª tanda — Agrupación visual de escenas por juego y expansión
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Grupos** | Las escenas se agrupan por juego/expansión y mantienen el orden cronológico | `TopMenu` |
+| **Colores** | Juego base ámbar, Despertar cian, Luccanor violeta, Mundo Sombrío rosa y expansiones futuras con color automático | `TopMenu` |
+| **Visualización** | Secciones plegables, dos columnas y descripciones de dos líneas | `TopMenu` |
+| **Futuras** | Cualquier expansión nueva se agrupa y colorea automáticamente | `TopMenu` |
+| **Pruebas** | 237 unitarios · 133 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        133/133
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

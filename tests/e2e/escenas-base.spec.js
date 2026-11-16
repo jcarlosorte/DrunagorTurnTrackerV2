@@ -220,6 +220,26 @@ test.describe('Escenas del juego base', () => {
     }).toEqual(['drumm']);
   });
 
+  test('agrupa las escenas por juego y expansión', async ({ page }) => {
+    await seedStorage(page, buildSeed({
+      expansions: JSON.stringify(['base', 'luccanor', 'dark_world']),
+    }));
+    await openTracker(page);
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+
+    const baseGroup = page.getByTestId('scene-group-base-0');
+    const luccanorGroup = page.getByTestId('scene-group-luccanor-1');
+    const darkWorldGroup = page.getByTestId('scene-group-dark_world-3');
+    await expect(baseGroup).toBeVisible();
+    await expect(luccanorGroup).toBeVisible();
+    await expect(darkWorldGroup).toBeVisible();
+
+    await baseGroup.getByRole('button').first().click();
+    await expect(page.getByTestId('scene-base_chapter1')).toHaveCount(0);
+    await baseGroup.getByRole('button').first().click();
+    await expect(page.getByTestId('scene-base_chapter1')).toBeVisible();
+  });
+
   test('Capítulo 14 añade Tharmagar y sus enemigos', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);

@@ -1,5 +1,5 @@
 // src/components/TopMenu.jsx
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
@@ -64,6 +64,74 @@ const SpecialEventIcon = ({ size = 20 }) => (
   />
 );
 
+const SCENE_GROUP_THEMES = {
+  base: {
+    header: 'border-amber-700/60 bg-amber-950/40 text-amber-100',
+    card: 'border-amber-800/60 bg-amber-950/30',
+    title: 'text-amber-100',
+    description: 'text-amber-100/75',
+    button: 'bg-amber-700 hover:bg-amber-600 focus-visible:ring-amber-300',
+  },
+  awakenings: {
+    header: 'border-cyan-700/60 bg-cyan-950/40 text-cyan-100',
+    card: 'border-cyan-800/60 bg-cyan-950/30',
+    title: 'text-cyan-100',
+    description: 'text-cyan-100/75',
+    button: 'bg-cyan-700 hover:bg-cyan-600 focus-visible:ring-cyan-300',
+  },
+  luccanor: {
+    header: 'border-violet-700/60 bg-violet-950/40 text-violet-100',
+    card: 'border-violet-800/60 bg-violet-950/30',
+    title: 'text-violet-100',
+    description: 'text-violet-100/75',
+    button: 'bg-violet-700 hover:bg-violet-600 focus-visible:ring-violet-300',
+  },
+  dark_world: {
+    header: 'border-rose-700/60 bg-rose-950/40 text-rose-100',
+    card: 'border-rose-800/60 bg-rose-950/30',
+    title: 'text-rose-100',
+    description: 'text-rose-100/75',
+    button: 'bg-rose-700 hover:bg-rose-600 focus-visible:ring-rose-300',
+  },
+};
+
+const SCENE_FALLBACK_THEMES = [
+  {
+    header: 'border-emerald-700/60 bg-emerald-950/40 text-emerald-100',
+    card: 'border-emerald-800/60 bg-emerald-950/30',
+    title: 'text-emerald-100',
+    description: 'text-emerald-100/75',
+    button: 'bg-emerald-700 hover:bg-emerald-600 focus-visible:ring-emerald-300',
+  },
+  {
+    header: 'border-sky-700/60 bg-sky-950/40 text-sky-100',
+    card: 'border-sky-800/60 bg-sky-950/30',
+    title: 'text-sky-100',
+    description: 'text-sky-100/75',
+    button: 'bg-sky-700 hover:bg-sky-600 focus-visible:ring-sky-300',
+  },
+  {
+    header: 'border-orange-700/60 bg-orange-950/40 text-orange-100',
+    card: 'border-orange-800/60 bg-orange-950/30',
+    title: 'text-orange-100',
+    description: 'text-orange-100/75',
+    button: 'bg-orange-700 hover:bg-orange-600 focus-visible:ring-orange-300',
+  },
+  {
+    header: 'border-lime-700/60 bg-lime-950/40 text-lime-100',
+    card: 'border-lime-800/60 bg-lime-950/30',
+    title: 'text-lime-100',
+    description: 'text-lime-100/75',
+    button: 'bg-lime-700 hover:bg-lime-600 focus-visible:ring-lime-300',
+  },
+];
+
+function getSceneGroupTheme(key) {
+  if (SCENE_GROUP_THEMES[key]) return SCENE_GROUP_THEMES[key];
+  const hash = [...String(key)].reduce((total, char) => total + char.charCodeAt(0), 0);
+  return SCENE_FALLBACK_THEMES[hash % SCENE_FALLBACK_THEMES.length];
+}
+
 const TopMenu = ({
   onAddEnemy,
   onSelectCommander,
@@ -93,6 +161,7 @@ const TopMenu = ({
   const [manualSelect, setManualSelect] = useState('');
   const [showRuneFaceOptions, setShowRuneFaceOptions] = useState(false);
   const [showAssaultFaceOptions, setshowAssaultFaceOptions] = useState(false);
+  const [collapsedSceneGroups, setCollapsedSceneGroups] = useState({});
 
 
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
@@ -114,6 +183,30 @@ const TopMenu = ({
   const menuRefScenario = useRef(null);
   const menuRefNodes = useRef(null);
   const { selectedExpansions, mainBox, previewOtherBoxes, togglePreview, canPreviewOtherBoxes } = useExpansions();
+
+  const sceneGroups = useMemo(() => {
+    const ordered = SCENES
+      .filter((scene) => (
+        (scene.campaign || 'awakenings') === mainBox
+        && (!scene.expansionId || selectedExpansions.includes(scene.expansionId))
+      ))
+      .sort((a, b) => {
+        const orderA = a.order ?? Number(a.id.replace(/\D/g, ''));
+        const orderB = b.order ?? Number(b.id.replace(/\D/g, ''));
+        return orderA - orderB;
+      });
+    const sections = [];
+    ordered.forEach((scene) => {
+      const key = scene.expansionId || (scene.campaign === 'core' ? 'base' : 'awakenings');
+      const last = sections[sections.length - 1];
+      if (last?.key === key) {
+        last.scenes.push(scene);
+      } else {
+        sections.push({ key, scenes: [scene] });
+      }
+    });
+    return sections.map((section, index) => ({ ...section, index }));
+  }, [mainBox, selectedExpansions]);
   const activeEnemyExpansions = selectedExpansions.filter((expansionId) => (
     ENEMIES.some((enemy) => enemy.expansionId === expansionId)
   ));
@@ -2052,34 +2145,59 @@ const TopMenu = ({
               </span>
               <h2 className="text-base font-bold">{t.scenesTitle || 'Escenas'}</h2>
             </div>
-            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-4">
-              {[...SCENES]
-                .filter((scene) => (
-                  (scene.campaign || 'awakenings') === mainBox
-                  && (!scene.expansionId || selectedExpansions.includes(scene.expansionId))
-                ))
-                .sort((a, b) => {
-                  const orderA = a.order ?? Number(a.id.replace(/\D/g, ''));
-                  const orderB = b.order ?? Number(b.id.replace(/\D/g, ''));
-                  return orderA - orderB;
-                })
-                .map((scene) => (
-                  <div key={scene.id} data-testid={`scene-${scene.id}`} className="rounded-lg border border-amber-800/60 bg-amber-950/30 p-1.5">
-                    <p className="text-[0.65rem] font-bold leading-tight text-amber-100">
-                      {t[scene.titleKey] || scene.titleEn}
-                    </p>
-                    <p className="mt-0.5 line-clamp-1 text-[0.58rem] leading-snug text-amber-100/75">
-                      {t[scene.descriptionKey] || ''}
-                    </p>
+            <div className="space-y-2">
+              {sceneGroups.map((group) => {
+                const theme = getSceneGroupTheme(group.key);
+                const collapsed = Boolean(collapsedSceneGroups[`${group.key}-${group.index}`]);
+                const groupLabel = group.key === 'base'
+                  ? (translations.config?.box_core || t.sceneGroupBase || 'Juego base')
+                  : group.key === 'awakenings'
+                    ? (translations.config?.box_awakenings || t.sceneGroupAwakenings || 'Despertar')
+                    : (translations.expansions?.[group.key] || group.key);
+                return (
+                  <section
+                    key={`${group.key}-${group.index}`}
+                    data-testid={`scene-group-${group.key}-${group.index}`}
+                    className={`rounded-xl border p-1.5 ${theme.header}`}
+                  >
                     <button
                       type="button"
-                      onClick={() => activateScene(scene)}
-                      className="mt-1 min-h-6 rounded-md bg-amber-700 px-1.5 text-[0.58rem] font-bold text-white hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                      aria-expanded={!collapsed}
+                      onClick={() => setCollapsedSceneGroups((prev) => ({ ...prev, [`${group.key}-${group.index}`]: !prev[`${group.key}-${group.index}`] }))}
+                      className="flex w-full items-center justify-between gap-2 rounded-lg px-1 py-0.5 text-left"
                     >
-                      ▶ {t.activateChapter || 'Activar capítulo'}
+                      <span className="truncate text-[0.68rem] font-extrabold uppercase tracking-wide">
+                        {groupLabel}
+                      </span>
+                      <span className="flex shrink-0 items-center gap-1 text-[0.58rem] font-semibold opacity-80">
+                        {group.scenes.length}
+                        <span aria-hidden="true">{collapsed ? '▸' : '▾'}</span>
+                      </span>
                     </button>
-                  </div>
-                ))}
+                    {!collapsed && (
+                      <div className="mt-1 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                        {group.scenes.map((scene) => (
+                          <div key={scene.id} data-testid={`scene-${scene.id}`} className={`rounded-lg border p-1.5 ${theme.card}`}>
+                            <p className={`text-[0.65rem] font-bold leading-tight ${theme.title}`}>
+                              {t[scene.titleKey] || scene.titleEn}
+                            </p>
+                            <p className={`mt-0.5 line-clamp-2 text-[0.58rem] leading-snug ${theme.description}`}>
+                              {t[scene.descriptionKey] || ''}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => activateScene(scene)}
+                              className={`mt-1 min-h-6 rounded-md px-1.5 text-[0.58rem] font-bold text-white focus-visible:outline-none focus-visible:ring-2 ${theme.button}`}
+                            >
+                              ▶ {t.activateChapter || 'Activar capítulo'}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                );
+              })}
             </div>
           </motion.div>
         )}
