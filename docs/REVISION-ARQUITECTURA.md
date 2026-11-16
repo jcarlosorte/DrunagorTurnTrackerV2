@@ -5741,6 +5741,25 @@ Unit       237 tests
 E2E        134/134
 ```
 
+### 338.ª tanda — Escenas de Desierto Avernal
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Visibilidad** | Escenas solo con la expansión Desierto Avernal activa | `scenes` |
+| **Orden** | Se añaden después del final del juego base | `scenes` |
+| **Runas** | Asalto de Wermunggdir cara A en los capítulos 01, 02 y 03 | `scenes` |
+| **Eventos** | Senda Norte (A), Senda Sur (B) y Senda Sur (C) | `scenes` |
+| **3b** | Limpia enemigos y cartas, recupera héroes, mascotas y compañeros y añade a Wermunggdir al final | `scenes`, `InitTracker` |
+| **Color** | Grupo propio naranja para Desierto Avernal | `TopMenu` |
+| **Pruebas** | 237 unitarios · 137 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        137/137
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

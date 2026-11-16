@@ -93,6 +93,13 @@ const SCENE_GROUP_THEMES = {
     description: 'text-rose-100/75',
     button: 'bg-rose-700 hover:bg-rose-600 focus-visible:ring-rose-300',
   },
+  infernal_desert: {
+    header: 'border-orange-700/60 bg-orange-950/40 text-orange-100',
+    card: 'border-orange-800/60 bg-orange-950/30',
+    title: 'text-orange-100',
+    description: 'text-orange-100/75',
+    button: 'bg-orange-700 hover:bg-orange-600 focus-visible:ring-orange-300',
+  },
 };
 
 const SCENE_FALLBACK_THEMES = [

@@ -1937,6 +1937,35 @@ const InitTracker = () => {
       resetEnemySession();
     }
 
+    if (scene.prepareWermunggdir) {
+      resetEnemySession();
+      resetPlacedRunes();
+      const keptStates = new Set(['ESCUDO', 'KI', 'CONCENTRACION', 'FRUTO_DE_VIDA', 'FURIA', 'ENTROPIA']);
+      (trackerData.heroes || []).forEach((heroId) => {
+        const extras = getHeroExtras(heroId);
+        if (!extras) return;
+        const cubos = Object.fromEntries(
+          Object.entries(extras.cubosMax || {}).map(([key, value]) => [key, value || 0]),
+        );
+        updateHeroExtras(heroId, {
+          vida: extras.vidaMax,
+          cubos,
+          estados: (extras.estados || []).filter((estado) => keptStates.has(estado?.id || estado)),
+          estadosAlterados: (extras.estadosAlterados || []).filter((estado) => keptStates.has(estado?.id)),
+        });
+      });
+      setTrackerData((prev) => ({
+        ...prev,
+        companions: (prev.companions || []).map((companion) => ({
+          ...companion,
+          vida: companion.vidaMax ?? companion.vida,
+          estados: (companion.estados || []).filter((estado) => keptStates.has(estado?.id || estado)),
+          estadosAlterados: (companion.estadosAlterados || []).filter((estado) => keptStates.has(estado?.id)),
+        })),
+      }));
+      refreshHeroExtras();
+    }
+
     if (scene.returnActiveNodes) {
       nodosOscuridad
         .filter((nodo) => nodo.estado === 'activa')
@@ -2176,6 +2205,10 @@ const InitTracker = () => {
     }
 
     await spawnSceneEnemies(scene);
+
+    if (scene.finalBossId) {
+      await handleManualEnemyAdd(scene.finalBossId, 'jefe', 'jefe', 'NoShow');
+    }
 
     if (scene.eternalDarkness) {
       await new Promise((resolve) => { window.setTimeout(resolve, 100); });
