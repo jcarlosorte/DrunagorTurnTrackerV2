@@ -1425,6 +1425,13 @@ export const GameProvider = ({ children }) => {
     setAldeanos([]);
     setAldeanosRescatados(0);
   };
+
+  const resetTerribleCannons = () => {
+    setTerribleCannons([
+      { id: 'terrible_1', time: 0 },
+      { id: 'terrible_2', time: 0 },
+    ]);
+  };
   
   const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
@@ -1579,6 +1586,7 @@ export const GameProvider = ({ children }) => {
         setRescue, rescue, initializeRescue, removeRescue,
         aldeanos, addAldeano, setAldeanoVida, removeAldeano, rescueAldeano, resetAldeanos,
         aldeanosRescatados, setAldeanosRescatados,
+        resetTerribleCannons,
         initializeDecks,
         drawCardFromDeck,
         campamento,

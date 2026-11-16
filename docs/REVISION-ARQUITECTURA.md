@@ -5590,6 +5590,23 @@ Unit       237 tests
 E2E        123/123
 ```
 
+### 329.ª tanda — Grupos de reinicio de partida
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Compañeros** | Nuevo grupo para restablecer vida y estados de compañeros y mascotas | `RestartGameDialog`, `InitTracker` |
+| **Seguidores** | Nuevo grupo para restablecer vida y estados de seguidores | `RestartGameDialog`, `InitTracker` |
+| **Aldeanos** | Nuevo grupo para limpiar aldeanos y contador de rescatados | `RestartGameDialog`, `InitTracker` |
+| **Eventos** | Nuevo grupo para sorpresas, mazos de escenario, cañones terribles y Visión Clara | `RestartGameDialog`, `InitTracker` |
+| **Pruebas** | 237 unitarios · 124 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        124/124
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

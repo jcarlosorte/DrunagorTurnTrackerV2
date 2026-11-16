@@ -283,7 +283,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, initializeSpawnPoints, controlPoints, initializeControlPoints, initializeDarknessPiles, runeKeys, initializeRuneKeys, reduceRuneBagTo, rescue, aldeanos, aldeanosRescatados, addAldeano, generationPoints, addGenerationPoint, pilas, pilasConcentrada, addActiveFogNode, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, erradenEvent, sorpresaEvent, addSorpresaEvent, drawSorpresaCard, addCorruptShipEvent, corruptShipEvent, addSwanShipEvent, swanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, initializeSpawnPoints, controlPoints, initializeControlPoints, initializeDarknessPiles, runeKeys, initializeRuneKeys, reduceRuneBagTo, rescue, aldeanos, aldeanosRescatados, addAldeano, resetAldeanos, generationPoints, addGenerationPoint, pilas, pilasConcentrada, addActiveFogNode, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, resetErradenEvent, erradenEvent, sorpresaEvent, addSorpresaEvent, drawSorpresaCard, resetSorpresaEvent, addCorruptShipEvent, corruptShipEvent, resetCorruptShipEvent, addSwanShipEvent, swanShipEvent, resetSwanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, resetTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -5348,7 +5348,7 @@ const InitTracker = () => {
     choice.resolve(companion || null);
   };
 
-  const handleRestartGame = ({ runas = false, heroes = false } = {}) => {
+  const handleRestartGame = ({ runas = false, heroes = false, companions = false, followers = false, villagers = false, events = false } = {}) => {
     resetTurnAndHistory();
     clearGameLog();
     removeStorage('trackerSession');
@@ -5371,6 +5371,10 @@ const InitTracker = () => {
 
     if (heroes) {
       (trackerData.heroes || []).forEach((heroId) => resetHeroForNewGame(heroId));
+      refreshHeroExtras();
+    }
+
+    if (companions) {
       setTrackerData((prev) => ({
         ...prev,
         companions: (prev.companions || []).map((companion) => ({
@@ -5379,7 +5383,28 @@ const InitTracker = () => {
           estadosAlterados: [],
         })),
       }));
-      refreshHeroExtras();
+    }
+
+    if (followers) {
+      setTrackerData((prev) => ({
+        ...prev,
+        followers: (prev.followers || []).map((follower) => ({
+          ...follower,
+          vida: follower.vidaMax ?? follower.vida,
+          estadosAlterados: [],
+        })),
+      }));
+    }
+
+    if (villagers) resetAldeanos();
+
+    if (events) {
+      resetErradenEvent();
+      resetSorpresaEvent();
+      resetCorruptShipEvent();
+      resetSwanShipEvent();
+      resetTerribleCannons();
+      deactivateVisionClara();
     }
 
     setIsRestartOpen(false);

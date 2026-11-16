@@ -129,6 +129,71 @@ test.describe('Fase E · campamento y reinicio', () => {
     await expect.poll(async () => (await readStorage(page, 'drunagor:saves:index:v1', [])).length).toBeGreaterThan(0);
   });
 
+  test('reiniciar permite limpiar compañeros, seguidores, aldeanos y eventos', async ({ page }) => {
+    const seed = buildSeed();
+    const tracker = JSON.parse(seed.trackerData);
+    tracker.companions = [{
+      uid: 'companion-reset',
+      id: 'drumm',
+      heroId: 'vorn',
+      order: 0,
+      vida: 0,
+      vidaMax: 1,
+      estadosAlterados: [{ id: 'VENENO_I', count: 1 }],
+      capacidades: [],
+    }];
+    tracker.followers = [{
+      uid: 'follower-reset',
+      id: 'vorn_guerrero',
+      vida: 1,
+      vidaMax: 5,
+      estadosAlterados: [{ id: 'QUEMADURA_I', count: 1 }],
+    }];
+    seed.trackerData = JSON.stringify(tracker);
+    await seedStorage(page, seed);
+    await openTracker(page);
+    await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('gameState') || '{}');
+      state.aldeanos = [{ uuid: 'ald-reset', cardId: 'aldeano_2', color: 'azul', vida: 1, vidaMax: 4 }];
+      state.aldeanosRescatados = 2;
+      state.sorpresaEvent = { active: true, deck: ['sorpresa_3'], discarded: [] };
+      localStorage.setItem('gameState', JSON.stringify(state));
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.track-slot');
+
+    await page.getByRole('button', { name: 'Menú de juego' }).click();
+    await page.getByRole('menuitem', { name: 'Reiniciar partida' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Reiniciar partida' });
+    await dialog.getByRole('checkbox').nth(2).check();
+    await dialog.getByRole('checkbox').nth(3).check();
+    await dialog.getByRole('checkbox').nth(4).check();
+    await dialog.getByRole('checkbox').nth(5).check();
+    await dialog.getByRole('button', { name: 'Reiniciar partida' }).click();
+
+    await expect.poll(async () => {
+      const saved = await readStorage(page, 'trackerData', {});
+      const game = await readStorage(page, 'gameState', {});
+      return {
+        companionLife: saved.companions?.[0]?.vida,
+        companionStates: saved.companions?.[0]?.estadosAlterados?.length,
+        followerLife: saved.followers?.[0]?.vida,
+        followerStates: saved.followers?.[0]?.estadosAlterados?.length,
+        villagers: (game.aldeanos || []).length,
+        rescued: game.aldeanosRescatados,
+        surpriseActive: game.sorpresaEvent?.active,
+      };
+    }).toEqual({
+      companionLife: 1,
+      companionStates: 0,
+      followerLife: 5,
+      followerStates: 0,
+      villagers: 0,
+      rescued: 0,
+      surpriseActive: false,
+    });
+  });
+
   test('reiniciar partida limpia turno, historial, enemigos, runas y héroes', async ({ page }) => {
     await seedStorage(page, {
       ...buildSeed(),
