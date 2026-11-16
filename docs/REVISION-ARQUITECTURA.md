@@ -5855,6 +5855,24 @@ Unit       237 tests
 E2E        142/142
 ```
 
+### 345.ª tanda — Escenas de El Ascenso del Dragón No Muerto
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Visibilidad** | Escenas solo con la expansión activa, tras Desierto Avernal | `scenes` |
+| **Monstruo Huésped** | Se activa en los capítulos 01, 02 y 03; sigue activo en 01b | `scenes`, `InitTracker` |
+| **Enemigos** | Granjeros Corruptos, Abominaciones, Carne Podrida, Caballeros Sombríos y Sectarios | `scenes` |
+| **3b** | Limpia enemigos y cartas, desactiva Monstruo Huésped, recupera al grupo y añade a Aral’hezec al final | `scenes`, `InitTracker` |
+| **Color** | Grupo propio esmeralda | `TopMenu` |
+| **Pruebas** | 237 unitarios · 145 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        145/145
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

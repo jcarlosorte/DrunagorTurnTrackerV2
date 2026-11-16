@@ -221,7 +221,7 @@ const InitTracker = () => {
     () => buildTurnOrder(TURN_ORDER, trackerData.companions || [], trackerData.placedHeroes || [], trackerData.followers || []),
     [trackerData.companions, trackerData.placedHeroes, trackerData.followers],
   );
-  const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetEnemySession, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, acechoActivo, activaAcecho, invadidosActivo, desactivaAcecho, desactivaHuesped, desactivaOscuridad, desactivaAsalto, desactivaInvadidos } = useInitEnemies();
+  const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetEnemySession, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, activaHuesped, acechoActivo, activaAcecho, invadidosActivo, desactivaAcecho, desactivaHuesped, desactivaOscuridad, desactivaAsalto, desactivaInvadidos } = useInitEnemies();
   const { translations } = useLanguage();
   const { selectedExpansions, mainBox, previewOtherBoxes } = useExpansions();
   const ti = translations.trackerInit || {};
@@ -1937,7 +1937,7 @@ const InitTracker = () => {
       resetEnemySession();
     }
 
-    if (scene.prepareWermunggdir) {
+    if (scene.prepareWermunggdir || scene.prepareFinalBoss) {
       resetEnemySession();
       resetPlacedRunes();
       const keptStates = new Set(['ESCUDO', 'KI', 'CONCENTRACION', 'FRUTO_DE_VIDA', 'FURIA', 'ENTROPIA']);
@@ -1964,6 +1964,7 @@ const InitTracker = () => {
         })),
       }));
       refreshHeroExtras();
+      if (scene.deactivateHostMonster) desactivaHuesped();
     }
 
     if (scene.returnActiveNodes) {
@@ -2053,6 +2054,8 @@ const InitTracker = () => {
       sceneEternalDarknessRef.current = true;
       setEternalDarknessActive(true);
     }
+
+    if (scene.activateHostMonster) activaHuesped();
 
     if (scene.finalBoss) {
       await handleManualEnemyAdd('undead_king_boss_2', 'jefe', 'jefe', 'NoShow');

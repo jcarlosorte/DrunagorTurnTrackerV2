@@ -100,6 +100,13 @@ const SCENE_GROUP_THEMES = {
     description: 'text-orange-100/75',
     button: 'bg-orange-700 hover:bg-orange-600 focus-visible:ring-orange-300',
   },
+  undead_dragon: {
+    header: 'border-emerald-700/60 bg-emerald-950/40 text-emerald-100',
+    card: 'border-emerald-800/60 bg-emerald-950/30',
+    title: 'text-emerald-100',
+    description: 'text-emerald-100/75',
+    button: 'bg-emerald-700 hover:bg-emerald-600 focus-visible:ring-emerald-300',
+  },
 };
 
 const SCENE_FALLBACK_THEMES = [
