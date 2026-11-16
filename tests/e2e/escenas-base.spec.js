@@ -177,6 +177,30 @@ test.describe('Escenas del juego base', () => {
     });
   });
 
+  test('una escena que pide Tharmagar Leal elimina al Resentido', async ({ page }) => {
+    const seed = buildSeed();
+    const tracker = JSON.parse(seed.trackerData);
+    tracker.companions = [{
+      uid: 'tharmagar-resentido-test',
+      id: 'tharmagar_resentido',
+      heroId: 'vorn',
+      order: 0,
+      vida: 5,
+      vidaMax: 5,
+      estadosAlterados: [],
+      capacidades: [],
+    }];
+    seed.trackerData = JSON.stringify(tracker);
+    await seedStorage(page, seed);
+    await openTracker(page);
+    await activateScene(page, 'base_chapter14');
+
+    await expect.poll(async () => {
+      const saved = await readStorage(page, 'trackerData', {});
+      return (saved.companions || []).map((entry) => `${entry.id}:${entry.heroId}`);
+    }).toEqual(['tharmagar_leal:vorn']);
+  });
+
   test('Capítulo 14 añade Tharmagar y sus enemigos', async ({ page }) => {
     await seedStorage(page, baseSeed());
     await openTracker(page);

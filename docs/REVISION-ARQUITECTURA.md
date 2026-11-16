@@ -5530,6 +5530,21 @@ Unit       237 tests
 E2E        121/121
 ```
 
+### 325.ª tanda — Versión correcta de Tharmagar en escenas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Leal/Resentido** | Si la escena pide una versión y está la otra, se elimina automáticamente | `InitTracker` |
+| **Héroe** | La sustitución conserva el héroe asociado cuando ya estaba alguna versión | `InitTracker` |
+| **Pruebas** | 237 unitarios · 122 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        122/122
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

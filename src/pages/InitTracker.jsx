@@ -2004,9 +2004,15 @@ const InitTracker = () => {
     }
 
     const companionIds = scene.addCompanionIds || (scene.addCompanionId ? [scene.addCompanionId] : []);
+    const tharmagarIds = ['tharmagar_leal', 'tharmagar_resentido'];
     for (const companionId of companionIds) {
       const companion = getCompanion(companionId);
-      const removeIds = scene.removeCompanionIds || [];
+      const removeIds = [
+        ...(scene.removeCompanionIds || []),
+        ...(tharmagarIds.includes(companionId)
+          ? tharmagarIds.filter((id) => id !== companionId)
+          : []),
+      ];
       const currentCompanions = trackerData.companions || [];
       const existingTarget = currentCompanions.find((entry) => entry.id === companion?.id);
       const displaced = currentCompanions.find((entry) => removeIds.includes(entry.id));
