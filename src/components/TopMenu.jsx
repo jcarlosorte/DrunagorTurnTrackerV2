@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { useSavesUi } from '@/context/SavesUiContext';
-import { GiArchiveRegister, GiSwordClash, GiSpikedDragonHead, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiWoodenCrate, GiPawPrint, GiCampfire, GiWoodenSign } from 'react-icons/gi';
+import { GiArchiveRegister, GiSwordClash, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiWoodenCrate, GiPawPrint, GiCampfire, GiWoodenSign } from 'react-icons/gi';
 import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
@@ -1207,31 +1207,6 @@ const TopMenu = ({
                   </div>
                 )}
 
-                 {/* --- Bloque 4: MONSTRUO HUESPED (solo si expansión activa) --- */}
-                 {showCoreContent && selectedExpansions.includes("undead_dragon") && (
-                  <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"> 
-                    <div className="flex flex-wrap gap-2 justify-center">
-                      <GiSpikedDragonHead className="text-indigo-300 text-xl" />
-                      
-                      {!huespedActivo ? (
-                        <button
-                          onClick={activaHuesped}
-                          className="state-btn-add text-white text-xs px-2 py-1 rounded"
-                        >
-                          {t.activaHuesped}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={desactivaHuesped}
-                          className="bg-blue-700 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded"
-                        >
-                          {t.desactivaHuesped}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-
                 {/* --- Bloque 5: INVADIDOS --- */}
                 {showCoreContent && (
                 <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"> 
@@ -1963,6 +1938,27 @@ const TopMenu = ({
                   {eternalDarknessActive
                     ? (t.eternalDarknessDisable || 'Desactivar Ocuridad Eterna')
                     : (t.eternalDarknessEnable || 'Activar Ocuridad Eterna')}
+                </button>
+              </div>
+            )}
+
+            {showCoreContent && (
+              <div data-testid="host-monster-toggle" className="rounded-xl border border-indigo-800/60 bg-indigo-950/30 p-2">
+                <p className="text-xs font-bold text-indigo-100">{t.hostMonsterTitle || 'Monstruo Huésped'}</p>
+                <p className="mt-1 text-[0.6rem] text-indigo-200/80">
+                  {t.hostMonsterSummary || 'Al derrotar un monstruo se roba 1 Runa si es pequeño y 2 si es Grande.'}
+                </p>
+                <button
+                  type="button"
+                  aria-pressed={huespedActivo}
+                  onClick={huespedActivo ? desactivaHuesped : activaHuesped}
+                  className={`mt-2 min-h-9 rounded-lg px-3 text-xs font-bold text-white ${
+                    huespedActivo ? 'bg-indigo-600 hover:bg-indigo-500' : 'bg-slate-700 hover:bg-slate-600'
+                  }`}
+                >
+                  {huespedActivo
+                    ? (t.desactivaHuesped || 'Desactivar Monstruo Huésped')
+                    : (t.activaHuesped || 'Activar Monstruo Huésped')}
                 </button>
               </div>
             )}

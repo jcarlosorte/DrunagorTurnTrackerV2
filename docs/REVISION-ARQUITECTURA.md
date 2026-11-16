@@ -5760,6 +5760,22 @@ Unit       237 tests
 E2E        137/137
 ```
 
+### 339.ª tanda — Pasiva Monstruo Huésped
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Menú** | Monstruo Huésped disponible en Eventos y mecánicas especiales | `TopMenu` |
+| **Aviso** | Aviso persistente sobre el track con el texto completo de la mecánica | `InitTracker` |
+| **Robo** | 1 runa para enemigos normales y 2 para `size: "grande"` | `InitEnemiesContext` |
+| **Pruebas** | 237 unitarios · 138 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        138/138
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

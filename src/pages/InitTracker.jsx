@@ -5563,11 +5563,12 @@ const InitTracker = () => {
             )}
 
             {huespedActivo && (
-              <div className="mt-3 p-2 bg-indigo-900 rounded-lg">
-                <div className="text-xs text-indigo-300 font-bold">
-                  {ti.huespedActivo}
-                </div>
-              </div>
+              <TrackWarningBanner
+                title={ti.hostMonsterTitle || 'Monstruo Huésped'}
+                summary={ti.hostMonsterSummary || 'Cuando un monstruo es derrotado se robará 1 Runa para monstruos pequeños y 2 Runas para Grandes.'}
+                details={ti.hostMonsterDetails || 'Cuando un monstruo es derrotado se robará 1 Runa para monstruos pequeños y 2 Runas para Grandes, luego se colocará la loseta de Oscuridad desde donde ha sido derrotado como si fuera el punto de generación, luego coloca la runa en el medidor.'}
+                labels={{ details: ti.details || 'Detalles' }}
+              />
             )}
 
             {/* 🐉 Aviso de la mecánica de Rey redivivo acecha */}
