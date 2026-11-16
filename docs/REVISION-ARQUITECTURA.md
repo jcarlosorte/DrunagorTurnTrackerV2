@@ -5499,6 +5499,22 @@ Unit       237 tests
 E2E        119/119
 ```
 
+### 323.ª tanda — Héroe de Dárem del Dúo Dinámico
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Dúo Dinámico** | Al responder Sí, permite elegir un Héroe de Dárem | `InitTracker` |
+| **Asignación** | El compañero se añade al héroe con rol Líder (o Guardián en Despertar) | `InitTracker` |
+| **Sin líder** | Se avisa si no existe un héroe con ese rol | `InitTracker` |
+| **Pruebas** | 237 unitarios · 119 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        119/119
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

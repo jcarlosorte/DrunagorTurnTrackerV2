@@ -86,7 +86,7 @@ import { isHeroManagementEnabled } from '@/utils/heroSettings';
 import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import { findNextActiveEntity, buildTurnOrder, indexOfEntityInOrder } from '@/utils/turnOrder';
-import { getCompanion, getCompanionName, getCompanionBackground, createCompanionEntry } from '@/data/companions';
+import { getCompanion, getCompanionName, getCompanionBackground, createCompanionEntry, getCompanionGroup, getCompanionsForExpansions } from '@/data/companions';
 import { getFollower, getFollowerState } from '@/data/followers';
 import { ROLE_POSITIONS, ROLES_ON_TOP as rolesOnTop, ROLES_ON_BOTTOM as rolesOnBottom, getRoleSide } from '@/data/roles';
 import { readCampFollowers } from '@/utils/campFollowers';
@@ -267,6 +267,7 @@ const InitTracker = () => {
   const [isCampPhaseOpen, setIsCampPhaseOpen] = useState(false);
   const [isSequentialAdventureOpen, setIsSequentialAdventureOpen] = useState(false);
   const [sceneCompanionChoice, setSceneCompanionChoice] = useState(null);
+  const [duoDarenChoice, setDuoDarenChoice] = useState(null);
   const [isCampOpen, setIsCampOpen] = useState(false);
   const specialCategories = ['comandante', 'jefe', 'overlord', 'hero', 'esbirro', 'escenario'];
   const isFlickeringBoar = (enemy) => (
@@ -1447,6 +1448,30 @@ const InitTracker = () => {
     });
             if (duoDinamico) {
               showScenarioToast(`${ti.textoDuo}`);
+              const leader = (trackerData.placedHeroes || []).find((hero) => (
+                ['lider', 'guardian'].includes(trackerData.roles?.[hero.id])
+              )) || (trackerData.heroes || []).find((heroId) => (
+                ['lider', 'guardian'].includes(trackerData.roles?.[heroId])
+              ));
+              const leaderId = typeof leader === 'string' ? leader : leader?.id;
+              const existingIds = new Set((trackerData.companions || []).map((entry) => entry.id));
+              const darenOptions = getCompanionsForExpansions(selectedExpansions)
+                .filter((companion) => getCompanionGroup(companion) === 'daren_hero' && !existingIds.has(companion.id));
+              if (leaderId && darenOptions.length > 0) {
+                const chosen = await chooseDuoDarenCompanion(darenOptions);
+                if (chosen) {
+                  setTrackerData((prev) => {
+                    if ((prev.companions || []).some((entry) => entry.id === chosen.id)) return prev;
+                    const order = (prev.companions || []).filter((entry) => entry.heroId === leaderId).length;
+                    return {
+                      ...prev,
+                      companions: [...(prev.companions || []), createCompanionEntry(chosen, leaderId, order)],
+                    };
+                  });
+                }
+              } else if (!leaderId) {
+                showScenarioToast(ti.duoNoLeader || 'No hay ningún héroe con el rol de Líder para el Dúo Dinámico.');
+              }
             }
           
             // Aplicar reducción de vida si corresponde
@@ -5288,6 +5313,17 @@ const InitTracker = () => {
     choice.resolve(heroId || null);
   };
 
+  const chooseDuoDarenCompanion = (options) => new Promise((resolve) => {
+    setDuoDarenChoice({ options, resolve });
+  });
+
+  const resolveDuoDarenCompanion = (companion) => {
+    const choice = duoDarenChoice;
+    if (!choice) return;
+    setDuoDarenChoice(null);
+    choice.resolve(companion || null);
+  };
+
   const handleRestartGame = ({ runas = false, heroes = false } = {}) => {
     resetTurnAndHistory();
     clearGameLog();
@@ -6161,6 +6197,42 @@ const InitTracker = () => {
               <button
                 type="button"
                 onClick={() => resolveSceneCompanionHero(null)}
+                className="mt-3 min-h-9 w-full rounded-lg bg-slate-700 px-3 text-xs font-semibold text-slate-200 hover:bg-slate-600"
+              >
+                {ti.cancel || 'Cancelar'}
+              </button>
+            </div>
+          </div>
+        )}
+        {duoDarenChoice && (
+          <div className="layer-modal fixed inset-0 z-[95] flex items-center justify-center bg-black/70 p-4" role="presentation">
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={ti.duoDarenTitle || 'Dúo Dinámico: Héroe de Dárem'}
+              className="w-full max-w-md rounded-2xl border border-slate-600 bg-slate-900 p-4 text-white shadow-2xl"
+            >
+              <h2 className="text-base font-bold">
+                {ti.duoDarenTitle || 'Dúo Dinámico: Héroe de Dárem'}
+              </h2>
+              <p className="mt-1 text-sm text-slate-300">
+                {ti.duoDarenQuestion || 'Elige un Héroe de Dárem para invocarlo y añadirlo al héroe con el rol de Líder.'}
+              </p>
+              <div className="mt-3 grid gap-1.5">
+                {duoDarenChoice.options.map((companion) => (
+                  <button
+                    key={companion.id}
+                    type="button"
+                    onClick={() => resolveDuoDarenCompanion(companion)}
+                    className="min-h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-left text-sm font-semibold text-white hover:border-emerald-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+                  >
+                    {getCompanionName(companion.id)}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => resolveDuoDarenCompanion(null)}
                 className="mt-3 min-h-9 w-full rounded-lg bg-slate-700 px-3 text-xs font-semibold text-slate-200 hover:bg-slate-600"
               >
                 {ti.cancel || 'Cancelar'}
