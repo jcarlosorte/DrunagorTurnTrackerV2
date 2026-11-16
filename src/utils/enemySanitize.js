@@ -19,6 +19,7 @@ const CAMPOS = [
   'vidaMax',
   'movimiento',
   'ataque',
+  'ataqueOscuridad',
   'tipo_ataque',
   'color',
   'imagen',

@@ -283,7 +283,7 @@ const InitTracker = () => {
         ...pilasConcentrada.filter((pila) => pila.estado === 'activa'),
       ];
   };
-  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, initializeSpawnPoints, controlPoints, initializeControlPoints, initializeDarknessPiles, runeKeys, initializeRuneKeys, reduceRuneBagTo, rescue, aldeanos, aldeanosRescatados, addAldeano, resetAldeanos, generationPoints, addGenerationPoint, pilas, pilasConcentrada, addActiveFogNode, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, resetErradenEvent, erradenEvent, sorpresaEvent, addSorpresaEvent, drawSorpresaCard, resetSorpresaEvent, addCorruptShipEvent, corruptShipEvent, resetCorruptShipEvent, addSwanShipEvent, swanShipEvent, resetSwanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, terribleCannons, addTerribleCannonTime, tickTerribleCannons, resetTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
+  const { availableTiles, usedTiles, manifestTile, tileToasts, setTileToasts, showTileToast, discardTileByColor, runes, getRuneCount, drawMultipleTiles, tileWarning, setTileWarning, scenarioMonster, setScenarioMonster, spawnPoints, initializeSpawnPoints, controlPoints, initializeControlPoints, initializeDarknessPiles, runeKeys, initializeRuneKeys, reduceRuneBagTo, rescue, aldeanos, aldeanosRescatados, addAldeano, resetAldeanos, generationPoints, addGenerationPoint, pilas, pilasConcentrada, addActiveFogNode, nodosOscuridad, addNewNodoOscuridad, activarNodoOscuridad, placeTilesFromNodoOscuridadToTrack, placeSceneRunes, initializeDecks, drawCardFromDeck, resetGameState, resetNodeMechanics, restoreRunesFromSequence, resetGenerationPoints, magicCannons, addMagicCannon, setMagicCannonLoaded, resetMagicCannons, rompenodoNotice, clearRompenodoNotice, addErradenEvent, drawErradenCard, resetErradenEvent, erradenEvent, sorpresaEvent, addSorpresaEvent, drawSorpresaCard, resetSorpresaEvent, addCorruptShipEvent, corruptShipEvent, resetCorruptShipEvent, addSwanShipEvent, swanShipEvent, resetSwanShipEvent, drawCorruptShipCard, drawSwanShipCard, flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck, siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent, visionClaraActive, activateVisionClara, deactivateVisionClara, eternalDarknessActive, setEternalDarknessActive, terribleCannons, addTerribleCannonTime, tickTerribleCannons, resetTerribleCannons, terribleCannonNotice, clearTerribleCannonNotice } = useGame();
   siegeActiveRef.current = siegeEvent.active;
 
   const { placedRunes, placeRune, removeRuneByUUID, resetPlacedRunes, setPlacedRunes } = useInitRunes();
@@ -329,6 +329,20 @@ const InitTracker = () => {
   const [drawnEventCard, setDrawnEventCard] = useState(null);
   const [drawnSorpresaCard, setDrawnSorpresaCard] = useState(null);
   const [mistsSofocantesActive, setMistsSofocantesActive] = useState(false);
+  const eternalDarknessRef = useRef(eternalDarknessActive);
+  const sceneEternalDarknessRef = useRef(false);
+
+  useEffect(() => {
+    eternalDarknessRef.current = eternalDarknessActive;
+  }, [eternalDarknessActive]);
+
+  const placeEnemyWithDarkness = (payload) => placeEnemy({
+    ...payload,
+    enemy: {
+      ...payload.enemy,
+      ataqueOscuridad: (eternalDarknessRef.current || sceneEternalDarknessRef.current) ? 2 : undefined,
+    },
+  });
   const [storyCard, setStoryCard] = useState(null);
   const [fuegoCannonChoice, setFuegoCannonChoice] = useState(null);
   const [terribleCannonChoice, setTerribleCannonChoice] = useState(false);
@@ -1138,7 +1152,7 @@ const InitTracker = () => {
     const colorId = assignColorToEnemy(uuid, isBig);
     const initialStates = getEnemyStatusCatalog().map(estado => ({ id: estado.id, count: 0 }));
     showToast(selected);
-    placeEnemy({
+    placeEnemyWithDarkness({
       enemy: {
         uuid: uuid,
         name: selected.nombre,
@@ -1233,7 +1247,7 @@ const InitTracker = () => {
           estadosAlterados: initialStates
         };  
         if (ver === 'show') showToast(selected);
-        placeEnemy({ enemy });
+        placeEnemyWithDarkness({ enemy });
         // 👉 Añadir cartas de ataque del comandante:
         placeCommanderCards(selected, uuid, false, deckOverride);
       };
@@ -1284,7 +1298,7 @@ const InitTracker = () => {
           estadosAlterados: initialStates
         };
         if (ver === 'show') showToast(selected);
-        placeEnemy({ enemy });
+        placeEnemyWithDarkness({ enemy });
         // 👉 Añadir cartas de ataque del señor supremo:
         placeOverlordCards(selected, uuid);
         return;
@@ -1318,7 +1332,7 @@ const InitTracker = () => {
           estadosAlterados: initialStates
         };
         if (ver === 'show') showToast(selected);
-        placeEnemy({ enemy });
+        placeEnemyWithDarkness({ enemy });
         // 👉 Añadir cartas de ataque del comandante:
         placeCommanderCards(selected, uuid);
         placeFallenHeroCards(selected, uuid);
@@ -1353,7 +1367,7 @@ const InitTracker = () => {
             estadosAlterados: initialStates
           };
 
-          placeEnemy({ enemy });
+          placeEnemyWithDarkness({ enemy });
        
           return;
           
@@ -1404,7 +1418,7 @@ const InitTracker = () => {
           // 2- Eliminar monstruos
           resetPlacedEnemies();
           // 3- Colocar carta de Jefe
-          placeEnemy({ enemy });
+          placeEnemyWithDarkness({ enemy });
           // 👉 Añadir cartas de ataque del jefe:
           placeBossCards(selected, uuid);
           // 4- Esbirros
@@ -1491,7 +1505,7 @@ const InitTracker = () => {
     const runePosition = selected.runePosition;
     const adjustedCaps = adjustCapabilitiesByRunes(selected.capacidades, selected.rune, getRuneCount);
     
-    placeEnemy({
+    placeEnemyWithDarkness({
       enemy: {
         uuid: uuid,
         name: selected.nombre,
@@ -1564,7 +1578,7 @@ const InitTracker = () => {
         estadosAlterados: initialStates
       };
       showToast(enemy);
-      placeEnemy({ enemy });
+      placeEnemyWithDarkness({ enemy });
       // 👉 Añadir cartas de ataque del comandante:
       placeCommanderCards(selected, uuid);
     });
@@ -1897,7 +1911,8 @@ const InitTracker = () => {
   };
 
   const activateScene = async (scene) => {
-    const needsSceneReset = !scene.preserveBoard && !scene.preserveRunesOnly && shouldResetSceneBoard(scene.id);
+    const needsSceneReset = scene.forceSceneReset
+      || (!scene.preserveBoard && !scene.preserveRunesOnly && shouldResetSceneBoard(scene.id));
     if (needsSceneReset) {
       resetEnemySession();
       resetPlacedRunes();
@@ -2003,6 +2018,12 @@ const InitTracker = () => {
     }
 
     if (scene.addFogNode) addActiveFogNode(Boolean(scene.preserveBoard));
+
+    if (scene.eternalDarkness) {
+      eternalDarknessRef.current = true;
+      sceneEternalDarknessRef.current = true;
+      setEternalDarknessActive(true);
+    }
 
     if (scene.finalBoss) {
       await handleManualEnemyAdd('undead_king_boss_2', 'jefe', 'jefe', 'NoShow');
@@ -2156,6 +2177,13 @@ const InitTracker = () => {
 
     await spawnSceneEnemies(scene);
 
+    if (scene.eternalDarkness) {
+      await new Promise((resolve) => { window.setTimeout(resolve, 100); });
+      setPlacedEnemies((prev) => prev.map((entry) => ({
+        ...entry,
+        enemy: { ...entry.enemy, ataqueOscuridad: 2 },
+      })));
+    }
     if (scene.bagRunesPerColor) reduceRuneBagTo(scene.bagRunesPerColor);
     if (scene.advanceToNextHero) advanceSceneToNextHero();
 
@@ -4921,6 +4949,7 @@ const InitTracker = () => {
     setLastRealTurnIndex(null);
     setExecutedRunes([]);
     setMistsSofocantesActive(false);
+    sceneEternalDarknessRef.current = false;
     processedVoragineRef.current = new Set();
     processedDefenseTurnRef.current = new Set();
     processedStartEffectsRef.current.clear();
@@ -5461,6 +5490,7 @@ const InitTracker = () => {
       resetCorruptShipEvent();
       resetSwanShipEvent();
       resetTerribleCannons();
+      setEternalDarknessActive(false);
       deactivateVisionClara();
     }
 
@@ -5555,6 +5585,14 @@ const InitTracker = () => {
                     },
                   )}
                 />
+                {eternalDarknessActive && (
+                  <TrackWarningBanner
+                    title={ti.eternalDarknessTitle || 'Ocuridad Eterna'}
+                    summary={ti.eternalDarknessSummary || 'Todas las casillas están bajo Oscuridad. Los enemigos invocados ganan +2 al Ataque.'}
+                    details={ti.eternalDarknessDetails || 'Todas las casillas se encuentran bajo los efectos de la Oscuridad. Los enemigos invocados mientras este aviso esté activo ganan +2 al Ataque.'}
+                    labels={{ details: ti.details || 'Detalles' }}
+                  />
+                )}
                 {mistsSofocantesActive && (
                   <TrackWarningBanner
                     title={translations.cartas_sorpresa?.nombre?.sorpresa_3 || ti.buriedSurpriseMists || 'Nieblas Sofocantes'}

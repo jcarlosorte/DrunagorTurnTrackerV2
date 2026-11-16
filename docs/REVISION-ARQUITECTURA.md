@@ -5625,6 +5625,24 @@ Unit       237 tests
 E2E        128/128
 ```
 
+### 331.ª tanda — Escenas de El Mundo Sombrío
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Visibilidad** | Las escenas solo aparecen si la expansión El Mundo Sombrío está activa | `TopMenu` |
+| **Orden** | Se insertan entre los capítulos 09 y 10 del juego base | `scenes` |
+| **Ocuridad Eterna** | Aviso persistente sobre el track y toggle en Eventos | `GameContext`, `TopMenu`, `InitTracker` |
+| **Ataque** | Los enemigos invocados con el aviso activo muestran su ataque original/+2 | `InitTracker`, `ModalEnemyCard` |
+| **Escenas** | Salto hacia las sombras, Un Gran Paso para La Humanidad y Ecos de Recuerdo | `scenes` |
+| **Pruebas** | 237 unitarios · 132 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        132/132
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

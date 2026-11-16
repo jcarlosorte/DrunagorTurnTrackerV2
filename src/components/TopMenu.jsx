@@ -98,7 +98,7 @@ const TopMenu = ({
   const [showEmbrujoOptions, setShowEmbrujoOptions] = useState(false);
   const [showScenarioFaceOptions, setShowScenarioFaceOptions] = useState({ incursion: false, defensa: false });
   const [pendingRuneAction, setPendingRuneAction] = useState(null);
-  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, resetNodeMechanics, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, sorpresaEvent, addSorpresaEvent, resetSorpresaEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent, siegeEvent, addSiegeEvent, resetSiegeEvent } = useGame();
+  const { removeRune, availableTiles, usedTiles, showTileToast, drawTileByColor, addRunesCascade, resetTiles, resetNodeMechanics, deleteAvailableTileByColor, scenarioMonster, setScenarioMonster, manifestTile, pilas, pilasConcentrada, spawnPoints, generationPoints, addGenerationPoint, removeGenerationPoint, magicCannons, addMagicCannon, toggleMagicCannon, removeMagicCannon, controlPoints, runeKeys, rescue, erradenEvent, addErradenEvent, resetErradenEvent, sorpresaEvent, addSorpresaEvent, resetSorpresaEvent, corruptShipEvent, addCorruptShipEvent, resetCorruptShipEvent, swanShipEvent, addSwanShipEvent, resetSwanShipEvent, siegeEvent, addSiegeEvent, resetSiegeEvent, eternalDarknessActive, setEternalDarknessActive } = useGame();
   const { trackerData, setTrackerData } = useTracker();
   const { placedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
@@ -1839,6 +1839,27 @@ const TopMenu = ({
                 {t.eventsTitle || 'Eventos y mecánicas especiales'}
               </h2>
             </div>
+
+            {selectedExpansions.includes('dark_world') && (
+              <div data-testid="eternal-darkness-toggle" className="rounded-xl border border-violet-800/60 bg-violet-950/30 p-2">
+                <p className="text-xs font-bold text-violet-100">{t.eternalDarknessTitle || 'Ocuridad Eterna'}</p>
+                <p className="mt-1 text-[0.6rem] text-violet-200/80">
+                  {t.eternalDarknessDescription || 'Todas las casillas están bajo Oscuridad. Los enemigos invocados ganan +2 al Ataque.'}
+                </p>
+                <button
+                  type="button"
+                  aria-pressed={eternalDarknessActive}
+                  onClick={() => setEternalDarknessActive((prev) => !prev)}
+                  className={`mt-2 min-h-9 rounded-lg px-3 text-xs font-bold text-white ${
+                    eternalDarknessActive ? 'bg-violet-600 hover:bg-violet-500' : 'bg-slate-700 hover:bg-slate-600'
+                  }`}
+                >
+                  {eternalDarknessActive
+                    ? (t.eternalDarknessDisable || 'Desactivar Ocuridad Eterna')
+                    : (t.eternalDarknessEnable || 'Activar Ocuridad Eterna')}
+                </button>
+              </div>
+            )}
 
             {mainBox === 'core' && (
               <div className="rounded-xl border border-fuchsia-800/60 bg-fuchsia-950/30 p-2">

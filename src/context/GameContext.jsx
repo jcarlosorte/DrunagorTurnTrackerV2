@@ -77,6 +77,7 @@ export const GameProvider = ({ children }) => {
   const siegeEventRef = useRef(siegeEvent);
   siegeEventRef.current = siegeEvent;
   const [visionClaraActive, setVisionClaraActive] = useState(Boolean(persisted.visionClaraActive));
+  const [eternalDarknessActive, setEternalDarknessActive] = useState(Boolean(persisted.eternalDarknessActive));
   const [terribleCannons, setTerribleCannons] = useState(() => (
     persisted.terribleCannons || [
       { id: 'terrible_1', time: 0 },
@@ -124,6 +125,7 @@ export const GameProvider = ({ children }) => {
       flickeringBoarDeck,
       siegeEvent,
       visionClaraActive,
+      eternalDarknessActive,
       terribleCannons,
     });
   }, [
@@ -133,7 +135,7 @@ export const GameProvider = ({ children }) => {
     aldeanos, aldeanosRescatados,
     aldeanoDeck, errantesDeck, codigosPilas, campamento, erradenEvent,
     sorpresaEvent,
-    corruptShipEvent, swanShipEvent, flickeringBoarDeck, siegeEvent, visionClaraActive, terribleCannons,
+    corruptShipEvent, swanShipEvent, flickeringBoarDeck, siegeEvent, visionClaraActive, eternalDarknessActive, terribleCannons,
   ]);
 
   const handleCodigoChange = (pilaId, nuevoCodigo) => {
@@ -298,6 +300,7 @@ export const GameProvider = ({ children }) => {
     setFlickeringBoarDeck(emptyFlickeringBoarDeck());
     setSiegeEvent({ active: false, deck: [], discarded: [], current: null });
     setVisionClaraActive(false);
+    setEternalDarknessActive(false);
     setTerribleCannons([{ id: 'terrible_1', time: 0 }, { id: 'terrible_2', time: 0 }]);
     setCodigosPilas({});
     setTileToasts([]);
@@ -1536,6 +1539,7 @@ export const GameProvider = ({ children }) => {
         flickeringBoarDeck, initializeFlickeringBoarDeck, drawFlickeringBoarCardNow, resetFlickeringBoarDeck,
         siegeEvent, addSiegeEvent, drawSiegeCard, resetSiegeEvent,
         visionClaraActive, activateVisionClara, deactivateVisionClara,
+        eternalDarknessActive, setEternalDarknessActive,
         terribleCannons, addTerribleCannonTime, tickTerribleCannons,
         terribleCannonNotice, clearTerribleCannonNotice,
         resetTiles,

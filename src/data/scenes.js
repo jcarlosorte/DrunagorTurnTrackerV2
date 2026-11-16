@@ -837,6 +837,63 @@ export const SCENES = [
       5: [{ enemyId: 'lady_claw', color: 'gris', category: 'soldado', quantity: 1, label: 'Dama Marina' }],
     },
   },
+  {
+    id: 'darkworld_chapter1',
+    campaign: 'core',
+    expansionId: 'dark_world',
+    order: 9.1,
+    titleKey: 'sceneDarkWorldChapter1',
+    titleEn: 'Chapter 01 – Jump into the Shadows',
+    descriptionKey: 'sceneDarkWorldChapter1Description',
+    eternalDarkness: true,
+    enemiesByHeroes: {
+      1: [
+        { enemyId: 'shadow_guardian', color: 'gris', category: 'soldado', quantity: 1, label: 'Guardián Sombrío' },
+        { enemyId: 'shadow_pain', color: 'blanco', category: 'soldado', quantity: 1, label: 'Dolor Sombrío' },
+      ],
+      2: [{ enemyId: 'shadow_guardian', color: 'gris', category: 'soldado', quantity: 1, label: 'Guardián Sombrío' }],
+      3: [{ enemyId: 'shadow_guardian', color: 'gris', category: 'soldado', quantity: 1, label: 'Guardián Sombrío' }],
+      4: [{ enemyId: 'shadow_pain', color: 'blanco', category: 'soldado', quantity: 1, label: 'Dolor Sombrío' }],
+      5: [{ enemyId: 'shadow_pain', color: 'blanco', category: 'soldado', quantity: 1, label: 'Dolor Sombrío' }],
+    },
+  },
+  {
+    id: 'darkworld_chapter1b',
+    campaign: 'core',
+    expansionId: 'dark_world',
+    order: 9.2,
+    titleKey: 'sceneDarkWorldChapter1b',
+    titleEn: 'Special Event – A Big Step For Mankind',
+    descriptionKey: 'sceneDarkWorldChapter1bDescription',
+    forceSceneReset: true,
+    enemiesByHeroes: {
+      1: [
+        { enemyId: 'shadow_guardian', color: 'gris', category: 'soldado', quantity: 1, label: 'Guardián Sombrío' },
+        { enemyId: 'abomination', color: 'negro', category: 'veterano', quantity: 1, label: 'Abominación' },
+      ],
+      2: [{ enemyId: 'shadow_pain', color: 'blanco', category: 'soldado', quantity: 1, label: 'Dolor Sombrío' }],
+      3: [{ enemyId: 'shadow_pain', color: 'blanco', category: 'soldado', quantity: 1, label: 'Dolor Sombrío' }],
+      4: [{ enemyId: 'shadow_guardian', color: 'gris', category: 'soldado', quantity: 1, label: 'Guardián Sombrío' }],
+      5: [{ enemyId: 'abomination', color: 'negro', category: 'veterano', quantity: 1, label: 'Abominación' }],
+    },
+  },
+  {
+    id: 'darkworld_chapter2',
+    campaign: 'core',
+    expansionId: 'dark_world',
+    order: 9.3,
+    titleKey: 'sceneDarkWorldChapter2',
+    titleEn: 'Chapter 02 – Echoes of Memory',
+    descriptionKey: 'sceneDarkWorldChapter2Description',
+    eternalDarkness: true,
+    enemiesByHeroes: {
+      1: [{ enemyId: 'shadow_guardian', color: 'gris', category: 'veterano', quantity: 1, label: 'Guardián Sombrío' }],
+      2: [{ enemyId: 'shadow_pain', color: 'blanco', category: 'soldado', quantity: 1, label: 'Dolor Sombrío' }],
+      3: [{ enemyId: 'shadow_guardian', color: 'gris', category: 'veterano', quantity: 1, label: 'Guardián Sombrío' }],
+      4: [{ enemyId: 'shadow_guardian', color: 'gris', category: 'veterano', quantity: 1, label: 'Guardián Sombrío' }],
+      5: [{ enemyId: 'shadow_pain', color: 'blanco', category: 'soldado', quantity: 1, label: 'Dolor Sombrío' }],
+    },
+  },
 ];
 
 export default SCENES;

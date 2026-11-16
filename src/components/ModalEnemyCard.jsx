@@ -552,6 +552,14 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
                         {tipoAtaqueIconMap[tipo_ataque] || <GiSwordClash className="text-white text-lg" />}
                       </span>
                       {valorAtaque}
+                      {Number(enemy.ataqueOscuridad) > 0 && Number.isFinite(Number(valorAtaque)) && (
+                        <span
+                          className="font-bold text-violet-600"
+                          title={ti.eternalDarknessAttack || 'Ataque modificado por Ocuridad Eterna'}
+                        >
+                          /{Number(valorAtaque) + Number(enemy.ataqueOscuridad)}
+                        </span>
+                      )}
                       {effectiveStats.ataqueModificado !== valorAtaque && effectiveStats.categoria !== "esbirro" && (
                         <span>
                           /
