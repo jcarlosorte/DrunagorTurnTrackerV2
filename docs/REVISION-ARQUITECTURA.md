@@ -5808,6 +5808,22 @@ Unit       237 tests
 E2E        139/139
 ```
 
+### 342.ª tanda — Opciones de reinicio agrupadas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Grupo de héroes** | Héroes, compañeros, mascotas y seguidores en una sola opción | `RestartGameDialog`, `InitTracker` |
+| **Enemigos** | Nueva opción para reiniciar enemigos, activada por defecto | `RestartGameDialog`, `InitTracker` |
+| **Eventos** | Eventos, mazos especiales y aldeanos en una sola opción | `RestartGameDialog`, `InitTracker` |
+| **Pruebas** | 237 unitarios · 140 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        140/140
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

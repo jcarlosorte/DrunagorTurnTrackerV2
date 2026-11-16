@@ -5467,16 +5467,19 @@ const InitTracker = () => {
     }
   };
 
-  const handleRestartGame = ({ runas = false, heroes = false, companions = false, followers = false, villagers = false, events = false } = {}) => {
+  const handleRestartGame = ({ runas = false, heroes = false, enemies = true, events = false } = {}) => {
     resetTurnAndHistory();
     clearGameLog();
     removeStorage('trackerSession');
-    resetEnemySession();
     resetGenerationPoints();
     resetMagicCannons();
     resetFlickeringBoarDeck();
     resetSiegeEvent();
-    setScenarioMonster(null);
+
+    if (enemies) {
+      resetEnemySession();
+      setScenarioMonster(null);
+    }
 
     if (runas) {
       resetPlacedRunes();
@@ -5490,32 +5493,23 @@ const InitTracker = () => {
 
     if (heroes) {
       (trackerData.heroes || []).forEach((heroId) => resetHeroForNewGame(heroId));
-      refreshHeroExtras();
-    }
-
-    if (companions) {
       setTrackerData((prev) => ({
         ...prev,
         companions: (prev.companions || []).map((companion) => ({
           ...companion,
           vida: companion.vidaMax ?? companion.vida,
+          estados: [],
           estadosAlterados: [],
         })),
-      }));
-    }
-
-    if (followers) {
-      setTrackerData((prev) => ({
-        ...prev,
         followers: (prev.followers || []).map((follower) => ({
           ...follower,
           vida: follower.vidaMax ?? follower.vida,
+          estados: [],
           estadosAlterados: [],
         })),
       }));
+      refreshHeroExtras();
     }
-
-    if (villagers) resetAldeanos();
 
     if (events) {
       resetErradenEvent();
@@ -5525,6 +5519,7 @@ const InitTracker = () => {
       resetTerribleCannons();
       setEternalDarknessActive(false);
       deactivateVisionClara();
+      resetAldeanos();
     }
 
     setIsRestartOpen(false);

@@ -165,10 +165,8 @@ test.describe('Fase E · campamento y reinicio', () => {
     await page.getByRole('button', { name: 'Menú de juego' }).click();
     await page.getByRole('menuitem', { name: 'Reiniciar partida' }).click();
     const dialog = page.getByRole('dialog', { name: 'Reiniciar partida' });
-    await dialog.getByRole('checkbox').nth(2).check();
+    await dialog.getByRole('checkbox').nth(1).check();
     await dialog.getByRole('checkbox').nth(3).check();
-    await dialog.getByRole('checkbox').nth(4).check();
-    await dialog.getByRole('checkbox').nth(5).check();
     await dialog.getByRole('button', { name: 'Reiniciar partida' }).click();
 
     await expect.poll(async () => {
@@ -192,6 +190,26 @@ test.describe('Fase E · campamento y reinicio', () => {
       rescued: 0,
       surpriseActive: false,
     });
+  });
+
+  test('reiniciar permite conservar los enemigos si se desmarca su opción', async ({ page }) => {
+    await seedStorage(page, {
+      ...buildSeed(),
+      initEnemiesState: buildEnemyState(),
+    });
+    await openTracker(page);
+    await page.getByRole('button', { name: 'Menú de juego' }).click();
+    await page.getByRole('menuitem', { name: 'Reiniciar partida' }).click();
+
+    const dialog = page.getByRole('dialog', { name: 'Reiniciar partida' });
+    const enemies = dialog.getByRole('checkbox').nth(2);
+    await expect(enemies).toBeChecked();
+    await enemies.uncheck();
+    await dialog.getByRole('button', { name: 'Reiniciar partida' }).click();
+
+    await expect.poll(async () => (
+      (await readStorage(page, 'initEnemiesState', {})).placedEnemies || []
+    ).length).toBe(1);
   });
 
   test('reiniciar partida limpia turno, historial, enemigos, runas y héroes', async ({ page }) => {
