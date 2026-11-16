@@ -5709,6 +5709,23 @@ Unit       237 tests
 E2E        134/134
 ```
 
+### 336.ª tanda — Menú de escenas compacto y secuencial
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Tarjetas** | Solo título, sin descripción; toda la tarjeta es el botón | `TopMenu` |
+| **Secuencia** | Números de capítulo, rangos por sección y línea de secuencia | `TopMenu` |
+| **Espacio** | Filas compactas en dos o tres columnas | `TopMenu` |
+| **Grupos** | Colores por juego/expansión, cabeceras plegables y rangos | `TopMenu` |
+| **Pruebas** | 237 unitarios · 134 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        134/134
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -132,6 +132,12 @@ function getSceneGroupTheme(key) {
   return SCENE_FALLBACK_THEMES[hash % SCENE_FALLBACK_THEMES.length];
 }
 
+function getSceneBadge(scene, index) {
+  const match = String(scene.id).match(/chapter(\d+)([a-z]?)/i);
+  if (!match) return String(index + 1).padStart(2, '0');
+  return `${match[1].padStart(2, '0')}${match[2]?.toUpperCase() || ''}`;
+}
+
 const TopMenu = ({
   onAddEnemy,
   onSelectCommander,
@@ -2150,10 +2156,13 @@ const TopMenu = ({
                 const theme = getSceneGroupTheme(group.key);
                 const collapsed = Boolean(collapsedSceneGroups[`${group.key}-${group.index}`]);
                 const groupLabel = group.key === 'base'
-                  ? (translations.config?.box_core || t.sceneGroupBase || 'Juego base')
+                  ? (t.sceneGroupBase || 'Juego base')
                   : group.key === 'awakenings'
-                    ? (translations.config?.box_awakenings || t.sceneGroupAwakenings || 'Despertar')
+                    ? (t.sceneGroupAwakenings || 'Despertar')
                     : (translations.expansions?.[group.key] || group.key);
+                const firstBadge = getSceneBadge(group.scenes[0], 0);
+                const lastBadge = getSceneBadge(group.scenes[group.scenes.length - 1], group.scenes.length - 1);
+                const groupRange = firstBadge === lastBadge ? firstBadge : `${firstBadge}–${lastBadge}`;
                 return (
                   <section
                     key={`${group.key}-${group.index}`}
@@ -2166,8 +2175,13 @@ const TopMenu = ({
                       onClick={() => setCollapsedSceneGroups((prev) => ({ ...prev, [`${group.key}-${group.index}`]: !prev[`${group.key}-${group.index}`] }))}
                       className="flex w-full items-center justify-between gap-2 rounded-lg px-1 py-0.5 text-left"
                     >
-                      <span className="truncate text-[0.68rem] font-extrabold uppercase tracking-wide">
-                        {groupLabel}
+                      <span className="flex min-w-0 items-center gap-1.5">
+                        <span className="truncate text-[0.68rem] font-extrabold uppercase tracking-wide">
+                          {groupLabel}
+                        </span>
+                        <span className="shrink-0 rounded bg-black/20 px-1 py-0.5 text-[0.52rem] font-bold tabular-nums opacity-80">
+                          {groupRange}
+                        </span>
                       </span>
                       <span className="flex shrink-0 items-center gap-1 text-[0.58rem] font-semibold opacity-80">
                         {group.scenes.length}
@@ -2175,24 +2189,39 @@ const TopMenu = ({
                       </span>
                     </button>
                     {!collapsed && (
-                      <div className="mt-1 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                        {group.scenes.map((scene) => (
-                          <div key={scene.id} data-testid={`scene-${scene.id}`} className={`rounded-lg border p-1.5 ${theme.card}`}>
-                            <p className={`text-[0.65rem] font-bold leading-tight ${theme.title}`}>
-                              {t[scene.titleKey] || scene.titleEn}
-                            </p>
-                            <p className={`mt-0.5 line-clamp-2 text-[0.58rem] leading-snug ${theme.description}`}>
-                              {t[scene.descriptionKey] || ''}
-                            </p>
-                            <button
-                              type="button"
-                              onClick={() => activateScene(scene)}
-                              className={`mt-1 min-h-6 rounded-md px-1.5 text-[0.58rem] font-bold text-white focus-visible:outline-none focus-visible:ring-2 ${theme.button}`}
+                      <div className="relative mt-1 grid grid-cols-2 gap-1 pl-2 sm:grid-cols-3">
+                        <span className="pointer-events-none absolute bottom-1 left-0 top-1 w-px bg-current opacity-25" aria-hidden="true" />
+                        {group.scenes.map((scene, sceneIndex) => {
+                          const rawTitle = t[scene.titleKey] || scene.titleEn;
+                          const sceneTitle = group.key === 'base' || group.key === 'awakenings'
+                            ? rawTitle
+                            : rawTitle.includes('·')
+                              ? rawTitle.split('·').slice(1).join('·').trim()
+                              : rawTitle;
+                          const badge = getSceneBadge(scene, sceneIndex);
+                          return (
+                            <div
+                              key={scene.id}
+                              data-testid={`scene-${scene.id}`}
+                              className={`group relative flex min-h-8 items-center gap-1.5 overflow-hidden rounded-lg border px-1.5 py-1 transition hover:border-white/50 hover:brightness-110 ${theme.card}`}
                             >
-                              ▶ {t.activateChapter || 'Activar capítulo'}
-                            </button>
-                          </div>
-                        ))}
+                              <button
+                                type="button"
+                                aria-label={`${sceneTitle} · ${t.activateChapter || 'Activar capítulo'}`}
+                                title={sceneTitle}
+                                onClick={() => activateScene(scene)}
+                                className="absolute inset-0 z-10 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+                              />
+                              <span className={`relative z-0 inline-flex h-5 min-w-7 shrink-0 items-center justify-center rounded-md bg-white/10 px-1 text-[0.52rem] font-black tabular-nums ${theme.title}`}>
+                                {badge}
+                              </span>
+                              <span className={`relative z-0 min-w-0 flex-1 truncate text-[0.6rem] font-semibold leading-tight ${theme.title}`}>
+                                {sceneTitle}
+                              </span>
+                              <span aria-hidden="true" className="relative z-0 text-xs opacity-50">›</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </section>
