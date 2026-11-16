@@ -5840,6 +5840,21 @@ Unit       237 tests
 E2E        141/141
 ```
 
+### 344.ª tanda — Cubos de trauma y maldición de Aral’hezec
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Invocación** | Aral’hezec pregunta por cubos de trauma y maldición | `InitTracker` |
+| **Vida** | +5 por cubo de trauma y +1 por cubo de maldición | `InitTracker` |
+| **Pruebas** | 237 unitarios · 142 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        142/142
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

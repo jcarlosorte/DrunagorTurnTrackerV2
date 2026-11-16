@@ -1374,7 +1374,7 @@ const InitTracker = () => {
         } else if (selected.rune === 'jefe'){
           // Los jefes del juego base usan cubos de trauma/maldición; los de
           // campañas posteriores (Despertar) no pasan por esas preguntas.
-          const useCubes = selected.expansionId === 'base' || selected.id === 'wermunggdir';
+          const useCubes = selected.expansionId === 'base' || ['wermunggdir', 'aralhezec'].includes(selected.id);
           const cubosTrauma = useCubes
             ? (parseInt(await appPrompt(`${ti.cubosTrauma}`, '0', { title: ti.cubosTrauma || 'Cubos de trauma' }), 10) || 0)
             : 0;
