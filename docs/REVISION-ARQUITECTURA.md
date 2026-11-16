@@ -5792,6 +5792,22 @@ Unit       237 tests
 E2E        139/139
 ```
 
+### 341.ª tanda — Mapa secuencial de escenas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Filas** | Seis escenas por fila en pantallas grandes | `TopMenu` |
+| **Secuencia** | Flechas entre escenas y flecha de continuación al final de cada fila | `TopMenu` |
+| **Mapa** | Las escenas se leen como un recorrido continuo dentro de cada grupo | `TopMenu` |
+| **Pruebas** | 237 unitarios · 139 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        139/139
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

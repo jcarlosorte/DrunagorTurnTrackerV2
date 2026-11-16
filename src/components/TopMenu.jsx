@@ -2192,39 +2192,49 @@ const TopMenu = ({
                       </span>
                     </button>
                     {!collapsed && (
-                      <div className="relative mt-1 grid grid-cols-2 gap-1 pl-2 sm:grid-cols-3">
-                        <span className="pointer-events-none absolute bottom-1 left-0 top-1 w-px bg-current opacity-25" aria-hidden="true" />
-                        {group.scenes.map((scene, sceneIndex) => {
-                          const rawTitle = t[scene.titleKey] || scene.titleEn;
-                          const sceneTitle = group.key === 'base' || group.key === 'awakenings'
-                            ? rawTitle
-                            : rawTitle.includes('·')
-                              ? rawTitle.split('·').slice(1).join('·').trim()
-                              : rawTitle;
-                          const badge = getSceneBadge(scene, sceneIndex);
-                          return (
-                            <div
-                              key={scene.id}
-                              data-testid={`scene-${scene.id}`}
-                              className={`group relative flex min-h-8 items-center gap-1.5 overflow-hidden rounded-lg border px-1.5 py-1 transition hover:border-white/50 hover:brightness-110 ${theme.card}`}
-                            >
-                              <button
-                                type="button"
-                                aria-label={`${sceneTitle} · ${t.activateChapter || 'Activar capítulo'}`}
-                                title={sceneTitle}
-                                onClick={() => activateScene(scene)}
-                                className="absolute inset-0 z-10 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
-                              />
-                              <span className={`relative z-0 inline-flex h-5 min-w-7 shrink-0 items-center justify-center rounded-md bg-white/10 px-1 text-[0.52rem] font-black tabular-nums ${theme.title}`}>
-                                {badge}
-                              </span>
-                              <span className={`relative z-0 min-w-0 flex-1 truncate text-[0.6rem] font-semibold leading-tight ${theme.title}`}>
-                                {sceneTitle}
-                              </span>
-                              <span aria-hidden="true" className="relative z-0 text-xs opacity-50">›</span>
-                            </div>
-                          );
-                        })}
+                      <div className="mt-1 space-y-1 pl-2">
+                        {Array.from({ length: Math.ceil(group.scenes.length / 6) }, (_, rowIndex) => (
+                          <div key={rowIndex} className="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-6">
+                            {group.scenes.slice(rowIndex * 6, rowIndex * 6 + 6).map((scene, sceneIndex) => {
+                              const globalIndex = rowIndex * 6 + sceneIndex;
+                              const rawTitle = t[scene.titleKey] || scene.titleEn;
+                              const sceneTitle = group.key === 'base' || group.key === 'awakenings'
+                                ? rawTitle
+                                : rawTitle.includes('·')
+                                  ? rawTitle.split('·').slice(1).join('·').trim()
+                                  : rawTitle;
+                              const badge = getSceneBadge(scene, globalIndex);
+                              const isLastOverall = globalIndex === group.scenes.length - 1;
+                              const isLastInRow = sceneIndex === group.scenes.slice(rowIndex * 6, rowIndex * 6 + 6).length - 1;
+                              return (
+                                <div
+                                  key={scene.id}
+                                  data-testid={`scene-${scene.id}`}
+                                  className={`group relative flex min-h-8 items-center gap-1.5 rounded-lg border px-1.5 py-1 pr-4 transition hover:border-white/50 hover:brightness-110 ${theme.card}`}
+                                >
+                                  <button
+                                    type="button"
+                                    aria-label={`${sceneTitle} · ${t.activateChapter || 'Activar capítulo'}`}
+                                    title={sceneTitle}
+                                    onClick={() => activateScene(scene)}
+                                    className="absolute inset-0 z-10 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+                                  />
+                                  <span className={`relative z-0 inline-flex h-5 min-w-7 shrink-0 items-center justify-center rounded-md bg-white/10 px-1 text-[0.52rem] font-black tabular-nums ${theme.title}`}>
+                                    {badge}
+                                  </span>
+                                  <span className={`relative z-0 min-w-0 flex-1 truncate text-[0.6rem] font-semibold leading-tight ${theme.title}`}>
+                                    {sceneTitle}
+                                  </span>
+                                  {!isLastOverall && (
+                                    <span aria-hidden="true" className="pointer-events-none absolute right-1 top-1/2 z-0 -translate-y-1/2 text-[0.7rem] font-bold opacity-60">
+                                      {isLastInRow ? '↳' : '→'}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ))}
                       </div>
                     )}
                   </section>
