@@ -5660,6 +5660,24 @@ Unit       237 tests
 E2E        133/133
 ```
 
+### 333.ª tanda — Fondos de cartas de ataque especiales
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Fondos** | Comandantes, Señores Supremos, Jefes y Héroes Caídos usan fondos de carta con textura | assets |
+| **Comandante** | Fondo ocre. | `CommanderCard` |
+| **Señor Supremo** | Fondo violeta. | `CommanderCard` |
+| **Jefe** | Fondo morado. | `CommanderCard` |
+| **Héroe Caído** | Fondo verde azulado. | `CommanderCard` |
+| **Pruebas** | 237 unitarios · 133 E2E | tests |
+
+**Medición**
+
+```text
+Unit       237 tests
+E2E        133/133
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

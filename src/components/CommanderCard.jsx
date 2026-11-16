@@ -5,6 +5,17 @@ import { useInitEnemies } from '@/context/InitEnemiesContext';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { getEnemyTone } from '@/components/track/enemyVisuals';
 import CommanderCardModal from '@/components/CommanderCardModal';
+import attackCardCommander from '@/assets/attack-cards/card-commander.webp';
+import attackCardOverlord from '@/assets/attack-cards/card-overlord.webp';
+import attackCardBoss from '@/assets/attack-cards/card-boss.webp';
+import attackCardFallenHero from '@/assets/attack-cards/card-fallen-hero.webp';
+
+const ATTACK_CARD_BACKGROUNDS = {
+  comandante: attackCardCommander,
+  overlord: attackCardOverlord,
+  jefe: attackCardBoss,
+  hero: attackCardFallenHero,
+};
 
 const CommanderCard = ({ carta }) => {
   const { translations } = useLanguage();
@@ -18,25 +29,39 @@ const CommanderCard = ({ carta }) => {
   const nombreEnemy = carta.nombreEnemy;
   const tiempoCount = (carta.estadosAlterados || []).find((estado) => estado.id === 'TIEMPO')?.count || 0;
   const tone = getEnemyTone(carta.color, carta.categoria);
+  const attackCardBackground = ATTACK_CARD_BACKGROUNDS[carta.categoria];
   // 🎨 Clases visuales condicionales por tipo
   const ringClass =
     carta.categoria === "overlord"
-      ? 'ring-4 ring-purple-500 animate-pulse'
-      : carta.categoria === "comandante" || carta.categoria === "hero"
-      ? 'ring-4 ring-yellow-400 animate-pulse'
+      ? 'ring-4 ring-violet-500 animate-pulse'
+      : carta.categoria === "comandante"
+      ? 'ring-4 ring-amber-500 animate-pulse'
+      : carta.categoria === "hero"
+      ? 'ring-4 ring-emerald-500 animate-pulse'
       : carta.categoria === "jefe"
-      ? 'ring-4 ring-purple-400 animate-pulse'
+      ? 'ring-4 ring-fuchsia-500 animate-pulse'
       : '';
 
   const borderClass =
     carta.categoria === "overlord"
-      ? 'border-morado'
-      : carta.categoria === "comandante" || carta.categoria === "hero"
-      ? 'border-yellow-400'
+      ? 'border-violet-500'
+      : carta.categoria === "comandante"
+      ? 'border-amber-500'
+      : carta.categoria === "hero"
+      ? 'border-emerald-500'
       : carta.categoria === "jefe"
-      ? 'border-purple-400'
+      ? 'border-fuchsia-500'
       : 'border-gray-500';
   
+  const titleTextClass =
+    carta.categoria === 'overlord'
+      ? 'text-violet-100'
+      : carta.categoria === 'jefe'
+        ? 'text-fuchsia-100'
+        : carta.categoria === 'hero'
+          ? 'text-emerald-100'
+          : 'text-amber-100';
+
   const enemyClass =
     carta.categoria === "overlord"
       ? ta.ataqueO
@@ -86,17 +111,34 @@ const CommanderCard = ({ carta }) => {
             </span>
           )}
 
-          {/* Fondo al estilo de los héroes, con el tono del enemigo */}
+          {/* Fondo de carta de ataque: misma base que runas e incursiones */}
           <div className="absolute inset-0 overflow-hidden rounded-lg" aria-hidden="true">
-            <div
-              className="absolute inset-0"
-              style={{ backgroundImage: `linear-gradient(160deg, ${tone}cc 0%, ${tone}66 55%, #0f172a 100%)` }}
-            />
-            <div
-              className="absolute -inset-6 opacity-70 blur-2xl"
-              style={{ background: `radial-gradient(circle at 50% 30%, ${tone}aa 0%, transparent 70%)` }}
-            />
-            <div className="absolute inset-0 bg-slate-950/20" />
+            {attackCardBackground ? (
+              <>
+                <img
+                  src={attackCardBackground}
+                  alt=""
+                  data-testid="attack-card-background"
+                  className="absolute inset-0 h-full w-full object-cover"
+                  style={{ objectPosition: 'center 32%' }}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="absolute inset-0 bg-slate-950/20" />
+              </>
+            ) : (
+              <>
+                <div
+                  className="absolute inset-0"
+                  style={{ backgroundImage: `linear-gradient(160deg, ${tone}cc 0%, ${tone}66 55%, #0f172a 100%)` }}
+                />
+                <div
+                  className="absolute -inset-6 opacity-70 blur-2xl"
+                  style={{ background: `radial-gradient(circle at 50% 30%, ${tone}aa 0%, transparent 70%)` }}
+                />
+                <div className="absolute inset-0 bg-slate-950/20" />
+              </>
+            )}
           </div>
 
           {/* Contenido de la carta (siempre por encima) */}
@@ -129,13 +171,13 @@ const CommanderCard = ({ carta }) => {
             </div>
           
             <div
-              className={`text-sm text-center ${carta.categoria === 'overlord' ? 'text-purple-200' : 'text-yellow-300'}`}
+              className={`text-sm text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.95)] ${titleTextClass}`}
               style={{ fontFamily: 'Impact, Charcoal, sans-serif' }}
             >
               {nombre}
             </div>
             <div
-              className="text-[0.50rem] italic text-white-300 text-center"
+              className="text-[0.50rem] italic text-slate-100 text-center drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)]"
               style={{ fontFamily: 'Impact, Charcoal, sans-serif' }}
             >
               <div>-{enemyClass}-</div>
