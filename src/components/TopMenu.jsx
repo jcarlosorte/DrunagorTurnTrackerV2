@@ -1062,10 +1062,13 @@ const TopMenu = ({
                         <div
                           key={cardA.id}
                           data-testid={`despertar-rune-${cardA.id}`}
-                          className="rounded-xl border border-violet-700/60 bg-violet-950/30 p-2"
+                          className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"
                         >
-                          <h4 className="text-xs font-bold text-violet-100">
-                            {translations.scenarioCard?.[cardA.id] || cardA.nombre}
+                          <h4 className="flex min-w-0 items-center gap-1.5 text-xs font-bold text-slate-100">
+                            <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-indigo-950/70 text-indigo-300">
+                              <GiRuneStone className="text-sm" />
+                            </span>
+                            <span className="truncate">{translations.scenarioCard?.[cardA.id] || cardA.nombre}</span>
                           </h4>
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             <button
@@ -1081,7 +1084,7 @@ const TopMenu = ({
                                 type="button"
                                 disabled={already}
                                 onClick={() => handleSelectUniqueCard(cardB)}
-                                className={`bg-indigo-800 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded ${already ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`bg-blue-700 hover:bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded ${already ? 'opacity-50 cursor-not-allowed' : ''}`}
                               >
                                 Cara B
                               </button>
@@ -1787,10 +1790,13 @@ const TopMenu = ({
                         <div
                           key={cardA.id}
                           data-testid={`despertar-incursion-${cardA.id}`}
-                          className="rounded-xl border border-violet-700/60 bg-violet-950/30 p-2"
+                          className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"
                         >
-                          <h4 className="text-xs font-bold text-violet-100">
-                            {translations.scenarioCard?.[cardA.id] || cardA.nombre}
+                          <h4 className="flex min-w-0 items-center gap-1.5 text-xs font-bold text-slate-100">
+                            <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-indigo-950/70 text-indigo-300">
+                              <GiUprising className="text-sm" />
+                            </span>
+                            <span className="truncate">{translations.scenarioCard?.[cardA.id] || cardA.nombre}</span>
                           </h4>
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             <button
@@ -1806,7 +1812,7 @@ const TopMenu = ({
                                 type="button"
                                 disabled={disabled}
                                 onClick={() => handleSelectUniqueCard(cardB)}
-                                className={`bg-indigo-800 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`bg-blue-700 hover:bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                               >
                                 Cara B
                               </button>

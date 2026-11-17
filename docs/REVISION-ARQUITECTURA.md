@@ -6002,6 +6002,23 @@ Unit       241 tests
 E2E        148/148
 ```
 
+### 354.ª tanda — Estilo unificado en el menú de Runas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Runas de Despertar** | Usan la misma superficie, borde y jerarquía que las del juego base | `TopMenu` |
+| **Iconos** | Cada carta muestra el icono `GiRuneStone` como las runas base | `TopMenu` |
+| **Incursiones** | Las cartas de incursión de Despertar usan el mismo panel y botones | `TopMenu` |
+| **Acciones** | Botones principales verdes y secundarios azules, iguales en ambas campañas | `TopMenu` |
+| **Pruebas** | 241 unitarios · 148 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        148/148
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

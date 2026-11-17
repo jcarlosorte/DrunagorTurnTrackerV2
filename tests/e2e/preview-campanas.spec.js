@@ -16,7 +16,10 @@ test('ver contenido de otras cajas muestra las escenas y cartas de Despertar des
   await page.getByRole('button', { name: 'Escenas', exact: true }).click();
 
   await page.getByRole('button', { name: 'Runas', exact: true }).click();
-  await expect(page.locator('[data-testid^="despertar-rune-"]').first()).toBeVisible();
+  const awakeningRune = page.locator('[data-testid^="despertar-rune-"]').first();
+  await expect(awakeningRune).toBeVisible();
+  await expect(awakeningRune).toHaveClass(/bg-slate-950/);
+  await expect(awakeningRune.locator('svg').first()).toBeVisible();
   await page.getByRole('button', { name: 'Runas', exact: true }).click();
 
   await page.getByRole('button', { name: 'Menú de juego' }).click();
