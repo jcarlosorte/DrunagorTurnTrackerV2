@@ -5954,6 +5954,21 @@ Unit       241 tests
 E2E        146/146
 ```
 
+### 351.ª tanda — Imagen del jefe ajustada al marco
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Imagen** | El retrato del jefe usa `object-contain` y conserva su proporción | `BossBanner` |
+| **Marco** | La altura se mantiene y el ancho se adapta al de la imagen | `BossBanner` |
+| **Pruebas** | 241 unitarios · 146 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        146/146
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

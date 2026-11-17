@@ -97,19 +97,19 @@ export default function BossBanner({ enemies = [], getEnemyName, onOpen, labels 
               <EnemyPortraitBackdrop
                 color={enemy.color}
                 categoria={enemy.categoria}
-                className="boss-banner__portrait relative flex h-24 w-20 shrink-0 items-center justify-center rounded-lg border border-red-500/50 sm:h-32 sm:w-24"
+                className="boss-banner__portrait relative flex h-24 w-auto shrink-0 items-center justify-center rounded-lg border border-red-500/50 sm:h-32"
               >
                 {enemy.imagen ? (
                   <ResponsiveImage
                     src={enemy.imagen}
                     alt=""
-                    sizes="160px"
-                    className="h-full w-full scale-110 object-cover object-top"
+                    sizes="220px"
+                    className="h-full w-auto max-w-none object-contain"
                     loading="eager"
                     decoding="async"
                   />
                 ) : (
-                  <span className="flex h-full w-full items-center justify-center text-slate-600">☠</span>
+                  <span className="flex h-full w-20 items-center justify-center text-slate-600">☠</span>
                 )}
                 {visibleStatuses.length > 0 && (
                   <span className="absolute left-1 top-1 flex flex-col gap-0.5">
