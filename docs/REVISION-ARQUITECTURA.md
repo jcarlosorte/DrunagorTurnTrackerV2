@@ -6135,6 +6135,24 @@ Unit       246 tests
 E2E        154/154
 ```
 
+### 362.ª tanda — Anillos de enemigos grandes
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Tamaño** | Los enemigos grandes conservan `size: "grande"` al colocarse y al guardarse | `InitTracker`, `enemies` |
+| **Detección** | Los guardados antiguos reconocen el tamaño por el catálogo | `enemies`, `EnemyRingControl` |
+| **Anillos** | La ficha muestra solo los cuatro anillos grandes y no los pequeños | `EnemyRingControl` |
+| **Intercambio** | Solo permite intercambiar con enemigos del mismo tamaño | `EnemyRingControl` |
+| **Invocaciones** | El Monstruo Huésped también reconoce los grandes antiguos | `InitEnemiesContext` |
+| **Pruebas** | 248 unitarios · 155 E2E | tests |
+
+**Medición**
+
+```text
+Unit       248 tests
+E2E        155/155
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

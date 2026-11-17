@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { ENEMY_RING_COLORS } from '@/data/enemyRings';
 import { ENEMY_RING_COLORS_BIG } from '@/data/enemyRingsBig';
+import { isEnemyLarge } from '@/data/enemies';
 import { useInitEnemies } from '@/context/InitEnemiesContext';
 
 export default function EnemyRingControl({ enemy, labels = {} }) {
@@ -25,14 +26,14 @@ export default function EnemyRingControl({ enemy, labels = {} }) {
 
   if (!enemy?.ringColor) return null;
 
-  const isBig = enemy.size === 'grande';
+  const isBig = isEnemyLarge(enemy);
   const colors = isBig ? ENEMY_RING_COLORS_BIG : ENEMY_RING_COLORS;
   const used = new Set(isBig ? usedColorsBig : usedColors);
   const available = colors.filter((color) => color.id !== currentColor && !used.has(color.id));
   const otherEnemies = placedEnemies.filter((entry) => (
     entry.enemy.uuid !== enemy.uuid
     && entry.enemy.ringColor
-    && (entry.enemy.size === 'grande') === isBig
+    && isEnemyLarge(entry.enemy) === isBig
   ));
 
   const updateColor = (nextColor) => {
@@ -70,7 +71,7 @@ export default function EnemyRingControl({ enemy, labels = {} }) {
 
   const swapWith = (otherUuid) => {
     const other = placedEnemies.find((entry) => entry.enemy.uuid === otherUuid)?.enemy;
-    if (!other?.ringColor || (other.size === 'grande') !== isBig) {
+    if (!other?.ringColor || isEnemyLarge(other) !== isBig) {
       setError(labels.ringSizeMismatch || 'Solo se pueden intercambiar anillos del mismo tamaño.');
       return;
     }

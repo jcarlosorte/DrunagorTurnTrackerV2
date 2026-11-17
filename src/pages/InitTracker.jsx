@@ -1187,6 +1187,7 @@ const InitTracker = () => {
         tipo_ataque: selected.tipo_ataque,
         capacidades: adjustedCaps,
         capacidadesOriginales: selected.capacidades,
+        size: selected.size,
         ringColor: colorId,
         cara: selected.cara,
         estadosAlterados: initialStates
@@ -1256,6 +1257,7 @@ const InitTracker = () => {
           tipo_ataque: selected.tipo_ataque,
           capacidades: adjustedCaps,
           capacidadesOriginales: selected.capacidades,
+          size: selected.size,
           ringColor: colorId,
           cara: selected.cara,
           estadosAlterados: initialStates
@@ -1307,6 +1309,7 @@ const InitTracker = () => {
           tipo_ataque: selected.tipo_ataque,
           capacidades: adjustedCaps,
           capacidadesOriginales: selected.capacidades,
+          size: selected.size,
           ringColor: colorId,
           cara: selected.cara,
           estadosAlterados: initialStates
@@ -1341,6 +1344,7 @@ const InitTracker = () => {
           tipo_ataque: selected.tipo_ataque,
           capacidades: adjustedCaps,
           capacidadesOriginales: selected.capacidades,
+          size: selected.size,
           ringColor: colorId,
           cara: selected.cara,
           estadosAlterados: initialStates
@@ -1376,6 +1380,7 @@ const InitTracker = () => {
             tipo_ataque: null,
             capacidades: adjustedCaps,
             capacidadesOriginales: selected.capacidades,
+            size: selected.size,
             ringColor: null,
             cara: null,
             estadosAlterados: initialStates
@@ -1422,6 +1427,7 @@ const InitTracker = () => {
             tipo_ataque: null,
             capacidades: adjustedCaps,
             capacidadesOriginales: selected.capacidades,
+            size: selected.size,
             ringColor: null,
             cara: null,
             estadosAlterados: initialStates
@@ -1541,6 +1547,7 @@ const InitTracker = () => {
         tipo_ataque: selected.tipo_ataque,
         capacidades: adjustedCaps,
         capacidadesOriginales: selected.capacidades,
+        size: selected.size,
         ringColor: colorId,
         cara: selected.cara,
         estadosAlterados: initialStates
@@ -1587,6 +1594,7 @@ const InitTracker = () => {
         tipo_ataque: selected.tipo_ataque,
         capacidades: adjustedCaps,
         capacidadesOriginales: selected.capacidades,
+        size: selected.size,
         ringColor: colorId,
         cara: selected.cara,
         estadosAlterados: initialStates

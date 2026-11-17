@@ -416,6 +416,17 @@ export const ENEMIES = BASE_ENEMIES.map((enemy) => ({
   imagen: getEnemyArt(enemy.id, enemy.imagen),
 }));
 
+const LARGE_ENEMY_IDS = new Set(
+  BASE_ENEMIES
+    .filter((enemy) => enemy.size === 'grande')
+    .map((enemy) => enemy.id),
+);
+
+/** Los enemigos grandes conservan su tamaño aunque el guardado sea antiguo. */
+export function isEnemyLarge(enemy) {
+  return enemy?.size === 'grande' || LARGE_ENEMY_IDS.has(enemy?.id);
+}
+
 // En Despertar, todo enemigo inmune a GRANDE también lo es a POLIMORFISMO.
 ENEMIES.forEach((enemy) => {
   if (

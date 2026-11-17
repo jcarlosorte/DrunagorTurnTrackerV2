@@ -1,5 +1,6 @@
 import { ENEMY_RING_COLORS } from '@/data/enemyRings';
 import { ENEMY_RING_COLORS_BIG } from '@/data/enemyRingsBig';
+import { isEnemyLarge } from '@/data/enemies';
 import { useLanguage } from '@/context/LanguageContext';
 import { useGame } from '@/context/GameContext';
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -155,7 +156,7 @@ export const InitEnemiesProvider = ({ children }) => {
     // Keep the state updater pure. React may invoke it more than once in StrictMode.
     setPlacedEnemies(updated);
     if (huespedActivo) {
-      const cantidad = target.enemy.size === 'grande' ? 2 : 1;
+      const cantidad = isEnemyLarge(target.enemy) ? 2 : 1;
       const tiles = drawMultipleTiles(cantidad);
       if (tiles && tiles.length > 0) {
         tiles.forEach(tile => handleTileDraw(tile));
