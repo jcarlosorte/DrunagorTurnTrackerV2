@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { buildEnemyState, buildSeed, openTracker, readStorage, seedStorage } from './helpers';
+import { buildEnemyState, buildSeed, expandAllSceneGroups, openTracker, readStorage, seedStorage } from './helpers';
 
 const luccanorSeed = () => buildSeed({
   mainBox: JSON.stringify('core'),
@@ -8,6 +8,7 @@ const luccanorSeed = () => buildSeed({
 
 async function activateScene(page, id) {
   await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+  await expandAllSceneGroups(page);
   await page.getByTestId(`scene-${id}`).getByRole('button', { name: /Activar capítulo/ }).click();
 }
 
@@ -68,6 +69,7 @@ test.describe('Escenas de La Ruina de Luccanor', () => {
     await seedStorage(page, luccanorSeed());
     await openTracker(page);
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-luccanor_chapter2c').getByRole('button', { name: /Activar capítulo/ }).click();
     const dialog = page.getByRole('dialog').filter({ hasText: 'Ruido' });
     await expect(dialog).toBeVisible();

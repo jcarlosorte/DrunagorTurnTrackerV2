@@ -5922,6 +5922,23 @@ Unit       241 tests
 E2E        145/145
 ```
 
+### 349.ª tanda — Escenas agrupadas por expansión
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Contenedores** | Cada juego/expansión tiene su propio contenedor plegable | `TopMenu` |
+| **Imágenes** | Cabecera con la imagen de la expansión y su nombre | `TopMenu` |
+| **Títulos** | Al desplegar se muestran en orden, con título completo y tipografía más legible | `TopMenu` |
+| **Inicial** | Todos los grupos empiezan cerrados para reducir la información de golpe | `TopMenu` |
+| **Pruebas** | 241 unitarios · 145 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        145/145
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

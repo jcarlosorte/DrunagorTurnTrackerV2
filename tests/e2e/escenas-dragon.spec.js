@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { buildEnemyState, buildHeroExtras, buildSeed, openTracker, readStorage, seedStorage } from './helpers';
+import { buildEnemyState, buildHeroExtras, buildSeed, expandAllSceneGroups, openTracker, readStorage, seedStorage } from './helpers';
 
 const undeadSeed = () => buildSeed({
   mainBox: JSON.stringify('core'),
@@ -8,6 +8,7 @@ const undeadSeed = () => buildSeed({
 
 async function activateScene(page, id) {
   await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+  await expandAllSceneGroups(page);
   await page.getByTestId(`scene-${id}`).getByRole('button', { name: /Activar capítulo/ }).click();
 }
 

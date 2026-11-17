@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { buildEnemyState, buildHeroExtras, buildSeed, openTracker, readStorage, seedStorage } from './helpers';
+import { buildEnemyState, buildHeroExtras, buildSeed, expandAllSceneGroups, openTracker, readStorage, seedStorage } from './helpers';
 
 const baseSeed = () => buildSeed({
   mainBox: JSON.stringify('core'),
@@ -8,6 +8,7 @@ const baseSeed = () => buildSeed({
 
 async function activateScene(page, id) {
   await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+  await expandAllSceneGroups(page);
   await page.getByTestId(`scene-${id}`).getByRole('button', { name: /Activar capítulo/ }).click();
 }
 
@@ -16,6 +17,7 @@ test.describe('Escenas del juego base', () => {
     await seedStorage(page, baseSeed());
     await openTracker(page);
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await expect(page.getByTestId('scene-base_chapter1')).toBeVisible();
     await expect(page.getByTestId('scene-base_chapter2')).toBeVisible();
     await expect(page.getByTestId('scene-base_chapter2b')).toBeVisible();
@@ -68,6 +70,7 @@ test.describe('Escenas del juego base', () => {
     await seedStorage(page, seed);
     await openTracker(page);
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-base_chapter5').getByRole('button', { name: /Activar capítulo/ }).click();
 
     const dialog = page.getByRole('dialog', { name: 'Elegir héroe para el compañero' });
@@ -227,17 +230,17 @@ test.describe('Escenas del juego base', () => {
     await openTracker(page);
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
 
-    const baseGroup = page.getByTestId('scene-group-base-0');
-    const luccanorGroup = page.getByTestId('scene-group-luccanor-1');
-    const darkWorldGroup = page.getByTestId('scene-group-dark_world-3');
+    const baseGroup = page.getByTestId('scene-group-base');
+    const luccanorGroup = page.getByTestId('scene-group-luccanor');
+    const darkWorldGroup = page.getByTestId('scene-group-dark_world');
     await expect(baseGroup).toBeVisible();
     await expect(luccanorGroup).toBeVisible();
     await expect(darkWorldGroup).toBeVisible();
 
     await baseGroup.getByRole('button').first().click();
-    await expect(page.getByTestId('scene-base_chapter1')).toHaveCount(0);
-    await baseGroup.getByRole('button').first().click();
     await expect(page.getByTestId('scene-base_chapter1')).toBeVisible();
+    await baseGroup.getByRole('button').first().click();
+    await expect(page.getByTestId('scene-base_chapter1')).toHaveCount(0);
   });
 
   test('Capítulo 14 añade Tharmagar y sus enemigos', async ({ page }) => {

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { buildSeed, openTracker, seedStorage } from './helpers';
+import { buildSeed, expandAllSceneGroups, openTracker, seedStorage } from './helpers';
 
 const awakeningsSeed = () => buildSeed({
   mainBox: JSON.stringify('awakenings'),
@@ -12,6 +12,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter1').getByRole('button', { name: /Activar capítulo/ }).click();
 
     await expect.poll(async () => page.evaluate(() => {
@@ -55,6 +56,7 @@ test.describe('Escenas de Despertar', () => {
     await page.waitForSelector('.track-slot');
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter1').getByRole('button', { name: /Activar capítulo/ }).click();
 
     await expect.poll(async () => page.evaluate(() => {
@@ -86,6 +88,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter2').getByRole('button', { name: /Activar capítulo/ }).click();
 
     await expect.poll(async () => page.evaluate(() => {
@@ -120,6 +123,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter3').getByRole('button', { name: /Activar capítulo/ }).click();
 
     await expect.poll(async () => page.evaluate(() => {
@@ -149,6 +153,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter4').getByRole('button', { name: /Activar capítulo/ }).click();
     const followerDialog = page.getByRole('dialog', { name: 'Seguidores de la escena' });
     await followerDialog.getByRole('button', { name: 'Añadir seguidores' }).click();
@@ -177,6 +182,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter5').getByRole('button', { name: /Activar capítulo/ }).click();
 
     await expect.poll(async () => page.evaluate(() => {
@@ -211,6 +217,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter6').getByRole('button', { name: /Activar capítulo/ }).click();
 
     await expect.poll(async () => page.evaluate(() => {
@@ -238,6 +245,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter7').getByRole('button', { name: /Activar capítulo/ }).click();
 
     const picker = page.getByRole('dialog', { name: 'Elegir seguidores' });
@@ -270,6 +278,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter8').getByRole('button', { name: /Activar capítulo/ }).click();
 
     await expect.poll(async () => page.evaluate(() => {
@@ -292,6 +301,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter8b').getByRole('button', { name: /Activar capítulo/ }).click();
 
     await expect.poll(async () => page.evaluate(() => {
@@ -319,6 +329,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter9').getByRole('button', { name: /Activar capítulo/ }).click();
 
     await expect.poll(async () => page.evaluate(() => {
@@ -344,6 +355,7 @@ test.describe('Escenas de Despertar', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+    await expandAllSceneGroups(page);
     await page.getByTestId('scene-chapter9').getByRole('button', { name: /Activar capítulo/ }).click();
     const normalHeight = await page.locator('.track-slot').first().evaluate((element) => element.getBoundingClientRect().height);
     await page.getByTestId('simplified-toggle').click();

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { buildSeed, openTracker, seedStorage } from './helpers';
+import { buildSeed, expandAllSceneGroups, openTracker, seedStorage } from './helpers';
 
 const awakeningsSeed = () => buildSeed({
   mainBox: JSON.stringify('awakenings'),
@@ -11,6 +11,7 @@ test('el menú Nodos reinicia todas sus mecánicas', async ({ page }) => {
   await openTracker(page);
 
   await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+  await expandAllSceneGroups(page);
   await page.getByTestId('scene-chapter2').getByRole('button', { name: /Activar capítulo/ }).click();
   await page.getByRole('button', { name: 'Nodos', exact: true }).click();
 

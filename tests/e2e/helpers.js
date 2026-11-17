@@ -98,6 +98,15 @@ export async function openTracker(page) {
   await page.waitForSelector('.track-slot');
 }
 
+/** Despliega todos los contenedores de expansiones del menú de Escenas. */
+export async function expandAllSceneGroups(page) {
+  const collapsed = page.locator('[data-scene-group] button[aria-expanded="false"]');
+  for (let index = 0; index < 20; index += 1) {
+    if (await collapsed.count() === 0) return;
+    await collapsed.first().click();
+  }
+}
+
 export async function readStorage(page, key, fallback = null) {
   return page.evaluate(({ storageKey, defaultValue }) => {
     const raw = localStorage.getItem(storageKey);
