@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CARTAS_COMANDANTE, CARTAS_JEFE, CARTAS_OVERLORD, getOverlordDeck } from '@/data/cartasEspeciales';
+import es from '@/i18n/es.json';
+import en from '@/i18n/en.json';
 
 describe('cartas de comandante', () => {
   it('las 10 cartas base pertenecen al juego base', () => {
@@ -70,5 +72,12 @@ describe('cartas del Rey Avivado', () => {
     ]);
     expect(deck.filter((carta) => carta.cara === 'B').map((carta) => carta.id))
       .toEqual(['boss_26', 'boss_27']);
+  });
+
+  it('atribuye la activación de condiciones al Rey Avivado', () => {
+    expect(es.cartas_ataque.capacidad.boss_29).toContain('condición que afecte al Rey Avivado');
+    expect(es.cartas_ataque.capacidad.boss_29).not.toContain('condición que afecte al Cosechador de Almas');
+    expect(en.cartas_ataque.capacidad.boss_29).toContain('condition affecting the Awakened King');
+    expect(en.cartas_ataque.capacidad.boss_29).not.toContain('condition affecting the Soul Harvester');
   });
 });

@@ -6153,6 +6153,21 @@ Unit       248 tests
 E2E        155/155
 ```
 
+### 363.ª tanda — Corrección de la carta «La Oscuridad se Extiende»
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Texto** | La activación de condiciones se atribuye al Rey Avivado, no al Cosechador de Almas | `es.json` |
+| **Inglés** | La misma corrección en la versión inglesa | `en.json` |
+| **Pruebas** | 249 unitarios · 155 E2E | tests |
+
+**Medición**
+
+```text
+Unit       249 tests
+E2E        155/155
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
