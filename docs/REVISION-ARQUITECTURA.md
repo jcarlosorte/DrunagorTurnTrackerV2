@@ -5889,6 +5889,22 @@ Unit       241 tests
 E2E        145/145
 ```
 
+### 347.ª tanda — Favicon personalizado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Icono** | Ojo de dragón dorado sobre rombo rúnico y fondo oscuro | `public/favicon.svg`, PNG e ICO |
+| **Navegador** | SVG para navegadores modernos y PNG/ICO como respaldo | `index.html` |
+| **PWA** | Iconos y colores actualizados en el manifiesto | `site.webmanifest` |
+| **Pruebas** | 241 unitarios · 145 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        145/145
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
