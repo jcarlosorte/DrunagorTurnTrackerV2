@@ -47,6 +47,7 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
   importación JSON (partida completa, solo configuración o solo track).
 - **Bilingüe** español/inglés, con detección y selector de idioma.
 - **Tutorial integrado** con el manual completo, capturas y diagramas en ambos idiomas.
+- **Compendio de palabras clave** con 187 términos bilingües, búsqueda, filtros, iconos y descripciones.
 
 ## Stack
 
@@ -162,7 +163,7 @@ Suite esperada antes de cada entrega:
 ```text
 lint      0 errores / 0 avisos
 unit      241 tests
-e2e       152 tests
+e2e       154 tests
 build     OK
 ```
 

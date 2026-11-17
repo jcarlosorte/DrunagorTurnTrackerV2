@@ -6117,6 +6117,24 @@ Unit       241 tests
 E2E        152/152
 ```
 
+### 361.ª tanda — Compendio de palabras clave
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Compendio** | 187 términos del glosario bilingüe con búsqueda por nombre, alias y descripción | `compendium`, `CompendiumPanel` |
+| **Filtros** | Categorías de reglas, combate, movimiento, condiciones, recursos, turno y campaña | `CompendiumPanel` |
+| **Iconos** | Iconos existentes de estados y recursos, con icono de categoría como respaldo | `compendium` |
+| **Accesibilidad** | Combobox, navegación con teclado, `aria-live`, foco y cierre con Escape | `CompendiumPanel` |
+| **Integración** | Botón en la barra superior sin cambiar la URL y cierre con retorno de foco | `TopMenu` |
+| **Pruebas** | 246 unitarios · 154 E2E | tests |
+
+**Medición**
+
+```text
+Unit       246 tests
+E2E        154/154
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { useSavesUi } from '@/context/SavesUiContext';
-import { GiArchiveRegister, GiSwordClash, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiWoodenCrate, GiPawPrint, GiCampfire, GiWoodenSign } from 'react-icons/gi';
+import { GiArchiveRegister, GiSwordClash, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiWoodenCrate, GiPawPrint, GiCampfire, GiWoodenSign, GiBookCover } from 'react-icons/gi';
 import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
@@ -41,6 +41,7 @@ import { useExpansions } from '@/context/ExpansionContext';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import CompanionPicker from '@/components/track/CompanionPicker';
 import RiskZone from '@/components/track/RiskZone';
+import CompendiumPanel from '@/components/CompendiumPanel';
 
 
 const RuneStackIcon = ({ size = 20 }) => (
@@ -175,6 +176,7 @@ const TopMenu = ({
   const { openSaves } = useSavesUi() || {};
   const savesT = translations?.saves || {};
   const t = translations?.trackerInit || {};
+  const compendiumLabel = translations?.compendium?.title || 'Compendio';
   const { resetPlacedEnemies, activaHuesped, desactivaHuesped, huespedActivo, activaAcecho, desactivaAcecho, acechoActivo, activaInvadidos, desactivaInvadidos, invadidosActivo, oscuridadActivo, activaOscuridad, desactivaOscuridad, asaltoActivo, activaAsalto, desactivaAsalto } = useInitEnemies();
   const [enemySelect, setEnemySelect] = useState('');
   const [randomExpansionIds, setRandomExpansionIds] = useState([]);
@@ -193,7 +195,7 @@ const TopMenu = ({
   const { placedRunes, setPlacedRunes, resetPlacedRunes } = useInitRunes();
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const gameMenuRef = useRef(null);
-  const [activeMenu, setActiveMenu] = useState(null); // 'enemies' | 'runes' | 'nodes' | 'scenario' | 'events' | 'scenes'
+  const [activeMenu, setActiveMenu] = useState(null); // 'enemies' | 'runes' | 'nodes' | 'scenario' | 'events' | 'scenes' | 'compendium'
   const [sceneFollowerOpen, setSceneFollowerOpen] = useState(false);
   const [sceneFollowerSelection, setSceneFollowerSelection] = useState(null);
   const [sceneMissing, setSceneMissing] = useState({ vorn: false, elros: false });
@@ -203,6 +205,7 @@ const TopMenu = ({
   const menuRefRunes = useRef(null);
   const menuRefScenario = useRef(null);
   const menuRefNodes = useRef(null);
+  const compendiumButtonRef = useRef(null);
   const { selectedExpansions, mainBox, previewOtherBoxes, togglePreview, canPreviewOtherBoxes } = useExpansions();
 
   const sceneGroups = useMemo(() => {
@@ -283,6 +286,7 @@ const TopMenu = ({
       }
     };
     const handleKey = (event) => {
+      if (event.key === 'Escape' && event.target?.closest?.('#track-menu-compendium')) return;
       if (event.key === 'Escape') {
         setActiveMenu(null);
         setGameMenuOpen(false);
@@ -576,6 +580,7 @@ const TopMenu = ({
               ...(['awakenings', 'core'].includes(mainBox) ? [
                 { id: 'scenes', icon: GiStoneTower, label: t.scenesMenu || 'Escenas', tone: 'amber' },
               ] : []),
+              { id: 'compendium', icon: GiBookCover, label: compendiumLabel, tone: 'violet' },
             ].map(({ id, icon: Icon, label, tone }) => {
               const isActive = activeMenu === id;
               const activeTone = tone === 'sky'
@@ -584,10 +589,13 @@ const TopMenu = ({
                   ? 'border-emerald-400/80 bg-emerald-700 text-white shadow-inner shadow-emerald-950/40'
                   : tone === 'cyan'
                     ? 'border-cyan-400/80 bg-cyan-700 text-white shadow-inner shadow-cyan-950/40'
-                    : 'border-amber-400/80 bg-amber-700 text-white shadow-inner shadow-amber-950/40';
+                    : tone === 'violet'
+                      ? 'border-violet-400/80 bg-violet-700 text-white shadow-inner shadow-violet-950/40'
+                      : 'border-amber-400/80 bg-amber-700 text-white shadow-inner shadow-amber-950/40';
               return (
                 <button
                   key={id}
+                  ref={id === 'compendium' ? compendiumButtonRef : undefined}
                   type="button"
                   onClick={() => toggleMenu(id)}
                   aria-expanded={isActive}
@@ -723,7 +731,7 @@ const TopMenu = ({
             )}
           </div>
 
-          {['enemies', 'runes', 'nodes', 'scenario', 'events', 'scenes'].includes(activeMenu) && (
+          {['enemies', 'runes', 'nodes', 'scenario', 'events', 'scenes', 'compendium'].includes(activeMenu) && (
             <button
               type="button"
               data-testid="close-menu"
@@ -2300,6 +2308,15 @@ const TopMenu = ({
               })}
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {activeMenu === 'compendium' && (
+          <CompendiumPanel onClose={() => {
+            setActiveMenu(null);
+            window.requestAnimationFrame(() => compendiumButtonRef.current?.focus());
+          }} />
         )}
       </AnimatePresence>
 

@@ -13,6 +13,26 @@
     "tutorial_hint": "How to use the app",
     "footerTagline": "Unofficial Drunagor tool"
   },
+  "compendium": {
+    "title": "Compendium",
+    "subtitle": "Search keywords, conditions and rules terms.",
+    "search": "Search term…",
+    "clear": "Clear search",
+    "all": "All",
+    "withIcon": "With icon",
+    "results": "{count} terms",
+    "noResultsTitle": "No results",
+    "noResultsBody": "Try another word or change the filters.",
+    "selectTitle": "Select a term",
+    "selectBody": "View its description, icon and related terms.",
+    "description": "Description",
+    "aliases": "Also known as",
+    "related": "Related terms",
+    "explore": "Explore categories",
+    "category": "Category",
+    "close": "Close compendium",
+    "emptyHint": "Try: Trample, Stun, Shield…"
+  },
   "tutorial": {
     "title": "Tutorial",
     "subtitle": "A quick guide to everything the app can do. It is updated with every improvement.",

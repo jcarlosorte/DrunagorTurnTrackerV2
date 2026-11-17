@@ -13,6 +13,26 @@
     "tutorial_hint": "Cómo usar la aplicación",
     "footerTagline": "Herramienta no oficial para Drunagor"
   },
+  "compendium": {
+    "title": "Compendio",
+    "subtitle": "Busca palabras clave, condiciones y términos de reglas.",
+    "search": "Buscar término…",
+    "clear": "Limpiar búsqueda",
+    "all": "Todo",
+    "withIcon": "Con icono",
+    "results": "{count} términos",
+    "noResultsTitle": "Sin resultados",
+    "noResultsBody": "Prueba con otra palabra o cambia los filtros.",
+    "selectTitle": "Selecciona un término",
+    "selectBody": "Consulta su descripción, su icono y los términos relacionados.",
+    "description": "Descripción",
+    "aliases": "También conocido como",
+    "related": "Términos relacionados",
+    "explore": "Explorar categorías",
+    "category": "Categoría",
+    "close": "Cerrar compendio",
+    "emptyHint": "Prueba con: Arrollar, Aturdimiento, Escudo…"
+  },
   "tutorial": {
     "title": "Tutorial",
     "subtitle": "Una guía rápida de todo lo que puede hacer la aplicación. Se actualiza con cada mejora.",
