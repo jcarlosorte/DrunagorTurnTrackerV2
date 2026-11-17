@@ -6049,6 +6049,23 @@ Unit       241 tests
 E2E        150/150
 ```
 
+### 357.ª tanda — Tutorial completo y gráfico
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Manual** | Guía completa para nuevos usuarios con flujo, menús, turnos, guardado y solución de problemas | `docs/TUTORIAL.md` |
+| **Capturas** | Nueve capturas reales de inicio, configuración, selección, tablero, escenas, runas, guardados, enemigos y héroe | `docs/tutorial/assets` |
+| **Diagramas** | Mapas Mermaid del onboarding y del bucle de turno | `docs/TUTORIAL.md` |
+| **Ayuda visual** | Tabla de figuras, anotaciones recomendadas y leyenda de iconos | `docs/TUTORIAL.md` |
+| **Pruebas** | 241 unitarios · 150 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        150/150
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
