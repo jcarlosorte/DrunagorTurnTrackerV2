@@ -46,6 +46,7 @@ test.describe('Tablero de iniciativa', () => {
       },
     }));
     await openTracker(page);
+    const emptyHeight = await page.locator('.track-slot').first().evaluate((element) => element.getBoundingClientRect().height);
     await page.evaluate((state) => {
       localStorage.setItem('initEnemiesState', JSON.stringify(state));
     }, state);
@@ -60,11 +61,14 @@ test.describe('Tablero de iniciativa', () => {
         slotHeight: document.querySelector('.track-slot')?.getBoundingClientRect().height || 0,
         cards: cards.length,
         trackTop: region?.getBoundingClientRect().top || 0,
+        trackBottom: region?.getBoundingClientRect().bottom || 0,
         topCard: Math.min(...cards.map((card) => card.getBoundingClientRect().top)),
+        bottomCard: Math.max(...cards.map((card) => card.getBoundingClientRect().bottom)),
       };
     });
-    expect(metrics.slotHeight).toBeGreaterThan(900);
-    expect(metrics.topCard).toBeGreaterThanOrEqual(metrics.trackTop);
+    expect(metrics.slotHeight).toBeGreaterThan(emptyHeight);
+    expect(metrics.topCard).toBeGreaterThanOrEqual(metrics.trackTop - 1);
+    expect(metrics.bottomCard).toBeLessThanOrEqual(metrics.trackBottom + 1);
   });
 
   test('la vista de lista usa una altura compacta', async ({ page }) => {

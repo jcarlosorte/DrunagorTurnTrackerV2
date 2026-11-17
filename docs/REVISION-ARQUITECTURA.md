@@ -5905,6 +5905,23 @@ Unit       241 tests
 E2E        145/145
 ```
 
+### 348.ª tanda — Altura independiente y medida de las pilas del track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Medición** | Cada slot mide la extensión real de sus pilas superior e inferior | `TrackSlot` |
+| **Centro** | La línea central se desplaza según el espacio necesario arriba y abajo | `InitTracker`, `TrackSlot` |
+| **Responsive** | Se recalcula al añadir cartas, cambiar densidad u overlap y en la vista simplificada | `TrackSlot` |
+| **Estabilidad** | Se evita el bucle de medición y se conserva un margen mínimo | `InitTracker` |
+| **Pruebas** | 241 unitarios · 145 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        145/145
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

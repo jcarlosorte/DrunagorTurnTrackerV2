@@ -1,7 +1,7 @@
 // src/pages/InitTracker.jsx
 
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -315,6 +315,20 @@ const InitTracker = () => {
   }, [placedEnemies, flickeringBoarDeck.active, flickeringBoarDeck.enemyUuid]);
   const [warningMessage, setWarningMessage] = useState(null);
   const [overhealedEnemies, setOverhealedEnemies] = useState(() => new Set(persistedSession.overhealedEnemies || []));
+  const [slotExtents, setSlotExtents] = useState({});
+  const handleSlotExtents = useCallback((index, extents) => {
+    setSlotExtents((prev) => {
+      const current = prev[index];
+      const nextTop = Math.max(0, Math.ceil(extents.top || 0));
+      const nextBottom = Math.max(0, Math.ceil(extents.bottom || 0));
+      if (current
+        && Math.abs(current.top - nextTop) <= 1
+        && Math.abs(current.bottom - nextBottom) <= 1) {
+        return prev;
+      }
+      return { ...prev, [index]: { top: nextTop, bottom: nextBottom } };
+    });
+  }, []);
 
   const [flippedCards, setFlippedCards] = useState([]);
   const [scenarioToasts, setScenarioToasts] = useState([]);
@@ -5165,11 +5179,24 @@ const InitTracker = () => {
   const overlapFactor = overlap === 'compact' ? 0.72 : 1;
   const normalCounts = countsPerSlot.map((counts) => counts.normal);
   const compactCounts = countsPerSlot.map((counts) => counts.compact);
-  const boardSlotHeight = (
+  const fallbackBoardSlotHeight = (
     simplified
       ? simplifiedSlotHeightFrom(normalCounts, compactCounts)
       : boardSlotHeightFrom(normalCounts)
   ) * densityFactor * overlapFactor;
+  const measuredTop = Object.values(slotExtents).reduce((max, extents) => Math.max(max, extents.top || 0), 0);
+  const measuredBottom = Object.values(slotExtents).reduce((max, extents) => Math.max(max, extents.bottom || 0), 0);
+  const hasMeasuredStacks = Object.keys(slotExtents).length > 0;
+  const SLOT_EDGE_PADDING = 30;
+  const SLOT_MIN_HALF = 280 * densityFactor;
+  const slotTopHeight = hasMeasuredStacks
+    ? Math.max(SLOT_MIN_HALF, measuredTop + SLOT_EDGE_PADDING)
+    : fallbackBoardSlotHeight / 2;
+  const slotBottomHeight = hasMeasuredStacks
+    ? Math.max(SLOT_MIN_HALF, measuredBottom + SLOT_EDGE_PADDING)
+    : fallbackBoardSlotHeight / 2;
+  const boardSlotHeight = slotTopHeight + slotBottomHeight;
+  const centerOffset = slotTopHeight;
 
   const currentSlotIndex = (() => {
     if (!currentTurnEntity) return -1;
@@ -5205,6 +5232,9 @@ const InitTracker = () => {
     currentSlotIndex,
     flippedCards,
     boardSlotHeight,
+    centerOffset,
+    bottomOffset: slotBottomHeight,
+    onStackExtents: handleSlotExtents,
     getHeroName,
     getHeroProf,
     getHeroExtras,

@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from 'react';
 import classNames from 'classnames';
 import { GiWingedSword, GiAbstract065 } from 'react-icons/gi';
 import siegeDeckBack from '@/assets/runes/card-indigo.webp';
@@ -39,6 +40,9 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     flippedCards = [],
     currentSlotIndex = -1,
     boardSlotHeight,
+    centerOffset,
+    bottomOffset,
+    onStackExtents,
     getHeroName,
     getHeroProf,
     getHeroExtras,
@@ -104,6 +108,32 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
   // En la vista de lista el slot se dibuja solo: usa su altura real y no la del tablero.
   // oardSlotHeight ya llega escalado por densidad y solape desde InitTracker.
   const slotHeight = compact ? compactSlotHeight(totalAbove, totalBelow) : boardSlotHeight;
+  const slotCenter = compact
+    ? slotHeight / 2
+    : (Number.isFinite(centerOffset) ? centerOffset : slotHeight / 2);
+  const slotBottom = compact
+    ? slotHeight / 2
+    : (Number.isFinite(bottomOffset) ? bottomOffset : slotHeight - slotCenter);
+  const slotRef = useRef(null);
+  const centerRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (compact || !slotRef.current || !centerRef.current || !onStackExtents) return;
+    const slot = slotRef.current;
+    const slotRect = slot.getBoundingClientRect();
+    const centerRect = centerRef.current.getBoundingClientRect();
+    const scale = slot.offsetWidth > 0 ? slotRect.width / slot.offsetWidth : 1;
+    const safeScale = scale > 0 ? scale : 1;
+    const centerY = centerRect.top + centerRect.height / 2;
+    let top = 0;
+    let bottom = 0;
+    slot.querySelectorAll('[data-stack-card]').forEach((card) => {
+      const rect = card.getBoundingClientRect();
+      top = Math.max(top, (centerY - rect.top) / safeScale);
+      bottom = Math.max(bottom, (rect.bottom - centerY) / safeScale);
+    });
+    onStackExtents(index, { top, bottom });
+  }, [compact, index, totalAbove, totalBelow, stackAbove.length, stackBelow.length, enemiesAbove.length, enemiesBelow.length, density, overlap, simplified, onStackExtents]);
 
   const renderStack = (items, side, type = 'hero') => {
     const isTop = side === 'top';
@@ -156,11 +186,12 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
         return (
           <div
             key={enemy.uuid}
+            data-stack-card="true"
             className="absolute left-1/2 w-[132px] max-w-full"
             style={{
               ...(isTop
-                ? { bottom: `calc(50% + ${BASE_GAP + i * 44}px)` }
-                : { top: `calc(50% + ${BASE_GAP + i * 44}px)` }),
+                ? { bottom: `calc(${slotBottom}px + ${BASE_GAP + i * 44}px)` }
+                : { top: `calc(${slotCenter}px + ${BASE_GAP + i * 44}px)` }),
               transform: 'translateX(-50%)',
               zIndex: isCurrentTurn ? 40 : zIndex,
             }}
@@ -208,11 +239,12 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
       return (
         <div
           key={isSiege ? `siege-${siegeEvent.current ?? 'none'}-${siegeEvent.deck.length}` : type === 'enemy' ? item.enemy.uuid : type === 'rune' ? item.uuid : isFollower ? item.uid : isCompanion ? item.uid : `${type}-${item.id}`}
+          data-stack-card="true"
           className="absolute left-1/2 w-[132px] max-w-full transition-transform duration-300"
           style={{
             ...(isTop
-              ? { bottom: `calc(50% + ${distance}px)` }
-              : { top: `calc(50% + ${distance}px)` }),
+              ? { bottom: `calc(${slotBottom}px + ${distance}px)` }
+              : { top: `calc(${slotCenter}px + ${distance}px)` }),
             transform: `translateX(-50%) scale(${densityFactor})`,
             transformOrigin: 'center center',
             zIndex: isCurrentTurn ? 40 : zIndex,
@@ -313,16 +345,26 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
   };
   return (
     <div
+      ref={slotRef}
       className={`track-slot relative w-full min-w-0 ${index === currentSlotIndex ? 'track-slot--active' : ''}`}
       style={{ height: `${slotHeight}px` }}
     >
-      {/* Pilas: se anclan al 50% del propio slot y crecen hacia fuera */}
+      <span
+        ref={centerRef}
+        className="pointer-events-none absolute inset-x-0 h-px"
+        style={{ top: `${slotCenter}px` }}
+        aria-hidden="true"
+      />
+      {/* Pilas: se anclan al centro del slot y crecen hacia fuera */}
       {renderStack(stackAbove, 'top', 'hero')}
       {isRune && renderStack(enemiesAbove, 'top', 'enemy')}
       {isRuneTextSlot && renderStack(runesAbove.map((r) => r.rune), 'top', 'rune')}
 
       {/* Centro del slot: siempre en la misma línea */}
-      <div className="track-slot__label absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 items-center justify-center bg-slate-700 py-1">
+      <div
+        className="track-slot__label absolute inset-x-0 z-10 flex -translate-y-1/2 items-center justify-center bg-slate-700 py-1"
+        style={{ top: `${slotCenter}px` }}
+      >
         <div className={classNames(
           'flex min-w-0 items-center justify-center font-fantasy',
           {
