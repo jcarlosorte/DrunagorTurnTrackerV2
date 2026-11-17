@@ -5939,6 +5939,21 @@ Unit       241 tests
 E2E        145/145
 ```
 
+### 350.ª tanda — Agrupación de escenas para todas las campañas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Despertar** | También se agrupa en su propio contenedor plegable | `TopMenu` |
+| **Futuras** | Cualquier escena nueva con `expansionId` se agrupa automáticamente | `TopMenu` |
+| **Pruebas** | 241 unitarios · 146 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        146/146
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

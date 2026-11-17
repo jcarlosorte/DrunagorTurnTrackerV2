@@ -223,6 +223,21 @@ test.describe('Escenas del juego base', () => {
     }).toEqual(['drumm']);
   });
 
+  test('agrupa también las escenas de Despertar en su propio contenedor', async ({ page }) => {
+    await seedStorage(page, buildSeed({
+      mainBox: JSON.stringify('awakenings'),
+      expansions: JSON.stringify(['base', 'apocalypse_awakenings']),
+    }));
+    await openTracker(page);
+    await page.getByRole('button', { name: 'Escenas', exact: true }).click();
+
+    const awakeningsGroup = page.getByTestId('scene-group-awakenings');
+    await expect(awakeningsGroup).toBeVisible();
+    await expect(page.getByTestId('scene-chapter1')).toHaveCount(0);
+    await awakeningsGroup.getByRole('button').first().click();
+    await expect(page.getByTestId('scene-chapter1')).toBeVisible();
+  });
+
   test('agrupa las escenas por juego y expansión', async ({ page }) => {
     await seedStorage(page, buildSeed({
       expansions: JSON.stringify(['base', 'luccanor', 'dark_world']),
