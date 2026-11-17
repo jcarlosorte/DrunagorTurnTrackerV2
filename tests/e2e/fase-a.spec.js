@@ -25,8 +25,8 @@ test.describe('Fase A · navegación y configuración', () => {
     await page.getByRole('button', { name: /^Tutorial/ }).click();
 
     await expect(page).toHaveURL(/\/tutorial\/?$/);
-    await expect(page.getByRole('heading', { name: /El tablero/ })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Partidas y copias/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Tutorial completo/ })).toBeVisible();
+    await expect(page.locator('.tutorial-prose h2')).toHaveCount(22);
     await page.getByRole('button', { name: /Volver al inicio/ }).click();
     await expect(page).toHaveURL(/\/$/);
   });

@@ -46,6 +46,7 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Guardados**: autoguardado, hasta 10 partidas con nombre, exportación e
   importación JSON (partida completa, solo configuración o solo track).
 - **Bilingüe** español/inglés, con detección y selector de idioma.
+- **Tutorial integrado** con el manual completo, capturas y diagramas en ambos idiomas.
 
 ## Stack
 
@@ -161,7 +162,7 @@ Suite esperada antes de cada entrega:
 ```text
 lint      0 errores / 0 avisos
 unit      241 tests
-e2e       150 tests
+e2e       151 tests
 build     OK
 ```
 

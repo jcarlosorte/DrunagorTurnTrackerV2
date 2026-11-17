@@ -6083,6 +6083,24 @@ Unit       241 tests
 E2E        150/150
 ```
 
+### 359.ª tanda — Tutorial completo integrado en la web
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Ruta /tutorial** | Renderiza el manual completo en español o inglés | `Tutorial` |
+| **Markdown** | El contenido se carga desde los manuales y se transforma con tablas, listas, avisos e imágenes | `Tutorial` |
+| **Diagramas** | Los diagramas Mermaid se renderizan dentro de la página | `Tutorial` |
+| **Navegación** | Índice lateral, selector ES/EN, impresión/PDF y vuelta al inicio | `Tutorial` |
+| **Capturas** | Las imágenes se sirven desde `public/tutorial` | `public` |
+| **Pruebas** | 241 unitarios · 151 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        151/151
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
