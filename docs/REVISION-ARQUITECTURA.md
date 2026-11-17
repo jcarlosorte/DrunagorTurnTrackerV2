@@ -6019,6 +6019,36 @@ Unit       241 tests
 E2E        148/148
 ```
 
+### 355.ª tanda — Mecánicas limitadas a su campaña
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Ocuridad Eterna** | Solo aparece en el juego base y en su previsualización | `TopMenu`, `InitTracker` |
+| **Avisos** | Monstruo Huésped, Acecho, Invadidos y Nieblas no se muestran en Despertar | `InitTracker` |
+| **Visión Clara** | Solo se muestra en Despertar y su previsualización | `InitTracker` |
+| **Pruebas** | 241 unitarios · 150 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        150/150
+```
+
+### 356.ª tanda — Imagen del contenedor de Despertar
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Imagen** | El contenedor de escenas de Despertar usa la imagen de su caja | `TopMenu` |
+| **Pruebas** | 241 unitarios · 150 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        150/150
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

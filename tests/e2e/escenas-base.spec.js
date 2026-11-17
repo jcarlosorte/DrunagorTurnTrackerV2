@@ -233,6 +233,7 @@ test.describe('Escenas del juego base', () => {
 
     const awakeningsGroup = page.getByTestId('scene-group-awakenings');
     await expect(awakeningsGroup).toBeVisible();
+    await expect(awakeningsGroup.locator('img').first()).toBeVisible();
     await expect(page.getByTestId('scene-chapter1')).toHaveCount(0);
     await awakeningsGroup.getByRole('button').first().click();
     await expect(page.getByTestId('scene-chapter1')).toBeVisible();

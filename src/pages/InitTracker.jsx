@@ -223,6 +223,8 @@ const InitTracker = () => {
   const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetEnemySession, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, activaHuesped, acechoActivo, activaAcecho, invadidosActivo, desactivaAcecho, desactivaHuesped, desactivaOscuridad, desactivaAsalto, desactivaInvadidos } = useInitEnemies();
   const { translations } = useLanguage();
   const { selectedExpansions, mainBox, previewOtherBoxes } = useExpansions();
+  const showCoreContent = mainBox === 'core' || previewOtherBoxes;
+  const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes;
   const ti = translations.trackerInit || {};
   const tr = translations.roles || {};
   const tc = translations.enemies?.categoria || {};
@@ -5591,7 +5593,7 @@ const InitTracker = () => {
             <div className={`mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 ${panelsBelow ? '' : 'lg:flex-row'}`}>
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
                 <div className="mb-2 space-y-2" data-testid="track-notice-stack">
-                  {huespedActivo && (
+                  {showCoreContent && huespedActivo && (
                     <TrackWarningBanner
                       title={ti.hostMonsterTitle || 'Monstruo Huésped'}
                       summary={ti.hostMonsterSummary || 'Cuando un monstruo es derrotado se robará 1 Runa para monstruos pequeños y 2 Runas para Grandes.'}
@@ -5599,21 +5601,21 @@ const InitTracker = () => {
                       labels={{ details: ti.details || 'Detalles' }}
                     />
                   )}
-                  {acechoActivo && (
+                  {showCoreContent && acechoActivo && (
                     <TrackWarningBanner
                       title={ti.acechoNoticeTitle || 'El Rey Redivivo Acecha'}
                       summary={ti.acechoNoticeSummary || 'La mecánica de Acecho está activa.'}
                       labels={{ details: ti.details || 'Detalles' }}
                     />
                   )}
-                  {invadidosActivo && (
+                  {showCoreContent && invadidosActivo && (
                     <TrackWarningBanner
                       title={ti.invadidosNoticeTitle || 'Invadidos'}
                       summary={ti.invadidosNoticeSummary || 'La mecánica de Invadidos está activa.'}
                       labels={{ details: ti.details || 'Detalles' }}
                     />
                   )}
-                  {visionClaraActive && (
+                  {showAwakeningsContent && visionClaraActive && (
                     <TrackWarningBanner
                       title={ti.visionClaraTitle || 'Visión Clara'}
                       summary={ti.visionClaraSummary || 'Visión Reducida desactivada hasta que el medidor alcance Gris Abajo.'}
@@ -5621,7 +5623,7 @@ const InitTracker = () => {
                       labels={{ details: ti.details || 'Detalles' }}
                     />
                   )}
-                  {eternalDarknessActive && (
+                  {showCoreContent && eternalDarknessActive && (
                     <TrackWarningBanner
                       title={ti.eternalDarknessTitle || 'Ocuridad Eterna'}
                       summary={ti.eternalDarknessSummary || 'Todas las casillas están bajo Oscuridad. Los enemigos invocados ganan +2 al Ataque.'}
@@ -5629,7 +5631,7 @@ const InitTracker = () => {
                       labels={{ details: ti.details || 'Detalles' }}
                     />
                   )}
-                  {mistsSofocantesActive && (
+                  {showCoreContent && mistsSofocantesActive && (
                     <TrackWarningBanner
                       title={translations.cartas_sorpresa?.nombre?.sorpresa_3 || ti.buriedSurpriseMists || 'Nieblas Sofocantes'}
                       summary={ti.mistsSummary || 'Alcance máximo de 1 área para habilidades de Agilidad, Sabiduría y Concentración (salvo ataques con arma y consumibles).'}

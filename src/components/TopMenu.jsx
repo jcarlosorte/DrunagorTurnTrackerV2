@@ -1983,7 +1983,7 @@ const TopMenu = ({
               </h2>
             </div>
 
-            {selectedExpansions.includes('dark_world') && (
+            {showCoreContent && selectedExpansions.includes('dark_world') && (
               <div data-testid="eternal-darkness-toggle" className="rounded-xl border border-violet-800/60 bg-violet-950/30 p-2">
                 <p className="text-xs font-bold text-violet-100">{t.eternalDarknessTitle || 'Ocuridad Eterna'}</p>
                 <p className="mt-1 text-[0.6rem] text-violet-200/80">
@@ -2225,7 +2225,9 @@ const TopMenu = ({
                   : group.key === 'awakenings'
                     ? (t.sceneGroupAwakenings || 'Despertar')
                     : (translations.expansions?.[group.key] || group.key);
-                const groupImage = EXPANSIONS.find((expansion) => expansion.id === group.key)?.imagen;
+                const groupImage = group.key === 'awakenings'
+                  ? EXPANSIONS.find((expansion) => expansion.id === 'apocalypse_awakenings')?.imagen
+                  : EXPANSIONS.find((expansion) => expansion.id === group.key)?.imagen;
                 const firstBadge = getSceneBadge(group.scenes[0], 0);
                 const lastBadge = getSceneBadge(group.scenes[group.scenes.length - 1], group.scenes.length - 1);
                 const groupRange = firstBadge === lastBadge ? firstBadge : `${firstBadge}–${lastBadge}`;
