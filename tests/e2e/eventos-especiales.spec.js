@@ -75,6 +75,22 @@ test.describe('Sorpresa Enterrada', () => {
   });
 });
 
+test.describe('Mazos especiales de Despertar', () => {
+  test('los cuatro mazos ocupan una sola fila cuando hay espacio', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 950 });
+    await seedStorage(page, awakeningsSeed());
+    await openTracker(page);
+    await page.getByRole('button', { name: 'Eventos', exact: true }).click();
+
+    const deckGrid = page.getByTestId('awakenings-event-decks');
+    const cards = deckGrid.locator(':scope > div');
+    await expect(cards).toHaveCount(4);
+
+    const rowTops = await cards.evaluateAll((elements) => elements.map((element) => element.offsetTop));
+    expect(new Set(rowTops).size).toBe(1);
+  });
+});
+
 test.describe('Sorpresa de Eradren', () => {
   test('añade el evento, roba una carta y la descarta', async ({ page }) => {
     await seedStorage(page, awakeningsSeed());

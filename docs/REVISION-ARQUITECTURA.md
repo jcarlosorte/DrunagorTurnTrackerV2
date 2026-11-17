@@ -6101,6 +6101,22 @@ Unit       241 tests
 E2E        151/151
 ```
 
+### 360.ª tanda — Mazos de Despertar en una fila
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Eventos** | Los cuatro mazos de Despertar usan una rejilla adaptativa | `TopMenu` |
+| **Ancho mínimo** | Cada tarjeta reserva 15rem; caben cuatro en línea cuando el panel lo permite | `TopMenu` |
+| **Responsive** | En anchos menores pasan a tres, dos o una columna sin desbordarse | `TopMenu` |
+| **Pruebas** | 241 unitarios · 152 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        152/152
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

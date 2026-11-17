@@ -2050,7 +2050,10 @@ const TopMenu = ({
             )}
 
             {showAwakeningsContent && (
-            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+            <div
+              data-testid="awakenings-event-decks"
+              className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-2"
+            >
             <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-2">
               <p className="text-xs font-bold text-amber-100">
                 {t.corruptShipDeck || 'PS del Navío Corrupto'}
