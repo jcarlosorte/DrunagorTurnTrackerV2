@@ -208,10 +208,14 @@ const TopMenu = ({
   const sceneGroups = useMemo(() => {
     const grouped = new Map();
     SCENES
-      .filter((scene) => (
-        (scene.campaign || 'awakenings') === mainBox
-        && (!scene.expansionId || selectedExpansions.includes(scene.expansionId))
-      ))
+      .filter((scene) => {
+        const campaign = scene.campaign || 'awakenings';
+        const campaignMatches = previewOtherBoxes
+          ? ['core', 'awakenings'].includes(campaign)
+          : campaign === mainBox;
+        return campaignMatches
+          && (!scene.expansionId || selectedExpansions.includes(scene.expansionId));
+      })
       .forEach((scene) => {
         const key = scene.expansionId || (scene.campaign === 'core' ? 'base' : 'awakenings');
         if (!grouped.has(key)) grouped.set(key, []);
@@ -232,7 +236,7 @@ const TopMenu = ({
         }),
       }))
       .sort((a, b) => groupOrder(a) - groupOrder(b));
-  }, [mainBox, selectedExpansions]);
+  }, [mainBox, previewOtherBoxes, selectedExpansions]);
   const activeEnemyExpansions = selectedExpansions.filter((expansionId) => (
     ENEMIES.some((enemy) => enemy.expansionId === expansionId)
   ));
@@ -253,6 +257,7 @@ const TopMenu = ({
     ))
     .map((enemy) => [enemy.id, enemy])).values());
   const showCoreContent = mainBox === 'core' || previewOtherBoxes;
+  const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes;
   
   const colorMap = {
     rojo: 'state-btn-remove',
@@ -313,19 +318,25 @@ const TopMenu = ({
     setManualSelect(value);
   };
 
+  const scenarioMonsterCampaigns = useMemo(
+    () => (previewOtherBoxes ? ['core', 'awakenings'] : [mainBox]),
+    [mainBox, previewOtherBoxes],
+  );
   const monstruosUnicos = Array.from(
     new Map(
-      getScenarioMonstersForCampaign(mainBox)
+      scenarioMonsterCampaigns
+        .flatMap((campaign) => getScenarioMonstersForCampaign(campaign))
         .map(m => [m.id, m])
     ).values()
   );
 
   useEffect(() => {
     if (!scenarioMonster) return;
-    const stillAvailable = getScenarioMonstersForCampaign(mainBox)
+    const stillAvailable = scenarioMonsterCampaigns
+      .flatMap((campaign) => getScenarioMonstersForCampaign(campaign))
       .some((monster) => monster.id === scenarioMonster.id);
     if (!stillAvailable) setScenarioMonster(null);
-  }, [mainBox, scenarioMonster, setScenarioMonster]);
+  }, [mainBox, previewOtherBoxes, scenarioMonster, scenarioMonsterCampaigns, setScenarioMonster]);
 
   useEffect(() => {
     if (!['awakenings', 'core'].includes(mainBox) && activeMenu === 'events') {
@@ -536,7 +547,7 @@ const TopMenu = ({
   })();
 
   const scenarioCards = placedRunes.filter((entry) => ['incursion', 'defensa'].includes(entry.rune?.tipo)).length;
-  const maxScenarioCards = mainBox === 'awakenings' ? 3 : 2;
+  const maxScenarioCards = mainBox === 'awakenings' || previewOtherBoxes ? 3 : 2;
   const activeNodes = spawnPoints.length + controlPoints.length + runeKeys.length + rescue.length + pilas.length + pilasConcentrada.length;
   
   return (
@@ -1042,7 +1053,7 @@ const TopMenu = ({
                   </div>
                   )}
 
-                  {mainBox === 'awakenings' && (
+                  {showAwakeningsContent && (
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {RUNAS_DESPERTAR.filter((card) => card.cara === 'A').map((cardA) => {
                       const cardB = RUNAS_DESPERTAR.find((card) => card.id === cardA.id && card.cara === 'B');
@@ -1498,8 +1509,8 @@ const TopMenu = ({
                 </div>
                 <ScenarioPanels />
                 <div className="mt-2 grid items-start gap-2 lg:grid-cols-3">
-                {mainBox === 'awakenings' && <NodosOscuridadPanel />}
-                {mainBox === 'awakenings' && (
+                {showAwakeningsContent && <NodosOscuridadPanel />}
+                {showAwakeningsContent && (
                   <div className="rounded-xl border border-cyan-700/60 bg-cyan-950/30 p-1.5">
                     <div className="mb-2 text-xs font-bold uppercase tracking-wide text-cyan-200">
                       {t.generationPoints || 'Fichas de Generación'}
@@ -1536,7 +1547,7 @@ const TopMenu = ({
                     )}
                   </div>
                 )}
-                {mainBox === 'awakenings' && (
+                {showAwakeningsContent && (
                 <div className="rounded-xl border border-orange-700/60 bg-orange-950/30 p-1.5">
                   <div className="mb-2 text-xs font-bold uppercase tracking-wide text-orange-200">
                     {t.magicCannons || 'Cañones Mágicos'}
@@ -1765,7 +1776,7 @@ const TopMenu = ({
                   </div>
                   )}
 
-                  {mainBox === 'awakenings' && (
+                  {showAwakeningsContent && (
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {INCURSION_DESPERTAR.filter((card) => card.cara === 'A').map((cardA) => {
                       const cardB = INCURSION_DESPERTAR.find((card) => card.id === cardA.id && card.cara === 'B');
@@ -2008,7 +2019,7 @@ const TopMenu = ({
               </div>
             )}
 
-            {mainBox === 'core' && (
+            {showCoreContent && (
               <div className="rounded-xl border border-fuchsia-800/60 bg-fuchsia-950/30 p-2">
                 <p className="text-xs font-bold text-fuchsia-100">{t.buriedSurpriseTitle || 'Sorpresa Enterrada'}</p>
                 <p className="mt-1 line-clamp-2 text-[0.6rem] text-fuchsia-200/80">
@@ -2032,7 +2043,7 @@ const TopMenu = ({
               </div>
             )}
 
-            {mainBox !== 'core' && (
+            {showAwakeningsContent && (
             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
             <div className="rounded-xl border border-amber-800/60 bg-amber-950/30 p-2">
               <p className="text-xs font-bold text-amber-100">

@@ -5985,6 +5985,23 @@ Unit       241 tests
 E2E        147/147
 ```
 
+### 353.ª tanda — Vista de contenido de otras campañas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Despertar** | Se muestran sus cartas y escenas al previsualizar desde el juego base | `TopMenu` |
+| **Juego base** | También se muestra al previsualizar desde Despertar | `TopMenu` |
+| **Escenas** | Los contenedores de ambas campañas aparecen durante la previsualización | `TopMenu` |
+| **Escenario** | Los monstruos de escenario de ambas campañas quedan disponibles | `TopMenu` |
+| **Pruebas** | 241 unitarios · 148 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        148/148
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
