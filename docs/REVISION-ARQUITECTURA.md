@@ -5969,6 +5969,22 @@ Unit       241 tests
 E2E        146/146
 ```
 
+### 352.ª tanda — Avisos unificados encima del track
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Pila común** | Todos los avisos persistentes se apilan en el mismo lugar sobre el track | `InitTracker` |
+| **Avisos** | Monstruo Huésped, Acecho, Invadidos, Visión Clara, Ocuridad Eterna y Nieblas usan el mismo componente | `InitTracker` |
+| **Visibilidad** | La pila queda dentro del área del track, por debajo de los menús superiores | `InitTracker` |
+| **Pruebas** | 241 unitarios · 147 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        147/147
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

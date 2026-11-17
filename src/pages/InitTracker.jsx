@@ -63,7 +63,6 @@ import SiegeCardModal from '@/components/track/SiegeCardModal';
 import SiegeDeckModal from '@/components/track/SiegeDeckModal';
 import AppAlertDialog from '@/components/AppAlertDialog';
 import TerribleCannonDialog from '@/components/track/TerribleCannonDialog';
-import VisionClaraModal from '@/components/track/VisionClaraModal';
 import EventCardModal from '@/components/track/EventCardModal';
 import BuriedSurpriseBar from '@/components/track/BuriedSurpriseBar';
 import mecanicaEspecialIcon from '@/assets/assets_logo/mecanica_especial.png';
@@ -360,7 +359,6 @@ const InitTracker = () => {
   const [storyCard, setStoryCard] = useState(null);
   const [fuegoCannonChoice, setFuegoCannonChoice] = useState(null);
   const [terribleCannonChoice, setTerribleCannonChoice] = useState(false);
-  const [visionClaraDetails, setVisionClaraDetails] = useState(false);
   const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
   const getHeroName = (id) => translations.heroes?.[id] || id;
@@ -5590,50 +5588,56 @@ const InitTracker = () => {
               />
             )}
 
-            {huespedActivo && (
-              <TrackWarningBanner
-                title={ti.hostMonsterTitle || 'Monstruo Huésped'}
-                summary={ti.hostMonsterSummary || 'Cuando un monstruo es derrotado se robará 1 Runa para monstruos pequeños y 2 Runas para Grandes.'}
-                details={ti.hostMonsterDetails || 'Cuando un monstruo es derrotado se robará 1 Runa para monstruos pequeños y 2 Runas para Grandes, luego se colocará la loseta de Oscuridad desde donde ha sido derrotado como si fuera el punto de generación, luego coloca la runa en el medidor.'}
-                labels={{ details: ti.details || 'Detalles' }}
-              />
-            )}
-
-            {/* 🐉 Aviso de la mecánica de Rey redivivo acecha */}
-            {acechoActivo && (
-              <div className="mt-3 p-2 bg-indigo-900 rounded-lg">
-                <div className="text-xs text-indigo-300 font-bold">
-                  {ti.acechoActivo}
-                </div>
-              </div>
-            )}
-
-            {/* 🐉 Aviso de la mecánica INVADIDOS */}
-            {invadidosActivo && (
-              <div className="mt-3 p-2 bg-indigo-900 rounded-lg">
-                <div className="text-xs text-indigo-300 font-bold">
-                  {ti.invadidosActivo}
-                </div>
-              </div>
-            )}
-            
             <div className={`mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 ${panelsBelow ? '' : 'lg:flex-row'}`}>
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                {visionClaraActive && (
-                  <div className="mb-2 flex flex-wrap items-center gap-2 rounded-xl border border-cyan-700/60 bg-cyan-950/40 p-2 text-cyan-100">
-                    <span className="text-xs font-bold">👁 Visión Clara</span>
-                    <span className="min-w-0 flex-1 text-[0.7rem] text-cyan-100/80">
-                      Visión Reducida desactivada hasta que el medidor alcance Gris Abajo.
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setVisionClaraDetails(true)}
-                      className="rounded bg-cyan-800 px-2 py-1 text-[0.65rem] font-bold text-white hover:bg-cyan-700"
-                    >
-                      Detalles
-                    </button>
-                  </div>
-                )}
+                <div className="mb-2 space-y-2" data-testid="track-notice-stack">
+                  {huespedActivo && (
+                    <TrackWarningBanner
+                      title={ti.hostMonsterTitle || 'Monstruo Huésped'}
+                      summary={ti.hostMonsterSummary || 'Cuando un monstruo es derrotado se robará 1 Runa para monstruos pequeños y 2 Runas para Grandes.'}
+                      details={ti.hostMonsterDetails || 'Cuando un monstruo es derrotado se robará 1 Runa para monstruos pequeños y 2 Runas para Grandes, luego se colocará la loseta de Oscuridad desde donde ha sido derrotado como si fuera el punto de generación, luego coloca la runa en el medidor.'}
+                      labels={{ details: ti.details || 'Detalles' }}
+                    />
+                  )}
+                  {acechoActivo && (
+                    <TrackWarningBanner
+                      title={ti.acechoNoticeTitle || 'El Rey Redivivo Acecha'}
+                      summary={ti.acechoNoticeSummary || 'La mecánica de Acecho está activa.'}
+                      labels={{ details: ti.details || 'Detalles' }}
+                    />
+                  )}
+                  {invadidosActivo && (
+                    <TrackWarningBanner
+                      title={ti.invadidosNoticeTitle || 'Invadidos'}
+                      summary={ti.invadidosNoticeSummary || 'La mecánica de Invadidos está activa.'}
+                      labels={{ details: ti.details || 'Detalles' }}
+                    />
+                  )}
+                  {visionClaraActive && (
+                    <TrackWarningBanner
+                      title={ti.visionClaraTitle || 'Visión Clara'}
+                      summary={ti.visionClaraSummary || 'Visión Reducida desactivada hasta que el medidor alcance Gris Abajo.'}
+                      details={ti.visionClaraDetails || 'La regla especial de Visión Reducida está suspendida mientras la ficha permanezca en la carta de escenario del Artillero Infame. Se retira cuando el medidor de iniciativa vuelva a alcanzar esa carta en la siguiente ronda.'}
+                      labels={{ details: ti.details || 'Detalles' }}
+                    />
+                  )}
+                  {eternalDarknessActive && (
+                    <TrackWarningBanner
+                      title={ti.eternalDarknessTitle || 'Ocuridad Eterna'}
+                      summary={ti.eternalDarknessSummary || 'Todas las casillas están bajo Oscuridad. Los enemigos invocados ganan +2 al Ataque.'}
+                      details={ti.eternalDarknessDetails || 'Todas las casillas se encuentran bajo los efectos de la Oscuridad. Los enemigos invocados mientras este aviso esté activo ganan +2 al Ataque.'}
+                      labels={{ details: ti.details || 'Detalles' }}
+                    />
+                  )}
+                  {mistsSofocantesActive && (
+                    <TrackWarningBanner
+                      title={translations.cartas_sorpresa?.nombre?.sorpresa_3 || ti.buriedSurpriseMists || 'Nieblas Sofocantes'}
+                      summary={ti.mistsSummary || 'Alcance máximo de 1 área para habilidades de Agilidad, Sabiduría y Concentración (salvo ataques con arma y consumibles).'}
+                      details={translations.cartas_sorpresa?.texto?.sorpresa_3 || ''}
+                      labels={{ details: ti.details || 'Detalles' }}
+                    />
+                  )}
+                </div>
                 <PassiveCardsPanel
                   cards={passiveCards}
                   labels={{ title: ti.activePassives || 'Pasivas activas' }}
@@ -5647,22 +5651,6 @@ const InitTracker = () => {
                     },
                   )}
                 />
-                {eternalDarknessActive && (
-                  <TrackWarningBanner
-                    title={ti.eternalDarknessTitle || 'Ocuridad Eterna'}
-                    summary={ti.eternalDarknessSummary || 'Todas las casillas están bajo Oscuridad. Los enemigos invocados ganan +2 al Ataque.'}
-                    details={ti.eternalDarknessDetails || 'Todas las casillas se encuentran bajo los efectos de la Oscuridad. Los enemigos invocados mientras este aviso esté activo ganan +2 al Ataque.'}
-                    labels={{ details: ti.details || 'Detalles' }}
-                  />
-                )}
-                {mistsSofocantesActive && (
-                  <TrackWarningBanner
-                    title={translations.cartas_sorpresa?.nombre?.sorpresa_3 || ti.buriedSurpriseMists || 'Nieblas Sofocantes'}
-                    summary={ti.mistsSummary || 'Alcance máximo de 1 área para habilidades de Agilidad, Sabiduría y Concentración (salvo ataques con arma y consumibles).'}
-                    details={translations.cartas_sorpresa?.texto?.sorpresa_3 || ''}
-                    labels={{ details: ti.details || 'Detalles' }}
-                  />
-                )}
                 <TurnTrackBoard
                   renderSlot={renderSlot}
                   summaries={slotSummaries}
@@ -6525,15 +6513,6 @@ const InitTracker = () => {
             bluePrompt: ti.blueCannonPrompt || 'La runa azul no tiene cañón propio. Elige un cañón descargado.',
             none: ti.noCannonOptions || 'No hay cañones descargados disponibles.',
             skip: ti.skipCannon || 'No cargar',
-          }}
-        />
-        <VisionClaraModal
-          open={visionClaraDetails}
-          onClose={() => setVisionClaraDetails(false)}
-          labels={{
-            title: 'Visión Clara',
-            close: ti.close || 'Cerrar',
-            text: 'La regla especial de Visión Reducida está suspendida mientras la ficha permanezca en la carta de escenario del Artillero Infame. Se retira cuando el medidor de iniciativa vuelva a alcanzar esa carta en la siguiente ronda.',
           }}
         />
         <CannonLoadDialog
