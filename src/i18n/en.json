@@ -455,6 +455,12 @@
     "resetConfirm": "Selected heroes, roles and enemies will be cleared and defaults restored."
   },
   "trackerInit": {
+    "randomExpansions": "Included expansions",
+    "randomBehaviors": "Included behaviors",
+    "randomPool": "View included enemies",
+    "behaviorStandard": "Standard",
+    "behaviorAlternative": "Alternate",
+    "behaviorComplex": "Complex",
     "vidaExcedida": "exceeds maximum health. Do you wish to continue?",
     "estadoExcedido_1": "has reached its limit",
     "estadoExcedido_2": "Do you want to increase it and continue?",

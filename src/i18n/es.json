@@ -456,6 +456,12 @@
     "resetConfirm": "Se borrarán los héroes, roles y enemigos seleccionados y se restaurarán los valores por defecto."
   },
   "trackerInit": {
+    "randomExpansions": "Expansiones incluidas",
+    "randomBehaviors": "Versiones incluidas",
+    "randomPool": "Ver enemigos incluidos",
+    "behaviorStandard": "Estándar",
+    "behaviorAlternative": "Alternativo",
+    "behaviorComplex": "Complejo",
     "vidaExcedida": "supera la vida máxima. ¿Deseas continuar?",
     "estadoExcedido_1": "alcanzó su límite",
     "estadoExcedido_2": "¿Deseas aumentarlo y continuar?",

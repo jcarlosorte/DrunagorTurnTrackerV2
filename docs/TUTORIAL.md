@@ -3,6 +3,8 @@
 > **Guía para nuevos usuarios · Edición 2026**  
 > Esta guía explica cómo usar la aplicación, no sustituye al reglamento de *Chronicles of Drunagor*. La app registra el estado de la partida y automatiza parte de la preparación; las reglas, decisiones y excepciones siguen siendo responsabilidad de la mesa.
 
+> **English:** [Read the English tutorial](TUTORIAL.en.md)
+
 ---
 
 ## 1. Qué es esta aplicación

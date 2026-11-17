@@ -6066,6 +6066,23 @@ Unit       241 tests
 E2E        150/150
 ```
 
+### 358.ª tanda — Tutorial completo en inglés
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Manual** | Traducción completa del tutorial al inglés | `docs/TUTORIAL.en.md` |
+| **Capturas** | Nueve capturas nuevas con la interfaz en inglés | `docs/tutorial/assets/en` |
+| **Diagramas** | Flujo de inicio, bucle de turno y tablas de referencia | `docs/TUTORIAL.en.md` |
+| **Navegación** | Enlaces cruzados español/inglés y acceso desde el README | `docs/TUTORIAL.md`, `README.md` |
+| **Pruebas** | 241 unitarios · 150 E2E | tests |
+
+**Medición**
+
+```text
+Unit       241 tests
+E2E        150/150
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

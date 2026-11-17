@@ -201,6 +201,7 @@ Vite solo publica variables `VITE_*`; no colocar secretos en ellas.
 ## Documentación
 
 - [Tutorial completo para nuevos usuarios](docs/TUTORIAL.md)
+- [Complete tutorial for new users](docs/TUTORIAL.en.md)
 - [Arquitectura y decisiones](docs/REVISION-ARQUITECTURA.md)
 - [Seguridad y límites de Pages](docs/SEGURIDAD.md)
 
