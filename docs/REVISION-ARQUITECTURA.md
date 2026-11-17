@@ -6168,6 +6168,20 @@ Unit       249 tests
 E2E        155/155
 ```
 
+### 364.ª tanda — Vida del Rey Avivado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Vida** | La ficha del Rey Avivado pasa de 40 a 80 puntos de Vida | `enemies.js` |
+| **Pruebas** | 250 unitarios · 155 E2E | tests |
+
+**Medición**
+
+```text
+Unit       250 tests
+E2E        155/155
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
