@@ -151,6 +151,7 @@ function ManualEnemyBehaviorPicker({
   randomLabel,
   behaviorLabel,
   onAdd,
+  getVariantName,
   excludedRandomIds = new Set(),
 }) {
   const uniqueVariants = variants.filter((variant, index, self) => (
@@ -161,6 +162,10 @@ function ManualEnemyBehaviorPicker({
   const randomVariants = uniqueVariants.filter((variant) => (
     isEnemyAllowedInRandom(variant, excludedRandomIds)
   ));
+  const defaultVariant = uniqueVariants.find((variant) => (
+    (variant.comportamiento || 'estandar') === 'estandar'
+  )) || uniqueVariants[0];
+  const defaultVariantName = getVariantName?.(defaultVariant) || defaultVariant?.nombre || '';
   const [behavior, setBehavior] = useState(uniqueVariants[0]?.comportamiento || 'estandar');
   if (uniqueVariants.length === 0) return null;
 
@@ -187,6 +192,9 @@ function ManualEnemyBehaviorPicker({
         {uniqueVariants.map((variant) => (
           <option key={variant.comportamiento || 'estandar'} value={variant.comportamiento || 'estandar'}>
             {labels?.[variant.comportamiento] || variant.comportamiento || 'estandar'}
+            {getVariantName && getVariantName(variant) !== defaultVariantName
+              ? ` · ${getVariantName(variant)}`
+              : ''}
           </option>
         ))}
       </select>
@@ -364,11 +372,13 @@ const InitTracker = () => {
   const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
   const getHeroName = (id) => translations.heroes?.[id] || id;
-  const getEnemyName = (id, color = null) => {
+  const getEnemyName = (id, color = null, variantName = null) => {
+    const variantLabel = variantName && translations.enemies?.nombres?.[variantName];
+    if (variantLabel) return variantLabel;
     if (color === 'escenario') {
-      return translations.enemies?.escenario?.[id] || id;
+      return translations.enemies?.escenario?.[id] || variantName || id;
     }
-    return translations.enemies?.[id] || id;
+    return translations.enemies?.[id] || variantName || id;
   };
 
   const getHeroProf = (id) => {
@@ -597,7 +607,7 @@ const InitTracker = () => {
     ? filterManualEnemies(manualSorted, {
       category: manualCategory,
       query: manualQuery,
-      getLabel: (enemy) => getEnemyName(enemy.id, enemy.color),
+      getLabel: (enemy) => getEnemyName(enemy.id, enemy.color, enemy.nombre),
     })
     : [];
   const manualGroups = filteredManualEnemies.reduce((acc, enemy) => {
@@ -6164,6 +6174,7 @@ const InitTracker = () => {
                                   addLabel={ti.addEnemy || 'Añadir'}
                                   randomLabel={ti.randomBehavior || 'Aleatorio'}
                                   behaviorLabel={ti.behavior || 'Comportamiento'}
+                                  getVariantName={(variant) => getEnemyName(variant.id, variant.color, variant.nombre)}
                                   onAdd={(variant) => handleManualEnemyAdd(
                                     variant.id,
                                     variant.comportamiento,

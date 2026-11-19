@@ -11,7 +11,8 @@ export function resolveEntityLabel({ id, name, capacidades, cara, translations }
   const clave = id || '';
   const cardKey = capacidades || (cara ? `${clave}_${cara}` : null);
 
-  return t.enemies?.[clave]
+  return t.enemies?.nombres?.[name]
+    || t.enemies?.[clave]
     || t.heroes?.[clave]
     || t.runas?.[clave]
     || (cardKey ? t.cartas_ataque?.nombre?.[cardKey] : null)

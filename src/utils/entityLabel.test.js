@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { resolveEntityLabel } from '@/utils/entityLabel';
 
 const translations = {
-  enemies: { dark_vampire_com: 'Comandante Bane' },
+  enemies: {
+    dark_vampire_com: 'Comandante Bane',
+    nombres: { 'Thought Drinker': 'Absorbejuicios' },
+  },
   heroes: { vorn: 'Vorn' },
   runas: { runa1: 'Runa de asalto' },
   cartas_ataque: { nombre: { ataqueC: 'Ataque del comandante' } },
@@ -15,6 +18,14 @@ describe('resolveEntityLabel', () => {
     expect(resolveEntityLabel({ id: 'dark_vampire_com', translations })).toBe('Comandante Bane');
     expect(resolveEntityLabel({ id: 'vorn', translations })).toBe('Vorn');
     expect(resolveEntityLabel({ id: 'runa1', translations })).toBe('Runa de asalto');
+  });
+
+  it('prioriza el nombre alternativo del enemigo', () => {
+    expect(resolveEntityLabel({
+      id: 'dream_titan',
+      name: 'Thought Drinker',
+      translations,
+    })).toBe('Absorbejuicios');
   });
 
   it('traduce cartas de comandante y de escenario', () => {

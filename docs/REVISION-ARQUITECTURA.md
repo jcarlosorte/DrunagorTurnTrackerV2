@@ -6182,6 +6182,23 @@ Unit       250 tests
 E2E        155/155
 ```
 
+### 365.ª tanda — Apocalipsis activo y enemigos alternativos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Campaña** | Apocalipsis queda desbloqueada y su expansión principal activa | `expansions`, `boxes.test` |
+| **Enemigos** | Se incorporan los cinco tipos de Apocalipsis con sus variantes estándar y alternativa | `enemies` |
+| **Nombres** | Las variantes alternativas usan su propio nombre en español: Absorbejuicios, Vengador Encadenado, Llamaguerra Caído, Campeón Caído y Miedo Devorador | `enemies`, i18n |
+| **Colores** | Se reconocen las capacidades numéricas `CONTRAATAQUE`, `EMBATE` y `HENDEDURA`, además de las existentes | `enemyVisuals` |
+| **Pruebas** | 254 unitarios · 156 E2E | tests |
+
+**Medición**
+
+```text
+Unit       254 tests
+E2E        156/156
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

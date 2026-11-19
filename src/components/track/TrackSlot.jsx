@@ -295,7 +295,7 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
               <EnemyCard
                 uuid={item.enemy.uuid}
                 id={item.enemy.id}
-                name={getEnemyName(item.enemy.id, item.enemy.color)}
+                name={getEnemyName(item.enemy.id, item.enemy.color, item.enemy.name)}
                 image={item.enemy.imagen}
                 comportamiento={item.enemy.comportamiento}
                 categoria={item.enemy.categoria}

@@ -157,7 +157,10 @@ export default function EnemyRingControl({ enemy, labels = {} }) {
                 <img src={entry.enemy.imagen} alt="" className="h-7 w-7 rounded object-cover" loading="lazy" />
               )}
               <span className="min-w-0 flex-1 truncate">
-                {translations.enemies?.[entry.enemy.id] || entry.enemy.nombre || entry.enemy.id}
+                {translations.enemies?.nombres?.[entry.enemy.name]
+                  || translations.enemies?.[entry.enemy.id]
+                  || entry.enemy.nombre
+                  || entry.enemy.id}
               </span>
               <span className={`h-3.5 w-3.5 rounded-full border border-white/70 ${colors.find((color) => color.id === entry.enemy.ringColor)?.className || ''}`} />
             </button>

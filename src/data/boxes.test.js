@@ -9,10 +9,10 @@ import {
 } from '@/data/boxes';
 
 describe('cajas principales', () => {
-  it('core y Despertar están desbloqueadas; Apocalipsis todavía no', () => {
+  it('core, Despertar y Apocalipsis están desbloqueadas', () => {
     expect(isBoxUnlocked(getMainBox('core'))).toBe(true);
     expect(isBoxUnlocked(getMainBox('awakenings'))).toBe(true);
-    expect(isBoxUnlocked(getMainBox('apocalypse'))).toBe(false);
+    expect(isBoxUnlocked(getMainBox('apocalypse'))).toBe(true);
   });
 
   it('cae en core para identificadores desconocidos', () => {

@@ -260,6 +260,18 @@
     "totalTimeHint": "Suma de todos sus turnos."
   },
   "enemies": {
+    "nombres": {
+      "Dream Titan": "Titán Onírico",
+      "Thought Drinker": "Absorbejuicios",
+      "Hellish Flayer": "Azote Bélico",
+      "Chained Reckoner": "Vengador Encadenado",
+      "Shadow Witch": "Bruja Sombría",
+      "Fell Warcaller": "Llamaguerra Caído",
+      "Skeleton Knight": "Caballero Esqueleto",
+      "Fallen Champion": "Campeón Caído",
+      "Faceless Conjurer": "Hechicero Sin Rostro",
+      "Consuming Horror": "Miedo Devorador"
+    },
     "lorelai_corrupted": "Lorelai Maga Caída",
     "elros_corrupted": "Elros Asesino Caído",
     "jaheen_corrupted": "Jaheen Clérigo Caído",
@@ -301,7 +313,10 @@
     "bone_reaper": "Segador de Huesos",
     "commander_twins": "Comandante Gemelo",
     "commander_thern": "Comandante Thern",
-    "dream_titan": "Titán del Sueño",
+    "dream_titan": "Titán Onírico",
+    "hellish_flayer": "Azote Bélico",
+    "faceless_conjurer": "Hechicero Sin Rostro",
+    "shadow_witch": "Bruja Sombría",
     "chain_master": "Maestro de Cadenas",
     "the_witch": "La Bruja",
     "skeleton_knight": "Caballero Esqueleto",
@@ -1355,6 +1370,7 @@
     "LENTITUD_I": "LENTITUD",
     "MALDICION_X": "MALDICIÓN {x}",
     "MANDO": "MANDO",
+    "REPRIMIR": "REPRIMIR",
     "MANIFESTAR": "MANIFESTAR",
     "MARCA_DE_MONTARAZ": "MARCA DE MONTARAZ",
     "MASCOTA": "MASCOTA",

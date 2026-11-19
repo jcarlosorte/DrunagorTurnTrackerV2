@@ -16,9 +16,10 @@ const ACCENTS = {
 export default function AnimatedEnemyToast({ enemyData, t }) {
   const accent = ACCENTS[enemyData.color] || ACCENTS.gris;
 
-  const name = enemyData.color === 'escenario'
-    ? t?.enemies?.escenario?.[enemyData.id] || enemyData.id
-    : t?.enemies?.[enemyData.id] || enemyData.id;
+  const name = t?.enemies?.nombres?.[enemyData.name]
+    || (enemyData.color === 'escenario'
+      ? t?.enemies?.escenario?.[enemyData.id] || enemyData.id
+      : t?.enemies?.[enemyData.id] || enemyData.name || enemyData.id);
   const life = enemyData.vida;
   const category = t?.enemies?.categoria?.[enemyData.categoria] || enemyData.categoria;
   const com = t?.trackerSelect?.comportamientos?.[enemyData.comportamiento] || enemyData.comportamiento;

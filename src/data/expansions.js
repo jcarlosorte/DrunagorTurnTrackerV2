@@ -166,8 +166,8 @@ export const EXPANSIONS = [
     imagen: apocalypseImg,
     heroes: [],
     enemies: [
-      "dream_titan", "chain_master", "the_witch", "skeleton_knight",
-      "larua_mage", "war_horsemen", "death_horsemen",
+      "dream_titan", "hellish_flayer", "faceless_conjurer", "shadow_witch",
+      "skeleton_knight", "war_horsemen", "death_horsemen",
       "plague_horsemen", "famine_horsemen"
     ],
     companions: [],
@@ -175,7 +175,7 @@ export const EXPANSIONS = [
     roles: [],
     dungeonRoles: [],
     language: { en: '', es: '' },
-    active: "off"
+    active: "on"
   },
   {
     id: "apocalypse_heroes_1",

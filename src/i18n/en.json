@@ -260,6 +260,18 @@
     "totalTimeHint": "Sum of all their turns."
   },
   "enemies": {
+    "nombres": {
+      "Dream Titan": "Dream Titan",
+      "Thought Drinker": "Thought Drinker",
+      "Hellish Flayer": "Hellish Flayer",
+      "Chained Reckoner": "Chained Reckoner",
+      "Shadow Witch": "Shadow Witch",
+      "Fell Warcaller": "Fell Warcaller",
+      "Skeleton Knight": "Skeleton Knight",
+      "Fallen Champion": "Fallen Champion",
+      "Faceless Conjurer": "Faceless Conjurer",
+      "Consuming Horror": "Consuming Horror"
+    },
     "lorelai_corrupted": "Lorelai Fallen Mage",
     "elros_corrupted": "Elros Fallen Assassin",
     "jaheen_corrupted": "Jaheen Fallen Cleric",
@@ -302,6 +314,9 @@
     "commander_twins": "Commander Twins",
     "commander_thern": "Commander Thern",
     "dream_titan": "Dream Titan",
+    "hellish_flayer": "Hellish Flayer",
+    "faceless_conjurer": "Faceless Conjurer",
+    "shadow_witch": "Shadow Witch",
     "chain_master": "Chain Master",
     "the_witch": "The Witch",
     "skeleton_knight": "Skeleton Knight",
@@ -1338,6 +1353,7 @@
     "LENTITUD_I": "SLOW",
     "MALDICION_X": "CURSE {x}",
     "MANDO": "COMMAND",
+    "REPRIMIR": "SUPPRESS",
     "MANIFESTAR": "SUMMON",
     "MARCA_DE_MONTARAZ": "RANGER’S MARK",
     "MASCOTA": "PET",

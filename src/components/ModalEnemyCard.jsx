@@ -367,10 +367,12 @@ export const ModalEnemyCard = ({ uuid, enemy, onClose, onDelete, onVidaChange, o
   };
   
   const getEnemyName = () => {
+    const variantLabel = enemy?.name && translations.enemies?.nombres?.[enemy.name];
+    if (variantLabel) return variantLabel;
     if (color === 'escenario') {
-      return translations.enemies?.escenario?.[id];
+      return translations.enemies?.escenario?.[id] || enemy?.name || id;
     }
-    return translations.enemies?.[id];
+    return translations.enemies?.[id] || enemy?.name || id;
   };
 
   const handleEstadoChangeLocal = async (estadoId, delta) => {
