@@ -1,4 +1,4 @@
-const NUMBERED = /^([A-ZÁÉÍÓÚÜÑ_ ]+?)\s+(X(?:[+-]\d+)?|\d+)$/i;
+const NUMBERED = /^([\p{Lu}_ ]+?)\s+(\+?\d+|X(?:[+-]\d+)?)$/iu;
 
 const lookup = (labels, key) => (
   labels?.[key]

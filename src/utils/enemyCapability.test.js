@@ -36,9 +36,15 @@ describe('etiquetas de capacidades de enemigo', () => {
     expect(resolveCapabilityLabel('CONTRAATAQUE X', en.condiciones_t).texto).toContain('COUNTERATTACK');
   });
 
-  it('resuelve variantes X-N', () => {
+  it('resuelve variantes X-N y +N', () => {
     const resultado = resolveCapabilityLabel('ESCUDO X-3', es.condiciones_t);
     expect(resultado.texto).toContain('ESCUDO');
     expect(resultado.texto).toContain('X-3');
+
+    const plus = resolveCapabilityLabel('EMBATE +2', es.condiciones_t);
+    expect(plus.texto).toContain('EMBATE');
+    expect(plus.texto).toContain('+2');
+    expect(hasCapabilityLabel('EMBATE +2', es.condiciones_t)).toBe(true);
+    expect(hasCapabilityLabel('CONTRAATAQUE +4', en.condiciones_t)).toBe(true);
   });
 });
