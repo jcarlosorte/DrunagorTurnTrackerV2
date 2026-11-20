@@ -15,6 +15,12 @@ describe('cajas principales', () => {
     expect(isBoxUnlocked(getMainBox('apocalypse'))).toBe(true);
   });
 
+  it('solo desbloquea una campaña si su expansión está seleccionada', () => {
+    expect(isBoxUnlocked(getMainBox('apocalypse'), ['base'])).toBe(false);
+    expect(isBoxUnlocked(getMainBox('apocalypse'), ['base', 'apocalypse_adventures'])).toBe(true);
+    expect(isBoxUnlocked(getMainBox('awakenings'), ['base'])).toBe(false);
+  });
+
   it('cae en core para identificadores desconocidos', () => {
     expect(getMainBox('desconocida').id).toBe('core');
     expect(MAIN_BOXES).toHaveLength(3);

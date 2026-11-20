@@ -56,8 +56,12 @@ export function getExpansionCampaigns(expansionId) {
     .map(([campaignId]) => campaignId);
 }
 
-export function isBoxUnlocked(box) {
+export function isBoxUnlocked(box, selectedExpansions = null) {
   if (!box) return false;
   const expansion = EXPANSIONS.find((entry) => entry.id === box.expansionId);
-  return Boolean(expansion && expansion.active !== 'off');
+  if (!expansion || expansion.active === 'off') return false;
+  if (Array.isArray(selectedExpansions)) {
+    return selectedExpansions.includes(box.expansionId);
+  }
+  return true;
 }

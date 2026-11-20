@@ -6199,6 +6199,22 @@ Unit       254 tests
 E2E        156/156
 ```
 
+### 366.ª tanda — Campañas limitadas a expansiones activas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Desbloqueo** | Una campaña solo se puede seleccionar si su expansión está activa en Configuración | `boxes`, `ExpansionContext`, `Tracker` |
+| **Cambio de configuración** | Si se desactiva la expansión de la campaña actual, se vuelve a una campaña disponible | `ExpansionContext` |
+| **Previsualización** | Solo se ofrece contenido de campañas activas | `ExpansionContext` |
+| **Pruebas** | 255 unitarios · 157 E2E | tests |
+
+**Medición**
+
+```text
+Unit       255 tests
+E2E        157/157
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

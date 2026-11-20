@@ -436,7 +436,7 @@ const TrackerSelect = () => {
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
               {MAIN_BOXES.map((box) => {
-                const unlocked = isBoxUnlocked(box);
+                const unlocked = isBoxUnlocked(box, selectedExpansions);
                 const selected = mainBox === box.id;
                 return (
                   <button

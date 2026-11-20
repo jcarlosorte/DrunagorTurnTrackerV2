@@ -16,7 +16,7 @@ export const ExpansionProvider = ({ children }) => {
   const [mainBox, setMainBoxState] = useState(() => {
     const stored = readJsonStorage('mainBox', 'core', (value) => typeof value === 'string');
     const box = getMainBox(stored);
-    return isBoxUnlocked(box) ? box.id : 'core';
+    return isBoxUnlocked(box, selectedExpansions) ? box.id : 'core';
   });
   const [previewOtherBoxes, setPreviewOtherBoxes] = useState(false);
 
@@ -28,6 +28,13 @@ export const ExpansionProvider = ({ children }) => {
     writeJsonStorage('mainBox', mainBox);
   }, [mainBox]);
 
+  useEffect(() => {
+    const current = getMainBox(mainBox);
+    if (isBoxUnlocked(current, selectedExpansions)) return;
+    const fallback = MAIN_BOXES.find((box) => isBoxUnlocked(box, selectedExpansions)) || getMainBox('core');
+    if (fallback.id !== mainBox) setMainBoxState(fallback.id);
+  }, [mainBox, selectedExpansions]);
+
   const toggleExpansion = (id) => {
     setSelectedExpansions(prev =>
       prev.includes(id)
@@ -38,7 +45,7 @@ export const ExpansionProvider = ({ children }) => {
 
   const setMainBox = (id) => {
     const box = getMainBox(id);
-    if (!box || !isBoxUnlocked(box)) return;
+    if (!box || !isBoxUnlocked(box, selectedExpansions)) return;
     setMainBoxState(box.id);
     const campaignExpansions = getCampaignExpansionIds(box.id).filter((expansionId) => {
       const expansion = EXPANSIONS.find((entry) => entry.id === expansionId);
@@ -51,7 +58,7 @@ export const ExpansionProvider = ({ children }) => {
 
   const clearExpansions = () => setSelectedExpansions([]);
 
-  const unlockedBoxes = MAIN_BOXES.filter(isBoxUnlocked);
+  const unlockedBoxes = MAIN_BOXES.filter((box) => isBoxUnlocked(box, selectedExpansions));
   const canPreviewOtherBoxes = unlockedBoxes.some((box) => box.id !== mainBox);
 
   return (
