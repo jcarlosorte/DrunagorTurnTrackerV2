@@ -52,6 +52,7 @@ const TrackerSelect = () => {
   const { selectedExpansions, mainBox, setMainBox } = useExpansions();
   const { language, translations } = useLanguage();
   const { trackerData, setTrackerData } = useTracker();
+  const [groupName, setGroupName] = useState(() => trackerData.groupName || '');
   const t = translations?.trackerSelect || {};
   const config = translations?.config || {};
   const navigate = useNavigate();
@@ -99,6 +100,7 @@ const TrackerSelect = () => {
     setHeroRoles(roles);
     setSelectedEnemies(enemies);
     setSelectedBehaviors(behaviors.length > 0 ? behaviors : BEHAVIORS);
+    setGroupName(trackerData.groupName || '');
   }, [expansionKey, trackerData, heroesInSelectedExpansions, enemiesInSelectedExpansions, availableRoles]);
 
   const getHeroName = useCallback((heroId) => translations.heroes?.[heroId] || heroId, [translations]);
@@ -204,6 +206,7 @@ const TrackerSelect = () => {
       roles,
       enemies: validEnemies,
       behaviors: behaviors.length > 0 ? behaviors : ["estandar"],
+      groupName: groupName.trim(),
     });
     navigate("/init", { replace: true });
   };
@@ -220,6 +223,7 @@ const TrackerSelect = () => {
       roles: {},
       enemies: validEnemies,
       behaviors: BEHAVIORS,
+      groupName: '',
     });
   };
 
@@ -493,6 +497,20 @@ const TrackerSelect = () => {
                 </span>
               </div>
             </div>
+
+            <label className="mb-4 block max-w-md">
+              <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
+                {t.groupName || 'Nombre del grupo'}
+              </span>
+              <input
+                type="text"
+                value={groupName}
+                onChange={(event) => setGroupName(event.target.value.slice(0, 40))}
+                maxLength={40}
+                placeholder={t.groupNamePlaceholder || 'Ej.: Los Buscadores'}
+                className="min-h-11 w-full rounded-xl border border-slate-600 bg-slate-950 px-3 text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              />
+            </label>
 
             <div className="relative mb-4">
               <GiMagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true" />

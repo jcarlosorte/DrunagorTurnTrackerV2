@@ -20,7 +20,7 @@ import {
   getHeroEffectDescription,
 } from '@/data/heroes/index';
 import { useExpansions } from '@/context/ExpansionContext';
-import { CUBE_META, MAX_HERO_VIDA, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, recobrarCubos, removeAlmacenItem, resetHero, toggleCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
+import { CUBE_META, MAX_HERO_VIDA, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, getHeroExtraId, recobrarCubos, removeAlmacenItem, removeHeroExtra, resetHero, toggleCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import {
@@ -877,7 +877,8 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
           {/* Auras y consecuencias */}
           {heroEffectGroups.map((group) => {
             const added = extras[group.key] || [];
-            const available = group.catalogue.filter((item) => !added.includes(item.id));
+            const addedIds = new Set(added.map((entry) => getHeroExtraId(entry)));
+            const available = group.catalogue.filter((item) => !addedIds.has(item.id));
             return (
               <section key={group.key} className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
                 <div className="mb-1.5 flex items-center justify-between">
@@ -926,26 +927,38 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                   <p className="px-1 text-[0.7rem] text-slate-400">{t.noneAdded || 'Ninguna añadida.'}</p>
                 ) : (
                   <ul className="space-y-1">
-                    {added.map((id) => (
+                    {added.map((entry) => {
+                      const id = getHeroExtraId(entry);
+                      const manualName = typeof entry === 'object'
+                        ? entry.name?.[language] || entry.name?.es || entry.nombre
+                        : null;
+                      const label = manualName || getHeroEffectName(id, language);
+                      const description = manualName
+                        ? ''
+                        : getHeroEffectDescription(id, language);
+                      return (
                       <li key={id} className="flex items-start gap-1.5 rounded-lg border border-rose-900/60 bg-rose-950/30 px-1.5 py-1">
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-[0.7rem] font-semibold text-slate-100">
-                            {getHeroEffectName(id, language)}
+                            {label}
                           </span>
-                          <span className="block text-[0.65rem] leading-snug text-slate-400">
-                            {getHeroEffectDescription(id, language)}
-                          </span>
+                          {description && (
+                            <span className="block text-[0.65rem] leading-snug text-slate-400">
+                              {description}
+                            </span>
+                          )}
                         </span>
                         <button
                           type="button"
-                          onClick={() => apply(toggleHeroExtra(heroId, group.key, id))}
-                          aria-label={`${getHeroEffectName(id, language)}: ${t.remove || 'Quitar'}`}
+                          onClick={() => apply(removeHeroExtra(heroId, group.key, entry))}
+                          aria-label={`${label}: ${t.remove || 'Quitar'}`}
                           className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-slate-700 text-xs text-white hover:bg-red-700"
                         >
                           ✕
                         </button>
                       </li>
-                    ))}
+                      );
+                    })}
                   </ul>
                 )}
               </section>

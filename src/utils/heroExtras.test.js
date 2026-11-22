@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   addAlmacenItem,
+  addManualHeroExtra,
   changeHeroVida,
   changeHeroVidaMax,
   getHeroExtras,
   patchHeroExtras,
   removeAlmacenItem,
+  removeHeroExtra,
   resetHero,
   resetHeroForNewGame,
   stepHeroEstadoAlterado,
@@ -146,5 +148,17 @@ describe('Semilla del Caos', () => {
     const after = stepHeroEstadoAlterado('vorn', 'SEMILLA_DEL_CAOS', 1, '2.0');
     expect(after.estadosAlterados.some((estado) => estado.id === 'SEMILLA_DEL_CAOS')).toBe(false);
     expect(after.vida).toBe(6);
+  });
+});
+
+describe('efectos manuales de héroe', () => {
+  it('guarda el nombre de un estado manual y permite quitarlo', () => {
+    const added = addManualHeroExtra('vorn', 'estados', 'Estado de prueba');
+    const entry = added.estados.find((item) => item.name?.es === 'Estado de prueba');
+    expect(entry).toBeTruthy();
+    expect(entry.manual).toBe(true);
+
+    const removed = removeHeroExtra('vorn', 'estados', entry);
+    expect(removed.estados.some((item) => item.name?.es === 'Estado de prueba')).toBe(false);
   });
 });

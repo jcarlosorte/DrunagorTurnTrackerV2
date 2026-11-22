@@ -88,7 +88,9 @@ export const emptyHeroExtras = (heroId) => {
 };
 
 const normalizeEstado = (item) => (
-  isPlainObject(item) ? { id: item.id, count: Number(item.count) || 1 } : { id: item, count: 1 }
+  isPlainObject(item)
+    ? { ...item, count: Number(item.count) || 1 }
+    : { id: item, count: 1 }
 );
 
 const clampSkillLevel = (value) => Math.max(0, Math.min(MAX_SKILL_LEVEL, Number(value) || 0));
@@ -293,6 +295,35 @@ export function toggleHeroExtra(heroId, group, id) {
     ? list.filter((item) => (typeof item === 'string' ? item !== id : item.id !== id))
     : [...list, id];
   return patchHeroExtras(heroId, { [group]: next });
+}
+
+/** Identificador estable de una entrada de héroe, sea catálogo o manual. */
+export const getHeroExtraId = (entry) => (
+  typeof entry === 'string' ? entry : entry?.id || ''
+);
+
+/** Añade una consecuencia o estado escrito manualmente. */
+export function addManualHeroExtra(heroId, group, text) {
+  const label = String(text || '').trim().slice(0, 60);
+  if (!label) return getHeroExtras(heroId);
+  const current = getHeroExtras(heroId);
+  const list = current[group] || [];
+  const entry = {
+    id: `manual_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    manual: true,
+    name: { es: label, en: label },
+  };
+  return patchHeroExtras(heroId, { [group]: [...list, entry] });
+}
+
+/** Quita una entrada de héroe por id o por objeto. */
+export function removeHeroExtra(heroId, group, entryOrId) {
+  const id = getHeroExtraId(entryOrId);
+  const current = getHeroExtras(heroId);
+  const list = (current[group] || []).filter((item) => (
+    getHeroExtraId(item) !== id
+  ));
+  return patchHeroExtras(heroId, { [group]: list });
 }
 
 export function stepHeroEstado(heroId, estadoId, delta) {

@@ -6215,6 +6215,24 @@ Unit       255 tests
 E2E        157/157
 ```
 
+### 367.ª tanda — Campamento ampliado
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nombre del grupo** | Editable en la selección de héroes y en el campamento | `Tracker`, `CampDialog` |
+| **Efectos de héroe** | Consecuencias y estados visibles y editables por héroe | `CampDialog`, `heroExtras` |
+| **Entradas manuales** | Se pueden escribir consecuencias y estados propios | `CampDialog`, `heroExtras` |
+| **Medidor de runas** | Cinco recuadros con runas en el medidor y fichas extraídas/totales | `CampDialog` |
+| **Campañas** | Los efectos se filtran por campaña y los seguidores solo aparecen en Despertar/Apocalipsis | `CampDialog` |
+| **Pruebas** | 256 unitarios · 160 E2E | tests |
+
+**Medición**
+
+```text
+Unit       256 tests
+E2E        160/160
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
