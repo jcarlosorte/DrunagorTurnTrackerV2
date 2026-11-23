@@ -6233,6 +6233,24 @@ Unit       256 tests
 E2E        160/160
 ```
 
+### 368.ª tanda — Nueva vista previa para enlaces
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Imagen social** | Nueva tarjeta 1200×630 con el estilo oscuro/esmeralda de la app, tablero, runas y retratos | `public/social-preview.jpg` |
+| **Open Graph** | Título, descripción, URL canónica, dimensiones, tipo y texto alternativo | `index.html` |
+| **Twitter/X** | Tarjeta `summary_large_image` con imagen y textos propios | `index.html` |
+| **Compatibilidad** | URL absoluta de producción para que los rastreadores resuelvan la imagen | `index.html` |
+| **Pruebas** | 258 unitarios · 161 E2E | tests |
+
+**Medición**
+
+```text
+Unit       258 tests
+E2E        161/161
+Imagen     1200×630 · JPEG · 115 KB
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
