@@ -845,6 +845,8 @@ Always reset:
 
 **Camp** stores shared group objects. It is a shared storage, not a shop.
 
+The dialog is ordered from top to bottom: party name; story record, rune track and followers; hero effects split into consequences and conditions; and camp objects at the end. **Apocalypse** also shows the **Legacy Trail** (three levels per path), the **Hero of Darem** traits and **Repercussions**, with one column per act for custom lines.
+
 ### Camp Phase
 
 Camp Phase:

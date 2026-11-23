@@ -33,7 +33,9 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Habilidades y capacidades**: los rombos de cada habilidad viven dentro de su cubo de
   acción y el rol de mazmorra debajo de los cuatro, con color elegido al marcarlo; tres
   capacidades de clase de tres rombos cada una, con nombre libre, y almacén de objetos.
-- **Campamento del grupo**: objetos compartidos (hasta 30) que se guardan con la partida.
+- **Campamento del grupo**: objetos compartidos (hasta 30), medidor de runas, seguidores
+  y registro de historia de Apocalipsis (Ruta del Legado, rasgos del Héroe de Darem y
+  Repercusiones por actos).
 - **Compañeros y mascotas**: 23 criaturas que se añaden desde el menú **Compañeros** de
   la barra superior, sin límite por héroe, con tarjeta propia tras su héroe en el track
   (vida y estados), turno en orden de aparición y ficha ampliada con capacidades.
@@ -162,8 +164,8 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      258 tests
-e2e       161 tests
+unit      263 tests
+e2e       165 tests
 build     OK
 ```
 

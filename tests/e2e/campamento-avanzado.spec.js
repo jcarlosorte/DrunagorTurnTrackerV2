@@ -25,7 +25,7 @@ test('el campamento guarda nombre del grupo, efectos manuales y estado de runas'
   await stateInput.locator('..').getByRole('button', { name: 'Añadir', exact: true }).click();
   await expect(camp.getByText('Estado de prueba')).toBeVisible();
 
-  await expect(camp.getByText('Seguidores del campamento')).toHaveCount(0);
+  await expect(camp.getByText('Seguidores Reclutados')).toHaveCount(0);
 
   await camp.getByRole('button', { name: 'Cerrar', exact: true }).last().click();
   await page.reload({ waitUntil: 'networkidle' });
@@ -55,5 +55,5 @@ test('los seguidores solo aparecen en campañas que los usan', async ({ page }) 
   await openTracker(page);
 
   const camp = await openCamp(page);
-  await expect(camp.getByText('Seguidores del campamento')).toBeVisible();
+  await expect(camp.getByText('Seguidores Reclutados')).toBeVisible();
 });
