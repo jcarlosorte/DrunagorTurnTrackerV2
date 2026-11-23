@@ -81,18 +81,22 @@ export default function HomeMenu() {
         <div className="relative z-10 flex flex-1 items-center justify-center px-4 py-10 sm:px-6">
         <div className="grid w-full max-w-5xl gap-8 overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/80 p-5 shadow-2xl shadow-emerald-950/30 backdrop-blur sm:p-8 lg:grid-cols-[1fr_1.15fr] lg:p-10">
           <section className="flex flex-col justify-center">
-            <div className="mb-6 flex items-center gap-3">
-              <span className="h-2 w-12 rounded-full bg-emerald-400" aria-hidden="true" />
-              <span className="text-xs font-bold uppercase tracking-[0.3em] text-emerald-300">Drunagor</span>
-            </div>
-            <h1 className="max-w-xl text-4xl font-black leading-tight tracking-tight text-slate-50 sm:text-5xl">
-              {home.title || 'Control de turnos para tu campaña'}
+            <h1
+              className="max-w-xl"
+              aria-label={`${home.title_line1 || 'Drunagor'} ${home.title_line2 || 'Control de Turnos'}`}
+            >
+              <span className="block bg-gradient-to-r from-emerald-200 via-slate-50 to-emerald-300 bg-clip-text text-4xl font-black uppercase leading-none tracking-[0.14em] text-transparent drop-shadow-[0_2px_12px_rgba(16,185,129,0.18)] sm:text-5xl">
+                {home.title_line1 || 'Drunagor'}
+              </span>
+              <span className="mt-2 block text-2xl font-black leading-tight tracking-tight text-slate-50 sm:text-3xl">
+                {home.title_line2 || 'Control de Turnos'}
+              </span>
             </h1>
             <p className="mt-4 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
-              {home.subtitle || 'Organiza héroes, enemigos, runas y niebla desde cualquier dispositivo.'}
+              {home.subtitle || 'Organiza héroes, enemigos, runas y mecánicas especiales desde cualquier dispositivo.'}
             </p>
 
-            <div className="mt-8 grid gap-3 sm:max-w-md">
+            <div className="mt-8 grid gap-2 sm:max-w-xl">
               {savedSession && (
                 <button
                   type="button"
@@ -110,32 +114,32 @@ export default function HomeMenu() {
               >
                 {home.start_tracker || 'Nueva partida'}
               </button>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => navigate("/config")}
-                  className="min-h-12 rounded-xl border border-slate-600 bg-slate-800 px-3 py-3 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                  className="min-h-14 rounded-xl border border-slate-600 bg-slate-800 px-2 py-2.5 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 sm:px-3"
                 >
-                  <span className="block text-sm">{home.configure_environment || 'Configurar entorno'}</span>
-                  <span className="mt-1 block text-[0.65rem] font-normal leading-snug text-slate-400">{home.configure_hint || 'Idioma, expansiones y versión de reglas'}</span>
+                  <span className="block text-xs leading-tight sm:text-sm">{home.configure_environment || 'Configurar entorno'}</span>
+                  <span className="mt-1 hidden text-[0.65rem] font-normal leading-snug text-slate-400 sm:block">{home.configure_hint || 'Idioma, expansiones y versión de reglas'}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate("/saves")}
-                  className="min-h-12 rounded-xl border border-slate-600 bg-slate-800 px-3 py-3 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                  className="min-h-14 rounded-xl border border-slate-600 bg-slate-800 px-2 py-2.5 text-left font-bold text-slate-100 transition hover:border-slate-400 hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 sm:px-3"
                 >
-                  <span className="block text-sm">{home.saves || 'Partidas'}</span>
-                  <span className="mt-1 block text-[0.65rem] font-normal leading-snug text-slate-400">{home.saves_hint || 'Guardar, exportar o importar'}</span>
+                  <span className="block text-xs leading-tight sm:text-sm">{home.saves || 'Partidas'}</span>
+                  <span className="mt-1 hidden text-[0.65rem] font-normal leading-snug text-slate-400 sm:block">{home.saves_hint || 'Guardar, exportar o importar'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/tutorial")}
+                  className="min-h-14 rounded-xl border border-emerald-700/60 bg-emerald-950/30 px-2 py-2.5 text-left font-bold text-emerald-100 transition hover:border-emerald-400 hover:bg-emerald-900/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:px-3"
+                >
+                  <span className="block text-xs leading-tight sm:text-sm">{home.tutorial || 'Tutorial'}</span>
+                  <span className="mt-1 hidden text-[0.65rem] font-normal leading-snug text-emerald-200/80 sm:block">{home.tutorial_hint || 'Cómo usar la aplicación'}</span>
                 </button>
               </div>
-              <button
-                type="button"
-                onClick={() => navigate("/tutorial")}
-                className="min-h-12 rounded-xl border border-emerald-700/60 bg-emerald-950/30 px-5 py-3 text-left font-bold text-emerald-100 transition hover:border-emerald-400 hover:bg-emerald-900/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-              >
-                <span className="block">{home.tutorial || 'Tutorial'}</span>
-                <span className="mt-1 block text-xs font-normal text-emerald-200/80">{home.tutorial_hint || 'Cómo usar la aplicación'}</span>
-              </button>
             </div>
           </section>
 

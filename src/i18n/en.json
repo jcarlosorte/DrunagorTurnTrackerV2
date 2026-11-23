@@ -2,6 +2,9 @@
   "language_name": "English 🇬🇧",
   "home": {
     "title": "Drunagor Turn Tracker",
+    "title_line1": "Drunagor",
+    "title_line2": "Turn Tracker",
+    "subtitle": "Organize heroes, enemies, runes and special mechanics from any device.",
     "start_tracker": "Start",
     "configure_environment": "Configure",
     "back_to_home": "Back",

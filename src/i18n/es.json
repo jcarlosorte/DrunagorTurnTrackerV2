@@ -2,6 +2,9 @@
   "language_name": "Español 🇪🇸",
   "home": {
     "title": "Drunagor Control de Turnos",
+    "title_line1": "Drunagor",
+    "title_line2": "Control de Turnos",
+    "subtitle": "Organiza héroes, enemigos, runas y mecánicas especiales desde cualquier dispositivo.",
     "start_tracker": "Iniciar",
     "configure_environment": "Configurar",
     "back_to_home": "Volver",

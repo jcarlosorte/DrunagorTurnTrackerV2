@@ -20,6 +20,29 @@ test.describe('Fase A · navegación y configuración', () => {
     await expect(footer.getByTestId('build-badge')).toBeVisible();
   });
 
+  test('la portada presenta el título en dos líneas y los tres accesos en una fila', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 950 });
+    await page.goto('./', { waitUntil: 'networkidle' });
+
+    await expect(page.getByRole('heading', { name: 'Drunagor Control de Turnos' })).toBeVisible();
+    await expect(page.getByText('Organiza héroes, enemigos, runas y mecánicas especiales desde cualquier dispositivo.')).toBeVisible();
+
+    const accessButtons = [
+      page.locator('main').getByRole('button', { name: /^Configurar/ }),
+      page.locator('main').getByRole('button', { name: /^Partidas/ }),
+      page.locator('main').getByRole('button', { name: /^Tutorial/ }),
+    ];
+    const boxes = [];
+    for (const button of accessButtons) {
+      await expect(button).toBeVisible();
+      boxes.push(await button.boundingBox());
+    }
+    expect(Math.abs(boxes[0].y - boxes[1].y)).toBeLessThan(2);
+    expect(Math.abs(boxes[1].y - boxes[2].y)).toBeLessThan(2);
+    expect(boxes[0].x).toBeLessThan(boxes[1].x);
+    expect(boxes[1].x).toBeLessThan(boxes[2].x);
+  });
+
   test('el tutorial abre desde la portada y muestra sus secciones', async ({ page }) => {
     await page.goto('./', { waitUntil: 'networkidle' });
     await page.getByRole('button', { name: /^Tutorial/ }).click();

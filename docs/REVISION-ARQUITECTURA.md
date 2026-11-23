@@ -6286,6 +6286,23 @@ Unit       264 tests
 E2E        167/167
 ```
 
+### 371.ª tanda — Nueva portada y accesos en fila
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Título** | “Drunagor” en una línea y “Control de Turnos” debajo, con degradado esmeralda y sin el rótulo verde repetido | `HomeMenu`, i18n |
+| **Texto** | La portada menciona “mecánicas especiales” en lugar de “niebla”, en español e inglés | i18n |
+| **Accesos** | Configurar, Partidas y Tutorial comparten una sola fila; las pistas se ocultan en móvil para no romper la línea | `HomeMenu` |
+| **Capturas** | Portadas ES/EN del tutorial actualizadas en documentación y web | `docs/tutorial/assets`, `public/tutorial/assets` |
+| **Pruebas** | 264 unitarios · 168 E2E | tests |
+
+**Medición**
+
+```text
+Unit       264 tests
+E2E        168/168
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).
