@@ -19,7 +19,8 @@ test('el campamento de Apocalipsis muestra y guarda el registro de historia', as
   await expect(camp.getByTestId('camp-story-card').getByRole('img', { name: 'Apocalipsis' })).toBeVisible();
   await expect(camp.getByText('Seguimiento de Historia')).toBeVisible();
   await expect(camp.getByText('Estado del medidor de runas')).toBeVisible();
-  await expect(camp.getByText('Seguidores Reclutados')).toHaveCount(0);
+  await expect(camp.getByText('Seguidores Reclutados')).toBeVisible();
+  await expect(camp.getByText('Sin seguidores guardados.')).toBeVisible();
   await expect(camp.getByText('Consecuencias', { exact: true })).toBeVisible();
   await expect(camp.getByText('Estados', { exact: true })).toBeVisible();
   await expect(camp.getByText('Ruta del Legado')).toBeVisible();
@@ -96,6 +97,7 @@ test('el campamento respeta la jerarquía visual solicitada', async ({ page }) =
   const box = async (locator) => locator.boundingBox();
   const story = await box(camp.getByTestId('camp-story-card'));
   const runes = await box(camp.getByTestId('camp-rune-card'));
+  const followers = await box(camp.getByText('Seguidores Reclutados'));
   const effects = await box(camp.getByTestId('camp-hero-effects'));
   const legacy = await box(camp.getByTestId('camp-legacy'));
   const daren = await box(camp.getByTestId('camp-daren'));
@@ -103,11 +105,21 @@ test('el campamento respeta la jerarquía visual solicitada', async ({ page }) =
   const objects = await box(camp.getByTestId('camp-objects'));
 
   expect(story.x + story.width).toBeLessThan(runes.x);
+  expect(followers.x).toBeGreaterThan(runes.x + runes.width);
   expect(effects.y).toBeGreaterThan(story.y);
   expect(legacy.y).toBeGreaterThan(effects.y);
   expect(daren.x).toBeGreaterThan(legacy.x);
   expect(repercussions.y).toBeGreaterThan(legacy.y);
   expect(objects.y).toBeGreaterThan(repercussions.y);
+
+  const legacyTraits = await Promise.all(
+    ['perseverancia', 'desastre', 'tragedia', 'heroismo']
+      .map((trait) => box(camp.getByTestId(`camp-legacy-trait-${trait}`))),
+  );
+  const legacyColumns = new Set(legacyTraits.map((trait) => Math.round(trait.x)));
+  const legacyRows = new Set(legacyTraits.map((trait) => Math.round(trait.y)));
+  expect(legacyColumns.size).toBe(2);
+  expect(legacyRows.size).toBe(2);
 
   const consequences = await box(camp.getByText('Consecuencias', { exact: true }));
   const conditions = await box(camp.getByText('Estados', { exact: true }));

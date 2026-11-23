@@ -1,4 +1,4 @@
-# Revisión de arquitectura y calidad — Drunagor Turn Tracker V2
+﻿# Revisión de arquitectura y calidad — Drunagor Turn Tracker V2
 
 > Documento de propuesta. **Nada de este documento se ha aplicado todavía**: cada punto es una decisión independiente que puedes **aceptar** o **posponer**.
 > Fecha de revisión: 2026-10-27 · Rama: `main` · Build verificado: OK
@@ -6303,6 +6303,11 @@ Unit       264 tests
 E2E        168/168
 ```
 
+### 372.ª tanda — Ruta del Legado en 2×2 y seguidores en Apocalipsis
+
+- **Ruta del Legado**: Perseverancia, Desastre, Tragedia y Heroísmo pasan de cuatro filas a una rejilla de 2 columnas × 2 filas; cada camino conserva sus tres círculos y su contador.
+- **Seguidores Reclutados**: Apocalipsis muestra siempre el bloque, aunque todavía no haya seguidores guardados, para poder incorporarlos cuando estén disponibles. Despertar mantiene sus seguidores y el juego base sigue sin el bloque.
+- **Pruebas**: 264 unitarios · 168 E2E.
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

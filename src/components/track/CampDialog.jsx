@@ -140,18 +140,21 @@ function LegacyTrail({ t, language, record, onUpdate }) {
           </p>
         </div>
       </div>
-      <div className="space-y-1">
+      <div className="grid grid-cols-2 gap-1">
         {LEGACY_TRAILS.map((trait) => {
           const value = record.legacyTrail[trait.id] || 0;
           const name = trait.label[language] || trait.label.es;
           return (
             <div
               key={trait.id}
-              className="flex items-center justify-between gap-2 rounded-lg border border-slate-700 bg-slate-900/70 px-2 py-1.5"
+              data-testid={`camp-legacy-trait-${trait.id}`}
+              className="rounded-lg border border-slate-700 bg-slate-900/70 px-2 py-1.5"
             >
-              <span className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-200">{name}</span>
-              <span className="w-6 text-right text-[0.65rem] tabular-nums text-slate-400">{value}/3</span>
-              <div className="flex gap-1">
+              <div className="flex min-w-0 items-center justify-between gap-1">
+                <span className="min-w-0 truncate text-xs font-semibold text-slate-200">{name}</span>
+                <span className="shrink-0 text-[0.65rem] tabular-nums text-slate-400">{value}/3</span>
+              </div>
+              <div className="mt-1 flex justify-center gap-1">
                 {[1, 2, 3].map((level) => {
                   const selected = value >= level;
                   return (
@@ -530,7 +533,8 @@ export default function CampDialog({ open, onClose }) {
   const extras = selectedHeroId ? getExtras(selectedHeroId) : null;
   const campaign = mainBox || 'core';
   const campaignExpansionIds = CAMPAIGN_EXPANSIONS[campaign] || [];
-  const showFollowers = FOLLOWERS.some((follower) => campaignExpansionIds.includes(follower.expansionId));
+  const showFollowers = campaign === 'apocalypse'
+    || FOLLOWERS.some((follower) => campaignExpansionIds.includes(follower.expansionId));
   const showApocalypse = campaign === 'apocalypse';
   const campRecord = normalizeCampRecord(trackerData.campRecord);
 
