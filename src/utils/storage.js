@@ -140,6 +140,9 @@ export const isPlainObject = (value) => (
   value !== null && typeof value === 'object' && !Array.isArray(value)
 );
 
+/** Roster de seguidores reclutados en el campamento. */
+export const CAMP_FOLLOWERS_KEY = 'campFollowers';
+
 export const GAME_STORAGE_KEYS = [
   'lang',
   'expansions',
@@ -151,10 +154,19 @@ export const GAME_STORAGE_KEYS = [
   'gameLog',
   'heroExtras',
   'heroManagement',
+  CAMP_FOLLOWERS_KEY,
 ];
 
 const CONFIG_STORAGE_KEYS = ['expansions', 'trackerData', 'heroManagement'];
-const TRACK_STORAGE_KEYS = ['gameState', 'initEnemiesState', 'initRunesState', 'trackerSession', 'gameLog', 'heroExtras'];
+const TRACK_STORAGE_KEYS = [
+  'gameState',
+  'initEnemiesState',
+  'initRunesState',
+  'trackerSession',
+  'gameLog',
+  'heroExtras',
+  CAMP_FOLLOWERS_KEY,
+];
 
 /** Versión actual del formato de guardado. */
 export const SNAPSHOT_SCHEMA_VERSION = 3;
@@ -207,6 +219,15 @@ export function createStorageSnapshot(scope = 'full') {
   };
 }
 
+const isCampFollower = (entry) => isPlainObject(entry) && typeof entry.id === 'string' && entry.id.length > 0;
+
+export function sanitizeCampFollowers(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter(isCampFollower)
+    .map((entry) => ({ ...entry }));
+}
+
 function validateStorageData(data) {
   if (!isPlainObject(data)) throw new Error('Datos de partida no válidos');
   if (data.lang !== undefined && typeof data.lang !== 'string') throw new Error('Idioma no válido');
@@ -219,6 +240,10 @@ function validateStorageData(data) {
       if (data[key] !== undefined && !isPlainObject(data[key])) throw new Error(`Estado no válido: ${key}`);
     });
   if (data.gameLog !== undefined && !Array.isArray(data.gameLog)) throw new Error('Historial no válido');
+  if (data.campFollowers !== undefined
+    && (!Array.isArray(data.campFollowers) || !data.campFollowers.every(isCampFollower))) {
+    throw new Error('Seguidores del campamento no válidos');
+  }
 }
 
 /**
@@ -281,6 +306,9 @@ export function extractSnapshotData(snapshot, scope = 'full') {
   }
 
   validateStorageData(data);
+  if (data.campFollowers !== undefined) {
+    data = { ...data, campFollowers: sanitizeCampFollowers(data.campFollowers) };
+  }
   return data;
 }
 

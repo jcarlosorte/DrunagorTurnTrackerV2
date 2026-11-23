@@ -1,4 +1,4 @@
-﻿# Revisión de arquitectura y calidad — Drunagor Turn Tracker V2
+# Revisión de arquitectura y calidad — Drunagor Turn Tracker V2
 
 > Documento de propuesta. **Nada de este documento se ha aplicado todavía**: cada punto es una decisión independiente que puedes **aceptar** o **posponer**.
 > Fecha de revisión: 2026-10-27 · Rama: `main` · Build verificado: OK
@@ -6308,6 +6308,25 @@ E2E        168/168
 - **Ruta del Legado**: Perseverancia, Desastre, Tragedia y Heroísmo pasan de cuatro filas a una rejilla de 2 columnas × 2 filas; cada camino conserva sus tres círculos y su contador.
 - **Seguidores Reclutados**: Apocalipsis muestra siempre el bloque, aunque todavía no haya seguidores guardados, para poder incorporarlos cuando estén disponibles. Despertar mantiene sus seguidores y el juego base sigue sin el bloque.
 - **Pruebas**: 264 unitarios · 168 E2E.
+
+### 373.ª tanda — Guardado del campamento y manual al día
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Seguidores en el guardado** | `campFollowers` entra en las claves del juego y del track, viaja en la partida completa y se restaura al cargar; el alcance de configuración sigue sin incluir el roster | `storage`, `campFollowers`, `guardados.spec` |
+| **Validación** | El snapshot comprueba que cada seguidor tenga `id`; `campRecord` se normaliza y `groupName` se recorta al importar | `storage`, `configValidation` |
+| **Reinicio** | Reiniciar la configuración también vacía los seguidores del campamento | `Tracker` |
+| **Tutorial** | Guardados y campamento explican roster, registro, 2×2 y seguidores de Apocalipsis; nueva captura del campamento en ES/EN | `TUTORIAL.md`, `TUTORIAL.en.md`, assets |
+| **README** | Portada, cartas compartidas de Apocalipsis, guardado completo y roadmap actualizados | `README.md` |
+| **Pruebas** | 268 unitarios · 169 E2E | tests |
+
+**Medición**
+
+```text
+Unit       268 tests
+E2E        169/169
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

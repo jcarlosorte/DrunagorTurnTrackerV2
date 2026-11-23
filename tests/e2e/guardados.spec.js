@@ -33,6 +33,38 @@ test.describe('Guardados', () => {
     expect(record.snapshot.track.heroExtras.vorn.estadosAlterados).toHaveLength(2);
   });
 
+  test('los seguidores del campamento viajan con el guardado', async ({ page }) => {
+    const campFollowers = [{
+      id: 'camp-follower-e2e',
+      role: 'seguidor',
+      position: 3,
+      stateId: null,
+      background: null,
+    }];
+
+    await page.goto('./saves', { waitUntil: 'networkidle' });
+    await page.evaluate((followers) => {
+      localStorage.setItem('campFollowers', JSON.stringify(followers));
+    }, campFollowers);
+    await page.getByRole('button', { name: /Guardar partida/i }).first().click();
+
+    await expect.poll(async () => page.evaluate(
+      () => JSON.parse(localStorage.getItem('drunagor:saves:index:v1') || '[]').length,
+    )).toBeGreaterThan(0);
+
+    const savedFollowers = await page.evaluate(() => {
+      const index = JSON.parse(localStorage.getItem('drunagor:saves:index:v1') || '[]');
+      const record = JSON.parse(localStorage.getItem(`drunagor:save:${index[0].id}`) || '{}');
+      return record.snapshot?.track?.campFollowers;
+    });
+    expect(savedFollowers).toEqual(campFollowers);
+
+    await page.evaluate(() => localStorage.setItem('campFollowers', '[]'));
+    await page.getByRole('button', { name: /^Cargar/i }).first().click();
+    await expect(page).toHaveURL(/\/init$/);
+    await expect.poll(async () => readStorage(page, 'campFollowers', [])).toEqual(campFollowers);
+  });
+
   test('cargar un guardado manipulado sanea los valores', async ({ page }) => {
     await page.goto('./saves', { waitUntil: 'networkidle' });
     await page.getByRole('button', { name: /Guardar partida/i }).first().click();

@@ -34,8 +34,11 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
   acción y el rol de mazmorra debajo de los cuatro, con color elegido al marcarlo; tres
   capacidades de clase de tres rombos cada una, con nombre libre, y almacén de objetos.
 - **Campamento del grupo**: objetos compartidos (hasta 30), medidor de runas, seguidores
-  y registro de historia de Apocalipsis (Ruta del Legado, rasgos del Héroe de Darem y
-  Repercusiones por actos).
+  reclutados y registro de historia de Apocalipsis (Ruta del Legado en 2×2, rasgos del
+  Héroe de Darem y Repercusiones por actos).
+- **Contenido compartido de Apocalipsis**: reutiliza la carta base de Oscuridad de Caza,
+  el panel de Nodos de Oscuridad de Despertar y la incursión atroz, sin abrir el resto
+  del contenido de otras campañas.
 - **Compañeros y mascotas**: 23 criaturas que se añaden desde el menú **Compañeros** de
   la barra superior, sin límite por héroe, con tarjeta propia tras su héroe en el track
   (vida y estados), turno en orden de aparición y ficha ampliada con capacidades.
@@ -48,6 +51,10 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Guardados**: autoguardado, hasta 10 partidas con nombre, exportación e
   importación JSON (partida completa, solo configuración o solo track).
 - **Bilingüe** español/inglés, con detección y selector de idioma.
+- **Portada renovada** con el título en dos líneas y los accesos Configurar, Partidas y
+  Tutorial en una sola fila.
+- **Vista previa para enlaces** con tarjeta social 1200×630, metadatos Open Graph y
+  Twitter/X, y URL absoluta de producción.
 - **Tutorial integrado** con el manual completo, capturas y diagramas en ambos idiomas.
 - **Compendio de palabras clave** con 187 términos bilingües, búsqueda, filtros, iconos y descripciones.
 
@@ -137,12 +144,17 @@ scripts/            Build, imágenes y verificación visual
 ## Partidas y persistencia
 
 - Autoguardado en `localStorage` (runas, fichas, pilas, enemigos, turno, ronda,
-  héroes y su estado).
+  héroes y su estado, nombre del grupo, registro de historia del campamento y
+  seguidores reclutados).
 - Hasta **10 partidas** con nombre en el dispositivo, con carga y borrado.
 - **Exportación/importación JSON** con tres alcances: `configuration`, `track` y
   `full`. Los datos importados se validan y sanean contra los catálogos actuales;
   las entradas desconocidas se descartan.
-- `schemaVersion` actual: **3**, con migraciones desde versiones anteriores.
+- La partida completa incluye el roster de seguidores (`campFollowers`); la
+  exportación de solo configuración conserva nombre de grupo y registro de historia,
+  pero no ese roster.
+- `schemaVersion` actual: **3**, con migraciones desde versiones anteriores. Los
+  guardados antiguos sin seguidores siguen cargando.
 - Indicador de cuota: avisa al superar el 80 % del espacio disponible y compacta
   los datos antes de fallar.
 - La sincronización multi-dispositivo **no está implementada** (véase el roadmap).
@@ -164,13 +176,14 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      264 tests
-e2e       168 tests
+unit      268 tests
+e2e       169 tests
 build     OK
 ```
 
-Las pruebas E2E cubren tablero, estados, guardados, héroes, seguridad, menús de
-enemigos/runas/nodos/escenario, volteo de cartas y CSP.
+Las pruebas E2E cubren tablero, estados, guardados (incluidos los seguidores del
+campamento), héroes, seguridad, menús de enemigos/runas/nodos/escenario, volteo de
+cartas y CSP.
 
 ## Despliegue
 
@@ -211,7 +224,8 @@ Vite solo publica variables `VITE_*`; no colocar secretos en ellas.
 
 ## Roadmap
 
-- **Contenido de Apocalipsis** para las reglas 2.0 (el selector 1.5/2.0 ya existe).
+- **Ampliar la cobertura de Apocalipsis** para las reglas 2.0 con nuevas cartas,
+  escenarios y seguidores reclutados.
 - **Sincronización multi-dispositivo** opcional (requiere backend).
 
 ## Autor

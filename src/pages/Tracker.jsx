@@ -213,6 +213,7 @@ const TrackerSelect = () => {
 
   const handleReset = () => {
     const validEnemies = Array.from(new Set(enemiesInSelectedExpansions.map((e) => e.id)));
+    clearCampFollowers();
     setSelectedHeroes([]);
     setHeroRoles({});
     setSelectedEnemies(validEnemies);

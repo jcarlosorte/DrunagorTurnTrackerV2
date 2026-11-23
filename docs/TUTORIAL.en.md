@@ -781,12 +781,14 @@ The app automatically saves state in `localStorage`:
 - Enemies.
 - Runes and tiles.
 - Heroes and conditions.
-- Camp.
+- Camp: items, party name and story record.
+- Followers recruited at camp.
 
 ### Manual saves
 
 - Save up to **10 games** with a name.
-- Each save includes configuration and board state.
+- Each full save includes configuration, board state, story record and recruited followers.
+- **Configuration only** keeps the party name and story record (they live inside configuration), but not the follower roster.
 - The top indicator shows used storage.
 
 ### Export
@@ -795,9 +797,9 @@ Three scopes:
 
 | Export | Content |
 |---|---|
-| **Full game** | Configuration + board + state |
-| **Configuration only** | Campaign, expansions, heroes, roles and enemies |
-| **Track only** | Current game state |
+| **Full game** | Configuration + board + state + recruited followers |
+| **Configuration only** | Campaign, expansions, heroes, roles, enemies, party name and story record |
+| **Track only** | Current game state, including recruited followers |
 
 ### Import
 
@@ -805,13 +807,15 @@ Three scopes:
 2. Select the file.
 3. The app validates and sanitizes data against current catalogs.
 4. Unknown entries are discarded.
-5. The save is applied.
+5. Saves from schema versions 1–3 remain compatible; older saves without followers load without them.
+6. The save is applied. A full game also restores the recruited follower roster.
 
 ### Limitations
 
 - No device synchronization.
 - Clearing browser data deletes unsaved games.
 - Space is limited; the app warns near the limit.
+- **Configuration only** does not include recruited followers: use **full game** to carry everything.
 
 > **Tip:** export a copy before a boss, a campaign change or an important update.
 
@@ -843,9 +847,13 @@ Always reset:
 
 ### Camp
 
+![Camp with the Apocalypse story record](tutorial/assets/en/10-camp.webp)
+
 **Camp** stores shared group objects. It is a shared storage, not a shop.
 
-The dialog is ordered from top to bottom: party name; story record, rune track and followers; hero effects split into consequences and conditions; and camp objects at the end. **Apocalypse** also shows the **Legacy Trail** (three levels per path), the **Hero of Darem** traits (Folk Hero and Knight of Amira are mutually exclusive) and **Repercussions**, with one column per act for custom lines.
+The dialog is ordered from top to bottom: centered party name; campaign story record, rune track and recruited followers; hero effects split into consequences and conditions; and camp objects at the end. **Apocalypse** also shows the **Legacy Trail** (four paths in a 2 × 2 grid, three levels each), the **Hero of Darem** traits (Folk Hero and Knight of Amira are mutually exclusive) and **Repercussions**, with one column per act for custom lines.
+
+The top row adapts to the campaign: **Awakenings** and **Apocalypse** show **Recruited Followers**; Apocalypse always shows it, even when empty, because followers will be added later. The base game hides that block.
 
 ### Camp Phase
 
@@ -1008,6 +1016,7 @@ The app validates data. A file from another version may contain unknown entries,
 | 7 | `tutorial/assets/en/07-enemies.webp` | Enemies | Random, manual, filters, risk zone |
 | 8 | `tutorial/assets/en/08-hero-card.webp` | Hero sheet | Health, conditions, cubes, trauma, curses |
 | 9 | `tutorial/assets/en/09-saves.webp` | Saves | Save, export, import, history |
+| 10 | `tutorial/assets/en/10-camp.webp` | Camp | Party, story, runes, followers, Legacy, Daren, Repercussions |
 
 ### Additional screenshots recommended
 

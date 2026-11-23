@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { extractSnapshotData, migrateSnapshot, SNAPSHOT_SCHEMA_VERSION } from '@/utils/storage';
+import {
+  CAMP_FOLLOWERS_KEY,
+  extractSnapshotData,
+  migrateSnapshot,
+  SNAPSHOT_SCHEMA_VERSION,
+} from '@/utils/storage';
 
 describe('migrateSnapshot', () => {
   it('migra el formato v1 de datos planos', () => {
@@ -55,5 +60,31 @@ describe('extractSnapshotData', () => {
       configuration: { heroManagement: 'sí' },
       track: {},
     })).toThrow(/gestión de héroes/i);
+  });
+
+  it('transporta los seguidores del campamento en el track', () => {
+    const followers = [{
+      id: 'camp-follower-1',
+      role: 'seguidor',
+      position: 2,
+      stateId: null,
+      background: null,
+    }];
+
+    const data = extractSnapshotData({
+      schemaVersion: 3,
+      configuration: {},
+      track: { [CAMP_FOLLOWERS_KEY]: followers },
+    }, 'full');
+
+    expect(data[CAMP_FOLLOWERS_KEY]).toEqual(followers);
+  });
+
+  it('rechaza seguidores de campamento sin id válido', () => {
+    expect(() => extractSnapshotData({
+      schemaVersion: 3,
+      configuration: {},
+      track: { [CAMP_FOLLOWERS_KEY]: [{ role: 'seguidor' }] },
+    }, 'full')).toThrow(/seguidores del campamento/i);
   });
 });

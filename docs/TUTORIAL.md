@@ -785,12 +785,14 @@ La app guarda automáticamente el estado en `localStorage`:
 - Enemigos.
 - Runas y fichas.
 - Héroes y estados.
-- Campamento.
+- Campamento: objetos, nombre del grupo y registro de historia.
+- Seguidores reclutados en el campamento.
 
 ### Partidas manuales
 
 - Puedes guardar hasta **10 partidas** con nombre.
-- Cada guardado incluye la configuración y el estado del track.
+- Cada guardado completo incluye la configuración, el estado del track, el registro de historia y los seguidores reclutados.
+- El alcance **solo configuración** conserva el nombre del grupo y el registro de historia (viven dentro de la configuración), pero no el roster de seguidores.
 - El indicador superior muestra el espacio usado.
 
 ### Exportar
@@ -799,9 +801,9 @@ Tres alcances:
 
 | Exportación | Contenido |
 |---|---|
-| **Partida completa** | Configuración + track + estado |
-| **Solo configuración** | Campaña, expansiones, héroes, roles y enemigos |
-| **Solo track** | Estado actual de la partida |
+| **Partida completa** | Configuración + track + estado + seguidores reclutados |
+| **Solo configuración** | Campaña, expansiones, héroes, roles, enemigos, nombre del grupo y registro de historia |
+| **Solo track** | Estado actual de la partida, incluidos los seguidores reclutados |
 
 ### Importar
 
@@ -809,13 +811,15 @@ Tres alcances:
 2. Selecciona el archivo.
 3. La app valida y sanea los datos contra los catálogos actuales.
 4. Las entradas desconocidas se descartan.
-5. Se aplica el guardado.
+5. Los guardados de versiones 1–3 siguen siendo compatibles; si son antiguos y no traen seguidores, se cargan sin ellos.
+6. Se aplica el guardado. Una partida completa restaura también el campamento de seguidores.
 
 ### Limitaciones
 
 - No hay sincronización entre dispositivos.
 - Limpiar los datos del navegador borra las partidas no exportadas.
 - El espacio es limitado; la app avisa al acercarse al límite.
+- El alcance **solo configuración** no incluye los seguidores reclutados: usa **partida completa** si quieres viajar con todo.
 
 > **Consejo:** exporta una copia antes de un jefe, un cambio de campaña o una actualización importante.
 
@@ -847,9 +851,13 @@ Siempre se reinician:
 
 ### Campamento
 
+![Campamento con el registro de historia de Apocalipsis](tutorial/assets/10-campamento.webp)
+
 El **Campamento** guarda objetos compartidos del grupo. Es un almacén común, no una tienda.
 
-El diálogo se organiza de arriba abajo: nombre del grupo; seguimiento de historia, medidor de runas y seguidores; efectos del héroe separados en consecuencias y estados; y, al final, los objetos. En **Apocalipsis** aparecen además la **Ruta del Legado** (tres niveles por camino), los rasgos del **Héroe de Darem** (Héroe Popular y Caballero de Amira son excluyentes) y las **Repercusiones**, con una columna por acto para escribir líneas propias.
+El diálogo se organiza de arriba abajo: nombre del grupo centrado; seguimiento de historia de la campaña, medidor de runas y seguidores reclutados; efectos del héroe separados en consecuencias y estados; y, al final, los objetos. En **Apocalipsis** aparecen además la **Ruta del Legado** (cuatro caminos en 2 columnas × 2 filas, con tres niveles cada uno), los rasgos del **Héroe de Darem** (Héroe Popular y Caballero de Amira son excluyentes) y las **Repercusiones**, con una columna por acto para escribir líneas propias.
+
+La fila superior se adapta a la campaña: **Despertar** y **Apocalipsis** muestran **Seguidores Reclutados**; Apocalipsis lo hace siempre, aunque todavía esté vacío, porque los seguidores se introducirán más adelante. El juego base oculta ese bloque.
 
 ### Fase de Campamento
 
@@ -1012,6 +1020,7 @@ La app valida los datos. Un archivo de otra versión puede tener entradas descon
 | 7 | `tutorial/assets/07-guardados.webp` | Partidas | Guardar, exportar, importar, historial |
 | 8 | `tutorial/assets/08-enemigos.webp` | Enemigos | Aleatorios, manuales, filtros, zona de riesgo |
 | 9 | `tutorial/assets/09-ficha-heroe.webp` | Ficha de héroe | Vida, estados, cubos, trauma, maldición |
+| 10 | `tutorial/assets/10-campamento.webp` | Campamento | Nombre, historia, runas, seguidores, Ruta, Daren, Repercusiones |
 
 ### Capturas adicionales recomendadas
 

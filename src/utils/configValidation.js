@@ -2,9 +2,11 @@ import { EXPANSIONS } from '@/data/expansions';
 import { HEROES } from '@/data/heroes';
 import { ENEMIES } from '@/data/enemies';
 import { ROLES } from '@/data/roles';
+import { normalizeCampRecord } from '@/utils/campRecord';
 
 const BEHAVIORS = ['estandar', 'alternativo', 'complejo'];
 const MAX_HEROES = 5;
+const MAX_GROUP_NAME = 60;
 
 const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 const isStringArray = (value) => Array.isArray(value) && value.every((item) => typeof item === 'string');
@@ -63,6 +65,16 @@ export function sanitizeConfiguration(data) {
       : [];
     if (Array.isArray(tracker.behaviors) && behaviors.length !== tracker.behaviors.length) {
       warnings.push('Se han ignorado comportamientos desconocidos.');
+    }
+
+    if (typeof tracker.groupName === 'string') {
+      tracker.groupName = tracker.groupName.trim().slice(0, MAX_GROUP_NAME);
+    } else {
+      delete tracker.groupName;
+    }
+
+    if (tracker.campRecord !== undefined) {
+      tracker.campRecord = normalizeCampRecord(tracker.campRecord);
     }
 
     result.trackerData = {

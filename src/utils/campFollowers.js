@@ -1,6 +1,4 @@
-import { readJsonStorage, writeJsonStorage } from '@/utils/storage';
-
-const CAMP_FOLLOWERS_KEY = 'campFollowers';
+import { CAMP_FOLLOWERS_KEY, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 
 const isCampFollowers = (value) => (
   Array.isArray(value)
