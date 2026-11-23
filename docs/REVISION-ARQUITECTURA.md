@@ -6270,6 +6270,22 @@ Unit       264 tests
 E2E        166/166
 ```
 
+### 370.ª tanda — Cartas compartidas con Apocalipsis
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Oscuridad de Caza** | Apocalipsis muestra la carta base de runa sin abrir el resto del contenido de Core | `TopMenu` |
+| **Nodos de Oscuridad** | Apocalipsis muestra el panel de nodos del Despertar sin activar fichas de generación ni cañones mágicos | `TopMenu` |
+| **Incursión Atroz** | Apocalipsis muestra únicamente esta incursión del Despertar, no Incansable ni Naval | `TopMenu` |
+| **Pruebas** | 264 unitarios · 167 E2E | tests |
+
+**Medición**
+
+```text
+Unit       264 tests
+E2E        167/167
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -261,6 +261,9 @@ const TopMenu = ({
     .map((enemy) => [enemy.id, enemy])).values());
   const showCoreContent = mainBox === 'core' || previewOtherBoxes;
   const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes;
+  const showBorrowedApocalypseCards = mainBox === 'apocalypse';
+  const showHuntingDarkness = showCoreContent || showBorrowedApocalypseCards;
+  const showAwakeningsNodes = showAwakeningsContent || showBorrowedApocalypseCards;
   
   const colorMap = {
     rojo: 'state-btn-remove',
@@ -993,8 +996,8 @@ const TopMenu = ({
                 <div className="flex flex-col gap-2">
 
                   {/* --- Bloque 1: OSCURIDAD DE CAZA --- */}
-                  {showCoreContent && (
-                  <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
+                  {showHuntingDarkness && (
+                  <div data-testid="hunting-darkness-card" className="rounded-xl border border-slate-700 bg-slate-950/50 p-2">
                     <div className="flex flex-wrap gap-2 justify-center items-center">
                       <GiRuneStone className="text-indigo-300 text-xl" />
                       {!oscuridadActivo ? (
@@ -1520,7 +1523,7 @@ const TopMenu = ({
                 </div>
                 <ScenarioPanels />
                 <div className="mt-2 grid items-start gap-2 lg:grid-cols-3">
-                {showAwakeningsContent && <NodosOscuridadPanel />}
+                {showAwakeningsNodes && <NodosOscuridadPanel />}
                 {showAwakeningsContent && (
                   <div className="rounded-xl border border-cyan-700/60 bg-cyan-950/30 p-1.5">
                     <div className="mb-2 text-xs font-bold uppercase tracking-wide text-cyan-200">
@@ -1787,48 +1790,52 @@ const TopMenu = ({
                   </div>
                   )}
 
-                  {showAwakeningsContent && (
+                  {(showAwakeningsContent || showBorrowedApocalypseCards) && (
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    {INCURSION_DESPERTAR.filter((card) => card.cara === 'A').map((cardA) => {
-                      const cardB = INCURSION_DESPERTAR.find((card) => card.id === cardA.id && card.cara === 'B');
-                      const already = placedRunes.some((entry) => entry.rune.tipo === 'incursion');
-                      const needsScenario = !cardA.incursion?.fixedMonsterId;
-                      const disabled = already || (needsScenario && !scenarioMonster);
-                      return (
-                        <div
-                          key={cardA.id}
-                          data-testid={`despertar-incursion-${cardA.id}`}
-                          className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"
-                        >
-                          <h4 className="flex min-w-0 items-center gap-1.5 text-xs font-bold text-slate-100">
-                            <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-indigo-950/70 text-indigo-300">
-                              <GiUprising className="text-sm" />
-                            </span>
-                            <span className="truncate">{translations.scenarioCard?.[cardA.id] || cardA.nombre}</span>
-                          </h4>
-                          <div className="mt-2 flex flex-wrap gap-1.5">
-                            <button
-                              type="button"
-                              disabled={disabled}
-                              onClick={() => handleSelectUniqueCard(cardA)}
-                              className={`state-btn-add text-white text-xs px-2 py-1 rounded ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                              Añadir (A)
-                            </button>
-                            {cardB && (
+                    {INCURSION_DESPERTAR
+                      .filter((card) => card.cara === 'A' && (
+                        showAwakeningsContent || card.id === 'incursion_despertar_atroz'
+                      ))
+                      .map((cardA) => {
+                        const cardB = INCURSION_DESPERTAR.find((card) => card.id === cardA.id && card.cara === 'B');
+                        const already = placedRunes.some((entry) => entry.rune.tipo === 'incursion');
+                        const needsScenario = !cardA.incursion?.fixedMonsterId;
+                        const disabled = already || (needsScenario && !scenarioMonster);
+                        return (
+                          <div
+                            key={cardA.id}
+                            data-testid={`despertar-incursion-${cardA.id}`}
+                            className="rounded-xl border border-slate-700 bg-slate-950/50 p-2"
+                          >
+                            <h4 className="flex min-w-0 items-center gap-1.5 text-xs font-bold text-slate-100">
+                              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-indigo-950/70 text-indigo-300">
+                                <GiUprising className="text-sm" />
+                              </span>
+                              <span className="truncate">{translations.scenarioCard?.[cardA.id] || cardA.nombre}</span>
+                            </h4>
+                            <div className="mt-2 flex flex-wrap gap-1.5">
                               <button
                                 type="button"
                                 disabled={disabled}
-                                onClick={() => handleSelectUniqueCard(cardB)}
-                                className={`bg-blue-700 hover:bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                onClick={() => handleSelectUniqueCard(cardA)}
+                                className={`state-btn-add text-white text-xs px-2 py-1 rounded ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                               >
-                                Cara B
+                                Añadir (A)
                               </button>
-                            )}
+                              {cardB && (
+                                <button
+                                  type="button"
+                                  disabled={disabled}
+                                  onClick={() => handleSelectUniqueCard(cardB)}
+                                  className={`bg-blue-700 hover:bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                >
+                                  Cara B
+                                </button>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                   )}
 
