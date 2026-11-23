@@ -6259,15 +6259,15 @@ Imagen     1200×630 · JPEG · 115 KB
 | **Seguimiento de Historia** | Logo de la campaña activa y subtítulo del registro de historia | `CampDialog` |
 | **Seguidores Reclutados** | Solo aparece en campañas con seguidores disponibles y conserva su retirada | `CampDialog`, `followers` |
 | **Ruta del Legado** | Perseverancia, Desastre, Tragedia y Heroísmo con tres niveles seleccionables | `CampDialog`, `campRecord` |
-| **Héroe de Darem** | Rasgos Héroe Popular, Redentor, Caballero de Amira y Vehemente con selector | `CampDialog`, `campRecord` |
+| **Héroe de Darem** | Rasgos Héroe Popular, Redentor, Caballero de Amira y Vehemente; los dos orígenes son excluyentes | `CampDialog`, `campRecord` |
 | **Repercusiones** | Cuatro actos con icono extraído de la referencia, líneas libres y límite de 8 por acto | `CampDialog`, `campRecord`, `assets/apocalypse` |
-| **Pruebas** | 263 unitarios · 165 E2E | tests |
+| **Pruebas** | 264 unitarios · 166 E2E | tests |
 
 **Medición**
 
 ```text
-Unit       263 tests
-E2E        165/165
+Unit       264 tests
+E2E        166/166
 ```
 
 ### Pendiente / pospuesto

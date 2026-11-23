@@ -17,6 +17,9 @@ export const DAREN_TRAITS = [
   { id: 'passionate', label: { es: 'Vehemente', en: 'Passionate' } },
 ];
 
+// Los dos orígenes del Héroe de Darem son alternativas: solo puede haber uno.
+export const DAREN_EXCLUSIVE_GROUPS = [['folkHero', 'knightOfAmira']];
+
 export const CAMP_ACTS = [
   { id: 'first', label: { es: 'Primer Acto', en: 'First Act' } },
   { id: 'second', label: { es: 'Segundo Acto', en: 'Second Act' } },
@@ -60,6 +63,12 @@ export function normalizeCampRecord(raw) {
   DAREN_TRAITS.forEach(({ id }) => {
     record.darenTraits[id] = raw.darenTraits?.[id] === true;
   });
+  DAREN_EXCLUSIVE_GROUPS.forEach((group) => {
+    const selected = group.find((id) => record.darenTraits[id] === true);
+    group.forEach((id) => {
+      if (id !== selected) record.darenTraits[id] = false;
+    });
+  });
   CAMP_ACTS.forEach(({ id }) => {
     record.unfoldings[id] = normalizeLines(raw.unfoldings?.[id]);
   });
@@ -78,6 +87,14 @@ export function withDarenTrait(record, traitId, enabled) {
   const next = normalizeCampRecord(record);
   if (!DAREN_TRAITS.some(({ id }) => id === traitId)) return next;
   next.darenTraits[traitId] = enabled === true;
+  if (enabled === true) {
+    DAREN_EXCLUSIVE_GROUPS
+      .filter((group) => group.includes(traitId))
+      .flat()
+      .forEach((id) => {
+        if (id !== traitId) next.darenTraits[id] = false;
+      });
+  }
   return next;
 }
 

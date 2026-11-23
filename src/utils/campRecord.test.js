@@ -69,6 +69,34 @@ describe('registro de historia del campamento', () => {
     expect(record.unfoldings.first).toEqual(['Perdieron la reliquia']);
   });
 
+  it('mantiene excluyentes los orígenes Héroe Popular y Caballero de Amira', () => {
+    let record = withDarenTrait(createCampRecord(), 'folkHero', true);
+    record = withDarenTrait(record, 'redeemer', true);
+    record = withDarenTrait(record, 'knightOfAmira', true);
+
+    expect(record.darenTraits).toMatchObject({
+      folkHero: false,
+      knightOfAmira: true,
+      redeemer: true,
+    });
+
+    record = withDarenTrait(record, 'folkHero', true);
+    expect(record.darenTraits).toMatchObject({
+      folkHero: true,
+      knightOfAmira: false,
+      redeemer: true,
+    });
+
+    const imported = normalizeCampRecord({
+      darenTraits: { folkHero: true, knightOfAmira: true, passionate: true },
+    });
+    expect(imported.darenTraits).toMatchObject({
+      folkHero: true,
+      knightOfAmira: false,
+      passionate: true,
+    });
+  });
+
   it('ignora actos y rasgos desconocidos', () => {
     const record = normalizeCampRecord({});
     const unknown = withLegacyLevel(record, 'destino', 3);

@@ -624,7 +624,7 @@
     "campLegacyTrail": "Legacy Trail",
     "campLegacyTrailHint": "Mark up to 3 levels on each path.",
     "campDarenTraits": "Hero of Darem Background and Traits",
-    "campDarenTraitsHint": "Mark the traits this hero has.",
+    "campDarenTraitsHint": "Mark the traits this hero has. Folk Hero and Knight of Amira are mutually exclusive.",
     "campRepercussions": "Repercussions",
     "campRepercussionsSubtitle": "Unfoldings / Epilogue",
     "campFirstAct": "First Act",

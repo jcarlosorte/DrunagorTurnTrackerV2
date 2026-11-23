@@ -625,7 +625,7 @@
     "campLegacyTrail": "Ruta del Legado",
     "campLegacyTrailHint": "Marca hasta 3 niveles en cada camino.",
     "campDarenTraits": "Orígenes y Rasgos del Héroe de Darem",
-    "campDarenTraitsHint": "Marca los rasgos que tenga el héroe.",
+    "campDarenTraitsHint": "Marca los rasgos que tenga el héroe. Héroe Popular y Caballero de Amira son excluyentes.",
     "campRepercussions": "Repercusiones",
     "campRepercussionsSubtitle": "Unfoldings / Epilogue",
     "campFirstAct": "Primer Acto",

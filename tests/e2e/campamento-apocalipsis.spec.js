@@ -54,6 +54,36 @@ test('el campamento de Apocalipsis muestra y guarda el registro de historia', as
   await expect(camp.getByTestId('camp-unfolding-first').getByText('El grupo escapó de la ciudad')).toBeVisible();
 });
 
+test('los orígenes Héroe Popular y Caballero de Amira son excluyentes', async ({ page }) => {
+  await seedStorage(page, buildSeed({
+    mainBox: JSON.stringify('apocalypse'),
+    expansions: JSON.stringify(['base', 'apocalypse_adventures']),
+  }));
+  await openTracker(page);
+
+  const camp = await openCamp(page);
+  const folk = camp.getByTestId('camp-daren-folkHero');
+  const knight = camp.getByTestId('camp-daren-knightOfAmira');
+  const redeemer = camp.getByTestId('camp-daren-redeemer');
+
+  await folk.click();
+  await expect(folk).toHaveAttribute('aria-pressed', 'true');
+  await expect(knight).toHaveAttribute('aria-pressed', 'false');
+
+  await knight.click();
+  await expect(folk).toHaveAttribute('aria-pressed', 'false');
+  await expect(knight).toHaveAttribute('aria-pressed', 'true');
+
+  await redeemer.click();
+  await expect(knight).toHaveAttribute('aria-pressed', 'true');
+  await expect(redeemer).toHaveAttribute('aria-pressed', 'true');
+
+  await folk.click();
+  await expect(folk).toHaveAttribute('aria-pressed', 'true');
+  await expect(knight).toHaveAttribute('aria-pressed', 'false');
+  await expect(redeemer).toHaveAttribute('aria-pressed', 'true');
+});
+
 test('el campamento respeta la jerarquía visual solicitada', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await seedStorage(page, buildSeed({

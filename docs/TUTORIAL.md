@@ -849,7 +849,7 @@ Siempre se reinician:
 
 El **Campamento** guarda objetos compartidos del grupo. Es un almacén común, no una tienda.
 
-El diálogo se organiza de arriba abajo: nombre del grupo; seguimiento de historia, medidor de runas y seguidores; efectos del héroe separados en consecuencias y estados; y, al final, los objetos. En **Apocalipsis** aparecen además la **Ruta del Legado** (tres niveles por camino), los rasgos del **Héroe de Darem** y las **Repercusiones**, con una columna por acto para escribir líneas propias.
+El diálogo se organiza de arriba abajo: nombre del grupo; seguimiento de historia, medidor de runas y seguidores; efectos del héroe separados en consecuencias y estados; y, al final, los objetos. En **Apocalipsis** aparecen además la **Ruta del Legado** (tres niveles por camino), los rasgos del **Héroe de Darem** (Héroe Popular y Caballero de Amira son excluyentes) y las **Repercusiones**, con una columna por acto para escribir líneas propias.
 
 ### Fase de Campamento
 
