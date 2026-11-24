@@ -51,7 +51,7 @@
       },
       {
         "title": "Runes",
-        "body": "The Runes menu gathers rune cards (darkness, assault, undead king, host, invaders), the bag status, manifest, adding tiles to the track and bulk rune adds. The risk zone removes tiles with confirmation."
+        "body": "The Runes menu gathers rune cards (darkness, assault, undead king, host, invaders), the bag status, manifest, adding tiles to the track and Restless Darkness. The risk zone removes tiles with confirmation."
       },
       {
         "title": "Nodes and areas",
@@ -1128,7 +1128,9 @@
     "confirmRemoveTileDesc": "The {color} tile will be removed from the initiative track. This cannot be undone.",
     "confirmDeleteTileTitle": "Remove tile from the bag",
     "confirmDeleteTileDesc": "The {color} tile will be discarded from the bag. This cannot be undone.",
-    "oscuridadCascada": "Add Runes in Bulk",
+    "oscuridadCascada": "Restless Darkness",
+    "oscuridadCascadaHint": "Add X runes of each color.",
+    "oscuridadCascadaAdd": "Add {n} runes of each color",
     "removeRandom": "Random",
     "removeOneRandom": "Removed one",
     "noTilesToRemove": "No tiles to remove.",

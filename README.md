@@ -20,7 +20,8 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Enemigos**: alta aleatoria por color, alta manual con buscador y filtros de
   color y categoría, bolsa de colores y jefes con inmunidades.
 - **Runas**: cartas de runa (oscuridad, asalto, rey redivivo, huésped, invadidos),
-  estado de la bolsa, manifestar, fichas y zona de riesgo con confirmaciones.
+  estado de la bolsa, manifestar, fichas, Oscuridad Inquieta (+1 a +6 por color) y zona
+  de riesgo con confirmaciones.
 - **Nodos y áreas**: pilas de runas, nodos de niebla, barricadas, puntos de
   aparición, llaves rúnicas y rescate.
 - **Escenario**: monstruo de escenario y cartas de incursión y defensa.
@@ -177,7 +178,7 @@ Suite esperada antes de cada entrega:
 ```text
 lint      0 errores / 0 avisos
 unit      268 tests
-e2e       169 tests
+e2e       170 tests
 build     OK
 ```
 

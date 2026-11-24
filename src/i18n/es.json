@@ -51,7 +51,7 @@
       },
       {
         "title": "Runas",
-        "body": "El menú Runas reúne las cartas de runa (oscuridad, asalto, rey redivivo, huésped, invadidos), el estado de la bolsa, manifestar, añadir fichas al medidor y añadir runas en masa. La zona de riesgo elimina fichas con confirmación."
+        "body": "El menú Runas reúne las cartas de runa (oscuridad, asalto, rey redivivo, huésped, invadidos), el estado de la bolsa, manifestar, añadir fichas al medidor y Oscuridad Inquieta. La zona de riesgo elimina fichas con confirmación."
       },
       {
         "title": "Nodos y áreas",
@@ -1129,7 +1129,9 @@
     "confirmRemoveTileDesc": "Se retirará la ficha {color} del medidor de iniciativa. Esta acción no se puede deshacer.",
     "confirmDeleteTileTitle": "Eliminar ficha de la bolsa",
     "confirmDeleteTileDesc": "Se descartará la ficha {color} de la bolsa. Esta acción no se puede deshacer.",
-    "oscuridadCascada": "Añadir Runas en Masa",
+    "oscuridadCascada": "Oscuridad Inquieta",
+    "oscuridadCascadaHint": "Añade X runas de cada color.",
+    "oscuridadCascadaAdd": "Añadir {n} runas de cada color",
     "removeRandom": "Aleatoria",
     "removeOneRandom": "Eliminada una ficha de",
     "noTilesToRemove": "No hay fichas para eliminar.",

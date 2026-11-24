@@ -444,7 +444,7 @@ El menú se divide en:
 
 1. **Cartas de runa**.
 2. **Estado de la bolsa**.
-3. **Añadir al medidor / manifestar / runas en masa**.
+3. **Añadir al medidor / manifestar / Oscuridad Inquieta**.
 4. **Zona de riesgo**.
 
 #### Cartas de runa
@@ -469,9 +469,9 @@ Cada carta puede añadirse por cara A o B si existe. La app evita duplicados inc
 
 Puedes añadir una ficha de un color concreto o una ficha aleatoria.
 
-#### Añadir runas en masa
+#### Oscuridad Inquieta
 
-Añade 1, 2, 3 o 4 runas al medidor de una vez.
+Añade X runas de cada color al medidor de una vez. Puedes elegir entre 1 y 6; si un color no tiene suficientes fichas en la bolsa, se añaden las disponibles.
 
 #### Manifestar
 

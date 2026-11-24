@@ -6327,6 +6327,23 @@ Unit       268 tests
 E2E        169/169
 ```
 
+### 374.ª tanda — Oscuridad Inquieta en el menú de runas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Nombre** | «Añadir Runas en Masa» pasa a llamarse «Oscuridad Inquieta», con la aclaración «Añade X runas de cada color» | `TopMenu`, `i18n` |
+| **Opciones** | La acción admite de 1 a 6 runas de cada color; si la bolsa no tiene suficientes fichas de un color, añade las disponibles | `GameContext`, `TopMenu` |
+| **Accesibilidad** | Cada botón expone un nombre accesible del tipo «Añadir N runas de cada color» | `TopMenu` |
+| **Tutorial** | Sección de runas y capturas ES/EN actualizadas con el nuevo nombre, la aclaración y los seis botones | `TUTORIAL.md`, `TUTORIAL.en.md`, assets |
+| **Pruebas** | Nueva prueba E2E de nombre, aclaración, botones +1 a +6 y alta de 30 fichas | `runas-escenario.spec.js` |
+
+**Medición**
+
+```text
+Unit       268 tests
+E2E        170/170
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

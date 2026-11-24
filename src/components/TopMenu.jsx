@@ -1365,15 +1365,19 @@ const TopMenu = ({
                 <div className="grid grid-cols-2 gap-2">
                 {/* Añadir oscuridad en cascada */}
                 <div className="track-surface-raised flex-1 p-3 shadow-md">
-                  <div className="flex items-center gap-2 mb-2 justify-center">
+                  <div className="flex items-center gap-2 mb-1 justify-center">
                     <GiRuneStone className="text-purple-400 text-xl" />
                     <span className="text-sm font-semibold text-center">{t.oscuridadCascada}</span>
                   </div>
+                  <p className="mb-2 text-center text-[11px] leading-tight text-slate-300">
+                    {t.oscuridadCascadaHint}
+                  </p>
                   <div className="flex flex-wrap gap-2 justify-center">
-                    {[1,2,3,4].map(num => (
+                    {[1,2,3,4,5,6].map(num => (
                       <button
                         key={num}
                         onClick={() => addRunesCascade(num)}
+                        aria-label={(t.oscuridadCascadaAdd || 'Añadir {n} runas de cada color').replace('{n}', num)}
                         className="bg-purple-700 hover:bg-purple-600 text-white text-xs px-3 py-1 rounded-full"
                       >
                         ➕ {num}

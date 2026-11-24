@@ -27,6 +27,20 @@ test.describe('Menús de runas y escenario', () => {
     await expect(addButton).toHaveCSS('background-color', 'rgb(21, 128, 61)');
   });
 
+  test('runas: Oscuridad Inquieta añade de cada color y llega a +6', async ({ page }) => {
+    await page.getByRole('button', { name: 'Runas', exact: true }).first().click();
+    const panel = page.locator('#track-menu-runes');
+
+    await expect(panel.getByText('Oscuridad Inquieta')).toBeVisible();
+    await expect(panel.getByText('Añade X runas de cada color.')).toBeVisible();
+    for (const num of [1, 2, 3, 4, 5, 6]) {
+      await expect(panel.getByRole('button', { name: `Añadir ${num} runas de cada color` })).toBeVisible();
+    }
+
+    await panel.getByRole('button', { name: 'Añadir 6 runas de cada color' }).click();
+    await expect(panel.getByText(/Extraídas:\s*30/)).toBeVisible();
+  });
+
   test('nodos: menú propio con contador y pilas', async ({ page }) => {
     await page.getByRole('button', { name: 'Nodos', exact: true }).first().click();
     const panel = page.locator('#track-menu-nodes');
