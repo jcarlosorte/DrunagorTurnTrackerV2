@@ -78,7 +78,7 @@ test.describe('Seguidores de Apocalipsis', () => {
     await expect(cohorts).toBeVisible();
     await expect(cohorts).toContainText('No se conservan entre aventuras.');
     await expect(picker).toContainText('Los seguidores se guardan; los acompañantes no.');
-    for (const name of ['Surcadora Avernal', 'Condotierro Umbraliano', 'Christi Y Jefrey', 'Carroñero']) {
+    for (const name of ['Surcadora Avernal', 'Condotierro Umbraliano', 'Christi & Jeffrey', 'Carroñero']) {
       await expect(cohorts.getByText(name, { exact: true })).toBeVisible();
     }
 

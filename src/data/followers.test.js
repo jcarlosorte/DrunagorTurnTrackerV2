@@ -60,6 +60,9 @@ describe('seguidores de Despertar y Apocalipsis', () => {
     expect(getFollowerName(getFollower('daviggo'), 'en')).toBe('Condottieri DaViggo');
     expect(getFollowerName(getFollower('carronero'), 'en')).toBe('Scavenger');
     expect(getFollowerEpithet(getFollower('carronero'), 'en')).toBe('Mysterious Ally');
+    expect(getFollowerName(getFollower('surcadora'), 'en')).toBe('Hellscarian Dunedancer');
+    expect(getFollowerName(getFollower('condotierro'), 'en')).toBe('Umbralian Condottieri');
+    expect(getFollowerName(getFollower('christiyjefrey'), 'es')).toBe('Christi & Jeffrey');
     expect(getFollowerStateName(getFollowerState('robin', 'sano'), 'en')).toBe('Healthy');
   });
 

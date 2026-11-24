@@ -206,7 +206,7 @@ export const FOLLOWERS = [
   {
     id: 'surcadora',
     name: 'Surcadora Avernal',
-    nameEn: 'Avernal Rider',
+    nameEn: 'Hellscarian Dunedancer',
     epithet: 'Amazon del Desierto',
     epithetEn: 'Desert Amazon',
     role: 'controlador',
@@ -222,7 +222,7 @@ export const FOLLOWERS = [
   {
     id: 'condotierro',
     name: 'Condotierro Umbraliano',
-    nameEn: 'Umbral Condottiero',
+    nameEn: 'Umbralian Condottieri',
     epithet: 'Soldado',
     epithetEn: 'Soldier',
     role: 'lider',
@@ -237,8 +237,8 @@ export const FOLLOWERS = [
   },
   {
     id: 'christiyjefrey',
-    name: 'Christi Y Jefrey',
-    nameEn: 'Christi and Jefrey',
+    name: 'Christi & Jeffrey',
+    nameEn: 'Christi & Jeffrey',
     epithet: 'Combatientes',
     epithetEn: 'Fighters',
     role: 'controlador',
