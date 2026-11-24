@@ -15,6 +15,7 @@ test.describe('Menús de runas y escenario', () => {
     await expect(panel.getByRole('heading', { name: 'Runas', level: 2 })).toBeVisible();
     await expect(panel.getByText(/^Runas \d+$/)).toBeVisible();
     await expect(panel.getByText(/^Fichas \d+\/\d+$/)).toBeVisible();
+    await expect(panel.getByTestId('rune-bag-summary')).toHaveCSS('text-align', 'center');
     await expect(panel.getByRole('heading', { name: 'Zona de riesgo' })).toBeVisible();
 
     // Los nodos ya no viven en Runas: tienen su propio menú.

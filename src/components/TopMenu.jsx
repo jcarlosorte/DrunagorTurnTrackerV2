@@ -1288,7 +1288,7 @@ const TopMenu = ({
                     </span>
                   </div>
                   {/* Estado general */}
-                  <div className="text-sm text-white justify-center">
+                  <div className="text-sm text-white text-center" data-testid="rune-bag-summary">
                     {t.extraidas}: <b>{usedTiles.length}</b><br />
                     {t.total}: <b>{availableTiles.length + usedTiles.length}</b>
                   </div>
