@@ -385,6 +385,7 @@ const TopMenu = ({
       name: follower.name,
       epithet: follower.epithet,
       role: follower.role,
+      cohort: Boolean(follower.cohort),
       position: ROLE_POSITIONS[follower.role] ?? 0,
       stateId: state.id,
       vida: state.vida,
@@ -401,7 +402,7 @@ const TopMenu = ({
       ...prev,
       followers: [...(prev.followers || []), ...additions],
     }));
-    additions.forEach((entry) => saveCampFollower(entry));
+    additions.filter((entry) => !entry.cohort).forEach((entry) => saveCampFollower(entry));
   };
 
   const activateScene = (scene) => {

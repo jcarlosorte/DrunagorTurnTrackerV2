@@ -66,4 +66,41 @@ test.describe('Seguidores de Apocalipsis', () => {
       return data.followers?.find((entry) => entry.id === 'robin');
     }).toMatchObject({ stateId: 'sano', vida: 7, vidaMax: 7 });
   });
+
+  test('los Acompañantes (Cohort) no se guardan en el campamento y se eliminan al reiniciar', async ({ page }) => {
+    await seedStorage(page, apocalypseSeed());
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Compañeros' }).click();
+    const picker = page.getByRole('dialog', { name: 'Compañeros y mascotas' });
+    const cohorts = picker.locator('section').filter({ hasText: 'Acompañantes (Cohort) (3)' });
+
+    await expect(cohorts).toBeVisible();
+    await expect(cohorts).toContainText('No se conservan entre aventuras.');
+    await expect(picker).toContainText('Los seguidores se guardan; los acompañantes no.');
+    for (const name of ['Surcadora Avernal', 'Condotierro Umbraliano', 'Christi Y Jefrey']) {
+      await expect(cohorts.getByText(name, { exact: true })).toBeVisible();
+    }
+
+    await cohorts.getByRole('button', { name: /Surcadora Avernal/ }).click();
+    await cohorts.getByRole('button', { name: /Añadir al track/ }).click();
+
+    await expect.poll(async () => {
+      const data = await readStorage(page, 'trackerData', {});
+      return data.followers?.find((entry) => entry.id === 'surcadora');
+    }).toMatchObject({ cohort: true, role: 'controlador', vida: 5, vidaMax: 5 });
+
+    expect(await readStorage(page, 'campFollowers', [])).toEqual([]);
+
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Menú de juego' }).click();
+    await page.getByRole('menuitem', { name: 'Reiniciar partida' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Reiniciar partida' });
+    await dialog.getByRole('button', { name: 'Reiniciar partida' }).click();
+
+    await expect.poll(async () => {
+      const data = await readStorage(page, 'trackerData', {});
+      return data.followers?.some((entry) => entry.id === 'surcadora');
+    }).toBe(false);
+  });
 });

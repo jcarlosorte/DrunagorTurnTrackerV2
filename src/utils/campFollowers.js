@@ -12,7 +12,7 @@ export function readCampFollowers() {
 
 /** Guarda el seguidor en el campamento (sin duplicar por id). */
 export function saveCampFollower(entry) {
-  if (!entry?.id) return readCampFollowers();
+  if (!entry?.id || entry.cohort) return readCampFollowers();
   const list = readCampFollowers();
   if (list.some((item) => item.id === entry.id)) return list;
 

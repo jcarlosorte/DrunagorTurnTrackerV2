@@ -11,6 +11,9 @@ import amsterdImg from '@/assets/followers/amsterd_seguidor.webp';
 import randyImg from '@/assets/followers/randy_seguidor.webp';
 import carmillaImg from '@/assets/followers/carmilla_seguidor.webp';
 import robinImg from '@/assets/followers/robin_seguidor.webp';
+import surcadoraCohortImg from '@/assets/cohort/surcadora_cohort.webp';
+import condotierroCohortImg from '@/assets/cohort/condotierro_cohort.webp';
+import christiyjefreyCohortImg from '@/assets/cohort/christiyjefrey_cohort.webp';
 
 export const FOLLOWERS = [
   {
@@ -199,10 +202,66 @@ export const FOLLOWERS = [
       { id: 'sano', name: 'Sano', nameEn: 'Healthy', ataque: 4, movimiento: 5, vida: 7 },
     ],
   },
+  {
+    id: 'surcadora',
+    name: 'Surcadora Avernal',
+    nameEn: 'Avernal Rider',
+    epithet: 'Amazon del Desierto',
+    epithetEn: 'Desert Amazon',
+    role: 'controlador',
+    expansionId: 'apocalypse_adventures',
+    attackType: 'cuerpo',
+    capabilities: ['HEMORRAGIA 2'],
+    image: surcadoraCohortImg,
+    cohort: true,
+    states: [
+      { id: 'normal', name: 'Normal', nameEn: 'Normal', ataque: 2, movimiento: 5, vida: 5 },
+    ],
+  },
+  {
+    id: 'condotierro',
+    name: 'Condotierro Umbraliano',
+    nameEn: 'Umbral Condottiero',
+    epithet: 'Soldado',
+    epithetEn: 'Soldier',
+    role: 'lider',
+    expansionId: 'apocalypse_adventures',
+    attackType: 'cuerpo',
+    capabilities: ['INTIMIDAR 1'],
+    image: condotierroCohortImg,
+    cohort: true,
+    states: [
+      { id: 'normal', name: 'Normal', nameEn: 'Normal', ataque: 2, movimiento: 4, vida: 7 },
+    ],
+  },
+  {
+    id: 'christiyjefrey',
+    name: 'Christi Y Jefrey',
+    nameEn: 'Christi and Jefrey',
+    epithet: 'Combatientes',
+    epithetEn: 'Fighters',
+    role: 'controlador',
+    expansionId: 'apocalypse_adventures',
+    attackType: 'cuerpo',
+    capabilities: ['PERSONAL', 'ESCUDO 2'],
+    image: christiyjefreyCohortImg,
+    cohort: true,
+    states: [
+      { id: 'normal', name: 'Normal', nameEn: 'Normal', ataque: 3, movimiento: 4, vida: 7 },
+    ],
+  },
 ];
+
+export const COHORT_FOLLOWERS = FOLLOWERS.filter((follower) => follower.cohort);
+export const STANDARD_FOLLOWERS = FOLLOWERS.filter((follower) => !follower.cohort);
 
 export function getFollower(id) {
   return FOLLOWERS.find((follower) => follower.id === id) || null;
+}
+
+/** Los Acompañantes (Cohort) no se conservan entre aventuras. */
+export function isCohortFollower(id) {
+  return Boolean(getFollower(id)?.cohort);
 }
 
 export function getFollowerState(followerId, stateId) {

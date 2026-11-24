@@ -6381,6 +6381,25 @@ Unit       274 tests
 E2E        173/173
 ```
 
+### 377.ª tanda — Acompañantes (Cohort)
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Roster** | Se añaden Surcadora Avernal, Condotierro Umbraliano y Christi Y Jefrey como acompañantes de Apocalipsis, con sus estadísticas y capacidades | `followers` |
+| **Imágenes** | Los PNG 880×1200 se convierten a WebP y se eliminan los originales | `assets/cohort` |
+| **Sección propia** | El menú separa **Acompañantes (Cohort)** de los seguidores, con aviso de que no se conservan entre aventuras | `CompanionPicker`, `i18n` |
+| **Persistencia** | Los Cohort no se guardan en `campFollowers`, no se restauran con la partida y se eliminan siempre al reiniciar | `campFollowers`, `InitTracker`, `TopMenu` |
+| **Fichas** | Tarjetas y fichas ampliadas muestran el tipo Acompañante y sus capacidades localizadas | `FollowerCard`, `FollowerModal`, `followerAbilities` |
+| **Pruebas** | Cobertura unitaria del catálogo y E2E de alta, ausencia en campamento y eliminación al reiniciar | `followers.test`, `campFollowers.test`, `seguidores-apocalipsis.spec` |
+| **Documentación** | README y tutorial ES/EN explican la diferencia entre seguidores y Cohort | `README`, `TUTORIAL*` |
+
+**Medición**
+
+```text
+Unit       276 tests
+E2E        174/174
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

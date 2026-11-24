@@ -103,6 +103,10 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
   const placedFollowers = trackerData.followers || [];
   const availableFollowers = getFollowersForCampaign({ mainBox, previewOtherBoxes, showAllBoxes })
     .filter((follower) => !placedFollowers.some((entry) => entry.id === follower.id));
+  const standardAvailableFollowers = availableFollowers.filter((follower) => !follower.cohort);
+  const cohortAvailableFollowers = availableFollowers.filter((follower) => follower.cohort);
+  const standardPlacedFollowers = placedFollowers.filter((entry) => !getFollower(entry.id)?.cohort);
+  const cohortPlacedFollowers = placedFollowers.filter((entry) => getFollower(entry.id)?.cohort);
   const selectedFollower = selectedFollowerId ? getFollower(selectedFollowerId) : null;
   const heroes = trackerData.placedHeroes?.length
     ? trackerData.placedHeroes
@@ -146,6 +150,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
       name: selectedFollower.name,
       epithet: selectedFollower.epithet,
       role: selectedFollower.role,
+      cohort: Boolean(selectedFollower.cohort),
       position: ROLE_POSITIONS[selectedFollower.role] ?? 0,
       stateId: state.id,
       vida: state.vida,
@@ -155,7 +160,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
       image: null,
     };
     setTrackerData((prev) => ({ ...prev, followers: [...(prev.followers || []), entry] }));
-    saveCampFollower(entry);
+    if (!entry.cohort) saveCampFollower(entry);
     setSelectedFollowerId(null);
     setSelectedFollowerState('');
   };
@@ -165,6 +170,110 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
       ...prev,
       followers: (prev.followers || []).filter((entry) => entry.uid !== uid),
     }));
+  };
+
+  const renderAvailableFollowerCard = (follower) => {
+    const isSelected = selectedFollowerId === follower.id;
+    const followerIndex = FOLLOWERS.findIndex((item) => item.id === follower.id);
+    const background = getInteractionBackgroundAt(followerIndex);
+    return (
+      <div
+        key={follower.id}
+        data-testid={`follower-card-${follower.id}`}
+        className={`rounded-lg border transition ${isSelected ? 'border-emerald-400 bg-emerald-950/40' : 'border-slate-700 bg-slate-800/60'}`}
+      >
+        <button
+          type="button"
+          aria-pressed={isSelected}
+          onClick={() => {
+            setSelectedFollowerId(isSelected ? null : follower.id);
+            setSelectedFollowerState(isSelected ? '' : (follower.states[0]?.id || ''));
+          }}
+          className="flex w-full items-center gap-2 p-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+        >
+          <span
+            className="relative flex h-14 w-11 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-950/60"
+            style={background ? {
+              backgroundImage: `url(${background})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            } : undefined}
+          >
+            <span className="absolute inset-0 bg-slate-950/35" aria-hidden="true" />
+            {follower.image ? (
+              <img
+                src={follower.image}
+                alt=""
+                className="relative h-full w-full object-contain object-bottom"
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <span className="relative text-lg font-black text-emerald-100">{getFollowerName(follower, language).charAt(0)}</span>
+            )}
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate text-xs font-semibold text-slate-100">{getFollowerName(follower, language)}</span>
+            <span className="block truncate text-[0.6rem] text-slate-400">
+              {getFollowerEpithet(follower, language)} · {rolesT[follower.role] || follower.role}
+            </span>
+          </span>
+        </button>
+        {isSelected && (
+          <div className="border-t border-emerald-700/60 p-1.5">
+            <label htmlFor={`follower-state-${follower.id}`} className="mb-1 block text-[0.6rem] font-semibold text-emerald-100">
+              {t.followersState || 'Estado'}
+            </label>
+            <div className="flex gap-1">
+              <select
+                id={`follower-state-${follower.id}`}
+                value={selectedFollowerState}
+                onChange={(event) => setSelectedFollowerState(event.target.value)}
+                className="min-h-8 min-w-0 flex-1 rounded border border-slate-600 bg-slate-900 px-1 text-[0.65rem] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+              >
+                {follower.states.map((state) => (
+                  <option key={state.id} value={state.id}>{getFollowerStateName(state, language)}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={addFollower}
+                className="min-h-8 shrink-0 whitespace-nowrap rounded bg-emerald-700 px-2 text-[0.65rem] font-semibold text-white hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+              >
+                + {t.followersAdd || 'Añadir'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderPlacedFollowerRow = (entry) => {
+    const follower = getFollower(entry.id);
+    const state = follower?.states.find((item) => item.id === entry.stateId) || follower?.states[0];
+    return (
+      <li key={entry.uid} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/70 px-2 py-1">
+        <span className="min-w-0 flex-1 truncate text-xs text-slate-200">
+          {follower ? getFollowerName(follower, language) : entry.id} · {rolesT[entry.role] || entry.role} · {getFollowerStateName(state, language)}
+        </span>
+        <button
+          type="button"
+          onClick={() => onOpenFollower?.(entry.uid)}
+          className="min-h-7 shrink-0 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-semibold text-white hover:bg-slate-600"
+        >
+          {t.open || 'Abrir'}
+        </button>
+        <button
+          type="button"
+          onClick={() => removeFollower(entry.uid)}
+          aria-label={`${follower ? getFollowerName(follower, language) : entry.id}: ${t.remove || 'Quitar'}`}
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-xs text-white hover:bg-red-700"
+        >
+          ✕
+        </button>
+      </li>
+    );
   };
 
   const resetAll = () => {
@@ -405,118 +514,47 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
           </section>
 
           {showFollowersSection && (
-            <section>
+            <section data-testid="standard-followers-section">
               <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-                {t.followers || 'Seguidores'} ({availableFollowers.length})
+                {t.followers || 'Seguidores'} ({standardAvailableFollowers.length})
               </p>
-              {availableFollowers.length === 0 ? (
+              {standardAvailableFollowers.length === 0 ? (
                 <p className="rounded-lg border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-400">
                   {t.followersAllPlaced || 'Todos los seguidores están colocados.'}
                 </p>
               ) : (
                 <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-                  {availableFollowers.map((follower) => {
-                    const isSelected = selectedFollowerId === follower.id;
-                    const followerIndex = FOLLOWERS.findIndex((item) => item.id === follower.id);
-                    const background = getInteractionBackgroundAt(followerIndex);
-                    return (
-                      <div key={follower.id} className={`rounded-lg border transition ${isSelected ? 'border-emerald-400 bg-emerald-950/40' : 'border-slate-700 bg-slate-800/60'}`}>
-                        <button
-                          type="button"
-                          aria-pressed={isSelected}
-                          onClick={() => {
-                            setSelectedFollowerId(isSelected ? null : follower.id);
-                            setSelectedFollowerState(isSelected ? '' : (follower.states[0]?.id || ''));
-                          }}
-                          className="flex w-full items-center gap-2 p-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-                        >
-                          <span
-                            className="relative flex h-14 w-11 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-950/60"
-                            style={background ? {
-                              backgroundImage: `url(${background})`,
-                              backgroundSize: 'cover',
-                              backgroundPosition: 'center',
-                            } : undefined}
-                          >
-                            <span className="absolute inset-0 bg-slate-950/35" aria-hidden="true" />
-                            {follower.image ? (
-                              <img
-                                src={follower.image}
-                                alt=""
-                                className="relative h-full w-full object-contain object-bottom"
-                                loading="lazy"
-                                decoding="async"
-                              />
-                            ) : (
-                              <span className="relative text-lg font-black text-emerald-100">{getFollowerName(follower, language).charAt(0)}</span>
-                            )}
-                          </span>
-                          <span className="min-w-0">
-                            <span className="block truncate text-xs font-semibold text-slate-100">{getFollowerName(follower, language)}</span>
-                            <span className="block truncate text-[0.6rem] text-slate-400">
-                              {getFollowerEpithet(follower, language)} · {rolesT[follower.role] || follower.role}
-                            </span>
-                          </span>
-                        </button>
-                        {isSelected && (
-                          <div className="border-t border-emerald-700/60 p-1.5">
-                            <label htmlFor={`follower-state-${follower.id}`} className="mb-1 block text-[0.6rem] font-semibold text-emerald-100">
-                              {t.followersState || 'Estado'}
-                            </label>
-                            <div className="flex gap-1">
-                              <select
-                                id={`follower-state-${follower.id}`}
-                                value={selectedFollowerState}
-                                onChange={(event) => setSelectedFollowerState(event.target.value)}
-                                className="min-h-8 min-w-0 flex-1 rounded border border-slate-600 bg-slate-900 px-1 text-[0.65rem] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-                              >
-                                {follower.states.map((state) => (
-                                  <option key={state.id} value={state.id}>{getFollowerStateName(state, language)}</option>
-                                ))}
-                              </select>
-                              <button
-                                type="button"
-                                onClick={addFollower}
-                                className="min-h-8 shrink-0 whitespace-nowrap rounded bg-emerald-700 px-2 text-[0.65rem] font-semibold text-white hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-                              >
-                                + {t.followersAdd || 'Añadir'}
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                  {standardAvailableFollowers.map(renderAvailableFollowerCard)}
                 </div>
               )}
-              {placedFollowers.length > 0 && (
+              {standardPlacedFollowers.length > 0 && (
                 <ul className="mt-2 space-y-1">
-                  {placedFollowers.map((entry) => {
-                    const follower = getFollower(entry.id);
-                    const state = follower?.states.find((item) => item.id === entry.stateId) || follower?.states[0];
-                    return (
-                      <li key={entry.uid} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/70 px-2 py-1">
-                        <span className="min-w-0 flex-1 truncate text-xs text-slate-200">
-                          {follower ? getFollowerName(follower, language) : entry.id} · {rolesT[entry.role] || entry.role} · {getFollowerStateName(state, language)}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => onOpenFollower?.(entry.uid)}
-                          className="min-h-7 shrink-0 rounded-lg bg-slate-700 px-2 text-[0.65rem] font-semibold text-white hover:bg-slate-600"
-                        >
-                          {t.open || 'Abrir'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeFollower(entry.uid)}
-                          aria-label={`${follower ? getFollowerName(follower, language) : entry.id}: ${t.remove || 'Quitar'}`}
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-xs text-white hover:bg-red-700"
-                        >
-                          ✕
-                        </button>
-                      </li>
-                    );
-                  })}
+                  {standardPlacedFollowers.map(renderPlacedFollowerRow)}
+                </ul>
+              )}
+            </section>
+          )}
+
+          {showApocalypseContent && (
+            <section data-testid="cohort-followers-section">
+              <p className="mb-0.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
+                {t.followersCohort || 'Acompañantes (Cohort)'} ({cohortAvailableFollowers.length})
+              </p>
+              <p className="mb-1.5 text-[0.65rem] text-amber-200/80">
+                {t.followersCohortHint || 'No se conservan entre aventuras.'}
+              </p>
+              {cohortAvailableFollowers.length === 0 ? (
+                <p className="rounded-lg border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-400">
+                  {t.followersCohortEmpty || 'No hay acompañantes disponibles.'}
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+                  {cohortAvailableFollowers.map(renderAvailableFollowerCard)}
+                </div>
+              )}
+              {cohortPlacedFollowers.length > 0 && (
+                <ul className="mt-2 space-y-1">
+                  {cohortPlacedFollowers.map(renderPlacedFollowerRow)}
                 </ul>
               )}
             </section>
@@ -562,7 +600,11 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
         </div>
 
         <footer className="flex items-center justify-between gap-2 border-t border-slate-700 px-4 py-2.5">
-          <span className="text-[0.7rem] text-slate-400">{t.savedWithGame || 'Se guarda con la partida'}</span>
+          <span className="text-[0.7rem] text-slate-400">
+            {showApocalypseContent
+              ? (t.savedWithGameCohort || 'Los seguidores se guardan; los acompañantes no.')
+              : (t.savedWithGame || 'Se guarda con la partida')}
+          </span>
           <button
             type="button"
             onClick={onClose}

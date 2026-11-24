@@ -37,6 +37,11 @@ describe('seguidores del campamento', () => {
     expect(readCampFollowers()).toEqual([]);
   });
 
+  it('no guarda los Acompañantes (Cohort)', () => {
+    saveCampFollower({ ...blueprint, id: 'surcadora', cohort: true });
+    expect(readCampFollowers()).toEqual([]);
+  });
+
   it('vacía el campamento al iniciar una nueva partida', () => {
     saveCampFollower(blueprint);
     clearCampFollowers();

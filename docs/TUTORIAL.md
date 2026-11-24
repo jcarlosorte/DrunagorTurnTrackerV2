@@ -678,8 +678,9 @@ Los cubos se recobran y se gastan durante la partida. La app permite marcarlos y
 - Tienen vida, estados y ficha propia.
 - Los seguidores se gestionan con el mismo flujo.
 - El menú y las fichas están disponibles en español e inglés: tipos, alias, estados, avisos y botones se traducen.
-- El roster se filtra por campaña: el juego base no muestra seguidores, mientras que **Despertar** y **Apocalipsis** tienen sus propios seis. La vista previa de otras campañas permite consultar los doce.
+- El roster se filtra por campaña: el juego base no muestra seguidores; **Despertar** tiene seis y **Apocalipsis** nueve (seis seguidores y tres **Acompañantes (Cohort)**). La vista previa de otras campañas permite consultar los quince.
 - En Apocalipsis, **Robin Rising** permite elegir entre los perfiles **Herido** y **Sano**; el resto tiene un perfil único.
+- Los **Acompañantes (Cohort)** funcionan igual que los seguidores en el track y en el turno, pero no se guardan entre aventuras: no se añaden al campamento, no se restauran con la partida y se eliminan al reiniciar.
 - Nombres, epítetos, perfiles y capacidades cambian con el idioma de la interfaz.
 
 ---
@@ -790,7 +791,7 @@ La app guarda automáticamente el estado en `localStorage`:
 - Runas y fichas.
 - Héroes y estados.
 - Campamento: objetos, nombre del grupo y registro de historia.
-- Seguidores reclutados en el campamento.
+- Seguidores reclutados en el campamento. Los **Acompañantes (Cohort)** quedan fuera a propósito: no se guardan ni se restauran.
 
 ### Partidas manuales
 

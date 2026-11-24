@@ -86,7 +86,7 @@ import { addHeroTurnTime, resetHeroForNewGame, stepHeroEstadoAlterado } from '@/
 import { formatClock } from '@/utils/turnTimer';
 import { findNextActiveEntity, buildTurnOrder, indexOfEntityInOrder } from '@/utils/turnOrder';
 import { getCompanion, getCompanionName, getCompanionBackground, createCompanionEntry, getCompanionGroup, getCompanionsForExpansions } from '@/data/companions';
-import { getFollower, getFollowerState } from '@/data/followers';
+import { getFollower, getFollowerState, isCohortFollower } from '@/data/followers';
 import { ROLE_POSITIONS, ROLES_ON_TOP as rolesOnTop, ROLES_ON_BOTTOM as rolesOnBottom, getRoleSide } from '@/data/roles';
 import { readCampFollowers } from '@/utils/campFollowers';
 import { applyCompanionTurnEffects } from '@/utils/companionAbilities';
@@ -3651,7 +3651,7 @@ const InitTracker = () => {
   
   // Al iniciar partida, coloca los seguidores guardados en el campamento.
   useEffect(() => {
-    const camp = readCampFollowers();
+    const camp = readCampFollowers().filter((blueprint) => !isCohortFollower(blueprint.id));
     if (camp.length === 0) return;
     setTrackerData((prev) => {
       if ((prev.followers || []).length > 0) return prev;
@@ -3665,6 +3665,7 @@ const InitTracker = () => {
           name: follower.name,
           epithet: follower.epithet,
           role: follower.role,
+          cohort: Boolean(follower.cohort),
           position: ROLE_POSITIONS[follower.role] ?? blueprint.position ?? 0,
           stateId: state.id,
           vida: state.vida,
@@ -5519,6 +5520,10 @@ const InitTracker = () => {
   };
 
   const handleRestartGame = ({ runas = false, heroes = false, enemies = true, events = false } = {}) => {
+    setTrackerData((prev) => ({
+      ...prev,
+      followers: (prev.followers || []).filter((follower) => !isCohortFollower(follower.id)),
+    }));
     resetTurnAndHistory();
     clearGameLog();
     removeStorage('trackerSession');

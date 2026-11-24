@@ -17,9 +17,11 @@ const ROLE_COLORS = {
  */
 export default function FollowerCard({ entry, onOpen }) {
   const { language, translations } = useLanguage();
-  const typeLabel = translations.trackerInit?.follower || 'Seguidor';
   const follower = getFollower(entry.id);
   if (!follower) return null;
+  const typeLabel = follower.cohort
+    ? (translations.trackerInit?.cohort || 'Acompañante')
+    : (translations.trackerInit?.follower || 'Seguidor');
 
   const state = getFollowerState(entry.id, entry.stateId);
   const life = entry.vida ?? state?.vida ?? 0;

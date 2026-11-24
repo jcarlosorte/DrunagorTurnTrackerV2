@@ -674,8 +674,9 @@ Cubes are spent and recovered during play. The app lets you mark and review them
 - Have their own health, conditions and sheet.
 - Followers use the same flow.
 - The menu and sheets are available in Spanish and English: types, aliases, states, notices and buttons are translated.
-- The roster is filtered by campaign: the base game shows no followers, while **Awakenings** and **Apocalypse** each have six. Previewing other campaigns lets you browse all twelve.
+- The roster is filtered by campaign: the base game shows no followers; **Awakenings** has six and **Apocalypse** has nine (six followers and three **Cohort Companions**). Previewing other campaigns lets you browse all fifteen.
 - In Apocalypse, **Robin Rising** lets you choose between the **Wounded** and **Healthy** profiles; the rest have a single profile.
+- **Cohort Companions** work like followers on the track and during the turn, but they are not kept between adventures: they are not added to the camp, are not restored with a save, and are removed when the game is restarted.
 - Names, epithets, profiles and abilities change with the interface language.
 
 ---
@@ -786,7 +787,7 @@ The app automatically saves state in `localStorage`:
 - Runes and tiles.
 - Heroes and conditions.
 - Camp: items, party name and story record.
-- Followers recruited at camp.
+- Followers recruited at camp. **Cohort Companions** are intentionally excluded: they are neither saved nor restored.
 
 ### Manual saves
 

@@ -144,7 +144,7 @@ export default function FollowerModal({ uid, onClose }) {
         background={background}
         name={getFollowerName(follower, language)}
         subtitle={getFollowerEpithet(follower, language)}
-        roleLabel={`${rolesT[follower.role] || follower.role} · ${getFollowerStateName(state, language)}`}
+        roleLabel={`${follower.cohort ? `${t.cohort || 'Acompañante'} · ` : ''}${rolesT[follower.role] || follower.role} · ${getFollowerStateName(state, language)}`}
         movement={state?.movimiento}
         attack={state?.ataque}
         attackType={follower.attackType}
