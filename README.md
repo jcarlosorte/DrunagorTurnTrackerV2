@@ -44,8 +44,8 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
   la barra superior, sin límite por héroe, con tarjeta propia tras su héroe en el track
   (vida y estados), turno en orden de aparición y ficha ampliada con capacidades. El
   menú y las fichas están traducidos al inglés, incluidos tipos, alias y subtipos.
-- **Seguidores por campaña**: seis en Despertar y nueve en Apocalipsis (seis seguidores
-  y tres Acompañantes Cohort), con perfiles, nombres y capacidades localizados; Robin
+- **Seguidores por campaña**: seis en Despertar y diez en Apocalipsis (seis seguidores
+  y cuatro Acompañantes Cohort), con perfiles, nombres y capacidades localizados; Robin
   Rising tiene dos perfiles (Herido/Sano). Los Cohort no se guardan en el campamento ni
   se restauran: se eliminan al reiniciar la partida.
 - **GenCon Exclusive**: expansión con el rol **Asistente**, alternativa a Apoyo en el

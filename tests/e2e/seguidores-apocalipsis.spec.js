@@ -73,12 +73,12 @@ test.describe('Seguidores de Apocalipsis', () => {
 
     await page.getByRole('button', { name: 'Compañeros' }).click();
     const picker = page.getByRole('dialog', { name: 'Compañeros y mascotas' });
-    const cohorts = picker.locator('section').filter({ hasText: 'Acompañantes (Cohort) (3)' });
+    const cohorts = picker.locator('section').filter({ hasText: 'Acompañantes (Cohort) (4)' });
 
     await expect(cohorts).toBeVisible();
     await expect(cohorts).toContainText('No se conservan entre aventuras.');
     await expect(picker).toContainText('Los seguidores se guardan; los acompañantes no.');
-    for (const name of ['Surcadora Avernal', 'Condotierro Umbraliano', 'Christi Y Jefrey']) {
+    for (const name of ['Surcadora Avernal', 'Condotierro Umbraliano', 'Christi Y Jefrey', 'Carroñero']) {
       await expect(cohorts.getByText(name, { exact: true })).toBeVisible();
     }
 

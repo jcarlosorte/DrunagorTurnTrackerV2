@@ -14,7 +14,7 @@ import {
 
 describe('seguidores de Despertar y Apocalipsis', () => {
   it('incluye los seguidores de ambas campañas con rol y estados', () => {
-    expect(FOLLOWERS).toHaveLength(15);
+    expect(FOLLOWERS).toHaveLength(16);
     for (const follower of FOLLOWERS) {
       expect(follower.role).toBeTruthy();
       expect(follower.states.length).toBeGreaterThanOrEqual(1);
@@ -58,6 +58,8 @@ describe('seguidores de Despertar y Apocalipsis', () => {
     expect(getFollowerName(khadija, 'en')).toBe('Dunedancer Khadija');
     expect(getFollowerEpithet(khadija, 'en')).toBe('Amazon Prodigy');
     expect(getFollowerName(getFollower('daviggo'), 'en')).toBe('Condottieri DaViggo');
+    expect(getFollowerName(getFollower('carronero'), 'en')).toBe('Scavenger');
+    expect(getFollowerEpithet(getFollower('carronero'), 'en')).toBe('Mysterious Ally');
     expect(getFollowerStateName(getFollowerState('robin', 'sano'), 'en')).toBe('Healthy');
   });
 
@@ -79,19 +81,24 @@ describe('seguidores de Despertar y Apocalipsis', () => {
     expect(ids({ mainBox: 'awakenings' })).toHaveLength(6);
     expect(ids({ mainBox: 'apocalypse' })).toEqual([
       'khadija', 'daviggo', 'amsterd', 'randy', 'carmilla', 'robin',
-      'surcadora', 'condotierro', 'christiyjefrey',
+      'surcadora', 'condotierro', 'christiyjefrey', 'carronero',
     ]);
-    expect(ids({ mainBox: 'core', previewOtherBoxes: true })).toHaveLength(15);
+    expect(ids({ mainBox: 'core', previewOtherBoxes: true })).toHaveLength(16);
   });
 
   it('marca los Acompañantes (Cohort) y sus valores', () => {
     expect(COHORT_FOLLOWERS.map((follower) => follower.id)).toEqual([
-      'surcadora', 'condotierro', 'christiyjefrey',
+      'surcadora', 'condotierro', 'christiyjefrey', 'carronero',
     ]);
     expect(COHORT_FOLLOWERS.every((follower) => isCohortFollower(follower.id))).toBe(true);
     expect(getFollowerState('surcadora', 'normal')).toMatchObject({ ataque: 2, movimiento: 5, vida: 5 });
     expect(getFollowerState('condotierro', 'normal')).toMatchObject({ ataque: 2, movimiento: 4, vida: 7 });
     expect(getFollowerState('christiyjefrey', 'normal')).toMatchObject({ ataque: 3, movimiento: 4, vida: 7 });
+    expect(getFollowerState('carronero', 'normal')).toMatchObject({ ataque: 6, movimiento: 5, vida: 5 });
+    expect(getFollower('carronero')).toMatchObject({
+      role: 'lider',
+      capabilities: ['PERSONAL', 'SIGILO'],
+    });
     expect(getFollower('surcadora')).toMatchObject({
       role: 'controlador',
       expansionId: 'apocalypse_adventures',

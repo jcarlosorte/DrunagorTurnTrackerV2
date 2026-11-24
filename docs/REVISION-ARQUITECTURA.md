@@ -6385,7 +6385,7 @@ E2E        173/173
 
 | Cambio | Detalle | Archivos |
 |---|---|---|
-| **Roster** | Se añaden Surcadora Avernal, Condotierro Umbraliano y Christi Y Jefrey como acompañantes de Apocalipsis, con sus estadísticas y capacidades | `followers` |
+| **Roster** | Se añaden Surcadora Avernal, Condotierro Umbraliano, Christi Y Jefrey y Carroñero como acompañantes de Apocalipsis, con sus estadísticas y capacidades | `followers` |
 | **Imágenes** | Los PNG 880×1200 se convierten a WebP y se eliminan los originales | `assets/cohort` |
 | **Sección propia** | El menú separa **Acompañantes (Cohort)** de los seguidores, con aviso de que no se conservan entre aventuras | `CompanionPicker`, `i18n` |
 | **Persistencia** | Los Cohort no se guardan en `campFollowers`, no se restauran con la partida y se eliminan siempre al reiniciar | `campFollowers`, `InitTracker`, `TopMenu` |

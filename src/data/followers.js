@@ -14,6 +14,7 @@ import robinImg from '@/assets/followers/robin_seguidor.webp';
 import surcadoraCohortImg from '@/assets/cohort/surcadora_cohort.webp';
 import condotierroCohortImg from '@/assets/cohort/condotierro_cohort.webp';
 import christiyjefreyCohortImg from '@/assets/cohort/christiyjefrey_cohort.webp';
+import carroneroCohortImg from '@/assets/cohort/carronero_cohort.webp';
 
 export const FOLLOWERS = [
   {
@@ -248,6 +249,22 @@ export const FOLLOWERS = [
     cohort: true,
     states: [
       { id: 'normal', name: 'Normal', nameEn: 'Normal', ataque: 3, movimiento: 4, vida: 7 },
+    ],
+  },
+  {
+    id: 'carronero',
+    name: 'Carroñero',
+    nameEn: 'Scavenger',
+    epithet: 'Aliado Misterioso',
+    epithetEn: 'Mysterious Ally',
+    role: 'lider',
+    expansionId: 'apocalypse_adventures',
+    attackType: 'cuerpo',
+    capabilities: ['PERSONAL', 'SIGILO'],
+    image: carroneroCohortImg,
+    cohort: true,
+    states: [
+      { id: 'normal', name: 'Normal', nameEn: 'Normal', ataque: 6, movimiento: 5, vida: 5 },
     ],
   },
 ];

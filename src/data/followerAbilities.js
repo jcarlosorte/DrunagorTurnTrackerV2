@@ -109,6 +109,15 @@ export const FOLLOWER_ABILITIES = [
     descriptionEn: 'Personal ability of the cohort companion.',
   },
   {
+    id: 'sigilo',
+    label: 'SIGILO',
+    name: 'Sigilo',
+    nameEn: 'Stealth',
+    color: 'border-indigo-600/60 bg-indigo-950/50 text-indigo-100',
+    description: 'Puede ocultarse para sorprender a sus objetivos.',
+    descriptionEn: 'Can hide to surprise its targets.',
+  },
+  {
     id: 'ataque_doble',
     label: 'ATAQUE DOBLE',
     name: 'Ataque doble',
