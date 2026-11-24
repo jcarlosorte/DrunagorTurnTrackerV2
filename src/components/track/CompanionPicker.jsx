@@ -6,9 +6,11 @@ import { useLanguage } from '@/context/LanguageContext';
 import {
   createCompanionEntry,
   getCompanion,
+  getCompanionAlias,
   getCompanionBackground,
   getCompanionGroup,
   getCompanionImage,
+  getCompanionName,
   getCompanionsForExpansions,
   getInteractionBackgroundAt,
 } from '@/data/companions';
@@ -217,9 +219,9 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
             )}
           </span>
           <span className="min-w-0">
-            <span className="block truncate text-xs font-semibold text-slate-100">{companion.name}</span>
+            <span className="block truncate text-xs font-semibold text-slate-100">{getCompanionName(companion.id, language)}</span>
             <span className="block truncate text-[0.6rem] text-slate-400">
-              {companion.type === 'mascota' ? (t.pet || 'Mascota') : (t.companion || 'Compañero')} · {companion.alias}
+              {companion.type === 'mascota' ? (t.pet || 'Mascota') : (t.companion || 'Compañero')} · {getCompanionAlias(companion, language)}
             </span>
           </span>
         </button>
@@ -227,7 +229,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
         {isSelected && (
           <div className="border-t border-amber-700/60 p-1.5">
             <p className="mb-1 text-[0.6rem] font-semibold text-amber-100">
-              {t.companionsAddTo || 'Añadir'} {companion.name} {t.companionsToHero || 'a'}:
+              {t.companionsAddTo || 'Añadir'} {getCompanionName(companion.id, language)} {t.companionsToHero || 'a'}:
             </p>
             <div className="flex gap-1">
               <select
@@ -288,7 +290,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
         )}
         <span className="min-w-0 flex-1">
           <span className="block truncate text-xs font-semibold text-slate-100">
-            {companion?.name || entry.id}
+            {companion ? getCompanionName(companion.id, language) : entry.id}
             <span className="ml-1 font-normal text-slate-400">→ {heroName(entry.heroId)}</span>
           </span>
           <span className="flex items-center gap-1 text-[0.6rem] text-slate-400">
@@ -306,7 +308,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
         <button
           type="button"
           onClick={() => remove(entry.uid)}
-          aria-label={`${companion?.name || entry.id}: ${t.remove || 'Quitar'}`}
+          aria-label={`${companion ? getCompanionName(companion.id, language) : entry.id}: ${t.remove || 'Quitar'}`}
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-xs text-white hover:bg-red-700"
         >
           ✕

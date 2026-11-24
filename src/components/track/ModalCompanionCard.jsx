@@ -2,7 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useTracker } from '@/context/TrackerContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { getAllyStatusCatalog } from '@/data/estadosAlterados';
-import { getCompanion, getCompanionBackground, getCompanionImage } from '@/data/companions';
+import {
+  getCompanion,
+  getCompanionAlias,
+  getCompanionBackground,
+  getCompanionImage,
+  getCompanionName,
+  getCompanionSubtype,
+} from '@/data/companions';
 import { parseCompanionAbilities } from '@/utils/companionAbilities';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import AllyDetailModal from '@/components/track/AllyDetailModal';
@@ -17,7 +24,7 @@ import { CHAOS_SEED_DAMAGE, isChaosSeedBurst } from '@/utils/chaosSeed';
  */
 export default function ModalCompanionCard({ uid, onClose }) {
   const { trackerData, setTrackerData } = useTracker();
-  const { translations } = useLanguage();
+  const { language, translations } = useLanguage();
   const { rulesVersion } = useRules();
   const { labels, descriptions } = useGlossary();
   const t = translations.heroes || {};
@@ -88,7 +95,7 @@ export default function ModalCompanionCard({ uid, onClose }) {
   const typeLabel = companion.type === 'mascota'
     ? (t.pet || 'Mascota')
     : (t.companion || 'Compañero');
-  const subtitle = `${companion.alias}${companion.subtype && companion.subtype !== '-' ? ` · ${companion.subtype}` : ''}`;
+  const subtitle = `${getCompanionAlias(companion, language)}${companion.subtype && companion.subtype !== '-' ? ` · ${getCompanionSubtype(companion, language)}` : ''}`;
 
   const statusPanel = (
     <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
@@ -144,7 +151,7 @@ export default function ModalCompanionCard({ uid, onClose }) {
         titleId="companion-title"
         image={image}
         background={background}
-        name={companion.name}
+        name={getCompanionName(companion.id, language)}
         subtitle={subtitle}
         roleLabel={typeLabel}
         movement={companion.movement}

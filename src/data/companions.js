@@ -373,12 +373,77 @@ export const COMPANION_TYPES = {
   companero: { es: 'Compañero', en: 'Companion' },
 };
 
+const COMPANION_NAMES_EN = {
+  dewey_guss: 'Dewey and Guss',
+  capitan_conner: 'Captain Conner',
+  conner_desarmado: 'Conner (unarmed)',
+  janina_desarmada: 'Janina (unarmed)',
+  tharmagar_leal: 'Tharmagar (loyal)',
+  tharmagar_resentido: 'Tharmagar (resentful)',
+  heroe_renacido: 'A reborn hero',
+};
+
+const COMPANION_ALIASES_EN = {
+  drumm: 'the dragon hatchling',
+  bronx: 'the bear',
+  dewey_guss: 'the dogs',
+  jokull: 'the ice spirit',
+  luma: 'the wolf',
+  monroe: 'the dog',
+  jinx: 'the eagle',
+  capitan_conner: 'Amiran captain',
+  conner_desarmado: 'Amiran captain',
+  lorelai_companion: 'Daren hero',
+  elros_companion: 'Daren hero',
+  jaheen_companion: 'Daren hero',
+  janina: 'Mage matriarch',
+  janina_desarmada: 'Mage matriarch',
+  maya_companion: 'Daren hero',
+  neil_mesick: 'Ship captain',
+  oliver_twist: 'Intrepid child',
+  ronald_keinz: 'Tormented ranger',
+  simon_kiblisch: 'Tomb robber',
+  tharmagar_leal: 'Master alchemist',
+  tharmagar_resentido: 'Master alchemist',
+  heroe_renacido: 'Daren hero',
+  vorn_companion: 'Daren hero',
+  neva: 'the clouded panther',
+  hakkon: 'Undead warrior',
+};
+
+const COMPANION_SUBTYPES_EN = {
+  'Dragón': 'Dragon',
+  'Oso': 'Bear',
+  'Perro': 'Dog',
+  'Elemental': 'Elemental',
+  'Lobo': 'Wolf',
+  'Águila': 'Eagle',
+  'Pantera': 'Panther',
+  'Draugr': 'Draugr',
+  '-': '-',
+};
+
 export function getCompanion(id) {
   return COMPANIONS.find((companion) => companion.id === id) || null;
 }
 
-export function getCompanionName(id) {
-  return getCompanion(id)?.name || id;
+export function getCompanionName(id, language = 'es') {
+  const companion = getCompanion(id);
+  if (!companion) return id;
+  if (language !== 'en') return companion.name;
+  return COMPANION_NAMES_EN[id] || companion.name;
+}
+
+export function getCompanionAlias(companion, language = 'es') {
+  if (!companion) return '';
+  if (language !== 'en') return companion.alias || '';
+  return COMPANION_ALIASES_EN[companion.id] || companion.alias || '';
+}
+
+export function getCompanionSubtype(companion, language = 'es') {
+  if (!companion?.subtype || companion.subtype === '-') return companion?.subtype || '';
+  if (language !== 'en') return companion.subtype;
+  return COMPANION_SUBTYPES_EN[companion.subtype] || companion.subtype;
 }
 
 const normalizeAlias = (value) => String(value || '')

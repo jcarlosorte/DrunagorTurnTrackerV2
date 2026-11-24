@@ -213,4 +213,36 @@ test.describe('Compañeros y mascotas', () => {
       return (data.companions || []).filter((entry) => entry.id === 'hakkon').length;
     }).toBe(2);
   });
+
+  test('muestra el menú completo en inglés', async ({ page }) => {
+    await seedStorage(page, { ...buildSeed({ lang: JSON.stringify('en') }) });
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Companions' }).click();
+    const picker = page.getByRole('dialog', { name: 'Companions and pets' });
+
+    await expect(picker.getByText('Available (23)')).toBeVisible();
+    await expect(picker.getByText('Pets (7)')).toBeVisible();
+    await expect(picker.getByText('Companions (10)')).toBeVisible();
+    await expect(picker.getByText('Daren Heroes (6)')).toBeVisible();
+    await expect(picker.getByText('Saved with the game')).toBeVisible();
+    await expect(picker.getByText('In play (0)')).toBeVisible();
+    await expect(picker.getByText('No companions or pets.')).toBeVisible();
+    await expect(picker).toContainText('Pet · the dragon hatchling');
+    await expect(picker).toContainText('Companion · Amiran captain');
+    await expect(picker).toContainText('Captain Conner');
+
+    await picker.getByRole('button', { name: /Drumm/ }).click();
+    await expect(picker.getByText('Add Drumm to:')).toBeVisible();
+    await expect(picker.getByLabel('Hero')).toBeVisible();
+    await expect(picker.getByRole('button', { name: '+ Add' })).toBeDisabled();
+
+    await expect(picker).toContainText('Daren hero');
+    await expect(picker).not.toContainText('Se guarda con la partida');
+    await expect(picker).not.toContainText('Mascotas');
+    await expect(picker).not.toContainText('Ninguna disponible');
+    await expect(picker).not.toContainText('la cría de dragón');
+    await expect(picker).not.toContainText('Capitán amirano');
+    await expect(picker).not.toContainText('Tharmagar (leal)');
+  });
 });

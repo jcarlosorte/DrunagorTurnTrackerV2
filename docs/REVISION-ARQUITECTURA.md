@@ -6363,6 +6363,24 @@ Unit       273 tests
 E2E        172/172
 ```
 
+### 376.ª tanda — Traducciones del menú de compañeros
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Secciones** | `Pets`, `Companions` y `Daren Heroes` sustituyen a los rótulos en español; también se traducen los subtítulos de tipo | `CompanionPicker`, `i18n` |
+| **Datos** | Nombres, alias y subtipos de las 23 criaturas tienen versión inglesa (p. ej. `Captain Conner`, `the dragon hatchling`, `Dragon`) | `companions` |
+| **Avisos** | Se traducen estados vacíos, “In play”, reset, confirmación y el recordatorio “Saved with the game” | `CompanionPicker`, `i18n` |
+| **Fichas** | La ficha ampliada usa nombre, alias y subtipo localizados | `ModalCompanionCard` |
+| **Pruebas** | Prueba unitaria de localización y E2E del menú completo en inglés, sin cadenas en español | `companions.test`, `companeros.spec` |
+| **Documentación** | Tutorial ES/EN y README indican que el menú y las fichas están traducidos | `TUTORIAL*`, `README` |
+
+**Medición**
+
+```text
+Unit       274 tests
+E2E        173/173
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

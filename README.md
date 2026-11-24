@@ -42,7 +42,8 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
   del contenido de otras campañas.
 - **Compañeros y mascotas**: 23 criaturas que se añaden desde el menú **Compañeros** de
   la barra superior, sin límite por héroe, con tarjeta propia tras su héroe en el track
-  (vida y estados), turno en orden de aparición y ficha ampliada con capacidades.
+  (vida y estados), turno en orden de aparición y ficha ampliada con capacidades. El
+  menú y las fichas están traducidos al inglés, incluidos tipos, alias y subtipos.
 - **Seguidores por campaña**: seis en Despertar y seis en Apocalipsis, con perfiles,
   nombres y capacidades localizados; Robin Rising tiene dos perfiles (Herido/Sano).
 - **GenCon Exclusive**: expansión con el rol **Asistente**, alternativa a Apoyo en el
@@ -179,8 +180,8 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      273 tests
-e2e       172 tests
+unit      274 tests
+e2e       173 tests
 build     OK
 ```
 

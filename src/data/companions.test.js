@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   COMPANIONS,
+  getCompanion,
+  getCompanionAlias,
   getCompanionBackground,
   getCompanionGroup,
   getCompanionImage,
+  getCompanionName,
+  getCompanionSubtype,
   getCompanionsForExpansions,
 } from '@/data/companions';
 
@@ -47,6 +51,17 @@ describe('getCompanionGroup', () => {
     expect(getCompanionGroup(conner)).toBe('companero');
     expect(getCompanionGroup(lorelai)).toBe('daren_hero');
     expect(getCompanionGroup(reborn)).toBe('daren_hero');
+  });
+});
+
+describe('traducciones de compañeros', () => {
+  it('localiza nombres, alias y subtipos', () => {
+    expect(getCompanionName('capitan_conner', 'en')).toBe('Captain Conner');
+    expect(getCompanionName('conner_desarmado', 'en')).toBe('Conner (unarmed)');
+    expect(getCompanionName('tharmagar_leal', 'en')).toBe('Tharmagar (loyal)');
+    expect(getCompanionAlias(getCompanion('drumm'), 'en')).toBe('the dragon hatchling');
+    expect(getCompanionAlias(getCompanion('lorelai_companion'), 'en')).toBe('Daren hero');
+    expect(getCompanionSubtype(getCompanion('drumm'), 'en')).toBe('Dragon');
   });
 });
 
