@@ -440,7 +440,7 @@ The menu has:
 
 1. **Rune cards**.
 2. **Bag status**.
-3. **Add to track / manifest / Restless Darkness**.
+3. **Add to track / manifest / Stirring Darkness**.
 4. **Risk zone**.
 
 #### Rune cards
@@ -465,7 +465,7 @@ Each card can be added by face A or B when available. The app prevents incompati
 
 Add a tile of a specific color or a random tile.
 
-#### Restless Darkness
+#### Stirring Darkness
 
 Add X runes of each color to the track at once. You can choose from 1 to 6; if a color does not have enough tiles in the bag, the available ones are added.
 

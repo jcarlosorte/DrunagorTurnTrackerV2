@@ -6331,7 +6331,7 @@ E2E        169/169
 
 | Cambio | Detalle | Archivos |
 |---|---|---|
-| **Nombre** | «Añadir Runas en Masa» pasa a llamarse «Oscuridad Inquieta», con la aclaración «Añade X runas de cada color» | `TopMenu`, `i18n` |
+| **Nombre** | «Añadir Runas en Masa» pasa a llamarse «Oscuridad Inquieta» («Stirring Darkness» en inglés), con la aclaración «Añade X runas de cada color» | `TopMenu`, `i18n` |
 | **Opciones** | La acción admite de 1 a 6 runas de cada color; si la bolsa no tiene suficientes fichas de un color, añade las disponibles | `GameContext`, `TopMenu` |
 | **Accesibilidad** | Cada botón expone un nombre accesible del tipo «Añadir N runas de cada color» | `TopMenu` |
 | **Tutorial** | Sección de runas y capturas ES/EN actualizadas con el nuevo nombre, la aclaración y los seis botones | `TUTORIAL.md`, `TUTORIAL.en.md`, assets |
