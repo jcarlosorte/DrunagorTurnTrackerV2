@@ -53,8 +53,9 @@ describe('seguidores de Despertar y Apocalipsis', () => {
   it('localiza nombres, epítetos y estados', () => {
     const khadija = getFollower('khadija');
     expect(getFollowerName(khadija, 'es')).toBe('Surcadora Khadija');
-    expect(getFollowerName(khadija, 'en')).toBe('Khadija the Wayfarer');
+    expect(getFollowerName(khadija, 'en')).toBe('Dunedancer Khadija');
     expect(getFollowerEpithet(khadija, 'en')).toBe('Amazon Prodigy');
+    expect(getFollowerName(getFollower('daviggo'), 'en')).toBe('Condottieri DaViggo');
     expect(getFollowerStateName(getFollowerState('robin', 'sano'), 'en')).toBe('Healthy');
   });
 

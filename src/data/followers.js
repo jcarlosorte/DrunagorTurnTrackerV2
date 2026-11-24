@@ -111,7 +111,7 @@ export const FOLLOWERS = [
   {
     id: 'khadija',
     name: 'Surcadora Khadija',
-    nameEn: 'Khadija the Wayfarer',
+    nameEn: 'Dunedancer Khadija',
     epithet: 'Amazona Prodigio',
     epithetEn: 'Amazon Prodigy',
     role: 'agresor',
@@ -126,7 +126,7 @@ export const FOLLOWERS = [
   {
     id: 'daviggo',
     name: 'Condotierro DaViggo',
-    nameEn: 'Condottiero DaViggo',
+    nameEn: 'Condottieri DaViggo',
     epithet: 'Capitán Noble',
     epithetEn: 'Noble Captain',
     role: 'defensor',
