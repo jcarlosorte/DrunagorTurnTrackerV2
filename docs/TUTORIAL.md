@@ -677,6 +677,9 @@ Los cubos se recobran y se gastan durante la partida. La app permite marcarlos y
 - Se colocan detrás de su héroe.
 - Tienen vida, estados y ficha propia.
 - Los seguidores se gestionan con el mismo flujo.
+- El roster se filtra por campaña: el juego base no muestra seguidores, mientras que **Despertar** y **Apocalipsis** tienen sus propios seis. La vista previa de otras campañas permite consultar los doce.
+- En Apocalipsis, **Robin Rising** permite elegir entre los perfiles **Herido** y **Sano**; el resto tiene un perfil único.
+- Nombres, epítetos, perfiles y capacidades cambian con el idioma de la interfaz.
 
 ---
 

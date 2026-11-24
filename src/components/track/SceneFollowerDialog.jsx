@@ -1,15 +1,33 @@
-const VORN_OPTIONS = [
-  { id: 'animado', label: 'Animado' },
-  { id: 'sediento', label: 'Sediento' },
-];
+const STATE_OPTIONS = {
+  vorn: {
+    es: [
+      { id: 'animado', label: 'Animado' },
+      { id: 'sediento', label: 'Sediento' },
+    ],
+    en: [
+      { id: 'animado', label: 'Animated' },
+      { id: 'sediento', label: 'Thirsty' },
+    ],
+  },
+  elros: {
+    es: [
+      { id: 'desanimado', label: 'Desanimado' },
+      { id: 'energico', label: 'Enérgico' },
+    ],
+    en: [
+      { id: 'desanimado', label: 'Discouraged' },
+      { id: 'energico', label: 'Energetic' },
+    ],
+  },
+};
 
-const ELROS_OPTIONS = [
-  { id: 'desanimado', label: 'Desanimado' },
-  { id: 'energico', label: 'Enérgico' },
-];
+const optionsFor = (follower, language) => (
+  STATE_OPTIONS[follower]?.[language] || STATE_OPTIONS[follower]?.es || []
+);
 
 export default function SceneFollowerDialog({
   open,
+  language = 'es',
   missing = { vorn: false, elros: false },
   values = { vorn: 'animado', elros: 'energico' },
   onChange,
@@ -41,7 +59,7 @@ export default function SceneFollowerDialog({
               onChange={(event) => onChange?.('vorn', event.target.value)}
               className="mt-1 min-h-10 w-full rounded-lg border border-slate-600 bg-slate-950 px-2 text-sm text-white"
             >
-              {VORN_OPTIONS.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
+              {optionsFor('vorn', language).map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
             </select>
           </label>
         )}
@@ -54,7 +72,7 @@ export default function SceneFollowerDialog({
               onChange={(event) => onChange?.('elros', event.target.value)}
               className="mt-1 min-h-10 w-full rounded-lg border border-slate-600 bg-slate-950 px-2 text-sm text-white"
             >
-              {ELROS_OPTIONS.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
+              {optionsFor('elros', language).map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
             </select>
           </label>
         )}

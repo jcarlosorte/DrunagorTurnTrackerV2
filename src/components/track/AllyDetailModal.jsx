@@ -45,8 +45,9 @@ export default function AllyDetailModal({
   onDelete,
   onClose,
 }) {
-  const { translations } = useLanguage();
+  const { language, translations } = useLanguage();
   const t = translations.trackerInit || {};
+  const isEnglish = language === 'en';
   const [openAbility, setOpenAbility] = useState(null);
 
   const type = normalizeAttackType(attackType);
@@ -57,10 +58,10 @@ export default function AllyDetailModal({
   };
   const AttackIcon = ATTACK_ICONS[type] || GiSwordClash;
   const attackTitle = type === 'distancia'
-    ? 'Ataque · A distancia'
+    ? (isEnglish ? 'Attack · Ranged' : 'Ataque · A distancia')
     : type === 'magia'
-      ? 'Ataque · Magia'
-      : 'Ataque · Cuerpo a cuerpo';
+      ? (isEnglish ? 'Attack · Magic' : 'Ataque · Magia')
+      : (isEnglish ? 'Attack · Melee' : 'Ataque · Cuerpo a cuerpo');
   const lifePercent = Math.max(0, Math.min(100, (life / Math.max(lifeMax, 1)) * 100));
 
   return (
@@ -130,8 +131,8 @@ export default function AllyDetailModal({
 
         <div className="grid grid-cols-2 gap-2">
           <div
-            title="Movimiento"
-            aria-label="Movimiento"
+            title={isEnglish ? 'Movement' : 'Movimiento'}
+            aria-label={isEnglish ? 'Movement' : 'Movimiento'}
             className="flex flex-col items-center justify-center gap-1 rounded-xl border border-slate-700 bg-slate-950/60 p-2 text-center"
           >
             <GiSteeltoeBoots className="text-xl text-blue-400" aria-hidden="true" />
@@ -194,7 +195,7 @@ export default function AllyDetailModal({
                           <button
                             type="button"
                             onClick={() => setOpenAbility(isOpen ? null : ability.id)}
-                            aria-label={`${ability.label}: descripción`}
+                            aria-label={`${ability.label}: ${isEnglish ? 'description' : 'descripción'}`}
                             aria-expanded={isOpen}
                             className="shrink-0 text-slate-400 hover:text-emerald-300"
                           >
@@ -220,8 +221,8 @@ export default function AllyDetailModal({
         <button
           type="button"
           onClick={onDelete}
-          aria-label="Eliminar"
-          title="Eliminar"
+          aria-label={isEnglish ? 'Remove' : 'Eliminar'}
+          title={isEnglish ? 'Remove' : 'Eliminar'}
           className="flex h-9 w-9 items-center justify-center rounded-lg border border-red-800 bg-red-950/60 text-red-200 hover:bg-red-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
         >
           <FiTrash2 aria-hidden="true" />

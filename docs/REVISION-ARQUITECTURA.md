@@ -6344,6 +6344,25 @@ Unit       268 tests
 E2E        170/170
 ```
 
+### 375.ª tanda — Seguidores de Apocalipsis
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Roster** | Se añaden los seis seguidores de Apocalipsis con sus estadísticas, perfiles y capacidades; Robin Rising conserva Herido/Sano y el resto usa un perfil único | `followers` |
+| **Imágenes** | Los PNG originales se convierten a WebP 880×1200 y se eliminan los originales pesados | assets |
+| **Localización** | Nombres, epítetos, perfiles y capacidades tienen versión inglesa; se añaden las cuatro capacidades nuevas y se traducen las seis existentes | `followers`, `followerAbilities`, `i18n` |
+| **Filtro por campaña** | El roster se limita a la campaña activa y la vista previa permite consultar los dos grupos; Apocalipsis ya muestra su sección de seguidores | `CompanionPicker` |
+| **Fichas** | Tarjetas, ficha ampliada, selección de escena y campamento usan los nombres y perfiles localizados | `FollowerCard`, `FollowerModal`, `TopMenu`, `CampDialog` |
+| **Pruebas** | Pruebas unitarias de catálogo/filtros y E2E de alta, ficha, capacidades y los dos perfiles de Robin | `followers.test`, `seguidores-apocalipsis.spec` |
+| **Documentación** | Tutorial ES/EN y README describen el roster por campaña y los perfiles | `TUTORIAL*`, `README` |
+
+**Medición**
+
+```text
+Unit       273 tests
+E2E        172/172
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -14,7 +14,14 @@ import {
 } from '@/data/companions';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import { getHeroClassId } from '@/data/heroClasses';
-import { FOLLOWERS, getFollower } from '@/data/followers';
+import {
+  FOLLOWERS,
+  getFollower,
+  getFollowerEpithet,
+  getFollowerName,
+  getFollowerStateName,
+  getFollowersForCampaign,
+} from '@/data/followers';
 import { ROLE_POSITIONS } from '@/data/roles';
 import { saveCampFollower } from '@/utils/campFollowers';
 import useFocusTrap from '@/hooks/useFocusTrap';
@@ -29,7 +36,7 @@ import useFocusTrap from '@/hooks/useFocusTrap';
 export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpenFollower, inline = false, hideReset = false }) {
   const { trackerData, setTrackerData } = useTracker();
   const { selectedExpansions, mainBox, previewOtherBoxes, canPreviewOtherBoxes } = useExpansions();
-  const { translations } = useLanguage();
+  const { language, translations } = useLanguage();
   const t = translations.trackerInit || {};
   const heroesT = translations.heroes || {};
   const rolesT = translations.roles || {};
@@ -43,6 +50,8 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
 
   const showCoreContent = mainBox === 'core' || previewOtherBoxes || showAllBoxes;
   const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes || showAllBoxes;
+  const showApocalypseContent = mainBox === 'apocalypse' || previewOtherBoxes || showAllBoxes;
+  const showFollowersSection = showAwakeningsContent || showApocalypseContent;
 
   useFocusTrap(dialogRef, open);
 
@@ -90,9 +99,8 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
   }));
   const visibleAvailable = availableGroups.flatMap((group) => group.list);
   const placedFollowers = trackerData.followers || [];
-  const availableFollowers = FOLLOWERS.filter(
-    (follower) => !placedFollowers.some((entry) => entry.id === follower.id)
-  );
+  const availableFollowers = getFollowersForCampaign({ mainBox, previewOtherBoxes, showAllBoxes })
+    .filter((follower) => !placedFollowers.some((entry) => entry.id === follower.id));
   const selectedFollower = selectedFollowerId ? getFollower(selectedFollowerId) : null;
   const heroes = trackerData.placedHeroes?.length
     ? trackerData.placedHeroes
@@ -394,7 +402,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
             )}
           </section>
 
-          {showAwakeningsContent && (
+          {showFollowersSection && (
             <section>
               <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
                 {t.followers || 'Seguidores'} ({availableFollowers.length})
@@ -438,13 +446,13 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
                                 decoding="async"
                               />
                             ) : (
-                              <span className="relative text-lg font-black text-emerald-100">{follower.name.charAt(0)}</span>
+                              <span className="relative text-lg font-black text-emerald-100">{getFollowerName(follower, language).charAt(0)}</span>
                             )}
                           </span>
                           <span className="min-w-0">
-                            <span className="block truncate text-xs font-semibold text-slate-100">{follower.name}</span>
+                            <span className="block truncate text-xs font-semibold text-slate-100">{getFollowerName(follower, language)}</span>
                             <span className="block truncate text-[0.6rem] text-slate-400">
-                              {follower.epithet} · {rolesT[follower.role] || follower.role}
+                              {getFollowerEpithet(follower, language)} · {rolesT[follower.role] || follower.role}
                             </span>
                           </span>
                         </button>
@@ -461,7 +469,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
                                 className="min-h-8 min-w-0 flex-1 rounded border border-slate-600 bg-slate-900 px-1 text-[0.65rem] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
                               >
                                 {follower.states.map((state) => (
-                                  <option key={state.id} value={state.id}>{state.name}</option>
+                                  <option key={state.id} value={state.id}>{getFollowerStateName(state, language)}</option>
                                 ))}
                               </select>
                               <button
@@ -487,7 +495,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
                     return (
                       <li key={entry.uid} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/70 px-2 py-1">
                         <span className="min-w-0 flex-1 truncate text-xs text-slate-200">
-                          {follower?.name || entry.id} · {rolesT[entry.role] || entry.role} · {state?.name}
+                          {follower ? getFollowerName(follower, language) : entry.id} · {rolesT[entry.role] || entry.role} · {getFollowerStateName(state, language)}
                         </span>
                         <button
                           type="button"
@@ -499,7 +507,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
                         <button
                           type="button"
                           onClick={() => removeFollower(entry.uid)}
-                          aria-label={`${follower?.name || entry.id}: ${t.remove || 'Quitar'}`}
+                          aria-label={`${follower ? getFollowerName(follower, language) : entry.id}: ${t.remove || 'Quitar'}`}
                           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-700 text-xs text-white hover:bg-red-700"
                         >
                           ✕

@@ -673,6 +673,9 @@ Cubes are spent and recovered during play. The app lets you mark and review them
 - Placed behind their hero.
 - Have their own health, conditions and sheet.
 - Followers use the same flow.
+- The roster is filtered by campaign: the base game shows no followers, while **Awakenings** and **Apocalypse** each have six. Previewing other campaigns lets you browse all twelve.
+- In Apocalypse, **Robin Rising** lets you choose between the **Wounded** and **Healthy** profiles; the rest have a single profile.
+- Names, epithets, profiles and abilities change with the interface language.
 
 ---
 

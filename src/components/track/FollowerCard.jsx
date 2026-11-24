@@ -1,4 +1,4 @@
-import { getFollower, getFollowerState } from '@/data/followers';
+import { getFollower, getFollowerName, getFollowerState } from '@/data/followers';
 import { getCompanionBackground } from '@/data/companions';
 import { getEstadoMeta } from '@/data/estadosAlterados';
 import { useLanguage } from '@/context/LanguageContext';
@@ -16,7 +16,7 @@ const ROLE_COLORS = {
  * interacción, retrato, nombre y vida dentro del marco.
  */
 export default function FollowerCard({ entry, onOpen }) {
-  const { translations } = useLanguage();
+  const { language, translations } = useLanguage();
   const typeLabel = translations.trackerInit?.follower || 'Seguidor';
   const follower = getFollower(entry.id);
   if (!follower) return null;
@@ -42,7 +42,7 @@ export default function FollowerCard({ entry, onOpen }) {
         }}
         role="button"
         tabIndex={0}
-        aria-label={follower.name}
+        aria-label={getFollowerName(follower, language)}
         data-follower-id={entry.id}
         data-follower-uid={entry.uid}
       >
@@ -101,7 +101,7 @@ export default function FollowerCard({ entry, onOpen }) {
             style={{ backgroundColor: color }}
           >
             <span className="block truncate text-center text-[0.55rem] font-bold leading-tight text-white">
-              {follower.name}
+              {getFollowerName(follower, language)}
             </span>
             <span className="block truncate text-center text-[0.4rem] uppercase leading-tight tracking-wide text-white/75">
               {typeLabel}

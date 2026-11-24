@@ -3,7 +3,13 @@ import { useTracker } from '@/context/TrackerContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useRules } from '@/context/RulesContext';
 import { getAllyStatusCatalog } from '@/data/estadosAlterados';
-import { getFollower, getFollowerState } from '@/data/followers';
+import {
+  getFollower,
+  getFollowerEpithet,
+  getFollowerName,
+  getFollowerState,
+  getFollowerStateName,
+} from '@/data/followers';
 import { getFollowerAbility } from '@/data/followerAbilities';
 import { getCompanionBackground } from '@/data/companions';
 import AllyDetailModal from '@/components/track/AllyDetailModal';
@@ -15,7 +21,7 @@ import useFocusTrap from '@/hooks/useFocusTrap';
  */
 export default function FollowerModal({ uid, onClose }) {
   const { trackerData, setTrackerData } = useTracker();
-  const { translations } = useLanguage();
+  const { language, translations } = useLanguage();
   const { rulesVersion } = useRules();
   const t = translations.trackerInit || {};
   const rolesT = translations.roles || {};
@@ -48,7 +54,11 @@ export default function FollowerModal({ uid, onClose }) {
     .map((label) => getFollowerAbility(label))
     .filter(Boolean)
     .filter((ability) => !ability.rulesVersion || ability.rulesVersion === rulesVersion)
-    .map((ability) => ({ id: ability.id, label: ability.label, description: ability.description }));
+    .map((ability) => ({
+      id: ability.id,
+      label: language === 'en' ? String(ability.nameEn || ability.label).toUpperCase() : ability.label,
+      description: language === 'en' ? ability.descriptionEn : ability.description,
+    }));
 
   const update = (changes) => {
     setTrackerData((prev) => ({
@@ -132,9 +142,9 @@ export default function FollowerModal({ uid, onClose }) {
         titleId="follower-modal-title"
         image={follower.image}
         background={background}
-        name={follower.name}
-        subtitle={follower.epithet}
-        roleLabel={`${rolesT[follower.role] || follower.role} · ${state?.name || ''}`}
+        name={getFollowerName(follower, language)}
+        subtitle={getFollowerEpithet(follower, language)}
+        roleLabel={`${rolesT[follower.role] || follower.role} · ${getFollowerStateName(state, language)}`}
         movement={state?.movimiento}
         attack={state?.ataque}
         attackType={follower.attackType}

@@ -11,7 +11,13 @@ import { useGame } from '@/context/GameContext';
 import { useTracker } from '@/context/TrackerContext';
 import { useExpansions } from '@/context/ExpansionContext';
 import { useHeroExtras } from '@/context/HeroExtrasContext';
-import { FOLLOWERS, getFollower, getFollowerState } from '@/data/followers';
+import {
+  FOLLOWERS,
+  getFollower,
+  getFollowerName,
+  getFollowerState,
+  getFollowerStateName,
+} from '@/data/followers';
 import { CAMPAIGN_EXPANSIONS, getMainBox } from '@/data/boxes';
 import { CONSECUENCIAS, ESTADOS_HEROE, getHeroEffectDescription, getHeroEffectName } from '@/data/heroes/index';
 import { readCampFollowers, removeCampFollower } from '@/utils/campFollowers';
@@ -101,15 +107,15 @@ function FollowersCard({ t, language, rolesT, followers, onRemove }) {
             return (
               <li key={entry.id} className="flex items-center justify-between gap-2 rounded-lg border border-slate-700 bg-slate-800/70 px-2 py-1 text-sm">
                 <span className="min-w-0 flex-1 truncate">
-                  {follower?.name || entry.id}
+                  {follower ? getFollowerName(follower, language) : entry.id}
                   <span className="ml-1 text-xs text-slate-400">
-                    · {rolesT[entry.role] || entry.role}{state ? ` · ${state.name?.[language] || state.name}` : ''}
+                    · {rolesT[entry.role] || entry.role}{state ? ` · ${getFollowerStateName(state, language)}` : ''}
                   </span>
                 </span>
                 <button
                   type="button"
                   onClick={() => onRemove(entry.id)}
-                  aria-label={`${follower?.name || entry.id}: ${t.remove || 'Quitar'}`}
+                  aria-label={`${follower ? getFollowerName(follower, language) : entry.id}: ${t.remove || 'Quitar'}`}
                   className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-slate-700 text-xs text-white hover:bg-red-700"
                 >
                   ✕

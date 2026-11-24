@@ -19,7 +19,11 @@ import { useInitEnemies } from "@/context/InitEnemiesContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTracker } from '@/context/TrackerContext';
 import LanguageMenu from "@/components/LanguageMenu";
-import { FOLLOWERS } from '@/data/followers';
+import {
+  FOLLOWERS,
+  getFollowerName,
+  getFollowerStateName,
+} from '@/data/followers';
 import { ROLE_POSITIONS } from '@/data/roles';
 import { getInteractionBackgroundAt } from '@/data/companions';
 import { saveCampFollower } from '@/utils/campFollowers';
@@ -171,7 +175,7 @@ const TopMenu = ({
   onActivateScene,
 }) => {
 
-  const { translations } = useLanguage();
+  const { language, translations } = useLanguage();
   const navigate = useNavigate();
   const { openSaves } = useSavesUi() || {};
   const savesT = translations?.saves || {};
@@ -421,8 +425,8 @@ const TopMenu = ({
           return {
             id: option.id,
             stateId: state?.id || option.stateId,
-            name: follower?.name || option.id,
-            stateName: state?.name || option.stateId,
+            name: follower ? getFollowerName(follower, language) : option.id,
+            stateName: getFollowerStateName(state, language) || option.stateId,
           };
         });
       const toChoose = Math.min(count, options.length);
@@ -2335,6 +2339,7 @@ const TopMenu = ({
 
       <SceneFollowerDialog
         open={sceneFollowerOpen}
+        language={language}
         missing={sceneMissing}
         values={sceneFollowerValues}
         onChange={(key, value) => setSceneFollowerValues((prev) => ({ ...prev, [key]: value }))}

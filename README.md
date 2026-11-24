@@ -43,6 +43,8 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Compañeros y mascotas**: 23 criaturas que se añaden desde el menú **Compañeros** de
   la barra superior, sin límite por héroe, con tarjeta propia tras su héroe en el track
   (vida y estados), turno en orden de aparición y ficha ampliada con capacidades.
+- **Seguidores por campaña**: seis en Despertar y seis en Apocalipsis, con perfiles,
+  nombres y capacidades localizados; Robin Rising tiene dos perfiles (Herido/Sano).
 - **GenCon Exclusive**: expansión con el rol **Asistente**, alternativa a Apoyo en el
   mismo hueco del track (no pueden convivir).
 - **Dice Tower Exclusive**: expansión con el rol **Lanza Dados**, alternativa a Líder en
@@ -177,14 +179,14 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      268 tests
-e2e       170 tests
+unit      273 tests
+e2e       172 tests
 build     OK
 ```
 
 Las pruebas E2E cubren tablero, estados, guardados (incluidos los seguidores del
-campamento), héroes, seguridad, menús de enemigos/runas/nodos/escenario, volteo de
-cartas y CSP.
+campamento), héroes, seguidores de Apocalipsis, seguridad, menús de
+enemigos/runas/nodos/escenario, volteo de cartas y CSP.
 
 ## Despliegue
 
@@ -225,8 +227,8 @@ Vite solo publica variables `VITE_*`; no colocar secretos en ellas.
 
 ## Roadmap
 
-- **Ampliar la cobertura de Apocalipsis** para las reglas 2.0 con nuevas cartas,
-  escenarios y seguidores reclutados.
+- **Ampliar la cobertura de Apocalipsis** para las reglas 2.0 con nuevas cartas y
+  escenarios.
 - **Sincronización multi-dispositivo** opcional (requiere backend).
 
 ## Autor

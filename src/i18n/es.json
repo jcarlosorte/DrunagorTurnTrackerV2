@@ -880,6 +880,8 @@
     "followersAllPlaced": "Todos los seguidores están colocados.",
     "follower": "Seguidor",
     "firmness": "Firmeza",
+    "abilities": "Capacidades",
+    "alteredStates": "Estados alterados",
     "followerRemove": "Quitar del track",
     "followerRemoveTitle": "Quitar seguidor",
     "followerRemoveConfirm": "El seguidor se retirará del track.",

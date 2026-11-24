@@ -879,6 +879,8 @@
     "followersAllPlaced": "All followers are placed.",
     "follower": "Follower",
     "firmness": "Firmness",
+    "abilities": "Abilities",
+    "alteredStates": "Altered states",
     "followerRemove": "Remove from track",
     "followerRemoveTitle": "Remove follower",
     "followerRemoveConfirm": "The follower will be removed from the track.",
