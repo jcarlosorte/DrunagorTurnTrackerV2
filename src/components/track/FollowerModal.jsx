@@ -13,6 +13,7 @@ import {
 import { getFollowerAbility } from '@/data/followerAbilities';
 import { getCompanionBackground } from '@/data/companions';
 import AllyDetailModal from '@/components/track/AllyDetailModal';
+import AllyStatusGrid from '@/components/track/AllyStatusGrid';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import useFocusTrap from '@/hooks/useFocusTrap';
 
@@ -90,48 +91,15 @@ export default function FollowerModal({ uid, onClose }) {
   };
 
   const statusPanel = (
-    <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+    <section data-testid="ally-status-panel" className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
       <p className="mb-1.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
         {t.alteredStates || 'Estados alterados'}
       </p>
-      <div className="grid grid-cols-2 gap-1 sm:grid-cols-3">
-        {catalogue.map((estado) => {
-          const count = countOf(estado.id);
-          return (
-            <div
-              key={estado.id}
-              title={estado.texto}
-              className={`flex items-center gap-1 rounded-lg border px-1 py-0.5 ${
-                count > 0 ? 'border-amber-700/70 bg-amber-950/40' : 'border-slate-700 bg-slate-800/60'
-              }`}
-            >
-              {estado.imagen && (
-                <img src={estado.imagen} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" />
-              )}
-              <span className="min-w-0 flex-1 truncate text-[0.6rem] capitalize text-slate-200">{estado.texto}</span>
-              <button
-                type="button"
-                onClick={() => changeEstado(estado, -1)}
-                disabled={count <= 0}
-                aria-label={`${estado.texto}: −1`}
-                className="flex h-6 w-5 items-center justify-center rounded bg-slate-700 text-xs text-white hover:bg-slate-600 disabled:opacity-40"
-              >
-                −
-              </button>
-              <span className="w-4 text-center text-[0.65rem] font-bold tabular-nums">{count}</span>
-              <button
-                type="button"
-                onClick={() => changeEstado(estado, 1)}
-                disabled={count >= (estado.max || 1)}
-                aria-label={`${estado.texto}: +1`}
-                className="flex h-6 w-5 items-center justify-center rounded bg-slate-700 text-xs text-white hover:bg-slate-600 disabled:opacity-40"
-              >
-                +
-              </button>
-            </div>
-          );
-        })}
-      </div>
+      <AllyStatusGrid
+        catalogue={catalogue}
+        countOf={countOf}
+        onChange={changeEstado}
+      />
     </section>
   );
 

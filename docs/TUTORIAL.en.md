@@ -678,6 +678,7 @@ Cubes are spent and recovered during play. The app lets you mark and review them
 - In Apocalypse, **Robin Rising** lets you choose between the **Wounded** and **Healthy** profiles; the rest have a single profile.
 - **Cohort** work like followers on the track and during the turn, but they are not kept between adventures: they are not added to the camp, are not restored with a save, and are removed when the game is restarted.
 - Names, epithets, profiles and abilities change with the interface language.
+- The sheet's altered states use icons, counters and ± buttons, just like heroes and enemies.
 
 ---
 

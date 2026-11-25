@@ -6401,6 +6401,22 @@ Unit       276 tests
 E2E        176/176
 ```
 
+### 378.ª tanda — Estados de aliados solo con iconos
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Paleta compacta** | Las fichas de mascotas, compañeros y seguidores muestran los estados alterados con icono, contador y botones ±, sin el nombre visible | `AllyStatusGrid` |
+| **Accesibilidad** | El nombre queda en `title` y en `aria-label` de los botones, igual que en enemigos y héroes | `AllyStatusGrid` |
+| **Compatibilidad** | La rejilla mantiene los iconos de reglas 2.0 para compañeros y el catálogo de aliados | `FollowerModal`, `ModalCompanionCard` |
+| **Pruebas** | E2E comprueba icono, botones accesibles y ausencia de texto del estado en la ficha | `seguidores-apocalipsis.spec` |
+
+**Medición**
+
+```text
+Unit       276 tests
+E2E        176/176
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

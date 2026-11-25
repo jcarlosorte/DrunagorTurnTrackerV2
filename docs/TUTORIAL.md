@@ -682,6 +682,7 @@ Los cubos se recobran y se gastan durante la partida. La app permite marcarlos y
 - En Apocalipsis, **Robin Rising** permite elegir entre los perfiles **Herido** y **Sano**; el resto tiene un perfil único.
 - Los **Acompañantes** funcionan igual que los seguidores en el track y en el turno, pero no se guardan entre aventuras: no se añaden al campamento, no se restauran con la partida y se eliminan al reiniciar.
 - Nombres, epítetos, perfiles y capacidades cambian con el idioma de la interfaz.
+- Los estados alterados de la ficha se gestionan con iconos, contador y botones ±, igual que en héroes y enemigos.
 
 ---
 

@@ -45,6 +45,11 @@ test.describe('Seguidores de Apocalipsis', () => {
     await expect(modal).toContainText('INSPIRAR');
     await modal.getByRole('button', { name: '1 HÉROE ADYACENTE: descripción' }).click();
     await expect(modal.getByText('La capacidad afecta a 1 héroe adyacente.')).toBeVisible();
+
+    const statusPanel = modal.getByTestId('ally-status-panel');
+    await expect(statusPanel.getByTestId('ally-status-VENENO_I')).toBeVisible();
+    await expect(statusPanel.getByRole('button', { name: 'veneno: +1' })).toBeVisible();
+    await expect(statusPanel).not.toContainText('veneno');
   });
 
   test('Robin Rising permite elegir entre Herido y Sano', async ({ page }) => {
