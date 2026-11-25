@@ -67,13 +67,13 @@ test.describe('Seguidores de Apocalipsis', () => {
     }).toMatchObject({ stateId: 'sano', vida: 7, vidaMax: 7 });
   });
 
-  test('los Acompañantes (Cohort) no se guardan en el campamento y se eliminan al reiniciar', async ({ page }) => {
+  test('los Acompañantes no se guardan en el campamento y se eliminan al reiniciar', async ({ page }) => {
     await seedStorage(page, apocalypseSeed());
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Compañeros' }).click();
     const picker = page.getByRole('dialog', { name: 'Compañeros y mascotas' });
-    const cohorts = picker.locator('section').filter({ hasText: 'Acompañantes (Cohort) (4)' });
+    const cohorts = picker.locator('section').filter({ hasText: 'Acompañantes (4)' });
 
     await expect(cohorts).toBeVisible();
     await expect(cohorts).toContainText('No se conservan entre aventuras.');
@@ -102,5 +102,19 @@ test.describe('Seguidores de Apocalipsis', () => {
       const data = await readStorage(page, 'trackerData', {});
       return data.followers?.some((entry) => entry.id === 'surcadora');
     }).toBe(false);
+  });
+
+  test('el grupo Cohort se traduce al inglés', async ({ page }) => {
+    await seedStorage(page, { ...apocalypseSeed(), lang: JSON.stringify('en') });
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Companions' }).click();
+    const picker = page.getByRole('dialog', { name: 'Companions and pets' });
+    const cohorts = picker.locator('section').filter({ hasText: /Cohort \(4\)/i });
+
+    await expect(cohorts).toBeVisible();
+    await expect(cohorts).toContainText('Cohort');
+    await expect(cohorts).not.toContainText('Acompañantes');
+    await expect(picker).not.toContainText('Cohort Companions');
   });
 });

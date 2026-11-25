@@ -6381,23 +6381,24 @@ Unit       274 tests
 E2E        173/173
 ```
 
-### 377.ª tanda — Acompañantes (Cohort)
+### 377.ª tanda — Acompañantes
 
 | Cambio | Detalle | Archivos |
 |---|---|---|
 | **Roster** | Se añaden Surcadora Avernal, Condotierro Umbraliano, Christi & Jeffrey y Carroñero como acompañantes de Apocalipsis, con sus estadísticas y capacidades | `followers` |
 | **Imágenes** | Los PNG 880×1200 se convierten a WebP y se eliminan los originales | `assets/cohort` |
-| **Sección propia** | El menú separa **Acompañantes (Cohort)** de los seguidores, con aviso de que no se conservan entre aventuras | `CompanionPicker`, `i18n` |
+| **Sección propia** | El menú separa **Acompañantes** de los seguidores, con aviso de que no se conservan entre aventuras | `CompanionPicker`, `i18n` |
 | **Persistencia** | Los Cohort no se guardan en `campFollowers`, no se restauran con la partida y se eliminan siempre al reiniciar | `campFollowers`, `InitTracker`, `TopMenu` |
 | **Fichas** | Tarjetas y fichas ampliadas muestran el tipo Acompañante y sus capacidades localizadas | `FollowerCard`, `FollowerModal`, `followerAbilities` |
 | **Pruebas** | Cobertura unitaria del catálogo y E2E de alta, ausencia en campamento y eliminación al reiniciar | `followers.test`, `campFollowers.test`, `seguidores-apocalipsis.spec` |
 | **Documentación** | README y tutorial ES/EN explican la diferencia entre seguidores y Cohort | `README`, `TUTORIAL*` |
+| **Traducciones** | La sección se titula **Acompañantes** en español y **Cohort** en inglés; “Música” pasa a **Music** en el menú de juego | `CompanionPicker`, `i18n` |
 
 **Medición**
 
 ```text
 Unit       276 tests
-E2E        174/174
+E2E        176/176
 ```
 
 ### Pendiente / pospuesto

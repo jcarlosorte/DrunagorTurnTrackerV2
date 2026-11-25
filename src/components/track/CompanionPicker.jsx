@@ -538,7 +538,7 @@ export default function CompanionPicker({ open, onClose, onOpenCompanion, onOpen
           {showApocalypseContent && (
             <section data-testid="cohort-followers-section">
               <p className="mb-0.5 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-                {t.followersCohort || 'Acompañantes (Cohort)'} ({cohortAvailableFollowers.length})
+                {t.followersCohort || 'Acompañantes'} ({cohortAvailableFollowers.length})
               </p>
               <p className="mb-1.5 text-[0.65rem] text-amber-200/80">
                 {t.followersCohortHint || 'No se conservan entre aventuras.'}

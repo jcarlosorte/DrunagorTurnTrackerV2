@@ -97,4 +97,14 @@ test.describe('Fase A · navegación y configuración', () => {
     await page.keyboard.press('Escape');
     await expect(menu).toHaveCount(0);
   });
+
+  test('track: el menú de juego traduce Música al inglés', async ({ page }) => {
+    await seedStorage(page, buildSeed({ lang: JSON.stringify('en') }));
+    await openTracker(page);
+
+    await page.getByRole('button', { name: 'Game menu' }).click();
+    const menu = page.getByRole('menu', { name: 'Game menu' });
+    await expect(menu.getByRole('menuitem', { name: 'Music' })).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Música' })).toHaveCount(0);
+  });
 });
