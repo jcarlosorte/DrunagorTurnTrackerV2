@@ -34,9 +34,12 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Habilidades y capacidades**: los rombos de cada habilidad viven dentro de su cubo de
   acción y el rol de mazmorra debajo de los cuatro, con color elegido al marcarlo; tres
   capacidades de clase de tres rombos cada una, con nombre libre, y almacén de objetos.
-- **Campamento del grupo**: objetos compartidos (hasta 30), medidor de runas, seguidores
-  reclutados y registro de historia de Apocalipsis (Ruta del Legado en 2×2, rasgos del
-  Héroe de Darem y Repercusiones por actos).
+- **Seguimiento de Historia** (menú **Historia**): objetos compartidos (hasta 30), medidor
+  de runas, seguidores reclutados y registro de Apocalipsis (Ruta del Legado en 2×2,
+  rasgos del Héroe de Darem y Repercusiones por actos).
+- **Ficha de héroe en dos zonas**: la vida y lo anterior se mantienen; debajo, el
+  **Diario de Campaña** agrupa cubos, habilidades, compañeros, equipo, almacén, auras,
+  consecuencias, estados y tiempo total con un fondo diferenciado.
 - **Contenido compartido de Apocalipsis**: reutiliza la carta base de Oscuridad de Caza,
   el panel de Nodos de Oscuridad de Despertar y la incursión atroz, sin abrir el resto
   del contenido de otras campañas.
@@ -183,7 +186,7 @@ Suite esperada antes de cada entrega:
 ```text
 lint      0 errores / 0 avisos
 unit      276 tests
-e2e       176 tests
+e2e       178 tests
 build     OK
 ```
 

@@ -7,9 +7,9 @@ test.describe('Fase E · campamento y reinicio', () => {
     await openTracker(page);
 
     await page.getByRole('button', { name: 'Menú de juego' }).click();
-    await page.getByRole('menuitem', { name: 'Campamento', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Historia', exact: true }).click();
 
-    const camp = page.getByRole('dialog', { name: 'Campamento del grupo' });
+    const camp = page.getByRole('dialog', { name: 'Seguimiento de Historia' });
     await expect(camp).toBeVisible();
     await camp.getByLabel('Objeto del campamento').fill('Cuerda');
     await camp.getByRole('button', { name: '+ Añadir' }).click();
@@ -23,8 +23,8 @@ test.describe('Fase E · campamento y reinicio', () => {
     await page.reload({ waitUntil: 'networkidle' });
     await page.waitForSelector('.track-slot');
     await page.getByRole('button', { name: 'Menú de juego' }).click();
-    await page.getByRole('menuitem', { name: 'Campamento', exact: true }).click();
-    await expect(page.getByRole('dialog', { name: 'Campamento del grupo' }).getByText('Cuerda')).toBeVisible();
+    await page.getByRole('menuitem', { name: 'Historia', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Seguimiento de Historia' }).getByText('Cuerda')).toBeVisible();
   });
 
   test('la Fase de Campamento limpia el track, cura al grupo y guarda la partida', async ({ page }) => {

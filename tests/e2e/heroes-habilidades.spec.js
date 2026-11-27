@@ -48,7 +48,7 @@ test.describe('Habilidades del héroe', () => {
     await dialog.getByRole('button', { name: 'Capacidad 1 · Nivel 3' }).click();
     await expect(dialog.getByRole('button', { name: 'Capacidad 1 · Nivel 3' })).toHaveAttribute('aria-pressed', 'true');
 
-    const storage = dialog.locator('section').filter({ hasText: 'Almacén' });
+    const storage = dialog.getByTestId('hero-storage');
     await dialog.getByLabel('Objeto del campamento').fill('Poción');
     await storage.getByRole('button', { name: /Añadir/ }).click();
     await expect(storage.getByText('Poción')).toBeVisible();
@@ -57,7 +57,7 @@ test.describe('Habilidades del héroe', () => {
     await page.locator('[role="button"][aria-label*="Katarina"]').first().click({ force: true });
     const reopened = page.getByRole('dialog');
     await expect(reopened.getByLabel('Nombre de la capacidad 1')).toHaveValue('Golpe demoledor');
-    await expect(reopened.locator('section').filter({ hasText: 'Almacén' }).getByText('Poción')).toBeVisible();
+    await expect(reopened.getByTestId('hero-storage').getByText('Poción')).toBeVisible();
   });
 
   test('el rol de mazmorra pide el color al marcar el rombo y lo puede cambiar', async ({ page }) => {

@@ -3,8 +3,8 @@ import { buildSeed, openTracker, seedStorage } from './helpers';
 
 async function openCamp(page) {
   await page.getByRole('button', { name: 'Menú de juego' }).click();
-  await page.getByRole('menuitem', { name: 'Campamento', exact: true }).click();
-  return page.getByRole('dialog', { name: 'Campamento del grupo' });
+  await page.getByRole('menuitem', { name: 'Historia', exact: true }).click();
+  return page.getByRole('dialog', { name: 'Seguimiento de Historia' });
 }
 
 test('el campamento de Apocalipsis muestra y guarda el registro de historia', async ({ page }) => {
@@ -17,7 +17,8 @@ test('el campamento de Apocalipsis muestra y guarda el registro de historia', as
 
   let camp = await openCamp(page);
   await expect(camp.getByTestId('camp-story-card').getByRole('img', { name: 'Apocalipsis' })).toBeVisible();
-  await expect(camp.getByText('Seguimiento de Historia')).toBeVisible();
+  await expect(camp.getByRole('heading', { name: 'Seguimiento de Historia' })).toBeVisible();
+  await expect(camp.getByTestId('camp-story-card').getByRole('heading')).toHaveCount(0);
   await expect(camp.getByText('Estado del medidor de runas')).toBeVisible();
   await expect(camp.getByText('Seguidores Reclutados')).toBeVisible();
   await expect(camp.getByText('Sin seguidores guardados.')).toBeVisible();

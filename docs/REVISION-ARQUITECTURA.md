@@ -6417,6 +6417,22 @@ Unit       276 tests
 E2E        176/176
 ```
 
+### 379.ª tanda — Historia y Diario de Campaña
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Menú Historia** | «Campamento» pasa a **Historia**; la vista ampliada se titula **Seguimiento de Historia** y usa el icono de libro | `TopMenu`, `CampDialog`, `i18n` |
+| **Cabecera sin redundancia** | Se retira el título interno «Seguimiento de Historia» de la tarjeta del logo; queda solo la imagen de la campaña | `CampDialog` |
+| **Diario de Campaña** | La ficha del héroe se divide tras la vida: todo lo inferior se agrupa bajo **Diario de Campaña**, con fondo verde diferenciado, sin tocar la zona superior | `ModalHeroCard`, `i18n` |
+| **Pruebas** | E2E comprueba el nuevo nombre del menú/diálogo, la ausencia del título interno y el orden vida → diario | `campamento-*`, `fase-e`, `heroe.spec` |
+
+**Medición**
+
+```text
+Unit       276 tests
+E2E        178/178
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

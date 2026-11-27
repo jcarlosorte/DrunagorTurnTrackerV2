@@ -626,7 +626,7 @@ The **Game menu** brings together:
 | **View other campaigns** | Show another box's content without changing the game |
 | **Home** | Return to the home screen |
 | **Back to settings** | Change language, expansions or rules |
-| **Camp** | Store shared objects |
+| **History** | Open the Story Record: shared objects and campaign log |
 | **Camp Phase** | Clear the board, heal the group and save |
 | **Sequential Adventure** | Prepare the next chapter while keeping resources |
 | **Restart game** | Grouped restart options |
@@ -661,7 +661,7 @@ Click a hero card to open its expanded sheet. There you can view and change:
 | **Knockdown, Stun, Slow** | Control conditions |
 | **Stealth, Fragile, Restriction** | Defensive or limiting states |
 
-Conditions appear next to hero health and in the expanded sheet.
+Conditions appear next to hero health and in the expanded sheet. The sheet is split into two areas: everything up to health management, and below it the **Campaign Log**, which groups cubes, abilities, companions, equipment, storage, auras, consequences, conditions and total time with a distinct background.
 
 ### Action cubes
 
@@ -849,13 +849,13 @@ Always reset:
 
 ---
 
-## 15. Camp and sequential adventure
+## 15. Story Record and sequential adventure
 
-### Camp
+### Story Record
 
-![Camp with the Apocalypse story record](tutorial/assets/en/10-camp.webp)
+![Story Record with the Apocalypse record](tutorial/assets/en/10-camp.webp)
 
-**Camp** stores shared group objects. It is a shared storage, not a shop.
+The **Story Record** stores shared group objects and the campaign log. It is shared storage, not a shop.
 
 The dialog is ordered from top to bottom: centered party name; campaign story record, rune track and recruited followers; hero effects split into consequences and conditions; and camp objects at the end. **Apocalypse** also shows the **Legacy Trail** (four paths in a 2 × 2 grid, three levels each), the **Hero of Darem** traits (Folk Hero and Knight of Amira are mutually exclusive) and **Repercussions**, with one column per act for custom lines.
 

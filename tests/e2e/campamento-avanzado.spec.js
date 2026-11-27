@@ -3,8 +3,8 @@ import { buildSeed, openTracker, seedStorage } from './helpers';
 
 async function openCamp(page) {
   await page.getByRole('button', { name: 'Menú de juego' }).click();
-  await page.getByRole('menuitem', { name: 'Campamento', exact: true }).click();
-  return page.getByRole('dialog', { name: 'Campamento del grupo' });
+  await page.getByRole('menuitem', { name: 'Historia', exact: true }).click();
+  return page.getByRole('dialog', { name: 'Seguimiento de Historia' });
 }
 
 test('el campamento guarda nombre del grupo, efectos manuales y estado de runas', async ({ page }) => {

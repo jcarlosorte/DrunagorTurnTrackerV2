@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { useSavesUi } from '@/context/SavesUiContext';
-import { GiArchiveRegister, GiSwordClash, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiWoodenCrate, GiPawPrint, GiCampfire, GiWoodenSign, GiBookCover } from 'react-icons/gi';
+import { GiArchiveRegister, GiSwordClash, GiCrownedSkull, GiDaemonSkull, GiBullyMinion, GiRuneStone, GiMinions, GiBrickWall, GiCardPlay, GiVillage, GiUprising, GiStoneTower, GiSwapBag, GiTrashCan, GiLeechingWorm, GiReaperScythe, GiGearHammer, GiMusicalNotes, GiPawPrint, GiCampfire, GiWoodenSign, GiBookCover } from 'react-icons/gi';
 import { MdAddCircleOutline, MdMenu } from 'react-icons/md';
 import { RUNAS, RUNAS_F, ASALTO } from '@/data/runas';
 import { RUNAS_DESPERTAR } from '@/data/runasDespertar';
@@ -702,8 +702,8 @@ const TopMenu = ({
                   onClick={() => { setGameMenuOpen(false); onOpenCamp?.(); }}
                   className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
                 >
-                  <GiWoodenCrate size={18} aria-hidden="true" />
-                  {t.campMenu || 'Campamento'}
+                  <GiBookCover size={18} aria-hidden="true" />
+                  {t.campMenu || 'Historia'}
                 </button>
                 <button
                   type="button"

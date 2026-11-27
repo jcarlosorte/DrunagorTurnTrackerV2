@@ -23,6 +23,42 @@ test.describe('Vista ampliada del héroe', () => {
     expect(await header.locator('span[title] img').count()).toBeGreaterThanOrEqual(2);
   });
 
+  test('agrupa el diario de campaña debajo de la gestión de vida', async ({ page }) => {
+    await openTracker(page);
+    await page.locator('[role="button"][aria-label*="Vorn"]').first().click({ force: true });
+
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible();
+
+    const life = dialog.getByTestId('hero-life-section');
+    const campaignLog = dialog.getByTestId('hero-campaign-log');
+    await expect(life).toBeVisible();
+    await expect(campaignLog.getByRole('heading', { name: 'Diario de Campaña' })).toBeVisible();
+    await expect(campaignLog.getByText('Cubos de acción')).toBeVisible();
+    await expect(campaignLog.getByText('Equipo', { exact: true })).toBeVisible();
+    await expect(campaignLog.getByTestId('hero-life-section')).toHaveCount(0);
+
+    const lifeBox = await life.boundingBox();
+    const logBox = await campaignLog.boundingBox();
+    expect(logBox.y).toBeGreaterThan(lifeBox.y + lifeBox.height);
+  });
+
+  test('usa Campaign Log y Story Record en inglés', async ({ page }) => {
+    await page.addInitScript(() => localStorage.removeItem('__e2e_seeded'));
+    await seedStorage(page, { ...buildSeed({ lang: JSON.stringify('en') }), heroExtras: buildHeroExtras() });
+    await openTracker(page);
+    await page.locator('[role="button"][aria-label*="Vorn"]').first().click({ force: true });
+
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog.getByTestId('hero-campaign-log').getByRole('heading', { name: 'Campaign Log' })).toBeVisible();
+    await page.keyboard.press('Escape');
+
+    await page.getByRole('button', { name: 'Game menu' }).click();
+    await page.getByRole('menuitem', { name: 'History', exact: true }).click();
+    const storyRecord = page.getByRole('dialog', { name: 'Story Record' });
+    await expect(storyRecord.getByRole('heading', { name: 'Story Record' })).toBeVisible();
+  });
+
   test('mantiene el foco dentro del diálogo y lo cierra con Escape', async ({ page }) => {
     await openTracker(page);
     await page.locator('[role="button"][aria-label*="Vorn"]').first().click({ force: true });

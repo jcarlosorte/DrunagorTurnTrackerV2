@@ -630,7 +630,7 @@ El botón **Menú de juego** reúne:
 | **Ver contenido de otras campañas** | Muestra contenido de otra caja sin cambiar la partida |
 | **Inicio** | Vuelve a la portada |
 | **Volver a configuración** | Cambia idioma, expansiones o reglas |
-| **Campamento** | Guarda objetos compartidos |
+| **Historia** | Abre el Seguimiento de Historia: objetos compartidos y registro de campaña |
 | **Fase de Campamento** | Limpia el track, cura al grupo y guarda |
 | **Aventura Secuencial** | Prepara el siguiente capítulo conservando recursos |
 | **Reiniciar partida** | Reinicio por grupos |
@@ -665,7 +665,7 @@ Haz clic en la tarjeta de un héroe para abrir su ficha ampliada. Desde ella pue
 | **Derribo, Aturdimiento, Lentitud** | Condiciones de control |
 | **Sigilo, Fragilidad, Restricción** | Estados defensivos o limitantes |
 
-Los estados se muestran junto a la vida del héroe y en la ficha ampliada.
+Los estados se muestran junto a la vida del héroe y en la ficha ampliada. La ficha se divide en dos zonas: todo lo que hay hasta la gestión de la vida y, debajo, el **Diario de Campaña**, que agrupa cubos, habilidades, compañeros, equipo, almacén, auras, consecuencias, estados y tiempo total con un fondo diferenciado.
 
 ### Cubos de acción
 
@@ -853,13 +853,13 @@ Siempre se reinician:
 
 ---
 
-## 15. Campamento y aventura secuencial
+## 15. Historia y aventura secuencial
 
-### Campamento
+### Seguimiento de Historia
 
-![Campamento con el registro de historia de Apocalipsis](tutorial/assets/10-campamento.webp)
+![Seguimiento de Historia con el registro de Apocalipsis](tutorial/assets/10-campamento.webp)
 
-El **Campamento** guarda objetos compartidos del grupo. Es un almacén común, no una tienda.
+El **Seguimiento de Historia** guarda objetos compartidos del grupo y el registro de la campaña. Es un almacén común, no una tienda.
 
 El diálogo se organiza de arriba abajo: nombre del grupo centrado; seguimiento de historia de la campaña, medidor de runas y seguidores reclutados; efectos del héroe separados en consecuencias y estados; y, al final, los objetos. En **Apocalipsis** aparecen además la **Ruta del Legado** (cuatro caminos en 2 columnas × 2 filas, con tres niveles cada uno), los rasgos del **Héroe de Darem** (Héroe Popular y Caballero de Amira son excluyentes) y las **Repercusiones**, con una columna por acto para escribir líneas propias.
 

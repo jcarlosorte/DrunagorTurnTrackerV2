@@ -36,6 +36,7 @@ import {
   GiRun,
   GiSwordWound,
   GiBullseye,
+  GiBookCover,
 } from 'react-icons/gi';
 
 const EQUIPMENT = [
@@ -356,7 +357,11 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
           </section>
 
           {/* Vida: máximo a los lados de la barra, actual en botones ±5 */}
-          <section className="rounded-xl border border-red-900/60 bg-red-950/40 p-2" aria-label={t.lifeTitle || 'Vida'}>
+          <section
+            data-testid="hero-life-section"
+            className="rounded-xl border border-red-900/60 bg-red-950/40 p-2"
+            aria-label={t.lifeTitle || 'Vida'}
+          >
             <div className="mb-1 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-red-200">
               <span>{t.lifeTitle || 'Vida'}</span>
               <span className="tabular-nums text-base text-white">{extras.vida} / {vidaMaxTotal}</span>
@@ -414,6 +419,23 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
             )}
           </section>
 
+          {/* Diario de Campaña: todo lo que sigue a la vida, agrupado visualmente */}
+          <section
+            data-testid="hero-campaign-log"
+            aria-labelledby="hero-campaign-log-title"
+            className="rounded-2xl border border-emerald-900/50 bg-gradient-to-b from-emerald-950/30 via-slate-950/25 to-slate-950/40 p-2"
+          >
+            <div className="mb-2 flex items-center gap-2 border-b border-emerald-900/40 pb-1.5">
+              <GiBookCover className="text-base text-emerald-300" aria-hidden="true" />
+              <h3
+                id="hero-campaign-log-title"
+                className="text-[0.7rem] font-bold uppercase tracking-wide text-emerald-200"
+              >
+                {t.campaignLog || 'Diario de Campaña'}
+              </h3>
+            </div>
+
+            <div className="space-y-2.5">
           {/* Cubos: acción a la izquierda, trauma/maldición a la derecha */}
           <section className="grid grid-cols-1 gap-2 sm:grid-cols-[1.6fr_1fr]">
             <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
@@ -821,7 +843,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
           </section>
 
           {/* Almacén del héroe: objetos manuales del campamento */}
-          <section className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
+          <section data-testid="hero-storage" className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
             <p className="mb-1.5 flex items-center gap-1 text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
               <GiWoodenCrate size={14} aria-hidden="true" />
               {t.storage || 'Almacén'}
@@ -986,6 +1008,8 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
             <p className="mt-0.5 text-[0.6rem] text-slate-500">
               {t.totalTimeHint || 'Suma de todos sus turnos.'}
             </p>
+          </section>
+            </div>
           </section>
         </div>
 

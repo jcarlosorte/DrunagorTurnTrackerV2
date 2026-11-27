@@ -65,11 +65,9 @@ function CampaignStoryCard({ mainBox, label }) {
   return (
     <section
       data-testid="camp-story-card"
+      aria-label={label}
       className="flex h-full flex-col rounded-xl border border-slate-700 bg-slate-950/60 p-3"
     >
-      <h3 className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-        {label}
-      </h3>
       <div className="flex flex-1 items-center justify-center py-2">
         <img
           src={box.logo}
@@ -496,7 +494,7 @@ function HeroEffectSection({
 }
 
 /**
- * Campamento del grupo: objetos compartidos, medidor de runas, efectos de los
+ * Seguimiento de Historia: objetos compartidos, medidor de runas, efectos de los
  * héroes y seguidores. Todo vive en la partida salvo los seguidores, que se
  * guardan en el campamento del navegador.
  */
@@ -577,9 +575,9 @@ export default function CampDialog({ open, onClose }) {
         className="flex max-h-[90dvh] w-full max-w-6xl flex-col rounded-2xl border border-slate-600 bg-slate-900 text-slate-100 shadow-2xl"
       >
         <header className="flex items-center gap-2 border-b border-slate-700 px-4 py-3">
-          <GiWoodenCrate className="text-lg text-amber-300" aria-hidden="true" />
+          <GiBookCover className="text-lg text-amber-300" aria-hidden="true" />
           <h2 id="camp-title" className="min-w-0 flex-1 truncate text-base font-bold">
-            {t.campTitle || 'Campamento del grupo'}
+            {t.campTitle || 'Seguimiento de Historia'}
           </h2>
           <span className="shrink-0 rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-xs font-semibold tabular-nums">
             {campamento.length}
