@@ -53,7 +53,7 @@ import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import PassiveCardsPanel from '@/components/track/PassiveCardsPanel';
 import TrackWarningBanner from '@/components/track/TrackWarningBanner';
 import AuraNoticeBanner from '@/components/track/AuraNoticeBanner';
-import { getAura } from '@/data/heroes/index';
+import { getAura, getConsecuenciasForCampaign } from '@/data/heroes/index';
 import GenerationPointsBar from '@/components/track/GenerationPointsBar';
 import MagicCannonsBar from '@/components/track/MagicCannonsBar';
 import PilaStatusPanel from '@/components/track/PilaStatusPanel';
@@ -91,6 +91,7 @@ import { getCompanion, getCompanionName, getCompanionBackground, createCompanion
 import { getFollower, getFollowerState, isCohortFollower } from '@/data/followers';
 import { ROLE_POSITIONS, ROLES_ON_TOP as rolesOnTop, ROLES_ON_BOTTOM as rolesOnBottom, getRoleSide } from '@/data/roles';
 import { readCampFollowers } from '@/utils/campFollowers';
+import { normalizeCampRecord } from '@/utils/campRecord';
 import { applyCompanionTurnEffects } from '@/utils/companionAbilities';
 import { findEnemyVariant } from '@/utils/enemyVariant';
 import { resolveEntityLabel } from '@/utils/entityLabel';
@@ -5230,6 +5231,13 @@ const InitTracker = () => {
   })();
 
   // Cada posición del tablero se renderiza en su propio componente.
+  const activeCampaign = mainBox || 'core';
+  const sharedConsequencesCount = (() => {
+    const record = normalizeCampRecord(trackerData.campRecord);
+    const allowed = new Set(getConsecuenciasForCampaign(activeCampaign).map((item) => item.id));
+    return record.consecuencias.filter((id) => allowed.has(id)).length;
+  })();
+
   const slotDeps = {
     runesColorMap,
     getRuneColorFromIndex,
@@ -5268,6 +5276,9 @@ const InitTracker = () => {
     companions: trackerData.companions || [],
     onOpenCompanion: setSelectedCompanionUid,
     RuneCard,
+    campaign: activeCampaign,
+    sharedConsequencesCount,
+    statusLabels: ti,
   };
 
   const renderSlot = (index, options = {}) => (

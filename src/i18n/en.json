@@ -645,6 +645,7 @@
     "consecuenciasShared": "Shared",
     "consecuenciasSpecial": "Special",
     "campConditions": "Conditions",
+    "campAura": "Aura",
     "campObjects": "Camp items",
     "campLegacyTrail": "Legacy Trail",
     "campLegacyTrailHint": "Mark up to 3 levels on each path.",

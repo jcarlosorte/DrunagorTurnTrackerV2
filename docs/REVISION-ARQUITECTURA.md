@@ -6484,6 +6484,24 @@ Unit       289 tests
 E2E        185/185
 ```
 
+### 383.ª tanda — Avisos flotantes en la carta del héroe
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Tres avisos** | La carta del track muestra iconos flotantes de aura, consecuencias compartidas y estados, cada uno con su contador | `CharacterCard` |
+| **Solo si hay contenido** | Cada aviso aparece únicamente cuando su contador es mayor que cero; la carta sin datos queda limpia | `CharacterCard` |
+| **Estilo por categoría** | Aura en ámbar, consecuencias en rosa y estados en azul cielo, con fondo oscuro y borde suave acorde al track | `CharacterCard` |
+| **Datos compartidos** | El contador de consecuencias se calcula desde `campRecord` y el catálogo de la campaña activa; aura y estados salen de `heroExtras` | `InitTracker`, `TrackSlot` |
+| **Compatibilidad** | Los iconos individuales de estados alterados se mantienen arriba a la izquierda; los avisos resumen aura, consecuencias y el panel de estados | `CharacterCard` |
+| **Pruebas** | E2E de los tres contadores, carta sin avisos y ocultación de aura/consecuencias fuera del juego base | `hero-badges.spec` |
+
+**Medición**
+
+```text
+Unit       289 tests
+E2E        188/188
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

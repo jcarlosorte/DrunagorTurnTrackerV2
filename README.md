@@ -44,6 +44,9 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
   recibir Trauma o al elegir otra. Las de líder pueden ser privadas o visibles para todo el
   grupo, y el track muestra el aura y su capacidad durante el turno correspondiente. No
   aparecen en otras campañas; cada expansión tendrá su propio catálogo.
+- **Avisos en la carta del track**: la carta del héroe muestra iconos flotantes con el
+  número de auras, consecuencias compartidas y estados cuando tiene alguno, con un color
+  propio para cada categoría.
 - **Consecuencias compartidas (Outcomes, solo juego base)**: las 15 del juego base se
   guardan en el **Seguimiento de Historia**, sin límite y una sola vez cada una. El panel es
   común: se edita desde el Seguimiento o desde el Diario de Campaña de cualquier héroe. No
@@ -194,7 +197,7 @@ Suite esperada antes de cada entrega:
 ```text
 lint      0 errores / 0 avisos
 unit      289 tests
-e2e       185 tests
+e2e       188 tests
 build     OK
 ```
 

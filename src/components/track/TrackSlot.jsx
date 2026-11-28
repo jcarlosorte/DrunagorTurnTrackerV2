@@ -60,6 +60,9 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
     openSiegeDeck,
     onCannonShotEndRound,
     RuneCard,
+    campaign = 'core',
+    sharedConsequencesCount = 0,
+    statusLabels = {},
   } = deps;
 
   const isRune = Object.values(runesColorMap).includes(index);
@@ -328,6 +331,9 @@ export default function TrackSlot({ index, compact = false, density = 'normal', 
                   clickable={heroManagementEnabled}
                   extras={heroManagementEnabled ? getHeroExtras(item.id) : null}
                   estadosLabels={tea}
+                  campaign={campaign}
+                  sharedConsequencesCount={sharedConsequencesCount}
+                  statusLabels={statusLabels}
                   onOpen={() => setSelectedHeroId(item.id)}
                 />
                 <CannonShotControl

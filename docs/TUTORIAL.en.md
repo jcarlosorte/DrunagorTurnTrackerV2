@@ -294,6 +294,7 @@ If something is missing, the app moves you to the right step and shows a message
 - Top and bottom stacks adapt independently.
 - The **boss banner** appears above the board when a boss is active.
 - **Mechanic notices** stack directly above the board.
+- Each hero card shows **floating badges** with the number of auras, shared outcomes and conditions when present; each category uses its own color and icon.
 
 ### 7.4 Side panel
 

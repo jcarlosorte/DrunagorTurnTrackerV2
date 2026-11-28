@@ -646,6 +646,7 @@
     "consecuenciasShared": "Compartidas",
     "consecuenciasSpecial": "Especial",
     "campConditions": "Estados",
+    "campAura": "Aura",
     "campObjects": "Objetos de campamento",
     "campLegacyTrail": "Ruta del Legado",
     "campLegacyTrailHint": "Marca hasta 3 niveles en cada camino.",

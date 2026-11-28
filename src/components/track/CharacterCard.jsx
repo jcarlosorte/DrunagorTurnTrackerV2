@@ -1,6 +1,7 @@
+import { GiAura, GiHealthDecrease, GiScrollUnfurled } from 'react-icons/gi';
 import FitText from '@/components/track/FitText';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
-import { ESTADOS_HEROE } from '@/data/heroes/index';
+import { getAura } from '@/data/heroes/index';
 import { getHeroClass } from '@/data/heroClasses';
 import HeroPortrait from '@/components/HeroPortrait';
 
@@ -19,11 +20,41 @@ export default function CharacterCard({
   clickable = false,
   extras = null,
   estadosLabels = {},
+  campaign = 'core',
+  sharedConsequencesCount = 0,
+  statusLabels = {},
 }) {
   const estadosAlterados = extras?.estadosAlterados || [];
   const condiciones = extras?.estados || [];
-  const tieneEstados = estadosAlterados.length > 0 || condiciones.length > 0;
+  const tieneAlterados = estadosAlterados.length > 0;
   const classColor = getHeroClass(heroId)?.color || '#800020';
+  const aura = getAura((extras?.auras || [])[0]);
+  const auraCount = aura && aura.campaign === campaign ? 1 : 0;
+  const consequencesCount = Math.max(0, Number(sharedConsequencesCount) || 0);
+  const statesCount = condiciones.length;
+  const badges = [
+    {
+      id: 'aura',
+      count: auraCount,
+      label: statusLabels.campAura || 'Aura',
+      icon: GiAura,
+      className: 'border-amber-300/80 bg-amber-950/90 text-amber-100',
+    },
+    {
+      id: 'consequences',
+      count: consequencesCount,
+      label: statusLabels.campConsequences || 'Consecuencias',
+      icon: GiScrollUnfurled,
+      className: 'border-rose-300/80 bg-rose-950/90 text-rose-100',
+    },
+    {
+      id: 'states',
+      count: statesCount,
+      label: statusLabels.campConditions || 'Estados',
+      icon: GiHealthDecrease,
+      className: 'border-sky-300/80 bg-sky-950/90 text-sky-100',
+    },
+  ].filter((badge) => badge.count > 0);
 
   return (
     <div className="flex flex-col items-center mx-1">
@@ -49,8 +80,33 @@ export default function CharacterCard({
           style={{ borderColor: classColor }}
         />
 
+        {/* Avisos flotantes: aura, consecuencias compartidas y estados. */}
+        {clickable && extras && badges.length > 0 && (
+          <div
+            className="absolute right-0.5 top-1/2 z-20 flex -translate-y-1/2 flex-col items-end gap-0.5"
+            data-testid="hero-status-badges"
+          >
+            {badges.map((badge) => {
+              const Icon = badge.icon;
+              const text = `${badge.label}: ${badge.count}`;
+              return (
+                <span
+                  key={badge.id}
+                  data-testid={`hero-status-${badge.id}`}
+                  title={text}
+                  aria-label={text}
+                  className={`inline-flex h-[1.15rem] min-w-[1.15rem] items-center justify-center gap-0.5 rounded-full border px-1 text-[0.5rem] font-bold leading-none shadow-md backdrop-blur-sm ${badge.className}`}
+                >
+                  <Icon className="text-[0.65rem]" aria-hidden="true" />
+                  <span>{badge.count}</span>
+                </span>
+              );
+            })}
+          </div>
+        )}
+
         {/* Estados alterados del héroe sobre la imagen (iconos, como en enemigos) */}
-        {clickable && tieneEstados && (
+        {clickable && tieneAlterados && (
           <div className="absolute left-0.5 top-0.5 grid grid-rows-3 grid-flow-col gap-0.5">
             {estadosAlterados.slice(0, 5).map((estado) => {
               const meta = ESTADOS_ALTERADOS.find((item) => item.id === estado.id);
@@ -69,19 +125,6 @@ export default function CharacterCard({
                       {estado.count}
                     </span>
                   )}
-                </span>
-              );
-            })}
-            {condiciones.slice(0, 4).map((estado) => {
-              const meta = ESTADOS_HEROE.find((item) => item.id === estado.id);
-              if (!meta) return null;
-              return (
-                <span
-                  key={`cond-${estado.id}`}
-                  title={`${meta.name?.es} ×${estado.count}`}
-                  className="flex h-4 w-4 items-center justify-center rounded-full border border-white/80 bg-amber-600/80 text-[0.45rem] font-bold leading-none text-white"
-                >
-                  {estado.count > 1 ? estado.count : '•'}
                 </span>
               );
             })}

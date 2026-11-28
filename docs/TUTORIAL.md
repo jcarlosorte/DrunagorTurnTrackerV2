@@ -298,6 +298,7 @@ De izquierda a derecha:
 - Las pilas se ajustan de forma independiente arriba y abajo.
 - El **banner del jefe** aparece encima del track cuando hay un jefe activo.
 - Los **avisos de mecánicas** se apilan justo encima del track.
+- La carta de cada héroe muestra **avisos flotantes** con el número de auras, consecuencias compartidas y estados cuando tiene alguno; cada categoría usa su propio color e icono.
 
 ### 7.4 Panel lateral
 
