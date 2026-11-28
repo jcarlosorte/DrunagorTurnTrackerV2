@@ -663,9 +663,9 @@ Click a hero card to open its expanded sheet. There you can view and change:
 
 Conditions appear next to hero health and in the expanded sheet. The sheet is split into two areas: everything up to health management, and below it the **Campaign Log**, which groups cubes, abilities, companions, equipment, storage, auras, consequences, conditions and total time with a distinct background.
 
-Each hero can have **only one aura**. When they receive a Trauma cube or choose another aura, the previous one is removed. The leader can choose all 20 base auras; other heroes can only choose individual ones. Some leader auras are private and others are shown to the whole party. During the hero's turn, the track shows a notice with their name, the aura and its capability; party auras also appear during every other hero's turn.
+In **base-game** campaigns, each hero can have **only one aura**. When they receive a Trauma cube or choose another aura, the previous one is removed. The leader can choose all 20 base auras; other heroes can only choose individual ones. Some leader auras are private and others are shown to the whole party. During the hero's turn, the track shows a notice with their name, the aura and its capability; party auras also appear during every other hero's turn. They do not appear outside the base game; each expansion will have its own auras.
 
-**Outcomes** are shared by the whole party. They can be recorded without limit, are never duplicated and live in the **Story Record**; the same panel appears in every hero's Campaign Log to review or change them. The base game includes 15, including *Corrupted Hero*, flagged as special.
+Base-game **Outcomes** are shared by the whole party. They can be recorded without limit, are never duplicated and live in the **Story Record**; the same panel appears in every hero's Campaign Log to review or change them. The base game includes 15, including *Corrupted Hero*, flagged as special. They only appear in base-game campaigns; expansions will add their own.
 
 ### Action cubes
 
@@ -861,7 +861,7 @@ Always reset:
 
 The **Story Record** stores shared group objects and the campaign log. It is shared storage, not a shop.
 
-The dialog is ordered from top to bottom: centered party name; campaign story record, rune track and recruited followers; the shared outcomes panel next to the hero conditions; and camp objects at the end. **Apocalypse** also shows the **Legacy Trail** (four paths in a 2 × 2 grid, three levels each), the **Hero of Darem** traits (Folk Hero and Knight of Amira are mutually exclusive) and **Repercussions**, with one column per act for custom lines.
+The dialog is ordered from top to bottom: centered party name; campaign story record, rune track and recruited followers; the shared outcomes panel (base game only) next to the hero conditions; and camp objects at the end. **Apocalypse** also shows the **Legacy Trail** (four paths in a 2 × 2 grid, three levels each), the **Hero of Darem** traits (Folk Hero and Knight of Amira are mutually exclusive) and **Repercussions**, with one column per act for custom lines.
 
 The top row adapts to the campaign: **Awakenings** and **Apocalypse** show **Recruited Followers**; Apocalypse always shows it, even when empty, because followers will be added later. The base game hides that block.
 

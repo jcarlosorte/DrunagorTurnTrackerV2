@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GiScrollUnfurled } from 'react-icons/gi';
-import { CONSECUENCIAS, getConsecuenciaName } from '@/data/heroes/index';
+import { getConsecuenciaName, getConsecuenciasForCampaign } from '@/data/heroes/index';
 import { normalizeCampRecord, withConsecuencia } from '@/utils/campRecord';
 
 /**
@@ -8,24 +8,31 @@ import { normalizeCampRecord, withConsecuencia } from '@/utils/campRecord';
  *
  * No pertenece a un héroe concreto: se guarda en trackerData.campRecord y
  * todas las fichas y el Seguimiento de Historia muestran la misma lista.
+ * Solo se muestran las consecuencias de la campaña activa.
  */
 export default function SharedConsequencesPanel({
   record,
   onUpdate,
   language = 'es',
+  campaign = 'core',
   t = {},
   testId = 'camp-consequences',
 }) {
   const [pickerOpen, setPickerOpen] = useState(false);
+  const catalogue = getConsecuenciasForCampaign(campaign);
+  const catalogueIds = new Set(catalogue.map((consequence) => consequence.id));
   const normalized = normalizeCampRecord(record);
-  const selected = normalized.consecuencias;
+  const selected = normalized.consecuencias.filter((id) => catalogueIds.has(id));
   const selectedSet = new Set(selected);
-  const byId = new Map(CONSECUENCIAS.map((consequence) => [consequence.id, consequence]));
-  const available = CONSECUENCIAS.filter((consequence) => !selectedSet.has(consequence.id));
+  const byId = new Map(catalogue.map((consequence) => [consequence.id, consequence]));
+  const available = catalogue.filter((consequence) => !selectedSet.has(consequence.id));
 
   const toggle = (id) => {
+    if (!catalogueIds.has(id)) return;
     onUpdate?.(withConsecuencia(normalized, id, !selectedSet.has(id)));
   };
+
+  if (catalogue.length === 0) return null;
 
   return (
     <section

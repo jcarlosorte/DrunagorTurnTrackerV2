@@ -22,8 +22,9 @@ test('el campamento de Apocalipsis muestra y guarda el registro de historia', as
   await expect(camp.getByText('Estado del medidor de runas')).toBeVisible();
   await expect(camp.getByText('Seguidores Reclutados')).toBeVisible();
   await expect(camp.getByText('Sin seguidores guardados.')).toBeVisible();
-  await expect(camp.getByText('Consecuencias', { exact: true })).toBeVisible();
-  await expect(camp.getByText('Estados', { exact: true })).toBeVisible();
+  await expect(camp.getByTestId('camp-consequences')).toHaveCount(0);
+  await expect(camp.getByTestId('camp-hero-effects').getByRole('heading', { name: 'Efectos del héroe' })).toBeVisible();
+  await expect(camp.getByTestId('camp-hero-effects').getByText('Estados', { exact: true })).toBeVisible();
   await expect(camp.getByText('Ruta del Legado')).toBeVisible();
   await expect(camp.getByText('Orígenes y Rasgos del Héroe de Darem')).toBeVisible();
   await expect(camp.getByText('Repercusiones')).toBeVisible();
@@ -122,9 +123,7 @@ test('el campamento respeta la jerarquía visual solicitada', async ({ page }) =
   expect(legacyColumns.size).toBe(2);
   expect(legacyRows.size).toBe(2);
 
-  const consequences = await box(camp.getByText('Consecuencias', { exact: true }));
-  const conditions = await box(camp.getByText('Estados', { exact: true }));
-  expect(consequences.x).toBeLessThan(conditions.x);
+  await expect(camp.getByTestId('camp-consequences')).toHaveCount(0);
 
   const firstAct = await box(camp.getByTestId('camp-unfolding-first'));
   const fourthAct = await box(camp.getByTestId('camp-unfolding-fourth'));

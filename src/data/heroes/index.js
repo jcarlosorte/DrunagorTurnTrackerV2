@@ -57,6 +57,11 @@ export const getConsecuenciaName = (id, language = 'es') => {
   return consequence.name[language] || consequence.name.es || id;
 };
 
+/** Catálogo de consecuencias disponibles en una campaña. */
+export const getConsecuenciasForCampaign = (campaign = 'core') => (
+  CONSECUENCIAS.filter((item) => item.campaign === (campaign || 'core'))
+);
+
 const AURAS_BY_ID = new Map(AURAS.map((item) => [item.id, item]));
 
 export const getAura = (id) => AURAS_BY_ID.get(id) || null;
@@ -78,6 +83,11 @@ export const getAuraCapability = (id, language = 'es') => {
   if (!aura) return '';
   return aura.capability[language] || aura.capability.es || '';
 };
+
+/** Catálogo de auras disponibles en una campaña. */
+export const getAurasForCampaign = (campaign = 'core') => (
+  AURAS.filter((item) => item.campaign === (campaign || 'core'))
+);
 
 /** Un aura de líder solo puede elegirla un héroe que ocupe su posición. */
 export const canHeroChooseAura = (aura, role) => (

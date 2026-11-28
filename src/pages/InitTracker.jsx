@@ -5603,7 +5603,7 @@ const InitTracker = () => {
     const add = (heroId) => {
       if (!heroId || seen.has(heroId)) return;
       const aura = getAura((getHeroExtras(heroId).auras || [])[0]);
-      if (!aura) return;
+      if (!aura || aura.campaign !== (mainBox || 'core')) return;
       if (heroId !== currentId && aura.scope !== 'party') return;
       seen.add(heroId);
       result.push({ heroId, aura });
@@ -5611,7 +5611,7 @@ const InitTracker = () => {
     add(currentId);
     heroes.forEach((hero) => add(hero.id));
     return result;
-  }, [currentTurnEntity?.id, currentTurnEntity?.type, trackerData.placedHeroes, heroExtrasVersion, getHeroExtras]);
+  }, [currentTurnEntity?.id, currentTurnEntity?.type, trackerData.placedHeroes, mainBox, heroExtrasVersion, getHeroExtras]);
 
   return ( 
       <PageTransition>

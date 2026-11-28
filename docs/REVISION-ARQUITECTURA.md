@@ -6467,6 +6467,23 @@ Unit       287 tests
 E2E        183/183
 ```
 
+### 382.ª tanda — Auras y consecuencias solo en el juego base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **Filtro por campaña** | `getAurasForCampaign` y `getConsecuenciasForCampaign` devuelven solo los efectos de la campaña activa; hoy únicamente el juego base tiene catálogo | `src/data/heroes/index.js` |
+| **Ficha del héroe** | La sección de Auras y el panel de Consecuencias se ocultan fuera del juego base; los estados siguen disponibles | `HeroAuraSection`, `SharedConsequencesPanel`, `ModalHeroCard` |
+| **Seguimiento** | Fuera del juego base desaparece el panel compartido y la cabecera pasa a “Efectos del héroe”; los estados ocupan el ancho completo | `CampDialog` |
+| **Avisos del track** | El aviso de aura solo se genera si su campaña coincide con la partida | `InitTracker` |
+| **Pruebas** | Unitarios de filtrado por campaña; E2E en Despertar y Apocalipsis sin auras, consecuencias ni avisos base | `auras.test`, `consecuencias.test`, `consecuencias.spec`, `campamento-apocalipsis.spec` |
+
+**Medición**
+
+```text
+Unit       289 tests
+E2E        185/185
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

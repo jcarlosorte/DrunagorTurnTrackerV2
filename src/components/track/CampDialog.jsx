@@ -19,7 +19,12 @@ import {
   getFollowerStateName,
 } from '@/data/followers';
 import { CAMPAIGN_EXPANSIONS, getMainBox } from '@/data/boxes';
-import { ESTADOS_HEROE, getHeroEffectDescription, getHeroEffectName } from '@/data/heroes/index';
+import {
+  ESTADOS_HEROE,
+  getConsecuenciasForCampaign,
+  getHeroEffectDescription,
+  getHeroEffectName,
+} from '@/data/heroes/index';
 import SharedConsequencesPanel from '@/components/track/SharedConsequencesPanel';
 import { readCampFollowers, removeCampFollower } from '@/utils/campFollowers';
 import {
@@ -538,6 +543,7 @@ export default function CampDialog({ open, onClose }) {
   const selectedHeroId = heroIds.includes(activeHeroId) ? activeHeroId : (heroIds[0] || '');
   const extras = selectedHeroId ? getExtras(selectedHeroId) : null;
   const campaign = mainBox || 'core';
+  const showConsequences = getConsecuenciasForCampaign(campaign).length > 0;
   const campaignExpansionIds = CAMPAIGN_EXPANSIONS[campaign] || [];
   const showFollowers = campaign === 'apocalypse'
     || FOLLOWERS.some((follower) => campaignExpansionIds.includes(follower.expansionId));
@@ -673,7 +679,9 @@ export default function CampDialog({ open, onClose }) {
               <div className="flex items-center gap-2">
                 <GiBookCover className="text-base text-amber-300" aria-hidden="true" />
                 <h3 className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-                  {t.campOutcomesConditions || 'Consecuencias y estados'}
+                  {showConsequences
+                    ? (t.campOutcomesConditions || 'Consecuencias y estados')
+                    : (t.campHeroEffects || 'Efectos del héroe')}
                 </h3>
               </div>
               {heroIds.length > 0 && (
@@ -691,14 +699,17 @@ export default function CampDialog({ open, onClose }) {
                 </select>
               )}
             </div>
-            <div className="mt-2 grid gap-2 md:grid-cols-2">
-              <SharedConsequencesPanel
-                record={campRecord}
-                onUpdate={updateCampRecord}
-                language={language}
-                t={t}
-                testId="camp-consequences"
-              />
+            <div className={`mt-2 grid gap-2 ${showConsequences ? 'md:grid-cols-2' : ''}`}>
+              {showConsequences && (
+                <SharedConsequencesPanel
+                  record={campRecord}
+                  onUpdate={updateCampRecord}
+                  language={language}
+                  campaign={campaign}
+                  t={t}
+                  testId="camp-consequences"
+                />
+              )}
               {extras ? (
                 HERO_EFFECT_SECTIONS.map((group) => (
                   <HeroEffectSection

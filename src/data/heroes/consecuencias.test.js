@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { CONSECUENCIAS, getConsecuencia, getConsecuenciaName } from '@/data/heroes/index';
+import {
+  CONSECUENCIAS,
+  getConsecuencia,
+  getConsecuenciaName,
+  getConsecuenciasForCampaign,
+} from '@/data/heroes/index';
 
 const EXPECTED = [
   ['humillacion', 'Humillación', 'Humbled'],
@@ -34,5 +39,12 @@ describe('consecuencias compartidas', () => {
   it('marca la consecuencia especial de Héroe corrupto', () => {
     expect(getConsecuencia('heroe_corrupto').special).toBe(true);
     expect(CONSECUENCIAS.filter((item) => item.special)).toHaveLength(1);
+  });
+
+  it('solo expone las consecuencias del juego base en la campaña base', () => {
+    expect(getConsecuenciasForCampaign('core')).toHaveLength(15);
+    expect(getConsecuenciasForCampaign()).toHaveLength(15);
+    expect(getConsecuenciasForCampaign('awakenings')).toHaveLength(0);
+    expect(getConsecuenciasForCampaign('apocalypse')).toHaveLength(0);
   });
 });

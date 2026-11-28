@@ -6,6 +6,7 @@ import {
   getAuraCapability,
   getAuraEffect,
   getAuraName,
+  getAurasForCampaign,
   isLeaderRole,
 } from '@/data/heroes/index';
 
@@ -65,6 +66,13 @@ describe('auras base', () => {
     expect(getAuraName('sed_de_sangre', 'en')).toBe('Bloodlust');
     expect(getAuraCapability('sed_de_sangre', 'es')).toBe('Matar: 1 acción de cubo extra');
     expect(getAuraEffect('sed_de_sangre', 'en')).toContain('additional Cube Action');
+  });
+
+  it('solo expone las auras del juego base en la campaña base', () => {
+    expect(getAurasForCampaign('core')).toHaveLength(20);
+    expect(getAurasForCampaign()).toHaveLength(20);
+    expect(getAurasForCampaign('awakenings')).toHaveLength(0);
+    expect(getAurasForCampaign('apocalypse')).toHaveLength(0);
   });
 
   it('solo permite elegir las auras de líder a los roles de líder', () => {

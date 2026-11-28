@@ -667,9 +667,9 @@ Haz clic en la tarjeta de un héroe para abrir su ficha ampliada. Desde ella pue
 
 Los estados se muestran junto a la vida del héroe y en la ficha ampliada. La ficha se divide en dos zonas: todo lo que hay hasta la gestión de la vida y, debajo, el **Diario de Campaña**, que agrupa cubos, habilidades, compañeros, equipo, almacén, auras, consecuencias, estados y tiempo total con un fondo diferenciado.
 
-Cada héroe puede tener **una sola aura**. Al recibir un cubo de Trauma o al elegir otra, el aura anterior se elimina. El líder puede escoger las 20 auras base; el resto de héroes, solo las individuales. Algunas auras del líder son privadas y otras se muestran a todo el grupo. Durante el turno del héroe, el track muestra un aviso con su nombre, el aura y la capacidad; las auras de grupo aparecen también en los turnos de los demás héroes.
+En partidas del **juego base**, cada héroe puede tener **una sola aura**. Al recibir un cubo de Trauma o al elegir otra, el aura anterior se elimina. El líder puede escoger las 20 auras base; el resto de héroes, solo las individuales. Algunas auras del líder son privadas y otras se muestran a todo el grupo. Durante el turno del héroe, el track muestra un aviso con su nombre, el aura y la capacidad; las auras de grupo aparecen también en los turnos de los demás héroes. Fuera del juego base no se muestran; cada expansión tendrá sus propias auras.
 
-Las **consecuencias (Outcomes)** son compartidas por todo el grupo. Se pueden anotar sin límite, no se repiten y viven en el **Seguimiento de Historia**; el mismo panel aparece en el Diario de Campaña de cada héroe para consultarlas o cambiarlas. El juego base incluye 15, entre ellas *Héroe corrupto*, marcada como especial.
+Las **consecuencias (Outcomes)** del juego base son compartidas por todo el grupo. Se pueden anotar sin límite, no se repiten y viven en el **Seguimiento de Historia**; el mismo panel aparece en el Diario de Campaña de cada héroe para consultarlas o cambiarlas. El juego base incluye 15, entre ellas *Héroe corrupto*, marcada como especial. Solo aparecen en campañas del juego base; las expansiones añadirán las suyas.
 
 ### Cubos de acción
 
@@ -865,7 +865,7 @@ Siempre se reinician:
 
 El **Seguimiento de Historia** guarda objetos compartidos del grupo y el registro de la campaña. Es un almacén común, no una tienda.
 
-El diálogo se organiza de arriba abajo: nombre del grupo centrado; seguimiento de historia de la campaña, medidor de runas y seguidores reclutados; panel compartido de consecuencias junto a los estados del héroe; y, al final, los objetos. En **Apocalipsis** aparecen además la **Ruta del Legado** (cuatro caminos en 2 columnas × 2 filas, con tres niveles cada uno), los rasgos del **Héroe de Darem** (Héroe Popular y Caballero de Amira son excluyentes) y las **Repercusiones**, con una columna por acto para escribir líneas propias.
+El diálogo se organiza de arriba abajo: nombre del grupo centrado; seguimiento de historia de la campaña, medidor de runas y seguidores reclutados; panel compartido de consecuencias (solo juego base) junto a los estados del héroe; y, al final, los objetos. En **Apocalipsis** aparecen además la **Ruta del Legado** (cuatro caminos en 2 columnas × 2 filas, con tres niveles cada uno), los rasgos del **Héroe de Darem** (Héroe Popular y Caballero de Amira son excluyentes) y las **Repercusiones**, con una columna por acto para escribir líneas propias.
 
 La fila superior se adapta a la campaña: **Despertar** y **Apocalipsis** muestran **Seguidores Reclutados**; Apocalipsis lo hace siempre, aunque todavía esté vacío, porque los seguidores se introducirán más adelante. El juego base oculta ese bloque.
 

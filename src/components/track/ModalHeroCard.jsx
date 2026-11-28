@@ -910,6 +910,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
             language={language}
             t={t}
             extras={extras}
+            campaign={campaign}
             placedHeroes={trackerData.placedHeroes || []}
             onSelectAura={(auraId) => apply(setHeroAura(heroId, auraId))}
             onRemoveAura={() => apply(setHeroAura(heroId, null))}
@@ -921,6 +922,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
             record={campRecord}
             onUpdate={updateCampRecord}
             language={language}
+            campaign={campaign}
             t={t}
             testId="hero-consequences"
           />

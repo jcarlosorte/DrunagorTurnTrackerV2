@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import {
-  AURAS,
   canHeroChooseAura,
   getAura,
   getAuraCapability,
   getAuraEffect,
   getAuraName,
+  getAurasForCampaign,
   isLeaderRole,
 } from '@/data/heroes/index';
 import { getHeroExtras } from '@/utils/heroExtras';
@@ -64,6 +64,7 @@ function AuraCard({ aura, language, t, editable, onRemove, testId, party = false
 /**
  * Sección de Auras del Diario de Campaña.
  *
+ * - Solo se muestran las auras de la campaña activa.
  * - El líder puede elegir cualquiera de las 20 auras base.
  * - El resto solo puede elegir las individuales.
  * - Las auras de grupo del líder se muestran en la ficha de todos los héroes.
@@ -74,15 +75,18 @@ export default function HeroAuraSection({
   language,
   t,
   extras,
+  campaign = 'core',
   placedHeroes = [],
   onSelectAura,
   onRemoveAura,
   getHeroName,
 }) {
   const [pickerOpen, setPickerOpen] = useState(false);
-  const ownAura = getAura((extras.auras || [])[0]);
+  const campaignAuras = getAurasForCampaign(campaign);
+  const ownAuraCandidate = getAura((extras.auras || [])[0]);
+  const ownAura = ownAuraCandidate?.campaign === campaign ? ownAuraCandidate : null;
   const leader = isLeaderRole(role);
-  const available = AURAS.filter((aura) => (
+  const available = campaignAuras.filter((aura) => (
     canHeroChooseAura(aura, role) && aura.id !== ownAura?.id
   ));
   const partyAuras = (placedHeroes || [])
@@ -91,7 +95,9 @@ export default function HeroAuraSection({
       heroId: hero.id,
       aura: getAura((getHeroExtras(hero.id).auras || [])[0]),
     }))
-    .filter((entry) => entry.aura?.visibility === 'party');
+    .filter((entry) => entry.aura?.campaign === campaign && entry.aura?.visibility === 'party');
+
+  if (campaignAuras.length === 0) return null;
 
   return (
     <section
