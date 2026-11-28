@@ -5593,6 +5593,7 @@ const InitTracker = () => {
 
   // Auras activas del turno: la propia y, si son de grupo, las del líder.
   const auraNotices = useMemo(() => {
+    // La versión obliga a releer las auras cuando cambia cualquier ficha.
     void heroExtrasVersion;
     if (currentTurnEntity?.type !== 'hero' || !currentTurnEntity.id) return [];
     const currentId = currentTurnEntity.id;

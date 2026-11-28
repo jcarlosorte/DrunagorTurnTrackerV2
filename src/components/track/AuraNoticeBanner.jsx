@@ -14,7 +14,7 @@ export default function AuraNoticeBanner({ heroName, aura, language, labels = {}
       data-aura-id={aura.id}
       className="mb-2 flex flex-wrap items-start gap-2 rounded-xl border border-amber-700/70 bg-amber-950/40 p-2 text-amber-100"
     >
-      <span className="shrink-0 text-xs font-black uppercase tracking-wide">
+      <span className="shrink-0 text-xs font-black uppercase tracking-wide text-amber-100">
         ✦ {labels.title || 'Aura activa'}
       </span>
       <span className="min-w-0 flex-1 text-[0.72rem] leading-snug">
