@@ -11,9 +11,10 @@ test.describe('Fase E · campamento y reinicio', () => {
 
     const camp = page.getByRole('dialog', { name: 'Seguimiento de Historia' });
     await expect(camp).toBeVisible();
-    await camp.getByLabel('Objeto del campamento').fill('Cuerda');
-    await camp.getByRole('button', { name: '+ Añadir' }).click();
-    await expect(camp.getByText('Cuerda')).toBeVisible();
+    const objects = camp.getByTestId('camp-objects');
+    await objects.getByLabel('Objeto del campamento').fill('Cuerda');
+    await objects.getByRole('button', { name: '+ Añadir' }).click();
+    await expect(objects.getByText('Cuerda')).toBeVisible();
 
     await expect.poll(async () => {
       const state = await readStorage(page, 'gameState', {});

@@ -6,6 +6,7 @@ import {
   MAX_LINES,
   createCampRecord,
   normalizeCampRecord,
+  withConsecuencia,
   withDarenTrait,
   withLegacyLevel,
   withUnfoldingLine,
@@ -19,6 +20,7 @@ describe('registro de historia del campamento', () => {
     LEGACY_TRAILS.forEach(({ id }) => expect(record.legacyTrail[id]).toBe(0));
     DAREN_TRAITS.forEach(({ id }) => expect(record.darenTraits[id]).toBe(false));
     CAMP_ACTS.forEach(({ id }) => expect(record.unfoldings[id]).toEqual([]));
+    expect(record.consecuencias).toEqual([]);
   });
 
   it('normaliza niveles, rasgos y líneas importadas', () => {
@@ -95,6 +97,26 @@ describe('registro de historia del campamento', () => {
       knightOfAmira: false,
       passionate: true,
     });
+  });
+
+  it('comparte las consecuencias, sin duplicados ni límite', () => {
+    const record = createCampRecord();
+    const withTwo = withConsecuencia(
+      withConsecuencia(record, 'humillacion'),
+      'inquebrantable',
+    );
+
+    expect(record.consecuencias).toEqual([]);
+    expect(withTwo.consecuencias).toEqual(['humillacion', 'inquebrantable']);
+
+    const withoutFirst = withConsecuencia(withTwo, 'humillacion', false);
+    expect(withoutFirst.consecuencias).toEqual(['inquebrantable']);
+
+    const imported = normalizeCampRecord({
+      consecuencias: ['humillacion', 'humillacion', 'no_existe', 'duo_dinamico'],
+    });
+    expect(imported.consecuencias).toEqual(['humillacion', 'duo_dinamico']);
+    expect(withConsecuencia(record, 'no_existe').consecuencias).toEqual([]);
   });
 
   it('ignora actos y rasgos desconocidos', () => {

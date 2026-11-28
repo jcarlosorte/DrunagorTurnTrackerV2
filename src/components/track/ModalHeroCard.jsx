@@ -10,17 +10,18 @@ import { getHeroClass } from '@/data/heroClasses';
 import HeroPortrait from '@/components/HeroPortrait';
 import CannonShotControl from '@/components/track/CannonShotControl';
 import HeroAuraSection from '@/components/track/HeroAuraSection';
+import SharedConsequencesPanel from '@/components/track/SharedConsequencesPanel';
 import heroBackground from '@/assets/interactions/draconian-altar.avif';
 import { getCompanion, getCompanionImage } from '@/data/companions';
 import { ESTADOS_ALTERADOS, INMUNIDADES, getHeroStatusCatalog } from '@/data/estadosAlterados';
 import {
-  CONSECUENCIAS,
   ESTADOS_HEROE,
   getHeroEffectName,
   getHeroEffectDescription,
 } from '@/data/heroes/index';
 import { useExpansions } from '@/context/ExpansionContext';
 import { CUBE_META, MAX_HERO_VIDA, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, getHeroExtraId, recobrarCubos, removeAlmacenItem, removeHeroExtra, resetHero, setHeroAura, toggleCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
+import { normalizeCampRecord } from '@/utils/campRecord';
 import { formatClock } from '@/utils/turnTimer';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import {
@@ -59,7 +60,6 @@ const SKILL_BY_CUBE = {
 };
 
 const GROUPS = [
-  { key: 'consecuencias', label: { es: 'Consecuencias', en: 'Consequences' }, catalogue: CONSECUENCIAS },
   { key: 'estados', label: { es: 'Estados', en: 'Conditions' }, catalogue: ESTADOS_HEROE },
 ];
 
@@ -97,6 +97,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
   const [dungeonPicker, setDungeonPicker] = useState(0);
 
   const campaign = mainBox || 'core';
+  const campRecord = normalizeCampRecord(trackerData.campRecord);
   const heroEffectGroups = GROUPS.map((group) => ({
     ...group,
     catalogue: group.catalogue.filter((item) => (item.campaign || 'core') === campaign),
@@ -114,6 +115,13 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
     setTrackerData((prev) => ({
       ...prev,
       companions: (prev.companions || []).filter((entry) => entry.uid !== uid),
+    }));
+  };
+
+  const updateCampRecord = (nextRecord) => {
+    setTrackerData((prev) => ({
+      ...prev,
+      campRecord: normalizeCampRecord(nextRecord),
     }));
   };
 
@@ -908,7 +916,16 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
             getHeroName={(id) => translations.heroes?.[id] || id}
           />
 
-          {/* Consecuencias y estados */}
+          {/* Consecuencias compartidas por todo el grupo. */}
+          <SharedConsequencesPanel
+            record={campRecord}
+            onUpdate={updateCampRecord}
+            language={language}
+            t={t}
+            testId="hero-consequences"
+          />
+
+          {/* Estados del héroe */}
           {heroEffectGroups.map((group) => {
             const added = extras[group.key] || [];
             const addedIds = new Set(added.map((entry) => getHeroExtraId(entry)));

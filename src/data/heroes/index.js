@@ -16,7 +16,7 @@ export const ESTADOS_HEROE = withCampaign(ESTADOS_HEROE_SOURCE);
 
 export const HERO_EFFECT_GROUPS = [
   { id: 'auras', label: { es: 'Auras', en: 'Auras' }, items: AURAS },
-  { id: 'consecuencias', label: { es: 'Consecuencias', en: 'Consequences' }, items: CONSECUENCIAS },
+  { id: 'consecuencias', label: { es: 'Consecuencias', en: 'Outcomes' }, items: CONSECUENCIAS },
   { id: 'estados', label: { es: 'Estados', en: 'Conditions' }, items: ESTADOS_HEROE },
 ];
 
@@ -34,7 +34,7 @@ export const getHeroEffectName = (id, language = 'es') => {
 
 export const getHeroEffectDescription = (id, language = 'es') => {
   const item = BY_ID.get(id);
-  if (!item) return '';
+  if (!item?.effect) return '';
   return item.effect[language] || item.effect.es || '';
 };
 
@@ -46,6 +46,16 @@ export const AURA_LEADER_ROLES = ['lider', 'lanza_dados', 'guardian'];
 export const isLeaderRole = (role) => AURA_LEADER_ROLES.includes(role);
 
 export const AURA_GROUP_IDS = ['leader-private', 'leader-party', 'hero-private'];
+
+const CONSECUENCIAS_BY_ID = new Map(CONSECUENCIAS.map((item) => [item.id, item]));
+
+export const getConsecuencia = (id) => CONSECUENCIAS_BY_ID.get(id) || null;
+
+export const getConsecuenciaName = (id, language = 'es') => {
+  const consequence = CONSECUENCIAS_BY_ID.get(id);
+  if (!consequence) return id;
+  return consequence.name[language] || consequence.name.es || id;
+};
 
 const AURAS_BY_ID = new Map(AURAS.map((item) => [item.id, item]));
 

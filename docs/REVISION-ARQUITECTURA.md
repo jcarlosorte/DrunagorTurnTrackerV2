@@ -6450,6 +6450,23 @@ Unit       284 tests
 E2E        180/180
 ```
 
+### 381.ª tanda — Consecuencias compartidas
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **15 Outcomes base** | Catálogo bilingüe con identificadores estables; *Héroe corrupto* marcada como especial | `src/data/heroes/consecuencias.js`, `index.js` |
+| **Panel compartido** | Las consecuencias viven en `campRecord`, sin límite y sin duplicados; se editan desde el Seguimiento y desde cualquier Diario | `SharedConsequencesPanel`, `campRecord.js` |
+| **Integración** | El Seguimiento muestra el panel junto a los estados del héroe; la ficha lo sitúa después de Auras y antes de Estados | `CampDialog`, `ModalHeroCard` |
+| **Guardado** | Entran en el snapshot completo y de track con `trackerData`; no dependen de `heroExtras` | `campRecord`, `storage` |
+| **Pruebas** | Unitarios de catálogo y normalización; E2E de panel compartido, inglés, límite y persistencia | `consecuencias.test`, `campRecord.test`, `consecuencias.spec` |
+
+**Medición**
+
+```text
+Unit       287 tests
+E2E        183/183
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

@@ -19,7 +19,8 @@ import {
   getFollowerStateName,
 } from '@/data/followers';
 import { CAMPAIGN_EXPANSIONS, getMainBox } from '@/data/boxes';
-import { CONSECUENCIAS, ESTADOS_HEROE, getHeroEffectDescription, getHeroEffectName } from '@/data/heroes/index';
+import { ESTADOS_HEROE, getHeroEffectDescription, getHeroEffectName } from '@/data/heroes/index';
+import SharedConsequencesPanel from '@/components/track/SharedConsequencesPanel';
 import { readCampFollowers, removeCampFollower } from '@/utils/campFollowers';
 import {
   CAMP_ACTS,
@@ -49,7 +50,6 @@ const RUNE_COLORS = [
 ];
 
 const HERO_EFFECT_SECTIONS = [
-  { key: 'consecuencias', label: { es: 'Consecuencias', en: 'Consequences' }, catalogue: CONSECUENCIAS },
   { key: 'estados', label: { es: 'Estados', en: 'Conditions' }, catalogue: ESTADOS_HEROE },
 ];
 
@@ -673,7 +673,7 @@ export default function CampDialog({ open, onClose }) {
               <div className="flex items-center gap-2">
                 <GiBookCover className="text-base text-amber-300" aria-hidden="true" />
                 <h3 className="text-[0.7rem] font-bold uppercase tracking-wide text-slate-300">
-                  {t.campHeroEffects || 'Efectos del héroe'}
+                  {t.campOutcomesConditions || 'Consecuencias y estados'}
                 </h3>
               </div>
               {heroIds.length > 0 && (
@@ -691,11 +691,16 @@ export default function CampDialog({ open, onClose }) {
                 </select>
               )}
             </div>
-            {!extras ? (
-              <p className="mt-2 text-xs text-slate-400">{t.campNoHeroes || 'Sin héroes en la partida.'}</p>
-            ) : (
-              <div className="mt-2 grid gap-2 md:grid-cols-2">
-                {HERO_EFFECT_SECTIONS.map((group) => (
+            <div className="mt-2 grid gap-2 md:grid-cols-2">
+              <SharedConsequencesPanel
+                record={campRecord}
+                onUpdate={updateCampRecord}
+                language={language}
+                t={t}
+                testId="camp-consequences"
+              />
+              {extras ? (
+                HERO_EFFECT_SECTIONS.map((group) => (
                   <HeroEffectSection
                     key={`${selectedHeroId}-${group.key}-${version}`}
                     heroId={selectedHeroId}
@@ -707,9 +712,13 @@ export default function CampDialog({ open, onClose }) {
                     campaign={campaign}
                     onUpdate={updateGroup}
                   />
-                ))}
-              </div>
-            )}
+                ))
+              ) : (
+                <p className="flex items-center justify-center rounded-xl border border-slate-700 bg-slate-950/60 p-3 text-center text-xs text-slate-400">
+                  {t.campNoHeroes || 'Sin héroes en la partida.'}
+                </p>
+              )}
+            </div>
           </section>
 
           {showApocalypse && (

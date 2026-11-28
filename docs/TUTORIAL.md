@@ -669,6 +669,8 @@ Los estados se muestran junto a la vida del héroe y en la ficha ampliada. La fi
 
 Cada héroe puede tener **una sola aura**. Al recibir un cubo de Trauma o al elegir otra, el aura anterior se elimina. El líder puede escoger las 20 auras base; el resto de héroes, solo las individuales. Algunas auras del líder son privadas y otras se muestran a todo el grupo. Durante el turno del héroe, el track muestra un aviso con su nombre, el aura y la capacidad; las auras de grupo aparecen también en los turnos de los demás héroes.
 
+Las **consecuencias (Outcomes)** son compartidas por todo el grupo. Se pueden anotar sin límite, no se repiten y viven en el **Seguimiento de Historia**; el mismo panel aparece en el Diario de Campaña de cada héroe para consultarlas o cambiarlas. El juego base incluye 15, entre ellas *Héroe corrupto*, marcada como especial.
+
 ### Cubos de acción
 
 Los cubos se recobran y se gastan durante la partida. La app permite marcarlos y consultarlos. En el campamento o al reiniciar héroes se recuperan al máximo.
@@ -793,7 +795,7 @@ La app guarda automáticamente el estado en `localStorage`:
 - Enemigos.
 - Runas y fichas.
 - Héroes y estados.
-- Campamento: objetos, nombre del grupo y registro de historia.
+- Campamento: objetos, nombre del grupo, registro de historia y consecuencias compartidas.
 - Seguidores reclutados en el campamento. Los **Acompañantes** quedan fuera a propósito: no se guardan ni se restauran.
 
 ### Partidas manuales
@@ -863,7 +865,7 @@ Siempre se reinician:
 
 El **Seguimiento de Historia** guarda objetos compartidos del grupo y el registro de la campaña. Es un almacén común, no una tienda.
 
-El diálogo se organiza de arriba abajo: nombre del grupo centrado; seguimiento de historia de la campaña, medidor de runas y seguidores reclutados; efectos del héroe separados en consecuencias y estados; y, al final, los objetos. En **Apocalipsis** aparecen además la **Ruta del Legado** (cuatro caminos en 2 columnas × 2 filas, con tres niveles cada uno), los rasgos del **Héroe de Darem** (Héroe Popular y Caballero de Amira son excluyentes) y las **Repercusiones**, con una columna por acto para escribir líneas propias.
+El diálogo se organiza de arriba abajo: nombre del grupo centrado; seguimiento de historia de la campaña, medidor de runas y seguidores reclutados; panel compartido de consecuencias junto a los estados del héroe; y, al final, los objetos. En **Apocalipsis** aparecen además la **Ruta del Legado** (cuatro caminos en 2 columnas × 2 filas, con tres niveles cada uno), los rasgos del **Héroe de Darem** (Héroe Popular y Caballero de Amira son excluyentes) y las **Repercusiones**, con una columna por acto para escribir líneas propias.
 
 La fila superior se adapta a la campaña: **Despertar** y **Apocalipsis** muestran **Seguidores Reclutados**; Apocalipsis lo hace siempre, aunque todavía esté vacío, porque los seguidores se introducirán más adelante. El juego base oculta ese bloque.
 

@@ -15,10 +15,10 @@ test('el campamento guarda nombre del grupo, efectos manuales y estado de runas'
   await camp.getByLabel('Nombre del grupo').fill('Los Buscadores');
   await expect(camp.getByTestId('camp-rune-azul')).toBeVisible();
 
-  const consequenceInput = camp.getByRole('textbox', { name: /Consecuencias: Escribir manualmente/ });
-  await consequenceInput.fill('Marca de la campaña');
-  await consequenceInput.locator('..').getByRole('button', { name: 'Añadir', exact: true }).click();
-  await expect(camp.getByText('Marca de la campaña')).toBeVisible();
+  const consequences = camp.getByTestId('camp-consequences');
+  await consequences.getByTestId('camp-consequences-add').click();
+  await consequences.getByTestId('camp-consequences-option-humillacion').click();
+  await expect(consequences.getByTestId('camp-consequences-item-humillacion')).toBeVisible();
 
   const stateInput = camp.getByRole('textbox', { name: /Estados: Escribir manualmente/ });
   await stateInput.fill('Estado de prueba');
@@ -32,7 +32,7 @@ test('el campamento guarda nombre del grupo, efectos manuales y estado de runas'
   await page.waitForSelector('.track-slot');
   camp = await openCamp(page);
   await expect(camp.getByLabel('Nombre del grupo')).toHaveValue('Los Buscadores');
-  await expect(camp.getByText('Marca de la campaña')).toBeVisible();
+  await expect(camp.getByTestId('camp-consequences-item-humillacion')).toBeVisible();
   await expect(camp.getByText('Estado de prueba')).toBeVisible();
 });
 

@@ -43,6 +43,9 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Auras base**: 20 auras con una sola activa por héroe; se pierden al recibir Trauma o al
   elegir otra. Las de líder pueden ser privadas o visibles para todo el grupo, y el track
   muestra el aura y su capacidad durante el turno correspondiente.
+- **Consecuencias compartidas (Outcomes)**: las 15 del juego base se guardan en el
+  **Seguimiento de Historia**, sin límite y una sola vez cada una. El panel es común: se
+  edita desde el Seguimiento o desde el Diario de Campaña de cualquier héroe.
 - **Contenido compartido de Apocalipsis**: reutiliza la carta base de Oscuridad de Caza,
   el panel de Nodos de Oscuridad de Despertar y la incursión atroz, sin abrir el resto
   del contenido de otras campañas.
@@ -188,8 +191,8 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      284 tests
-e2e       180 tests
+unit      287 tests
+e2e       183 tests
 build     OK
 ```
 

@@ -1,7 +1,10 @@
 /**
- * Campos de historia del campamento para la campaña de Apocalipsis.
+ * Campos de historia del campamento.
  * Se guardan dentro de trackerData.campRecord para que viajen con la partida.
  */
+import { CONSECUENCIAS } from '@/data/heroes/index';
+
+const CONSECUENCIA_IDS = new Set(CONSECUENCIAS.map(({ id }) => id));
 
 export const LEGACY_TRAILS = [
   { id: 'perseverancia', label: { es: 'Perseverancia', en: 'Perseverance' } },
@@ -45,11 +48,17 @@ function normalizeLines(value) {
     .slice(0, MAX_LINES);
 }
 
+function normalizeConsecuencias(value) {
+  if (!Array.isArray(value)) return [];
+  return [...new Set(value.map((id) => String(id ?? '')).filter((id) => CONSECUENCIA_IDS.has(id)))];
+}
+
 export function createCampRecord() {
   return {
     legacyTrail: Object.fromEntries(LEGACY_TRAILS.map(({ id }) => [id, 0])),
     darenTraits: Object.fromEntries(DAREN_TRAITS.map(({ id }) => [id, false])),
     unfoldings: Object.fromEntries(CAMP_ACTS.map(({ id }) => [id, []])),
+    consecuencias: [],
   };
 }
 
@@ -72,6 +81,7 @@ export function normalizeCampRecord(raw) {
   CAMP_ACTS.forEach(({ id }) => {
     record.unfoldings[id] = normalizeLines(raw.unfoldings?.[id]);
   });
+  record.consecuencias = normalizeConsecuencias(raw.consecuencias);
 
   return record;
 }
@@ -111,6 +121,22 @@ export function withoutUnfoldingLine(record, actId, index) {
   const next = normalizeCampRecord(record);
   if (!CAMP_ACTS.some(({ id }) => id === actId)) return next;
   next.unfoldings[actId] = next.unfoldings[actId].filter((_, itemIndex) => itemIndex !== index);
+  return next;
+}
+
+/**
+ * Añade o quita una consecuencia compartida. No hay límite: pueden estar todas.
+ */
+export function withConsecuencia(record, consecuenciaId, enabled = true) {
+  const next = normalizeCampRecord(record);
+  if (!CONSECUENCIA_IDS.has(consecuenciaId)) return next;
+  if (enabled === false) {
+    next.consecuencias = next.consecuencias.filter((id) => id !== consecuenciaId);
+    return next;
+  }
+  if (!next.consecuencias.includes(consecuenciaId)) {
+    next.consecuencias = [...next.consecuencias, consecuenciaId];
+  }
   return next;
 }
 

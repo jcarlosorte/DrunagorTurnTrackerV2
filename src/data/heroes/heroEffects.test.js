@@ -11,13 +11,13 @@ import {
 } from '@/data/heroes/index';
 
 describe('efectos de héroe', () => {
-  it('carga las 20 auras base y deja vacíos los catálogos pendientes', () => {
+  it('carga las 20 auras y las 15 consecuencias base', () => {
     expect(AURAS).toHaveLength(20);
-    expect(CONSECUENCIAS).toEqual([]);
+    expect(CONSECUENCIAS).toHaveLength(15);
     expect(ESTADOS_HEROE).toEqual([]);
-    expect(ALL_HERO_EFFECTS).toHaveLength(20);
+    expect(ALL_HERO_EFFECTS).toHaveLength(35);
     expect(HERO_EFFECT_GROUPS.find((group) => group.id === 'auras').items).toHaveLength(20);
-    expect(HERO_EFFECT_GROUPS.find((group) => group.id === 'consecuencias').items).toEqual([]);
+    expect(HERO_EFFECT_GROUPS.find((group) => group.id === 'consecuencias').items).toHaveLength(15);
     expect(HERO_EFFECT_GROUPS.find((group) => group.id === 'estados').items).toEqual([]);
   });
 
