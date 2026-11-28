@@ -667,6 +667,8 @@ Haz clic en la tarjeta de un héroe para abrir su ficha ampliada. Desde ella pue
 
 Los estados se muestran junto a la vida del héroe y en la ficha ampliada. La ficha se divide en dos zonas: todo lo que hay hasta la gestión de la vida y, debajo, el **Diario de Campaña**, que agrupa cubos, habilidades, compañeros, equipo, almacén, auras, consecuencias, estados y tiempo total con un fondo diferenciado.
 
+Cada héroe puede tener **una sola aura**. Al recibir un cubo de Trauma o al elegir otra, el aura anterior se elimina. El líder puede escoger las 20 auras base; el resto de héroes, solo las individuales. Algunas auras del líder son privadas y otras se muestran a todo el grupo. Durante el turno del héroe, el track muestra un aviso con su nombre, el aura y la capacidad; las auras de grupo aparecen también en los turnos de los demás héroes.
+
 ### Cubos de acción
 
 Los cubos se recobran y se gastan durante la partida. La app permite marcarlos y consultarlos. En el campamento o al reiniciar héroes se recuperan al máximo.

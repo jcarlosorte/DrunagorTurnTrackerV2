@@ -663,6 +663,8 @@ Click a hero card to open its expanded sheet. There you can view and change:
 
 Conditions appear next to hero health and in the expanded sheet. The sheet is split into two areas: everything up to health management, and below it the **Campaign Log**, which groups cubes, abilities, companions, equipment, storage, auras, consequences, conditions and total time with a distinct background.
 
+Each hero can have **only one aura**. When they receive a Trauma cube or choose another aura, the previous one is removed. The leader can choose all 20 base auras; other heroes can only choose individual ones. Some leader auras are private and others are shown to the whole party. During the hero's turn, the track shows a notice with their name, the aura and its capability; party auras also appear during every other hero's turn.
+
 ### Action cubes
 
 Cubes are spent and recovered during play. The app lets you mark and review them. Camp or hero reset restores them to maximum.

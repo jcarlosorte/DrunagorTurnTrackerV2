@@ -9,18 +9,18 @@ import { HEROES } from '@/data/heroes';
 import { getHeroClass } from '@/data/heroClasses';
 import HeroPortrait from '@/components/HeroPortrait';
 import CannonShotControl from '@/components/track/CannonShotControl';
+import HeroAuraSection from '@/components/track/HeroAuraSection';
 import heroBackground from '@/assets/interactions/draconian-altar.avif';
 import { getCompanion, getCompanionImage } from '@/data/companions';
 import { ESTADOS_ALTERADOS, INMUNIDADES, getHeroStatusCatalog } from '@/data/estadosAlterados';
 import {
-  AURAS,
   CONSECUENCIAS,
   ESTADOS_HEROE,
   getHeroEffectName,
   getHeroEffectDescription,
 } from '@/data/heroes/index';
 import { useExpansions } from '@/context/ExpansionContext';
-import { CUBE_META, MAX_HERO_VIDA, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, getHeroExtraId, recobrarCubos, removeAlmacenItem, removeHeroExtra, resetHero, toggleCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
+import { CUBE_META, MAX_HERO_VIDA, MOD_STATS, SKILLS, DUNGEON_SKILL_COLORS, addAlmacenItem, changeHeroActionCube, changeHeroActionCubeMax, changeHeroCubes, changeHeroVida, changeHeroVidaMax, getEquipmentBonus, getHeroExtras, getHeroExtraId, recobrarCubos, removeAlmacenItem, removeHeroExtra, resetHero, setHeroAura, toggleCapacidadNivel, setCapacidadNombre, setDungeonSkillColor, setEquipmentMod, setHeroEquipment, setHeroSkill, setHeroStat, stepHeroEstadoAlterado, toggleHeroExtra } from '@/utils/heroExtras';
 import { formatClock } from '@/utils/turnTimer';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import {
@@ -59,7 +59,6 @@ const SKILL_BY_CUBE = {
 };
 
 const GROUPS = [
-  { key: 'auras', label: { es: 'Auras', en: 'Auras' }, catalogue: AURAS },
   { key: 'consecuencias', label: { es: 'Consecuencias', en: 'Consequences' }, catalogue: CONSECUENCIAS },
   { key: 'estados', label: { es: 'Estados', en: 'Conditions' }, catalogue: ESTADOS_HEROE },
 ];
@@ -896,7 +895,20 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
             )}
           </section>
 
-          {/* Auras y consecuencias */}
+          {/* Aura única del héroe; las de grupo del líder se muestran en todas las fichas. */}
+          <HeroAuraSection
+            heroId={heroId}
+            role={role}
+            language={language}
+            t={t}
+            extras={extras}
+            placedHeroes={trackerData.placedHeroes || []}
+            onSelectAura={(auraId) => apply(setHeroAura(heroId, auraId))}
+            onRemoveAura={() => apply(setHeroAura(heroId, null))}
+            getHeroName={(id) => translations.heroes?.[id] || id}
+          />
+
+          {/* Consecuencias y estados */}
           {heroEffectGroups.map((group) => {
             const added = extras[group.key] || [];
             const addedIds = new Set(added.map((entry) => getHeroExtraId(entry)));

@@ -6433,6 +6433,23 @@ Unit       276 tests
 E2E        178/178
 ```
 
+### 380.ª tanda — Auras base
+
+| Cambio | Detalle | Archivos |
+|---|---|---|
+| **20 auras base** | Catálogo bilingüe con grupos de líder privadas, líder de grupo y héroes; capacidad y efecto completos | `src/data/heroes/auras.js`, `index.js` |
+| **Una sola aura** | Elegir otra sustituye la anterior; recibir un cubo de Trauma la elimina; la ficha y el guardado la normalizan | `heroExtras`, `heroSanitize`, `ModalHeroCard` |
+| **Elegibilidad** | El líder puede elegir las 20; el resto solo las individuales; las de grupo del líder se ven en todas las fichas | `HeroAuraSection`, `auras.js` |
+| **Aviso de turno** | El track muestra héroe, aura y capacidad; las de grupo aparecen en el turno de todos los héroes | `AuraNoticeBanner`, `InitTracker` |
+| **Pruebas** | Unitarios de catálogo, sustitución y Trauma; E2E de elección, pérdida por Trauma y aviso de grupo | `auras.test`, `heroExtras.test`, `auras.spec` |
+
+**Medición**
+
+```text
+Unit       284 tests
+E2E        180/180
+```
+
 ### Pendiente / pospuesto
 
 - **Enemigos (paso 3)**: cerrado (chips de color/categoría y contador en el selector manual).

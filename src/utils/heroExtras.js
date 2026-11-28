@@ -1,6 +1,6 @@
 import { FLUSH_EVENT, isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { HEROES } from '@/data/heroes';
-import { ALL_HERO_EFFECTS } from '@/data/heroes/index';
+import { ALL_HERO_EFFECTS, AURAS } from '@/data/heroes/index';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { CHAOS_SEED_DAMAGE, isChaosSeedBurst } from '@/utils/chaosSeed';
 
@@ -240,11 +240,21 @@ export function getHeroExtras(heroId) {
     const id = typeof item === 'string' ? item : item?.id;
     return item?.manual === true || knownEffects.has(id);
   }) : []);
+  const normalizeAuras = (list) => {
+    if (!Array.isArray(list)) return [];
+    const aura = list.find((item) => {
+      const id = typeof item === 'string' ? item : item?.id;
+      return knownEffects.has(id) && AURAS.some((entryAura) => entryAura.id === id);
+    });
+    return aura ? [typeof aura === 'string' ? aura : aura.id] : [];
+  };
+  const trauma = Number(entry.trauma) || 0;
 
   const value = {
     ...base,
     ...entry,
-    auras: keepKnownEffects(entry.auras),
+    // Un héroe solo puede tener un aura; se pierde al recibir un cubo de trauma.
+    auras: normalizeAuras(entry.auras),
     consecuencias: keepKnownEffects(entry.consecuencias),
     estados: keepKnownEffects(entry.estados).map(normalizeEstado),
     estadosAlterados: Array.isArray(entry.estadosAlterados)
@@ -257,7 +267,7 @@ export function getHeroExtras(heroId) {
     habilidades: normalizeHabilidades(entry.habilidades, base.habilidades),
     capacidadesClase: normalizeCapacidades(entry.capacidadesClase, base.capacidadesClase),
     almacen: normalizeAlmacen(entry.almacen),
-    trauma: Number(entry.trauma) || 0,
+    trauma,
     maldicion: Number(entry.maldicion) || 0,
     impactoMod: Number(entry.impactoMod) || 0,
     tiempoTotal: Math.max(0, Number(entry.tiempoTotal) || 0),
@@ -296,12 +306,23 @@ export function getEquipmentBonus(extras, stat) {
 
 export function toggleHeroExtra(heroId, group, id) {
   const current = getHeroExtras(heroId);
+  if (group === 'auras') {
+    // Nunca se acumulan auras: elegir una sustituye a la anterior.
+    const hasAura = (current.auras || []).includes(id);
+    return patchHeroExtras(heroId, { auras: hasAura ? [] : [id] });
+  }
   const list = current[group] || [];
   const exists = list.some((item) => (typeof item === 'string' ? item === id : item.id === id));
   const next = exists
     ? list.filter((item) => (typeof item === 'string' ? item !== id : item.id !== id))
     : [...list, id];
   return patchHeroExtras(heroId, { [group]: next });
+}
+
+/** Sustituye el aura del héroe por otra (o la quita con `null`). */
+export function setHeroAura(heroId, auraId) {
+  const valid = AURAS.some((aura) => aura.id === auraId);
+  return patchHeroExtras(heroId, { auras: valid ? [auraId] : [] });
 }
 
 /** Identificador estable de una entrada de héroe, sea catálogo o manual. */
@@ -406,8 +427,13 @@ export function changeHeroVidaMax(heroId, delta) {
 export function changeHeroCubes(heroId, type, delta) {
   const current = getHeroExtras(heroId);
   const max = type === 'trauma' ? MAX_TRAUMA : MAX_MALDICION;
-  const next = Math.max(0, Math.min((current[type] || 0) + delta, max));
-  return patchHeroExtras(heroId, { [type]: next });
+  const previous = current[type] || 0;
+  const next = Math.max(0, Math.min(previous + delta, max));
+  const receivedTrauma = type === 'trauma' && next > previous;
+  return patchHeroExtras(heroId, {
+    [type]: next,
+    ...(receivedTrauma ? { auras: [] } : {}),
+  });
 }
 
 export function changeHeroActionCube(heroId, color, delta) {

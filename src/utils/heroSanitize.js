@@ -1,4 +1,5 @@
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
+import { AURAS } from '@/data/heroes/index';
 
 export const SCHEMA_VERSION = 3;
 export const MAX_TRAUMA_CUBES = 2;
@@ -7,6 +8,7 @@ export const MAX_ACTION_CUBES = 10;
 export const CUBE_COLORS = ['amarillo', 'rojo', 'verde', 'azul'];
 const SKILL_COLORS = CUBE_COLORS;
 const SKILL_KEYS = ['melee', 'agility', 'ranged', 'wisdom'];
+const AURA_IDS = new Set(AURAS.map((aura) => aura.id));
 
 const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 
@@ -120,14 +122,19 @@ export function sanitizeHeroEntry(raw) {
       .map((item) => item.slice(0, 60))
     : [];
 
+  const trauma = clamp(raw.trauma, 0, MAX_TRAUMA_CUBES, 0);
+  const aura = !Array.isArray(raw.auras)
+    ? null
+    : raw.auras.find((id) => typeof id === 'string' && AURA_IDS.has(id));
+
   return {
     vida,
     vidaMax,
-    trauma: clamp(raw.trauma, 0, MAX_TRAUMA_CUBES, 0),
+    trauma,
     maldicion: clamp(raw.maldicion, 0, MAX_CURSE_CUBES, 0),
     impactoMod: clamp(raw.impactoMod, -20, 20, 0),
     tiempoTotal: clamp(raw.tiempoTotal, 0, 60 * 60 * 24, 0),
-    auras: Array.isArray(raw.auras) ? raw.auras.filter((id) => typeof id === 'string') : [],
+    auras: aura ? [aura] : [],
     consecuencias: Array.isArray(raw.consecuencias)
       ? raw.consecuencias.filter((id) => typeof id === 'string')
       : [],

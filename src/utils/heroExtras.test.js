@@ -2,9 +2,12 @@ import { describe, expect, it } from 'vitest';
 import {
   addAlmacenItem,
   addManualHeroExtra,
+  changeHeroCubes,
   changeHeroVida,
   changeHeroVidaMax,
   getHeroExtras,
+  setHeroAura,
+  toggleHeroExtra,
   patchHeroExtras,
   removeAlmacenItem,
   removeHeroExtra,
@@ -160,5 +163,41 @@ describe('efectos manuales de héroe', () => {
 
     const removed = removeHeroExtra('vorn', 'estados', entry);
     expect(removed.estados.some((item) => item.name?.es === 'Estado de prueba')).toBe(false);
+  });
+});
+
+describe('auras', () => {
+  it('solo conserva un aura y elegir otra sustituye la anterior', () => {
+    patchHeroExtras('vorn', { trauma: 0, auras: [] });
+
+    const first = setHeroAura('vorn', 'bendicion_de_gratitud');
+    expect(first.auras).toEqual(['bendicion_de_gratitud']);
+
+    const second = setHeroAura('vorn', 'vinculo_de_amistad');
+    expect(second.auras).toEqual(['vinculo_de_amistad']);
+
+    const toggled = toggleHeroExtra('vorn', 'auras', 'sed_de_sangre');
+    expect(toggled.auras).toEqual(['sed_de_sangre']);
+  });
+
+  it('se pierde al recibir un cubo de Trauma', () => {
+    patchHeroExtras('vorn', { trauma: 1, auras: [] });
+    const withAura = setHeroAura('vorn', 'corazon_bravo');
+    expect(withAura.auras).toEqual(['corazon_bravo']);
+
+    const after = changeHeroCubes('vorn', 'trauma', 1);
+    expect(after.trauma).toBe(2);
+    expect(after.auras).toEqual([]);
+  });
+
+  it('no se pierde al quitar Trauma ni al recibir Maldición', () => {
+    patchHeroExtras('vorn', { trauma: 1, maldicion: 0, auras: [] });
+    setHeroAura('vorn', 'corazon_frio');
+
+    const healed = changeHeroCubes('vorn', 'trauma', -1);
+    expect(healed.auras).toEqual(['corazon_frio']);
+
+    const cursed = changeHeroCubes('vorn', 'maldicion', 1);
+    expect(cursed.auras).toEqual(['corazon_frio']);
   });
 });

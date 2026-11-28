@@ -39,3 +39,37 @@ export const getHeroEffectDescription = (id, language = 'es') => {
 };
 
 export const HERO_EFFECTS_NEEDING_REVIEW = ALL_HERO_EFFECTS.filter((item) => item.needsReview);
+
+/** Roles que ocupan la posición de líder en el track. */
+export const AURA_LEADER_ROLES = ['lider', 'lanza_dados', 'guardian'];
+
+export const isLeaderRole = (role) => AURA_LEADER_ROLES.includes(role);
+
+export const AURA_GROUP_IDS = ['leader-private', 'leader-party', 'hero-private'];
+
+const AURAS_BY_ID = new Map(AURAS.map((item) => [item.id, item]));
+
+export const getAura = (id) => AURAS_BY_ID.get(id) || null;
+
+export const getAuraName = (id, language = 'es') => {
+  const aura = AURAS_BY_ID.get(id);
+  if (!aura) return id;
+  return aura.name[language] || aura.name.es || id;
+};
+
+export const getAuraEffect = (id, language = 'es') => {
+  const aura = AURAS_BY_ID.get(id);
+  if (!aura) return '';
+  return aura.effect[language] || aura.effect.es || '';
+};
+
+export const getAuraCapability = (id, language = 'es') => {
+  const aura = AURAS_BY_ID.get(id);
+  if (!aura) return '';
+  return aura.capability[language] || aura.capability.es || '';
+};
+
+/** Un aura de líder solo puede elegirla un héroe que ocupe su posición. */
+export const canHeroChooseAura = (aura, role) => (
+  Boolean(aura) && (aura.eligibility !== 'leader' || isLeaderRole(role))
+);

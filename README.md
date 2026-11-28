@@ -40,6 +40,9 @@ partidas se guardan en el navegador y se pueden exportar como JSON.
 - **Ficha de héroe en dos zonas**: la vida y lo anterior se mantienen; debajo, el
   **Diario de Campaña** agrupa cubos, habilidades, compañeros, equipo, almacén, auras,
   consecuencias, estados y tiempo total con un fondo diferenciado.
+- **Auras base**: 20 auras con una sola activa por héroe; se pierden al recibir Trauma o al
+  elegir otra. Las de líder pueden ser privadas o visibles para todo el grupo, y el track
+  muestra el aura y su capacidad durante el turno correspondiente.
 - **Contenido compartido de Apocalipsis**: reutiliza la carta base de Oscuridad de Caza,
   el panel de Nodos de Oscuridad de Despertar y la incursión atroz, sin abrir el resto
   del contenido de otras campañas.
@@ -185,8 +188,8 @@ Suite esperada antes de cada entrega:
 
 ```text
 lint      0 errores / 0 avisos
-unit      276 tests
-e2e       178 tests
+unit      284 tests
+e2e       180 tests
 build     OK
 ```
 

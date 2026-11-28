@@ -52,6 +52,8 @@ import DiceRoller from '@/components/track/DiceRoller';
 import TurnTrackBoard from '@/components/track/TurnTrackBoard';
 import PassiveCardsPanel from '@/components/track/PassiveCardsPanel';
 import TrackWarningBanner from '@/components/track/TrackWarningBanner';
+import AuraNoticeBanner from '@/components/track/AuraNoticeBanner';
+import { getAura } from '@/data/heroes/index';
 import GenerationPointsBar from '@/components/track/GenerationPointsBar';
 import MagicCannonsBar from '@/components/track/MagicCannonsBar';
 import PilaStatusPanel from '@/components/track/PilaStatusPanel';
@@ -229,7 +231,7 @@ const InitTracker = () => {
     [trackerData.companions, trackerData.placedHeroes, trackerData.followers],
   );
   const { placedEnemies, setPlacedEnemies, placeEnemy, removeEnemyByUUID, resetEnemySession, resetPlacedEnemies, assignColorToEnemy, releaseColor, usedColors, usedColorsBig, avisos, removeAviso, huespedActivo, activaHuesped, acechoActivo, activaAcecho, invadidosActivo, desactivaAcecho, desactivaHuesped, desactivaOscuridad, desactivaAsalto, desactivaInvadidos } = useInitEnemies();
-  const { translations } = useLanguage();
+  const { language, translations } = useLanguage();
   const { selectedExpansions, mainBox, previewOtherBoxes } = useExpansions();
   const showCoreContent = mainBox === 'core' || previewOtherBoxes;
   const showAwakeningsContent = mainBox === 'awakenings' || previewOtherBoxes;
@@ -369,7 +371,7 @@ const InitTracker = () => {
   const [storyCard, setStoryCard] = useState(null);
   const [fuegoCannonChoice, setFuegoCannonChoice] = useState(null);
   const [terribleCannonChoice, setTerribleCannonChoice] = useState(false);
-  const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras } = useHeroExtras();
+  const { getExtras: getHeroExtras, updateExtras: updateHeroExtras, refresh: refreshHeroExtras, version: heroExtrasVersion } = useHeroExtras();
   const [heroManagementEnabled] = useState(() => isHeroManagementEnabled());
   const getHeroName = (id) => translations.heroes?.[id] || id;
   const getEnemyName = (id, color = null, variantName = null) => {
@@ -5589,6 +5591,27 @@ const InitTracker = () => {
     ))
     .map((entry) => entry.enemy);
 
+  // Auras activas del turno: la propia y, si son de grupo, las del líder.
+  const auraNotices = useMemo(() => {
+    void heroExtrasVersion;
+    if (currentTurnEntity?.type !== 'hero' || !currentTurnEntity.id) return [];
+    const currentId = currentTurnEntity.id;
+    const heroes = trackerData.placedHeroes || [];
+    const seen = new Set();
+    const result = [];
+    const add = (heroId) => {
+      if (!heroId || seen.has(heroId)) return;
+      const aura = getAura((getHeroExtras(heroId).auras || [])[0]);
+      if (!aura) return;
+      if (heroId !== currentId && aura.scope !== 'party') return;
+      seen.add(heroId);
+      result.push({ heroId, aura });
+    };
+    add(currentId);
+    heroes.forEach((hero) => add(hero.id));
+    return result;
+  }, [currentTurnEntity?.id, currentTurnEntity?.type, trackerData.placedHeroes, heroExtrasVersion, getHeroExtras]);
+
   return ( 
       <PageTransition>
        
@@ -5616,6 +5639,19 @@ const InitTracker = () => {
             <div className={`mt-3 flex min-h-0 flex-1 flex-col gap-3 pt-32 sm:pt-16 ${panelsBelow ? '' : 'lg:flex-row'}`}>
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
                 <div className="mb-2 space-y-2" data-testid="track-notice-stack">
+                  {auraNotices.map(({ heroId, aura }) => (
+                    <AuraNoticeBanner
+                      key={`${heroId}-${aura.id}`}
+                      heroName={getHeroName(heroId)}
+                      aura={aura}
+                      language={language}
+                      labels={{
+                        title: ti.auraNoticeTitle || 'Aura activa',
+                        party: ti.auraPartyLabel || 'Grupo',
+                        details: ti.details || 'Detalles',
+                      }}
+                    />
+                  ))}
                   {showCoreContent && huespedActivo && (
                     <TrackWarningBanner
                       title={ti.hostMonsterTitle || 'Monstruo Huésped'}
