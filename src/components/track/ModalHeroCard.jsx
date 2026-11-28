@@ -901,6 +901,7 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
             const added = extras[group.key] || [];
             const addedIds = new Set(added.map((entry) => getHeroExtraId(entry)));
             const available = group.catalogue.filter((item) => !addedIds.has(item.id));
+            const hasCatalogue = group.catalogue.length > 0;
             return (
               <section key={group.key} className="rounded-xl border border-slate-700 bg-slate-950/60 p-2">
                 <div className="mb-1.5 flex items-center justify-between">
@@ -910,7 +911,8 @@ export default function ModalHeroCard({ heroId, role, onClose, onChanged, onOpen
                   <button
                     type="button"
                     onClick={() => setPicker(picker === group.key ? null : group.key)}
-                    className="min-h-7 rounded-lg bg-rose-800 px-2 text-[0.7rem] font-semibold text-white hover:bg-rose-700"
+                    disabled={!hasCatalogue}
+                    className="min-h-7 rounded-lg bg-rose-800 px-2 text-[0.7rem] font-semibold text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     + {t.add || 'Añadir'}
                   </button>

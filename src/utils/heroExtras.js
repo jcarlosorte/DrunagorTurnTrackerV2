@@ -1,5 +1,6 @@
 import { FLUSH_EVENT, isPlainObject, readJsonStorage, writeJsonStorage } from '@/utils/storage';
 import { HEROES } from '@/data/heroes';
+import { ALL_HERO_EFFECTS } from '@/data/heroes/index';
 import { ESTADOS_ALTERADOS } from '@/data/estadosAlterados';
 import { CHAOS_SEED_DAMAGE, isChaosSeedBurst } from '@/utils/chaosSeed';
 
@@ -234,12 +235,18 @@ export function getHeroExtras(heroId) {
     cubos[key] = Math.max(0, Math.min(Number(cubos[key]) || 0, max));
   });
 
+  const knownEffects = new Set(ALL_HERO_EFFECTS.map((item) => item.id));
+  const keepKnownEffects = (list) => (Array.isArray(list) ? list.filter((item) => {
+    const id = typeof item === 'string' ? item : item?.id;
+    return item?.manual === true || knownEffects.has(id);
+  }) : []);
+
   const value = {
     ...base,
     ...entry,
-    auras: Array.isArray(entry.auras) ? entry.auras : [],
-    consecuencias: Array.isArray(entry.consecuencias) ? entry.consecuencias : [],
-    estados: Array.isArray(entry.estados) ? entry.estados.map(normalizeEstado) : [],
+    auras: keepKnownEffects(entry.auras),
+    consecuencias: keepKnownEffects(entry.consecuencias),
+    estados: keepKnownEffects(entry.estados).map(normalizeEstado),
     estadosAlterados: Array.isArray(entry.estadosAlterados)
       ? entry.estadosAlterados.map(normalizeEstado)
       : [],

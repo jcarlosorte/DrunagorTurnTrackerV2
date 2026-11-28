@@ -378,6 +378,7 @@ function HeroEffectSection({
   const available = catalogue.filter((item) => (
     (item.campaign || 'core') === campaign && !addedIds.has(item.id)
   ));
+  const hasCatalogue = catalogue.length > 0;
   const labels = {
     add: language === 'en' ? 'Add' : 'Añadir',
     manual: language === 'en' ? 'Write manually…' : 'Escribir manualmente…',
@@ -413,9 +414,10 @@ function HeroEffectSection({
         <button
           type="button"
           onClick={() => setPickerOpen((value) => !value)}
+          disabled={!hasCatalogue}
           aria-label={`${label[language] || label.es}: ${labels.add}`}
           aria-expanded={pickerOpen}
-          className="min-h-7 rounded-lg bg-rose-800 px-2 text-[0.7rem] font-semibold text-white hover:bg-rose-700"
+          className="min-h-7 rounded-lg bg-rose-800 px-2 text-[0.7rem] font-semibold text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-40"
         >
           + {labels.add}
         </button>
